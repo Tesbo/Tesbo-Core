@@ -1,0 +1,13 @@
+{
+  "loginButton": "//a[@href='/login'][contains(.,'Login')]",
+  "emailTextBox" : "//input[@name='email']",
+  "passwordTextBox": "//input[@name='password']",
+  "vigoLogo" : "//img[@alt='vigo']"
+
+
+
+
+
+
+
+}

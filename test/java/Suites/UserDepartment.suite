@@ -1,0 +1,22 @@
+SuiteName: UserDepartment
+
+
+Test: Create a new Department
+#Smoke
+
+Step: Select @USER from left-navigation
+Step: Select @ORGANIZATION" from drop-down under @USER
+Step: Enter valid @emailaddres s
+Verify: Verify that @email was received
+End :
+
+
+
+Test: Verify Department is Created
+#Smoke
+
+Step: Open Url
+Step: Click @SignUpLink
+Verify: @EmailField is display
+End :
+

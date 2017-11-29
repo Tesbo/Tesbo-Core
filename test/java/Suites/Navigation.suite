@@ -1,0 +1,21 @@
+SuiteName: Navigation
+
+Test: Create a new Navigation
+#Regression
+
+Step: Select @USER from left-navigation
+Step: Select @ORGANIZATION" from drop-down under @USER
+Step: Enter valid @emailaddress
+Verify: Verify that @email was received
+End :
+
+
+Test: Verify Navigation is Created
+#Regression #hg
+
+Step: Open Url
+Step: Click @SignUpLink
+Verify: @EmailField is display
+End :
+
+

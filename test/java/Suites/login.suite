@@ -1,0 +1,41 @@
+SuiteName: Login
+@data = {
+username : "Admin"
+password : ""
+}
+
+
+Test: Verify login page
+#login
+Step: Open Url https://vigoreport.io/
+Step: Click @loginButton
+Step:    Enter    'vir@jsbot.io' into @emailTextBox
+Verify: @vigoLogo is displayed
+end:
+
+
+Test: Verify email1 field is display
+#login
+Step: Open Url https://vigoreport.io/
+Step: Click @loginButton
+Step:    Enter    'vir@jsbot.io' into @emailTextBox
+Verify: @vigoLogo is displayed
+end:
+
+
+Test: Enter text in email field
+#Regression #Smoke
+
+Step: Open Url
+Step: Click on @SignUp_Link
+Step: Enter 'Email' into @EmailField
+Verify: @EmailField is Equal to "test@gmail.com"
+End:
+
+Test: Verify password field is display
+#Smoke
+
+Step: Open Url
+Step: Click @SignUpLink
+Verify: @PasswordField is display
+END:

@@ -1,0 +1,16 @@
+{
+
+  "SuiteDirectory" : "./src/test/java/Suites/",
+
+  "run" :
+  {
+    "baseUrl" : "",
+    "by" : {
+      "tag" : ["login"]
+    },
+    "browser" : ["chrome"],
+    "parallel" :{"status":true,"count":"2","by":"method"}
+  }
+
+
+}
