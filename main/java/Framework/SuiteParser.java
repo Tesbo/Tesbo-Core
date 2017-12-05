@@ -1,21 +1,31 @@
-package java.Framework;
+package Framework;
 
+import com.google.gson.JsonArray;
+import com.google.gson.stream.JsonReader;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.openqa.selenium.json.Json;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.selebot.Exception.NoSuiteNameFoundException;
-import java.util.ArrayList;
+//import java.selebot.Exception.NoSuiteNameFoundException;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SuiteParser {
 
+    public static void main(String[] args) {
 
+        SuiteParser get = new SuiteParser();
+
+        get.allTagName();
+    }
 
 
     /**
@@ -39,10 +49,12 @@ public class SuiteParser {
 
 
     /**
-     * @param fileName : File path
+     * @param fileName : File name with extension e.g. login.suite
      * @return whole file content as String buffer
      */
     public StringBuffer readSuiteFile(String fileName) {
+
+        GetConfiguration configuration = new GetConfiguration();
 
         BufferedReader br = null;
         FileReader fr = null;
@@ -50,7 +62,7 @@ public class SuiteParser {
         StringBuffer suites = new StringBuffer();
 
         try {
-            fr = new FileReader(fileName);
+            fr = new FileReader(configuration.getSuitesDirectory() + "/" + fileName);
             br = new BufferedReader(fr);
             String sCurrentLine;
             while ((sCurrentLine = br.readLine()) != null) {
@@ -80,33 +92,29 @@ public class SuiteParser {
     }
 
 
-    /**
-     * @param suite
-     * @return
-     * @Author : Ankit Mistry
-     */
-    public String getSuiteName(File suite) {
-        String suiteName = "";
-        String allLines[] = getSuiteData(readSuiteFile(suite.getAbsolutePath()));
-        for (int i = 0; i < allLines.length; i++) {
-            {
-                if (allLines[i].toLowerCase().contains("suitename")) {
-                    String sutie[] = allLines[i].split(":");
-                    suiteName = sutie[1].trim();
-                    break;
-                }
-            }
-            if (suiteName.equals("")) {
-                throw new NoSuiteNameFoundException("No suite name found");
-            }
+    public void allTagName() {
+
+        GetConfiguration configuration = new GetConfiguration();
+        String directoryPath = configuration.getSuitesDirectory();
+
+        JSONArray suiteFileList = getSuites(directoryPath);
+        JSONObject allSuite = new JSONObject();
+
+        for (int i = 0; i < suiteFileList.size(); i++) {
+
+            File name = new File(suiteFileList.get(i).toString());
+            SuiteParser suiteName = new SuiteParser();
+
+            allSuite.put(name.getName(),suiteName.readSuiteFile(name.getName()));
+
+
+
         }
-        return suiteName;
+
+
+        System.out.println(allSuite);
+
     }
-
-
-
-
-
 
 
 }
