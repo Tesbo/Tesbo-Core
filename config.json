@@ -1,6 +1,6 @@
 {
 
-  "SuiteDirectory" : "./src/test/java/Suites/",
+  "SuiteDirectory" : "/Volumes/Viral/Projects/SelebotFinal/selebot/test/java/Suites",
 
   "run" :
   {
@@ -8,7 +8,7 @@
     "by" : {
       "tag" : ["login"]
     },
-    "browser" : ["chrome"],
+    "browser" : ["chrome","firefox","IE","safari"],
     "parallel" :{"status":true,"count":"2","by":"method"}
   }
 

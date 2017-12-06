@@ -1,7 +1,7 @@
 SuiteName: Navigation
 
 Test: Create a new Navigation
-#Regression
+#Regression #login
 
 Step: Select @USER from left-navigation
 Step: Select @ORGANIZATION" from drop-down under @USER

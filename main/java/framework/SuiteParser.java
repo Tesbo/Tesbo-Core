@@ -1,31 +1,22 @@
-package Framework;
+package framework;
 
-import com.google.gson.JsonArray;
-import com.google.gson.stream.JsonReader;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.openqa.selenium.json.Json;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-//import java.selebot.Exception.NoSuiteNameFoundException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+//import java.selebot.Exception.NoSuiteNameFoundException;
+
 public class SuiteParser {
 
-    public static void main(String[] args) {
-
-        SuiteParser get = new SuiteParser();
-
-        get.allTagName();
-    }
 
 
     /**
@@ -92,7 +83,35 @@ public class SuiteParser {
     }
 
 
-    public void allTagName() {
+    /**
+     * @param tagName
+     * @param suite
+     * @return
+     */
+    public JSONArray getTestNameByTag(String tagName, StringBuffer suite) {
+
+        String allLines[] = suite.toString().split("[\\r\\n]+");
+        JSONArray testName = new JSONArray();
+
+
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
+                if (allLines[i + 1].toLowerCase().contains("#" + tagName.toLowerCase())) {
+                    String testNameArray[] = allLines[i].split(":");
+                    testName.add(testNameArray[1].trim());
+                }
+            }
+        }   // When No Test Available
+        if (testName.size() == 0) {
+
+            //throw new NoTestFoundException("No test found in suite file");
+            return null;
+        }
+        return testName;
+    }
+
+
+    public JSONObject getTestNameByTag(String tag) {
 
         GetConfiguration configuration = new GetConfiguration();
         String directoryPath = configuration.getSuitesDirectory();
@@ -100,20 +119,24 @@ public class SuiteParser {
         JSONArray suiteFileList = getSuites(directoryPath);
         JSONObject allSuite = new JSONObject();
 
+        JSONObject testNameWithSuites = new JSONObject();
+
         for (int i = 0; i < suiteFileList.size(); i++) {
 
             File name = new File(suiteFileList.get(i).toString());
             SuiteParser suiteName = new SuiteParser();
-
-            allSuite.put(name.getName(),suiteName.readSuiteFile(name.getName()));
-
-
-
+            allSuite.put(name.getName(), suiteName.readSuiteFile(name.getName()));
         }
 
+        for (Object suite : allSuite.keySet()) {
+            JSONArray testNames = getTestNameByTag(tag, (StringBuffer) allSuite.get(suite));
 
-        System.out.println(allSuite);
+            if (testNames != null) {
+                testNameWithSuites.put(suite.toString(), testNames);
+            }
 
+        }
+return  testNameWithSuites;
     }
 
 

@@ -1,4 +1,4 @@
-package Framework;
+package framework;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -9,8 +9,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Utility {
-
-
 
 
     public JSONObject loadJsonFile(String jsonFilePath) {

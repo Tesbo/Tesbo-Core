@@ -1,6 +1,5 @@
-package Framework;
+package framework;
 
-import Framework.Utility;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -16,21 +15,21 @@ public class GetConfiguration {
     public static void main(String[] args) {
         GetConfiguration get = new GetConfiguration();
 
-        System.out.println(get.getBrowserName());
+      //  System.out.println(get.getBrowserName());
     }
 
     public String getConfigFilePath() {
-        File file = new File("src/test/java/config/config.json");
+        File file = new File("config.json");
         return file.getAbsolutePath();
     }
 
-    public ArrayList<String> getBrowserName() {
+    public ArrayList<String> getBrowsers() {
         Utility parser = new Utility();
         return (JSONArray) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("browser");
     }
 
 
-    public ArrayList<String> getTagName() {
+    public ArrayList<String> getTags() {
         Utility parser = new Utility();
         JSONObject main= parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
@@ -74,11 +73,11 @@ public class GetConfiguration {
         return ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("baseUrl").toString();
     }
 
-    public Map<String, String> getParallel() {
+    public JSONObject getParallel() {
         Utility parser = new Utility();
         JSONObject parallelData=(JSONObject) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("parallel");
         boolean IsTrue=(boolean) parallelData.get("status");
-        Map<String,String> dataOfparallel=new HashMap<> ();
+        JSONObject dataOfparallel=new JSONObject ();
         if(IsTrue)
         {
             dataOfparallel.put("status",parallelData.get("status").toString());
