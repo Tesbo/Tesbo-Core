@@ -4,12 +4,12 @@
 
   "run" :
   {
-    "baseUrl" : "",
+    "baseUrl" : "https://google.com",
     "by" : {
       "tag" : ["login"]
     },
-    "browser" : ["chrome","firefox","IE","safari"],
-    "parallel" :{"status":true,"count":"2","by":"method"}
+    "browser" : ["chrome","firefox"],
+    "parallel" :{"status":true,"count":"4"}
   }
 
 

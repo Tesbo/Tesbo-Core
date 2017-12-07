@@ -1,19 +1,23 @@
 package Execution;
 
+import framework.TestExecutor;
 import framework.GetConfiguration;
 import framework.SuiteParser;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class TestExecutionBuilder {
 
 
     public static void main(String[] args) {
         TestExecutionBuilder builder = new TestExecutionBuilder();
-        builder.parallelBuilder();
+        builder.parallelBuilder(builder.buildExecutionQueueByTag());
     }
 
-    public void buildExecutionQueueByTag() {
+    public JSONArray buildExecutionQueueByTag() {
         SuiteParser suiteParser = new SuiteParser();
         GetConfiguration config = new GetConfiguration();
         JSONArray completeTestObjectArray = new JSONArray();
@@ -36,36 +40,35 @@ public class TestExecutionBuilder {
 
         }
 
+        for (Object a : completeTestObjectArray) {
+            System.out.println(a);
+        }
+
+        return completeTestObjectArray;
     }
 
 
-    public void parallelBuilder(/*JSONArray testExecutionQueue*/)
-    {
-
+    public void parallelBuilder(JSONArray testExecutionQueue) {
 
         GetConfiguration config = new GetConfiguration();
-
         JSONObject parallelConfig = config.getParallel();
+        int threadCount = 0;
 
-
-        if(parallelConfig.get("status").toString().equals("true"))
-        {
-
-
-
-
-
-
-
-
-
-        }else {
-
+        if (parallelConfig.get("status").toString().equals("true")) {
+            threadCount = Integer.parseInt(parallelConfig.get("count").toString());
+        } else {
+            threadCount = 1;
         }
 
-
-
-
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        System.out.println(testExecutionQueue.size());
+        for (int i = 0; i < testExecutionQueue.size(); i++) {
+            Runnable worker = new TestExecutor((JSONObject) testExecutionQueue.get(i));
+            executor.execute(worker);
+        }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
 
 
     }

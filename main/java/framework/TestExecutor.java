@@ -1,16 +1,24 @@
-package Selenium;
+package framework;
 
 import framework.GetConfiguration;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.OperaDriverManager;
+import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
-public class TestExecutor {
+public class TestExecutor implements Runnable {
 
+
+    JSONObject test;
+
+    public TestExecutor(JSONObject test)
+    {
+        this.test=test;
+    }
 
     WebDriver driver;
 
@@ -58,10 +66,14 @@ public class TestExecutor {
     }
 
 
+    @Override
+    public void run() {
+
+        System.out.println("Test Started " + test.get("testName") + "Browser " + test.get("browser"));
+
+        beforeTest(test.get("browser").toString());
+        afterTest();
 
 
-
-
-
-
+    }
 }

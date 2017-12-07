@@ -75,24 +75,30 @@ public class GetConfiguration {
 
     public JSONObject getParallel() {
         Utility parser = new Utility();
-        JSONObject parallelData=(JSONObject) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("parallel");
-        boolean IsTrue=(boolean) parallelData.get("status");
-        JSONObject dataOfparallel=new JSONObject ();
-        if(IsTrue)
-        {
-            dataOfparallel.put("status",parallelData.get("status").toString());
-            dataOfparallel.put("by",parallelData.get("by").toString());
-            dataOfparallel.put("count",parallelData.get("count").toString());
-            return dataOfparallel;
+        JSONObject parallelData = (JSONObject) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("parallel");
+        JSONObject dataOfparallel = new JSONObject();
+
+        try {
+
+            boolean IsTrue = (boolean) parallelData.get("status");
+            if (IsTrue) {
+                dataOfparallel.put("status", parallelData.get("status").toString());
+                dataOfparallel.put("count", parallelData.get("count").toString());
+                return dataOfparallel;
+
+            } else {
+                dataOfparallel.put("status", parallelData.get("status").toString());
+                return dataOfparallel;
+
+            }
+
+
+        } catch (Exception e) {
+            dataOfparallel.put("status", "false");
 
         }
-        else
-        {
-            dataOfparallel.put("status",parallelData.get("status").toString());
-            return dataOfparallel;
 
-        }
-
+return  dataOfparallel;
     }
 
     public String getSuitesDirectory() {
