@@ -4,7 +4,7 @@
 
   "run" :
   {
-    "baseUrl" : "https://google.com",
+
     "by" : {
       "tag" : ["login"]
     },

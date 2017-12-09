@@ -1,6 +1,5 @@
 package framework;
 
-import framework.GetConfiguration;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.OperaDriverManager;
@@ -14,13 +13,11 @@ public class TestExecutor implements Runnable {
 
 
     JSONObject test;
-
-    public TestExecutor(JSONObject test)
-    {
-        this.test=test;
-    }
-
     WebDriver driver;
+
+    public TestExecutor(JSONObject test) {
+        this.test = test;
+    }
 
     public void beforeTest(String browserName) {
 
@@ -44,12 +41,13 @@ public class TestExecutor implements Runnable {
                 driver = new InternetExplorerDriver();
             }
 
-            try{
-                driver.get(config.getBaseUrl());
-
-            }catch(org.openqa.selenium.WebDriverException e)
-            {
-                System.out.println("Base URL is not defined");
+            try {
+                System.out.println(config.getBaseUrl().equals(""));
+                if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {
+                    driver.get(config.getBaseUrl());
+                } else {
+                }
+            } catch (org.openqa.selenium.WebDriverException e) {
             }
 
 
@@ -66,6 +64,19 @@ public class TestExecutor implements Runnable {
     }
 
 
+    public void runTest()
+    {
+
+
+
+
+
+
+
+
+    }
+
+
     @Override
     public void run() {
 
@@ -76,4 +87,15 @@ public class TestExecutor implements Runnable {
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
 }

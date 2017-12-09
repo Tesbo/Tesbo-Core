@@ -4,7 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * Get Configuration class will contains all the methods that will read
@@ -14,8 +14,7 @@ public class GetConfiguration {
 
     public static void main(String[] args) {
         GetConfiguration get = new GetConfiguration();
-
-      //  System.out.println(get.getBrowserName());
+        System.out.println(get.getBaseUrl());
     }
 
     public String getConfigFilePath() {
@@ -31,7 +30,7 @@ public class GetConfiguration {
 
     public ArrayList<String> getTags() {
         Utility parser = new Utility();
-        JSONObject main= parser.loadJsonFile(getConfigFilePath());
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         JSONObject by = (JSONObject) run.get("by");
         return (JSONArray) by.get("tag");
@@ -39,7 +38,7 @@ public class GetConfiguration {
 
     public ArrayList<String> getSuiteName() {
         Utility parser = new Utility();
-        JSONObject main= parser.loadJsonFile(getConfigFilePath());
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         JSONObject by = (JSONObject) run.get("by");
         return (JSONArray) by.get("suite");
@@ -48,13 +47,10 @@ public class GetConfiguration {
 
     public String getRunBy() {
         Utility parser = new Utility();
-        String runby=((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("by").toString();
-        if(runby.toLowerCase().contains("suite"))
-        {
+        String runby = ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("by").toString();
+        if (runby.toLowerCase().contains("suite")) {
             return "suite";
-        }
-        else if(runby.toLowerCase().contains("tag"))
-        {
+        } else if (runby.toLowerCase().contains("tag")) {
             return "tag";
         }
         return null;
@@ -62,7 +58,7 @@ public class GetConfiguration {
 
     public ArrayList<String> getByValue() {
         Utility parser = new Utility();
-        JSONObject main= parser.loadJsonFile(getConfigFilePath());
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         JSONObject by = (JSONObject) run.get("by");
         return (JSONArray) by.get("suite");
@@ -70,7 +66,18 @@ public class GetConfiguration {
 
     public String getBaseUrl() {
         Utility parser = new Utility();
-        return ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("baseUrl").toString();
+
+        String baseUrl = "";
+
+
+        try {
+            baseUrl = ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("baseUrl").toString();
+        } catch (Exception e) {
+            System.out.println("Base URL is not defined");
+        }
+
+
+        return baseUrl;
     }
 
     public JSONObject getParallel() {
@@ -98,7 +105,7 @@ public class GetConfiguration {
 
         }
 
-return  dataOfparallel;
+        return dataOfparallel;
     }
 
     public String getSuitesDirectory() {
