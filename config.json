@@ -9,7 +9,7 @@
       "tag" : ["login"]
     },
     "browser" : ["chrome","firefox"],
-    "parallel" :{"status":true,"count":"4"}
+    "parallel" :{"status":true,"count":"1"}
   }
 
 

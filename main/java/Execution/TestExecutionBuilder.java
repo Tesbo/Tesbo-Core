@@ -60,6 +60,7 @@ public class TestExecutionBuilder {
             threadCount = 1;
         }
 
+        System.out.println(threadCount);
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         System.out.println(testExecutionQueue.size());
         for (int i = 0; i < testExecutionQueue.size(); i++) {

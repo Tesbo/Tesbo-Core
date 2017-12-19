@@ -3,6 +3,7 @@ package framework;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.OperaDriverManager;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -64,14 +65,22 @@ public class TestExecutor implements Runnable {
     }
 
 
-    public void runTest()
-    {
+    public void runTest() {
 
 
+        SuiteParser parser = new SuiteParser();
+        StepParser stepParser = new StepParser();
+
+        JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
+
+        System.out.println(steps.size());
+        for (Object step : steps) {
 
 
+            stepParser.parseStep(driver, step.toString());
 
 
+        }
 
 
     }
@@ -82,20 +91,12 @@ public class TestExecutor implements Runnable {
 
         System.out.println("Test Started " + test.get("testName") + "Browser " + test.get("browser"));
 
-        beforeTest(test.get("browser").toString());
-        afterTest();
+      //  beforeTest(test.get("browser").toString());
+        runTest();
+       // afterTest();
 
 
     }
-
-
-
-
-
-
-
-
-
 
 
 }

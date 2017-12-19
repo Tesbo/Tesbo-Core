@@ -10,8 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,6 +17,12 @@ import java.util.stream.Stream;
 
 public class SuiteParser {
 
+
+    public static void main(String[] args) {
+        SuiteParser p = new SuiteParser();
+
+        System.out.println(p.getTestStepBySuiteandTestCaseName("login.suite", "Verify login page"));
+    }
 
     /**
      * @param directory
@@ -38,7 +42,6 @@ public class SuiteParser {
 
         return suiteFileList;
     }
-
 
     /**
      * @param fileName : File name with extension e.g. login.suite
@@ -77,12 +80,10 @@ public class SuiteParser {
         return suites;
     }
 
-
     public String[] getSuiteData(StringBuffer sb) {
         String allLines[] = sb.toString().split("[\\r\\n]+");
         return allLines;
     }
-
 
     /**
      * @param tagName
@@ -110,7 +111,6 @@ public class SuiteParser {
         }
         return testName;
     }
-
 
     public JSONObject getTestNameByTag(String tag) {
 
@@ -140,72 +140,50 @@ public class SuiteParser {
         return testNameWithSuites;
     }
 
-
-
-
-
     /**
-     * @param suitesData
+     * Not completed need to work on this...
      * @param suiteName
      * @return
      */
-    public Map<String, ArrayList<String>> getTestStepBySuiteandTestCaseName(Map<String, StringBuffer> suitesData, String suiteName, String testCase) {
+    public JSONArray getTestStepBySuiteandTestCaseName(String suiteName, String testName) {
 
-        Map<String, StringBuffer> map = suitesData;
+        StringBuffer suiteDetails = readSuiteFile(suiteName);
 
-        Map<String, ArrayList<String>> stepByTestName = new HashMap<>();
+        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
 
-        String allLines[] = map.get(suiteName).toString().split("[\\r\\n]+");
-        String testName = null;
+        JSONArray testSteps = new JSONArray();
 
-
+        System.out.println(allLines.length);
         for (int i = 0; i < allLines.length; i++) {
+
+
+
             if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
+
+
+
                 String testNameArray[] = allLines[i].split(":");
-                testName = testNameArray[1].trim();
 
-                Map<String, ArrayList<String>> suitesTest = stepByTestName;
-                boolean flag = false;
-                for (Map.Entry<String, ArrayList<String>> test : suitesTest.entrySet()) {
-                    if (test.getKey().equalsIgnoreCase(testName)) {
-                        flag = true;
+
+                if (testNameArray[1].trim().contains(testName)) {
+
+                    System.out.println(testNameArray[1].trim());
+
+                    if (allLines[i].toLowerCase().contains("step:") | allLines[i].toLowerCase().contains("step :") |
+                            allLines[i].toLowerCase().contains("verify :") | allLines[i].toLowerCase().contains("verify :")
+                            ) {
+                        testSteps.add(allLines[i].toLowerCase());
+
+
                     }
                 }
 
 
-                if (!flag) {
-                    ArrayList<String> stepList = new ArrayList<String>();
-                    for (int j = i + 1; j < allLines.length; j++) {
-                        if (allLines[j].toLowerCase().contains("end:") | allLines[j].toLowerCase().contains("end :")) {
-                            break;
-                        }
-                        if (allLines[j].toLowerCase().contains("test:") | allLines[j].toLowerCase().contains("test :")) {
-                      //      throw new NoEndStepFoundException("End Step not found in test");
-                        }
-
-                        if (allLines[j].toLowerCase().contains("step:") | allLines[j].toLowerCase().contains("step :"))
-                            stepList.add(allLines[j]);
-                        if (allLines[j].toLowerCase().contains("verify:") | allLines[j].toLowerCase().contains("verify :"))
-                            stepList.add(allLines[j]);
-                    }
-
-
-                    if (testName.equalsIgnoreCase(testCase)) {
-                        stepByTestName.put(testName, stepList);
-
-                    }
-
-
-                } else {
-                  // throw new DuplicateTestNameException("Suite file has found duplicate test name");
-                }
             }
+
 
         }
 
-
-        return stepByTestName;
+        return testSteps;
     }
-
-
 }
