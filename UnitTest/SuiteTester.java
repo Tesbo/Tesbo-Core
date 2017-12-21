@@ -1,6 +1,6 @@
-import Framework.SuiteParser;
-import org.junit.Assert;
-import org.junit.Test;
+import framework.SuiteParser;
+import org.testng.annotations.Test;
+
 
 public class SuiteTester {
 
@@ -17,6 +17,9 @@ public class SuiteTester {
 
 
     }
+
+
+
 
 
 

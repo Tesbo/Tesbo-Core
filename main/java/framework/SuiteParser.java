@@ -2,6 +2,7 @@ package framework;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import selebot.Exception.NoTestStepFoundException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,7 +22,7 @@ public class SuiteParser {
     public static void main(String[] args) {
         SuiteParser p = new SuiteParser();
 
-        System.out.println(p.getTestStepBySuiteandTestCaseName("login.suite", "Verify login page"));
+        System.out.println(p.getTestStepBySuiteandTestCaseName("login.suite", "Enter text in email field"));
     }
 
     /**
@@ -142,48 +143,41 @@ public class SuiteParser {
 
     /**
      * Not completed need to work on this...
+     *
      * @param suiteName
      * @return
      */
     public JSONArray getTestStepBySuiteandTestCaseName(String suiteName, String testName) {
-
         StringBuffer suiteDetails = readSuiteFile(suiteName);
-
         String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-
         JSONArray testSteps = new JSONArray();
-
-        System.out.println(allLines.length);
+        int startPoint = 0;
+        boolean testStarted = false;
+        int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-
-
-
             if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
-
-
-
                 String testNameArray[] = allLines[i].split(":");
-
-
                 if (testNameArray[1].trim().contains(testName)) {
-
-                    System.out.println(testNameArray[1].trim());
-
-                    if (allLines[i].toLowerCase().contains("step:") | allLines[i].toLowerCase().contains("step :") |
-                            allLines[i].toLowerCase().contains("verify :") | allLines[i].toLowerCase().contains("verify :")
-                            ) {
-                        testSteps.add(allLines[i].toLowerCase());
-
-
-                    }
+                    startPoint = i;
+                    testStarted = true;
                 }
-
-
             }
-
-
+            if (testStarted) {
+                if (allLines[i].toLowerCase().contains("end")) {
+                    endpoint = i;
+                    testStarted = false;
+                }
+            }
         }
-
+        for (int j = startPoint; j < endpoint; j++) {
+            if (allLines[j].toLowerCase().contains("step:") | allLines[j].toLowerCase().contains("step :") |
+                    allLines[j].toLowerCase().contains("verify :") | allLines[j].toLowerCase().contains("verify :")) {
+                testSteps.add(allLines[j]);
+            }
+        }
+        if (testSteps.size() == 0) {
+            throw new NoTestStepFoundException("Steps are not defined for test : " + testName);
+        }
         return testSteps;
     }
 }

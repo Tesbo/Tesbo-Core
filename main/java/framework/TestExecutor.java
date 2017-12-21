@@ -76,11 +76,18 @@ public class TestExecutor implements Runnable {
         System.out.println(steps.size());
         for (Object step : steps) {
 
-
-            stepParser.parseStep(driver, step.toString());
+            System.out.println(step.toString());
+           stepParser.parseStep(driver, step.toString());
 
 
         }
+
+
+
+
+
+
+
 
 
     }
