@@ -1,11 +1,8 @@
 {
-  "gmailLink": "//*[@id='gbw']/div/div/div[1]/div[1]/a",
-  "signInTextBox" : "/html/body/nav/div/a[2]",
-  "emailTextBox": "//input[@type='email']",
-  "passwordTextBox" : "//input[@type='password']"
+  "emailTextBox": ".//*[@id='login-email']",
+"passwordTextBox" : ".//*[@id='login-password']",
 
-
-
+"signInTextBox" : ".//*[@id='login-submit']"
 
 
 

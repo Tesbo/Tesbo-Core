@@ -3,6 +3,7 @@ package framework;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.OperaDriverManager;
+import junit.framework.TestResult;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
@@ -76,11 +77,20 @@ public class TestExecutor implements Runnable {
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
 
         System.out.println(steps.size());
+
+
+        JSONArray stepResultArray = new JSONArray();
+        JSONObject stepResult = new JSONObject();
+
+
+
+
+
         for (Object step : steps) {
 
             System.out.println(step.toString());
            stepParser.parseStep(driver, test.get("suiteName").toString(), step.toString());
-
+           stepResult.put("testStep", step);
 
         }
 

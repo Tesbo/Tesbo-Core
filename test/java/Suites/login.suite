@@ -5,15 +5,13 @@ username : "Admin"
 password : ""
 }
 
-
 Test: Verify Gmail Login login page
 #login
-Step: Open URL 'https://google.com'
-Step: Click on @gmailLink
+Step: Open URL 'https://www.linkedin.com'
 Step: Enter 'viral103patel@gmail.com' into @emailTextBox
-Step : Enter 'gopi1010' into @passwordTextBox
-Verify: @vigoLogo is displayed
-end:
+Step : Enter 'jsbot@2017' into @passwordTextBox
+Step: Click on @signInTextBox
+end
 
 
 Test: Verify email1 field is display
