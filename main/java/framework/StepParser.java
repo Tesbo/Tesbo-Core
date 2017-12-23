@@ -2,7 +2,6 @@ package framework;
 
 import Selenium.Commands;
 import org.openqa.selenium.WebDriver;
-import sun.applet.Main;
 
 public class StepParser {
 
@@ -13,19 +12,55 @@ public class StepParser {
         parser.parseTextToEnter("Verify that @email was received");
     }
 
-    public void parseStep(WebDriver driver, String step)
+    public void parseStep(WebDriver driver, String suiteName, String step)
 
     {
         Commands cmd = new Commands();
+        GetLocator locator = new GetLocator();
 
-        System.out.println("ele " + parseElementName(step));
-        if (step.contains("click")) {
-            cmd.findElement(driver, parseElementName(step)).click();
+        if (step.toLowerCase().contains("click")) {
+            System.out.println(parseElementName(step));
+
+            try {
+                cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).click();
+
+                System.out.println("Step Passed");
+            } catch (Exception e) {
+                System.out.println("Step Failed");
+                e.printStackTrace();
+
+            }
+
+
         }
 
-        if (step.contains("enter")) {
-           cmd.findElement(driver,parseElementName(step)).sendKeys(parseTextToEnter(step));
+        if (step.toLowerCase().contains("enter")) {
+
+            try {
+                cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).sendKeys(parseTextToEnter(step));
+                System.out.println("Step Passed");
+            } catch (Exception e) {
+                System.out.println("Step Failed");
+                e.printStackTrace();
+            }
+
+
         }
+
+        if (step.toLowerCase().contains("url")) {
+            try {
+                driver.get(parseTextToEnter(step));
+                System.out.println("Step Passed");
+            } catch (Exception e) {
+                System.out.println("Step Failed");
+                e.printStackTrace();
+
+            }
+        }
+
+
+
+
 
 
     }
@@ -41,7 +76,7 @@ public class StepParser {
             if (word.contains("@")) {
                 elementName = word.substring(1);
             }
-            System.out.println(elementName);
+
         }
         return elementName;
     }
@@ -54,12 +89,12 @@ public class StepParser {
         for (String word : stepWordList) {
 
             if (word.contains("'")) {
-                int length = word.length()-1;
-                textToEnter = word.substring(1,length);
+                int length = word.length() - 1;
+                textToEnter = word.substring(1, length);
             }
 
         }
-        System.out.println("Text to enter " +textToEnter);
+
         return textToEnter;
     }
 

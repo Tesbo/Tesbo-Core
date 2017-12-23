@@ -32,7 +32,9 @@ public class TestExecutor implements Runnable {
 
 
             if (browserName.equalsIgnoreCase("chrome")) {
+
                 ChromeDriverManager.getInstance().setup();
+
                 driver = new ChromeDriver();
             }
 
@@ -77,7 +79,7 @@ public class TestExecutor implements Runnable {
         for (Object step : steps) {
 
             System.out.println(step.toString());
-           stepParser.parseStep(driver, step.toString());
+           stepParser.parseStep(driver, test.get("suiteName").toString(), step.toString());
 
 
         }
@@ -97,10 +99,9 @@ public class TestExecutor implements Runnable {
     public void run() {
 
         System.out.println("Test Started " + test.get("testName") + "Browser " + test.get("browser"));
-
-      //  beforeTest(test.get("browser").toString());
+        beforeTest(test.get("browser").toString());
         runTest();
-       // afterTest();
+        afterTest();
 
 
     }

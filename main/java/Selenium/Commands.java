@@ -5,8 +5,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 public class Commands {
 
@@ -30,15 +32,32 @@ public class Commands {
 
         WebElement element = null;
 
+
+
+        int webdriverTime = 600;
+
+
+
+        WebDriverWait wait = new WebDriverWait(driver,webdriverTime);
+        pause(3);
         try {
+            System.out.println("Inside CSS");
+
             element = driver.findElement(By.cssSelector(elementvalue));
+
         } catch (NoSuchElementException css) {
 
             try {
+                System.out.println("Inside id");
                 element = driver.findElement(By.id(elementvalue));
+
             } catch (NoSuchElementException id) {
                 try {
+
+                    System.out.println("Inside xpath" + elementvalue);
+
                     element = driver.findElement(By.xpath(elementvalue));
+
                 } catch (Exception xpath) {
                     try {
                         element = driver.findElement(By.className(elementvalue));
@@ -104,5 +123,14 @@ public class Commands {
         driver.get(url);
     }
 
+
+    public void pause(int sec)
+    {
+        try {
+            Thread.sleep(sec * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

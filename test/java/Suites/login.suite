@@ -6,17 +6,18 @@ password : ""
 }
 
 
-Test: Verify login page
+Test: Verify Gmail Login login page
 #login
-Step: Open Url https://vigoreport.io/
-Step: Click @loginButton
-Step: Enter 'vir@jsbot.io' into @emailTextBox
+Step: Open URL 'https://google.com'
+Step: Click on @gmailLink
+Step: Enter 'viral103patel@gmail.com' into @emailTextBox
+Step : Enter 'gopi1010' into @passwordTextBox
 Verify: @vigoLogo is displayed
 end:
 
 
 Test: Verify email1 field is display
-#login
+
 Step: Open Url https://vigoreport.io/
 Step: Click @loginButton
 Step:    Enter    'vir@jsbot.io' into @emailTextBox

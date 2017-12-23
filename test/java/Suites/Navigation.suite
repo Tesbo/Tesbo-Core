@@ -1,11 +1,12 @@
 SuiteName: Navigation
 
 Test: Create a new Navigation
-#Regression #login
+#Regression
 
 Step: Select @USER from left-navigation
 Step: Select @ORGANIZATION" from drop-down under @USER
 Step: Enter valid @emailaddress
+Strp : wait for 10 seconds
 Verify: Verify that @email was received
 End :
 

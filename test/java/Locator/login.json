@@ -1,8 +1,8 @@
 {
-  "loginButton": "//a[@href='/login'][contains(.,'Login')]",
-  "emailTextBox" : "//input[@name='email']",
-  "passwordTextBox": "//input[@name='password']",
-  "vigoLogo" : "//img[@alt='vigo']"
+  "gmailLink": "//*[@id='gbw']/div/div/div[1]/div[1]/a",
+  "signInTextBox" : "/html/body/nav/div/a[2]",
+  "emailTextBox": "//input[@type='email']",
+  "passwordTextBox" : "//input[@type='password']"
 
 
 

@@ -114,4 +114,13 @@ public class GetConfiguration {
         return parser.loadJsonFile(jsonFile.getAbsolutePath()).get("SuiteDirectory").toString();
     }
 
+
+    public String getLocatorDirectory() {
+        Utility parser = new Utility();
+        File jsonFile = new File("config.json");
+        return parser.loadJsonFile(jsonFile.getAbsolutePath()).get("locatorDirectory").toString();
+    }
+
+
+
 }

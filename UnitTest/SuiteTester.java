@@ -11,7 +11,7 @@ public class SuiteTester {
     {
         SuiteParser parser = new SuiteParser();
 
-       String loginFileData =  parser.readSuiteFile("login").toString();
+         String loginFileData =  parser.readSuiteFile("login").toString();
         System.out.println(loginFileData);
         //Assert.assertTrue(loginFileData.contains("SuiteName: Login"));
 
