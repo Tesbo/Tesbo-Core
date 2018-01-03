@@ -57,6 +57,15 @@
             <scope>test</scope>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <!-- use 2.9.0 for Java 7 projects -->
+            <version>3.9.0</version>
+        </dependency>
+
+
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>

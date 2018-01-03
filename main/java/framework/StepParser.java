@@ -3,6 +3,8 @@ package framework;
 import Selenium.Commands;
 import org.openqa.selenium.WebDriver;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class StepParser {
 
 
@@ -18,6 +20,8 @@ public class StepParser {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
+
+        //Clicks
         if (step.toLowerCase().contains("click")) {
             System.out.println(parseElementName(step));
 
@@ -34,6 +38,8 @@ public class StepParser {
 
         }
 
+
+        //Sendkeys
         if (step.toLowerCase().contains("enter")) {
 
             try {
@@ -44,9 +50,9 @@ public class StepParser {
                 e.printStackTrace();
             }
 
-
         }
 
+      // Get URL
         if (step.toLowerCase().contains("url")) {
             try {
                 driver.get(parseTextToEnter(step));
@@ -57,6 +63,21 @@ public class StepParser {
 
             }
         }
+
+        //Is displayed
+
+        if (step.toLowerCase().contains("displayed")) {
+            try {
+                if (step.toLowerCase().contains("should") || step.toLowerCase().contains("is")) {
+                    assertThat(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).isDisplayed()).isEqualTo(true);
+                }
+
+            } catch (Exception e) {
+                System.out.println("Step Failed");
+                e.printStackTrace();
+            }
+        }
+
 
 
 

@@ -5,12 +5,32 @@ username : "Admin"
 password : ""
 }
 
-Test: Verify Gmail Login login page
+
+BeforeTest :
+
+
+
+
+AfterTest :
+
+
+StepGroup : Login
+Step:
+Step:
+Step:
+Step:
+End
+
+
+
+Test : Verify Gmail Login login page
+
 #login
-Step: Open URL 'https://www.linkedin.com'
-Step: Enter 'viral103patel@gmail.com' into @emailTextBox
+
+StepGroup : Open URL 'https://www.linkedin.com'
+Step : Enter 'viral103patel@gmail.com' into @emailTextBox
 Step : Enter 'jsbot@2017' into @passwordTextBox
-Step: Click on @signInTextBox
+Step : Click on @signInTextBox
 end
 
 
@@ -18,7 +38,8 @@ Test: Verify email1 field is display
 
 Step: Open Url https://vigoreport.io/
 Step: Click @loginButton
-Step:    Enter    'vir@jsbot.io' into @emailTextBox
+Step: Enter 'vir@jsbot.io' into @emailTextBox
+Steo : Switch to frame
 Verify: @vigoLogo is displayed
 end:
 
@@ -26,8 +47,10 @@ end:
 Test: Enter text in email field
 #Regression #Smoke
 
-
 End:
+
+
+
 
 Test: Verify password field is display
 #Smoke
