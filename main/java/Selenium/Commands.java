@@ -133,4 +133,19 @@ public class Commands {
         }
     }
 
+
+    public void switchToActiveElement(WebDriver driver)
+    {
+        driver.switchTo().activeElement();
+    }
+
+
+    public void switchToDefaultContent(WebDriver driver)
+    {
+        driver.switchTo().defaultContent();
+    }
+
+
+
+
 }
