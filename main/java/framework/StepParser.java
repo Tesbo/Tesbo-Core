@@ -30,7 +30,6 @@ public class StepParser {
 
                 cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).click();
 
-
                 System.out.println("Step Passed");
             } catch (Exception e) {
                 System.out.println("Step Failed");
@@ -98,8 +97,6 @@ public class StepParser {
 
 
         try {
-
-
             //Step :  switch to active Element
             if (step.toLowerCase().contains("active element")) {
 
@@ -119,15 +116,44 @@ public class StepParser {
                 cmd.switchToDefaultContent(driver);
             }
 
-            if (step.toLowerCase().contains("active element")) {
 
-            }
-
-/*
-Switch to frame
- */
+            /**
+             * Switch to frame
+             */
             if (step.toLowerCase().contains("frame")) {
+                //using identify.
+                if (step.toLowerCase().contains("using")) {
+                    //Step : Switch to frame using id 'FrameID'.
+                    if (step.toLowerCase().contains("id")) {
+                        System.out.println("id : " + parseTextToEnter(step));
+                        cmd.switchFrame(driver, parseTextToEnter(step));
+                    }
+                    //Step : Switch to frame using name 'FrameName'.
+                    else if (step.toLowerCase().contains("name")) {
+                        System.out.println("name : " + parseTextToEnter(step));
+                        cmd.switchFrame(driver, parseTextToEnter(step));
+                    }
+                }
+                /**
+                 * parent or main identify.
+                 * Step : Switch to parent frame.
+                 * Step : Switch to main frame.
+                 */
+                else if (step.toLowerCase().contains("parent") || step.toLowerCase().contains("main")) {
+                    cmd.switchMainFrame(driver);
+                }
+                /**
+                 * element identify.
+                 * Step : Switch to frame @WebElement.
+                 */
+                else if (parseElementName(step) != null) {
+                    try {
+                        cmd.switchFrameElement(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
+                    } catch (NullPointerException e) {
+                        System.out.println("No element find.");
+                    }
 
+                }
 
             }
 
@@ -167,6 +193,7 @@ Switch to new Window
         }
         return elementName;
     }
+
 
     public String parseTextToEnter(String step) {
         String textToEnter = "";

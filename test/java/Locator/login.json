@@ -2,7 +2,9 @@
   "emailTextBox": ".//*[@id='login-email']",
 "passwordTextBox" : ".//*[@id='login-password']",
 
-"signInTextBox" : ".//*[@id='login-submit']"
+"signInTextBox" : ".//*[@id='login-submit']",
+
+ "iframeXpath" : "//iframe[@id='aswift_0']"
 
 
 

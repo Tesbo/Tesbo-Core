@@ -5,48 +5,34 @@ username : "Admin"
 password : ""
 }
 
-
-BeforeTest :
-
-
-
-
-AfterTest :
-
-
-StepGroup : Login
-Step:
-Step:
-Step:
-Step:
-End
-
-
-
 Test : Verify Gmail Login login page
 
 #login
 
-StepGroup : Open URL 'https://www.linkedin.com'
+Step : Open URL 'https://www.linkedin.com'
 Step : Enter 'viral103patel@gmail.com' into @emailTextBox
 Step : Enter 'jsbot@2017' into @passwordTextBox
 Step : Click on @signInTextBox
 end
 
 
-Test: Verify email1 field is display
-
-Step: Open Url https://vigoreport.io/
-Step: Click @loginButton
-Step: Enter 'vir@jsbot.io' into @emailTextBox
-Steo : Switch to frame
-Verify: @vigoLogo is displayed
-end:
+Test: Switch Frame demo
+#frame
+Step: Open Url 'http://toolsqa.com/iframe-practice-page/'
+Step: Switch to frame using id 'iframe2'
+Step:  switch to default content
+Step: Switch to frame using name 'IF1'
+Step:  switch to default content
+Step: Switch to frame @iframeXpath
+Step: Switch to parent frame
+Step: Switch to frame using id 'iframe2'
+end
 
 
 Test: Enter text in email field
 #Regression #Smoke
-
+Step: Click @loginButton
+Step: Enter 'vir@jsbot.io' into @emailTextBox
 End:
 
 

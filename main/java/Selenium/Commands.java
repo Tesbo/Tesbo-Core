@@ -32,13 +32,9 @@ public class Commands {
 
         WebElement element = null;
 
-
-
         int webdriverTime = 600;
 
-
-
-        WebDriverWait wait = new WebDriverWait(driver,webdriverTime);
+        WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
         pause(3);
         try {
             System.out.println("Inside CSS");
@@ -124,8 +120,7 @@ public class Commands {
     }
 
 
-    public void pause(int sec)
-    {
+    public void pause(int sec) {
         try {
             Thread.sleep(sec * 1000);
         } catch (InterruptedException e) {
@@ -134,18 +129,37 @@ public class Commands {
     }
 
 
-    public void switchToActiveElement(WebDriver driver)
-    {
+    public void switchToActiveElement(WebDriver driver) {
         driver.switchTo().activeElement();
     }
 
 
-    public void switchToDefaultContent(WebDriver driver)
-    {
+    public void switchToDefaultContent(WebDriver driver) {
         driver.switchTo().defaultContent();
     }
 
+    /**
+     * @param driver
+     * @param ID
+     * @Description : Switch to IFrame using ID, Name and Web Element.
+     */
+    public void switchFrame(WebDriver driver, String ID) {
+        driver.switchTo().frame(ID);
+    }
 
+    /**
+     * @param driver
+     * @Description : Switch to main or parent IFrame.
+     */
+    public void switchMainFrame(WebDriver driver) {
+        driver.switchTo().parentFrame();
+    }
 
-
+    /**
+     * @param driver
+     * @Description : Switch to main or parent IFrame.
+     */
+    public void switchFrameElement(WebDriver driver, WebElement element) {
+        driver.switchTo().frame(element);
+    }
 }
