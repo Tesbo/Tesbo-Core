@@ -108,9 +108,9 @@ public class StepParser {
             if (step.toLowerCase().contains("alert")) {
                 /**
                  * ok identify.
-                 * Step : Switch to alert then ok.
+                 * Step : Switch to alert then accept
                  */
-                if (step.toLowerCase().contains("ok")) {
+                if (step.toLowerCase().contains("accept")) {
                     cmd.switchAlertAccept(driver);
                 }
                 /**
@@ -123,10 +123,11 @@ public class StepParser {
                 }
                 /**
                  * read identify.
-                 * Step : Switch to alert then read.
+                 * Step : Switch to alert then verify text with 'text'.
                  */
-                else if (step.toLowerCase().contains("read")) {
-                    System.out.println("Alert text : "+cmd.switchAlertRead(driver));
+                else if (step.toLowerCase().contains("verify text")) {
+                    String alertText = cmd.switchAlertRead(driver);
+                    assertThat(alertText).containsIgnoringCase(parseTextToEnter(step));
                 }
                 /**
                  * enter identify.

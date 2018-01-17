@@ -33,10 +33,10 @@ Test: Switch Alert demo
 Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
 Step: Enter '53920' into @Customer_ID
 Step: Click on @Submit_Btn
-Step: Switch to alert then read
+Step: Switch to alert then verify text with 'Do you really want to delete this customer?'
 Step: Switch to alert then cancel
 Step: Click on @Submit_Btn
-Step: Switch to alert then ok.
+Step: Switch to alert then accept
 end
 
 
