@@ -162,4 +162,37 @@ public class Commands {
     public void switchFrameElement(WebDriver driver, WebElement element) {
         driver.switchTo().frame(element);
     }
+
+    /**
+     * @param driver
+     * @Description : Switch to alert and Accept.
+     */
+    public void switchAlertAccept(WebDriver driver) {
+        driver.switchTo().alert().accept();
+    }
+
+    /**
+     * @param driver
+     * @Description : Switch to alert and Dismiss.
+     */
+    public void switchAlertDismiss(WebDriver driver) {
+        driver.switchTo().alert().dismiss();
+    }
+
+    /**
+     * @param driver
+     * @Description : Switch to alert and get alert text.
+     */
+    public String switchAlertRead(WebDriver driver) {
+        return driver.switchTo().alert().getText();
+    }
+
+    /**
+     * @param driver
+     * @param Text
+     * @Description : Switch to alert and enter text.
+     */
+    public void switchAlertSendKey(WebDriver driver, String Text) {
+        driver.switchTo().alert().sendKeys(Text);
+    }
 }

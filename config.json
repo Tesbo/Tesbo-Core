@@ -1,14 +1,14 @@
 {
 
-  "SuiteDirectory" : "/Volumes/Viral/Projects/SelebotFinal/selebot/test/java/Suites",
-  "locatorDirectory" : "/Volumes/Viral/Projects/SelebotFinal/selebot/test/java/Locator",
+  "SuiteDirectory" : "E:/Sellium/selebot/test/java/Suites",
+  "locatorDirectory" : "E:/Sellium/selebot/test/java/Locator",
 
   "run" :
   {
 
     "baseUrl" : "https://vigoreport.io",
     "by" : {
-      "tag" : ["login"]
+      "tag" : ["alert"]
     },
     "browser" : ["chrome"],
     "parallel" :{"status":true,"count":"1"}

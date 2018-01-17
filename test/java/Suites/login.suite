@@ -20,12 +20,23 @@ Test: Switch Frame demo
 #frame
 Step: Open Url 'http://toolsqa.com/iframe-practice-page/'
 Step: Switch to frame using id 'iframe2'
-Step:  switch to default content
+Step: switch to default content
 Step: Switch to frame using name 'IF1'
-Step:  switch to default content
+Step: switch to default content
 Step: Switch to frame @iframeXpath
 Step: Switch to parent frame
 Step: Switch to frame using id 'iframe2'
+end
+
+Test: Switch Alert demo
+#alert
+Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
+Step: Enter '53920' into @Customer_ID
+Step: Click on @Submit_Btn
+Step: Switch to alert then read
+Step: Switch to alert then cancel
+Step: Click on @Submit_Btn
+Step: Switch to alert then ok.
 end
 
 
