@@ -39,6 +39,15 @@ Step: Click on @Submit_Btn
 Step: Switch to alert then accept
 end
 
+Test: Switch window demo
+#window
+Step: Open Url 'http://toolsqa.com/automation-practice-switch-windows/'
+Step: Click on @NewWindow
+Step: Switch to new window.
+Step: close window.
+Step: Switch to main window.
+Step: Click on @NewWindow
+end
 
 Test: Enter text in email field
 #Regression #Smoke

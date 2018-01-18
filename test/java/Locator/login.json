@@ -6,6 +6,7 @@
 
  "iframeXpath" : "//iframe[@id='aswift_0']",
   "Customer_ID" : "cusid",
-  "Submit_Btn" : "submit"
+  "Submit_Btn" : "submit",
+  "NewWindow" : "//button[@onclick='newBrwTab()']"
 
 }
