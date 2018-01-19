@@ -49,6 +49,16 @@ Step: Switch to main window.
 Step: Click on @NewWindow
 end
 
+Test: Navigate demo
+#navigate
+Step: Open Url 'http://www.DemoQA.com'
+Step: Click on @Register
+Step: Navigate to back
+Step: Navigate refresh
+Step: Navigate to forward
+Step: Navigate refresh
+end
+
 Test: Enter text in email field
 #Regression #Smoke
 Step: Click @loginButton

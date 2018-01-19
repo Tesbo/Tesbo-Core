@@ -26,24 +26,16 @@ public class StepParser {
             System.out.println(parseElementName(step));
 
             try {
-
-
                 cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).click();
-
                 System.out.println("Step Passed");
             } catch (Exception e) {
                 System.out.println("Step Failed");
                 e.printStackTrace();
-
             }
-
-
         }
-
 
         //Sendkeys
         if (step.toLowerCase().contains("enter")) {
-
             try {
                 cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).sendKeys(parseTextToEnter(step));
                 System.out.println("Step Passed");
@@ -51,7 +43,6 @@ public class StepParser {
                 System.out.println("Step Failed");
                 e.printStackTrace();
             }
-
         }
 
         // Get URL
@@ -67,7 +58,6 @@ public class StepParser {
         }
 
         //Is displayed
-
         if (step.toLowerCase().contains("displayed")) {
             try {
                 if (step.toLowerCase().contains("should") || step.toLowerCase().contains("is")) {
@@ -80,13 +70,15 @@ public class StepParser {
             }
         }
 
-
         //Switch
         if (step.toLowerCase().contains("switch")) {
             switchFunction(driver, suiteName, step);
         }
 
-
+        //navigate
+        if (step.toLowerCase().contains("navigate")) {
+            navigateFunction(driver, step);
+        }
     }
 
 
@@ -107,7 +99,7 @@ public class StepParser {
              */
             if (step.toLowerCase().contains("alert")) {
                 /**
-                 * ok identify.
+                 * accept identify.
                  * Step : Switch to alert then accept
                  */
                 if (step.toLowerCase().contains("accept")) {
@@ -122,7 +114,7 @@ public class StepParser {
                     cmd.switchAlertDismiss(driver);
                 }
                 /**
-                 * read identify.
+                 * verify text identify.
                  * Step : Switch to alert then verify text with 'text'.
                  */
                 else if (step.toLowerCase().contains("verify text")) {
@@ -210,6 +202,32 @@ public class StepParser {
         } catch (Exception e) {
             System.out.println("Step Failed");
             e.printStackTrace();
+        }
+    }
+
+    public void navigateFunction(WebDriver driver, String step){
+        Commands cmd = new Commands();
+        /**
+         * back identify.
+         * Step : Navigate to back
+         */
+        if (step.toLowerCase().contains("back")) {
+            cmd.navigateBack(driver);
+        }
+
+        /**
+         * forward identify.
+         * Step : Navigate to forward
+         */
+        else if (step.toLowerCase().contains("forward")) {
+            cmd.navigateForward(driver);
+        }
+        /**
+         * refresh identify.
+         * Step : Navigate refresh
+         */
+        else if (step.toLowerCase().contains("refresh")) {
+            cmd.navigateRefresh(driver);
         }
     }
 
