@@ -99,19 +99,47 @@ public class StepParser {
         try {
             //Step :  switch to active Element
             if (step.toLowerCase().contains("active element")) {
-
                 cmd.switchToActiveElement(driver);
-
             }
 
-
+            /**
+             * Switch to alert.
+             */
             if (step.toLowerCase().contains("alert")) {
-                //develop new alert method
+                /**
+                 * ok identify.
+                 * Step : Switch to alert then accept
+                 */
+                if (step.toLowerCase().contains("accept")) {
+                    cmd.switchAlertAccept(driver);
+                }
+                /**
+                 * close and cancel identify.
+                 * Step : Switch to alert then close.
+                 * Step : Switch to alert then cancel.
+                 */
+                else if (step.toLowerCase().contains("close") || step.toLowerCase().contains("cancel")) {
+                    cmd.switchAlertDismiss(driver);
+                }
+                /**
+                 * read identify.
+                 * Step : Switch to alert then verify text with 'text'.
+                 */
+                else if (step.toLowerCase().contains("verify text")) {
+                    String alertText = cmd.switchAlertRead(driver);
+                    assertThat(alertText).containsIgnoringCase(parseTextToEnter(step));
+                }
+                /**
+                 * enter identify.
+                 * Step : Switch to alert then enter 'Text'.
+                 */
+                else if (step.toLowerCase().contains("enter")) {
+                    cmd.switchAlertSendKey(driver, parseTextToEnter(step));
+                }
             }
 
 
             //Step :  switch to default content
-
             if (step.toLowerCase().contains("default content")) {
                 cmd.switchToDefaultContent(driver);
             }

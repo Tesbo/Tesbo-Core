@@ -30,8 +30,6 @@ public class TestExecutor implements Runnable {
                 FirefoxDriverManager.getInstance().setup();
                 driver = new FirefoxDriver();
             }
-
-
             if (browserName.equalsIgnoreCase("chrome")) {
 
                 ChromeDriverManager.getInstance().setup();
@@ -77,30 +75,14 @@ public class TestExecutor implements Runnable {
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
 
         System.out.println(steps.size());
-
-
         JSONArray stepResultArray = new JSONArray();
         JSONObject stepResult = new JSONObject();
 
-
-
-
-
         for (Object step : steps) {
-
             System.out.println(step.toString());
            stepParser.parseStep(driver, test.get("suiteName").toString(), step.toString());
            stepResult.put("testStep", step);
-
         }
-
-
-
-
-
-
-
-
 
     }
 
@@ -112,7 +94,6 @@ public class TestExecutor implements Runnable {
         beforeTest(test.get("browser").toString());
         runTest();
         afterTest();
-
 
     }
 

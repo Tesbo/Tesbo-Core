@@ -4,9 +4,8 @@
 
 "signInTextBox" : ".//*[@id='login-submit']",
 
- "iframeXpath" : "//iframe[@id='aswift_0']"
-
-
-
+ "iframeXpath" : "//iframe[@id='aswift_0']",
+  "Customer_ID" : "cusid",
+  "Submit_Btn" : "submit"
 
 }
