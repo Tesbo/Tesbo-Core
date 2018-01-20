@@ -236,4 +236,28 @@ public class Commands {
     public void closeWindow(WebDriver driver) {
         driver.close();
     }
+
+    /**
+     * @param driver
+     * @Description : Navigate to back window.
+     */
+    public void navigateBack(WebDriver driver) {
+        driver.navigate().back();
+    }
+
+    /**
+     * @param driver
+     * @Description : Navigate to forward window.
+     */
+    public void navigateForward(WebDriver driver) {
+        driver.navigate().forward();
+    }
+
+    /**
+     * @param driver
+     * @Description : Navigate refresh window.
+     */
+    public void navigateRefresh(WebDriver driver) {
+        driver.navigate().refresh();
+    }
 }

@@ -1,12 +1,10 @@
 {
   "emailTextBox": ".//*[@id='login-email']",
-"passwordTextBox" : ".//*[@id='login-password']",
-
-"signInTextBox" : ".//*[@id='login-submit']",
-
- "iframeXpath" : "//iframe[@id='aswift_0']",
-  "Customer_ID" : "cusid",
-  "Submit_Btn" : "submit",
-  "NewWindow" : "//button[@onclick='newBrwTab()']"
-
+  "passwordTextBox": ".//*[@id='login-password']",
+  "signInTextBox": ".//*[@id='login-submit']",
+  "iframeXpath": "//iframe[@id='aswift_0']",
+  "Customer_ID": "cusid",
+  "Submit_Btn": "submit",
+  "NewWindow": "//button[@onclick='newBrwTab()']",
+  "Register": ".//*[@id='menu-item-374']/a"
 }
