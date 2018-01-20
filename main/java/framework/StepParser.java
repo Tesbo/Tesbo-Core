@@ -144,7 +144,6 @@ public class StepParser {
                 cmd.switchToDefaultContent(driver);
             }
 
-
             /**
              * Switch to frame
              */
@@ -180,32 +179,39 @@ public class StepParser {
                     } catch (NullPointerException e) {
                         System.out.println("No element find.");
                     }
-
                 }
-
             }
 
-
-
-/*
-Switch to new Window
- */
-
-
+            /**
+             * Switch to window.
+             */
             if (step.toLowerCase().contains("window")) {
-
-
+                /**
+                 * Step : Switch to new window.
+                 */
+                if (step.toLowerCase().contains("new")) {
+                    cmd.switchNewWindow(driver);
+                }
+                /**
+                 * Step : Switch to main window.
+                 * Step : Switch to parent window.
+                 */
+                else if (step.toLowerCase().contains("main") || step.toLowerCase().contains("parent")) {
+                    cmd.switchMainWindow(driver);
+                }
+                /**
+                 * Step : close window.
+                 */
+                else if (step.toLowerCase().contains("close")) {
+                    cmd.closeWindow(driver);
+                }
             }
-
 
         } catch (Exception e) {
             System.out.println("Step Failed");
             e.printStackTrace();
         }
-
-
     }
-
 
     public String parseElementName(String step) {
 

@@ -7,6 +7,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Set;
+
 import static com.google.common.truth.Truth.assertThat;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
@@ -194,5 +196,44 @@ public class Commands {
      */
     public void switchAlertSendKey(WebDriver driver, String Text) {
         driver.switchTo().alert().sendKeys(Text);
+    }
+
+    public String parantWindow = "";
+    public String childWindow = "";
+
+    /**
+     * @param driver
+     * @Description : Switch to new open window.
+     */
+    public void switchNewWindow(WebDriver driver) {
+        //Get parent window.
+        parantWindow = driver.getWindowHandle();
+        //Get all open windows.
+        Set<String> handles = driver.getWindowHandles();
+
+        for (String windowHandle : handles) {
+            //Condition for get new window.
+            if (!windowHandle.equals(parantWindow)) {
+                childWindow = windowHandle;
+                //Switch to new window.
+                driver.switchTo().window(childWindow);
+            }
+        }
+    }
+
+    /**
+     * @param driver
+     * @Description : Switch to main/parent window.
+     */
+    public void switchMainWindow(WebDriver driver) {
+        driver.switchTo().window(parantWindow);
+    }
+
+    /**
+     * @param driver
+     * @Description : Close window.
+     */
+    public void closeWindow(WebDriver driver) {
+        driver.close();
     }
 }

@@ -8,11 +8,10 @@
 
     "baseUrl" : "https://vigoreport.io",
     "by" : {
-      "tag" : ["alert"]
+      "tag" : ["window"]
     },
     "browser" : ["chrome"],
     "parallel" :{"status":true,"count":"1"}
   }
-
 
 }
