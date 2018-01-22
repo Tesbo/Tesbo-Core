@@ -1,7 +1,10 @@
 package framework;
 
 import Selenium.Commands;
+import org.apache.commons.lang3.ObjectUtils;
 import org.openqa.selenium.WebDriver;
+
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -78,6 +81,11 @@ public class StepParser {
         //navigate
         if (step.toLowerCase().contains("navigate")) {
             navigateFunction(driver, step);
+        }
+
+        //scroll
+        if (step.toLowerCase().contains("scroll")) {
+            scrollFunction(driver, suiteName, step);
         }
     }
 
@@ -205,7 +213,7 @@ public class StepParser {
         }
     }
 
-    public void navigateFunction(WebDriver driver, String step){
+    public void navigateFunction(WebDriver driver, String step) {
         Commands cmd = new Commands();
         /**
          * back identify.
@@ -228,6 +236,50 @@ public class StepParser {
          */
         else if (step.toLowerCase().contains("refresh")) {
             cmd.navigateRefresh(driver);
+        }
+    }
+
+    public void scrollFunction(WebDriver driver, String suiteName, String step) {
+        Commands cmd = new Commands();
+        GetLocator locator = new GetLocator();
+
+        /**
+         * 'Bottom' identify.
+         * Step :Scroll to bottom.
+         */
+        if (step.toLowerCase().contains("bottom")) {
+            cmd.scrollBottom(driver);
+        }
+        /**
+         * 'top' identify.
+         * step : Scroll to top.
+         */
+        else if (step.toLowerCase().contains("top")) {
+            cmd.scrollTop(driver);
+        }
+        /**
+         * number identify.
+         * Step : Scroll to coordinate (50,100)
+         */
+        else if (!(parseNumverToEnter(step, 0) == null)) {
+            try {
+                String x = parseNumverToEnter(step, 0);
+                String y = parseNumverToEnter(step, 1);
+                cmd.scrollToCoordinate(driver, x, y);
+            } catch (NullPointerException e) {
+                System.out.println("No coordinate find.");
+            }
+        }
+        /**
+         * element identify.
+         * Step : Scroll to @element
+         */
+        else if (parseElementName(step) != "") {
+            try {
+                cmd.scrollToElement(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
+            } catch (NullPointerException e) {
+                System.out.println("No element find.");
+            }
         }
     }
 
@@ -264,5 +316,15 @@ public class StepParser {
         return textToEnter;
     }
 
+    public String parseNumverToEnter(String step, int index) {
+        String numbers;
+
+        //extracting string
+        numbers = step.replaceAll("[^-?0-9]+", " ");
+
+        System.out.println("Number is: " + Arrays.asList(numbers.trim().split(" ")).get(index));
+
+        return Arrays.asList(numbers.trim().split(" ")).get(index);
+    }
 
 }

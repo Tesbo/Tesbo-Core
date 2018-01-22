@@ -59,6 +59,15 @@ Step: Navigate to forward
 Step: Navigate refresh
 end
 
+Test: scroll demo
+#scroll
+Step: Open Url 'http://www.DemoQA.com'
+Step: Scroll to bottom
+Step: Scroll to top.
+Step: Scroll to coordinate (50,100)
+Step: Scroll to @Register
+end
+
 Test: Enter text in email field
 #Regression #Smoke
 Step: Click @loginButton
