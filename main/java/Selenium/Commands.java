@@ -1,12 +1,10 @@
 package Selenium;
 
 import framework.Utility;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.xml.bind.Element;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -259,5 +257,44 @@ public class Commands {
      */
     public void navigateRefresh(WebDriver driver) {
         driver.navigate().refresh();
+    }
+
+    /**
+     * @param driver
+     * @Description : Scrolling to bottom.
+     */
+    public void scrollBottom(WebDriver driver) {
+        JavascriptExecutor js = ((JavascriptExecutor) driver);
+        js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+    }
+
+    /**
+     * @param driver
+     * @Description : Scrolling to top.
+     */
+    public void scrollTop(WebDriver driver) {
+        JavascriptExecutor js = ((JavascriptExecutor) driver);
+        js.executeScript("window.scrollTo(0, -document.body.scrollHeight);");
+    }
+
+    /**
+     * @param driver
+     * @param element
+     * @Description : Scrolling to web element.
+     */
+    public void scrollToElement(WebDriver driver, WebElement element) {
+        JavascriptExecutor js = ((JavascriptExecutor) driver);
+        js.executeScript("arguments[0].scrollIntoView();", (element));
+    }
+
+    /**
+     * @param driver
+     * @param x
+     * @param y
+     * @Description : Scrolling to coordinate.
+     */
+    public void scrollToCoordinate(WebDriver driver, String x, String y) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollBy(" + x + ", " + y + ")");
     }
 }
