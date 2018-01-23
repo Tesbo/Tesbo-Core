@@ -87,6 +87,11 @@ public class StepParser {
         if (step.toLowerCase().contains("scroll")) {
             scrollFunction(driver, suiteName, step);
         }
+
+        //pause
+        if (step.toLowerCase().contains("pause")) {
+            pauseFunction(driver, suiteName, step);
+        }
     }
 
 
@@ -283,6 +288,52 @@ public class StepParser {
         }
     }
 
+    public void pauseFunction(WebDriver driver, String suiteName, String step) {
+        Commands cmd = new Commands();
+        GetLocator locator = new GetLocator();
+
+        /**
+         * 'disappear' identify.
+         * Step : pause until @element is disappear
+         */
+        if (step.toLowerCase().contains("disappear")) {
+            try {
+                cmd.pauseElementDisappear(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
+            } catch (Exception e) {
+                System.out.println("No element find.");
+            }
+        }
+        /**
+         * 'clickable' identify.
+         * Step : pause until element is clickable
+         */
+        else if (step.toLowerCase().contains("clickable")) {
+            try {
+                cmd.pauseElementClickable(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
+            } catch (Exception e) {
+                System.out.println("No element find.");
+            }
+        }
+        /**
+         * 'display' identify.
+         * Step : pause until @Submit_Btn is display
+         */
+        else if (step.toLowerCase().contains("display")) {
+            try{
+                cmd.pauseElementDisplay(driver, locator.getLocatorValue(suiteName, parseElementName(step)));
+            }catch (Exception e){
+                System.out.println("No element find.");
+            }
+        }
+        /**
+         * 'sec' identify.
+         * Step : pause for 5sec
+         */
+        else if (step.toLowerCase().contains("sec")) {
+            cmd.pause(Integer.parseInt(parseNumverToEnter(step, 0)));
+        }
+    }
+
     public String parseElementName(String step) {
 
         String[] stepWordList = step.split("\\s+");
@@ -297,7 +348,6 @@ public class StepParser {
         }
         return elementName;
     }
-
 
     public String parseTextToEnter(String step) {
         String textToEnter = "";

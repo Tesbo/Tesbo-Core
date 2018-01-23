@@ -68,6 +68,15 @@ Step: Scroll to coordinate (50,100)
 Step: Scroll to @Register
 end
 
+Test: pause demo
+#pause
+Step: Open Url 'http://www.DemoQA.com'
+Step: pause until @Home is disappear
+Step: pause until @Submit_Btn is display
+Step: pause for 50sec
+Step: pause until @Home is clickable
+end
+
 Test: Enter text in email field
 #Regression #Smoke
 Step: Click @loginButton
