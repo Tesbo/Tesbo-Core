@@ -77,6 +77,18 @@ Step: pause for 50sec
 Step: pause until @Home is clickable
 end
 
+Test: verification demo
+#verification
+Step: Open Url 'http://www.DemoQA.com'
+Step: pause until @ExpectedText is display
+Step: pause for 20sec
+verify: @ExpectedText is displayed
+Verify: @ExpectedText text is equal ignore case 'home'
+Verify: @ExpectedText text is equal 'Home'
+Verify: @ExpectedText text is contains 'Ho'
+Verify: @ExpectedText text is contains ignore case 'ho'
+end
+
 Test: Enter text in email field
 #Regression #Smoke
 Step: Click @loginButton

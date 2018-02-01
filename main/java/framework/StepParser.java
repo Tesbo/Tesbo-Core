@@ -60,19 +60,6 @@ public class StepParser {
             }
         }
 
-        //Is displayed
-        if (step.toLowerCase().contains("displayed")) {
-            try {
-                if (step.toLowerCase().contains("should") || step.toLowerCase().contains("is")) {
-                    assertThat(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).isDisplayed()).isEqualTo(true);
-                }
-
-            } catch (Exception e) {
-                System.out.println("Step Failed");
-                e.printStackTrace();
-            }
-        }
-
         //Switch
         if (step.toLowerCase().contains("switch")) {
             switchFunction(driver, suiteName, step);
@@ -319,9 +306,9 @@ public class StepParser {
          * Step : pause until @Submit_Btn is display
          */
         else if (step.toLowerCase().contains("display")) {
-            try{
+            try {
                 cmd.pauseElementDisplay(driver, locator.getLocatorValue(suiteName, parseElementName(step)));
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("No element find.");
             }
         }

@@ -7,5 +7,6 @@
   "Submit_Btn": "submit",
   "NewWindow": "//button[@onclick='newBrwTab()']",
   "Register": ".//*[@id='menu-item-374']/a",
-  "Home":"//h1"
+  "Home":"//h1",
+  "ExpectedText":"//article/header/h1"
 }
