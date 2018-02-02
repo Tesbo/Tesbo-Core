@@ -2,16 +2,21 @@ package Selenium;
 
 import framework.Utility;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import javax.xml.bind.Element;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
+import static org.openqa.selenium.support.ui.ExpectedConditions.*;
 
 public class Commands {
 
+    protected static Wait<WebDriver> wait;
 
     public String getElementValue(String elementName, String suiteName) {
         Utility jsonParser = new Utility();
@@ -28,8 +33,6 @@ public class Commands {
 
 
     public WebElement findElement(WebDriver driver, String elementvalue) {
-
-
         WebElement element = null;
 
         int webdriverTime = 600;
@@ -297,4 +300,149 @@ public class Commands {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(" + x + ", " + y + ")");
     }
+
+    /**
+     * @param driver
+     * @param element
+     * @Description : pause driver until element disappear.
+     */
+    public void pauseElementDisappear(WebDriver driver, WebElement element) {
+        wait = new WebDriverWait(driver, 100);
+        wait.until(invisibilityOf(element));
+    }
+
+    /**
+     * @param driver
+     * @param element
+     * @Description : pause driver until element clickable.
+     */
+    public void pauseElementClickable(WebDriver driver, WebElement element) {
+        wait = new WebDriverWait(driver, 100);
+        wait.until(elementToBeClickable(element));
+    }
+
+    /**
+     * @param driver
+     * @param elementvalue
+     * @return : Web element
+     * @Description : pause driver until element display.
+     */
+    public WebElement pauseElementDisplay(WebDriver driver, String elementvalue) {
+        Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+                .withTimeout(100, TimeUnit.SECONDS)
+                .pollingEvery(1, TimeUnit.SECONDS)
+                .ignoring(NoSuchElementException.class);
+
+        WebElement foo = wait.until(new Function<WebDriver, WebElement>() {
+            public WebElement apply(WebDriver driver) {
+                WebElement element = null;
+                try {
+                    element = driver.findElement(By.cssSelector(elementvalue));
+                } catch (NoSuchElementException css) {
+                    try {
+                        element = driver.findElement(By.id(elementvalue));
+                    } catch (NoSuchElementException id) {
+                        try {
+                            element = driver.findElement(By.xpath(elementvalue));
+                        } catch (Exception xpath) {
+                            try {
+                                element = driver.findElement(By.className(elementvalue));
+                            } catch (Exception className) {
+                                try {
+                                    element = driver.findElement(By.name(elementvalue));
+                                } catch (Exception name) {
+                                    try {
+                                        element = driver.findElement(By.tagName(elementvalue));
+                                    } catch (Exception tagName) {
+                                        try {
+                                            element = driver.findElement(By.linkText(elementvalue));
+                                        } catch (Exception linkText) {
+                                            try {
+                                                element = driver.findElement(By.partialLinkText(elementvalue));
+                                            } catch (Exception partialLinkText) {
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return element;
+            }
+        });
+
+        return foo;
+    }
+
+    /**
+     * @param element
+     * @param Text
+     * @Description : select drop down using visible text.
+     */
+    public void selectText(WebElement element, String Text) {
+        Select dropDown = new Select(element);
+        dropDown.selectByVisibleText(Text);
+    }
+
+    /**
+     * @param element
+     * @param Index
+     * @Description : select drop down value using index.
+     */
+    public void selectIndex(WebElement element, int Index) {
+        Select dropDown = new Select(element);
+        dropDown.selectByIndex(Index);
+    }
+
+    /**
+     * @param element
+     * @param Text
+     * @Description : select drop down using value.
+     */
+    public void selectValue(WebElement element, String Text) {
+        Select dropDown = new Select(element);
+        dropDown.selectByValue(Text);
+    }
+
+    /**
+     * @param element
+     * @Description : Deselect all the value from drop down.
+     */
+    public void deselectAll(WebElement element) {
+        Select dropDown = new Select(element);
+        dropDown.deselectAll();
+    }
+
+    /**
+     * @param element
+     * @param Text
+     * @Description : Deselect value using visible text.
+     */
+    public void deselectText(WebElement element, String Text) {
+        Select dropDown = new Select(element);
+        dropDown.deselectByVisibleText(Text);
+    }
+
+    /**
+     * @param element
+     * @param Index
+     * @Description : Deselect value using Index.
+     */
+    public void deselectIndex(WebElement element, int Index) {
+        Select dropDown = new Select(element);
+        dropDown.deselectByIndex(Index);
+    }
+
+    /**
+     * @param element
+     * @param Text
+     * @Description : Deselect drop down using value.
+     */
+    public void deselectValue(WebElement element, String Text) {
+        Select dropDown = new Select(element);
+        dropDown.deselectByValue(Text);
+    }
+
 }

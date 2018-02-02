@@ -35,6 +35,7 @@ public class TestExecutor implements Runnable {
                 ChromeDriverManager.getInstance().setup();
 
                 driver = new ChromeDriver();
+                driver.manage().window().maximize();
             }
 
 
@@ -71,6 +72,7 @@ public class TestExecutor implements Runnable {
 
         SuiteParser parser = new SuiteParser();
         StepParser stepParser = new StepParser();
+        VerifyParser verifyParser = new VerifyParser();
 
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
 
@@ -79,9 +81,17 @@ public class TestExecutor implements Runnable {
         JSONObject stepResult = new JSONObject();
 
         for (Object step : steps) {
-            System.out.println(step.toString());
-           stepParser.parseStep(driver, test.get("suiteName").toString(), step.toString());
-           stepResult.put("testStep", step);
+
+            if (step.toString().toLowerCase().contains("step:") | step.toString().toLowerCase().contains("step :")) {
+                System.out.println(step.toString());
+                stepParser.parseStep(driver, test.get("suiteName").toString(), step.toString());
+                stepResult.put("testStep", step);
+            } else if (step.toString().toLowerCase().contains("verify:") | step.toString().toLowerCase().contains("verify :")) {
+                System.out.println(step.toString());
+                verifyParser.parseVerify(driver, test.get("suiteName").toString(), step.toString());
+                stepResult.put("testVerifyl", step);
+            }
+
         }
 
     }
