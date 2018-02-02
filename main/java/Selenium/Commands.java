@@ -3,6 +3,7 @@ package Selenium;
 import framework.Utility;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -374,4 +375,74 @@ public class Commands {
 
         return foo;
     }
+
+    /**
+     * @param element
+     * @param Text
+     * @Description : select drop down using visible text.
+     */
+    public void selectText(WebElement element, String Text) {
+        Select dropDown = new Select(element);
+        dropDown.selectByVisibleText(Text);
+    }
+
+    /**
+     * @param element
+     * @param Index
+     * @Description : select drop down value using index.
+     */
+    public void selectIndex(WebElement element, int Index) {
+        Select dropDown = new Select(element);
+        dropDown.selectByIndex(Index);
+    }
+
+    /**
+     * @param element
+     * @param Text
+     * @Description : select drop down using value.
+     */
+    public void selectValue(WebElement element, String Text) {
+        Select dropDown = new Select(element);
+        dropDown.selectByValue(Text);
+    }
+
+    /**
+     * @param element
+     * @Description : Deselect all the value from drop down.
+     */
+    public void deselectAll(WebElement element) {
+        Select dropDown = new Select(element);
+        dropDown.deselectAll();
+    }
+
+    /**
+     * @param element
+     * @param Text
+     * @Description : Deselect value using visible text.
+     */
+    public void deselectText(WebElement element, String Text) {
+        Select dropDown = new Select(element);
+        dropDown.deselectByVisibleText(Text);
+    }
+
+    /**
+     * @param element
+     * @param Index
+     * @Description : Deselect value using Index.
+     */
+    public void deselectIndex(WebElement element, int Index) {
+        Select dropDown = new Select(element);
+        dropDown.deselectByIndex(Index);
+    }
+
+    /**
+     * @param element
+     * @param Text
+     * @Description : Deselect drop down using value.
+     */
+    public void deselectValue(WebElement element, String Text) {
+        Select dropDown = new Select(element);
+        dropDown.deselectByValue(Text);
+    }
+
 }

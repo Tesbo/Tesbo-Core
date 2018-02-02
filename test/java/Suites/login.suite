@@ -89,6 +89,18 @@ Verify: @ExpectedText text is contains 'Ho'
 Verify: @ExpectedText text is contains ignore case 'ho'
 end
 
+Test: select demo
+#select
+Step: Open Url 'http://demo.guru99.com/selenium/newtours/register.php'
+Step: pause for 10sec
+Step: Select using text 'ANDORRA' from @DropDown
+Step: pause for 1sec
+Step: Select using index 7 from @DropDown
+Step: pause for 1sec
+Step: Select using value 'BAHAMAS' form @DropDown
+Step: pause for 2sec
+end
+
 Test: Enter text in email field
 #Regression #Smoke
 Step: Click @loginButton

@@ -79,6 +79,11 @@ public class StepParser {
         if (step.toLowerCase().contains("pause")) {
             pauseFunction(driver, suiteName, step);
         }
+
+        //select
+        if (step.toLowerCase().contains("select")) {
+            selectFunction(driver, suiteName, step);
+        }
     }
 
 
@@ -318,6 +323,64 @@ public class StepParser {
          */
         else if (step.toLowerCase().contains("sec")) {
             cmd.pause(Integer.parseInt(parseNumverToEnter(step, 0)));
+        }
+    }
+
+    public void selectFunction(WebDriver driver, String suiteName, String step) {
+        Commands cmd = new Commands();
+        GetLocator locator = new GetLocator();
+
+        if (step.toLowerCase().contains("deselect")) {
+            /**
+             * 'all' identify.
+             * Step : Deselect all from @element
+             */
+            if (step.toLowerCase().contains("all")) {
+                cmd.deselectAll(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
+            }
+            /**
+             * 'text' identify.
+             * Step : Deselect using text 'Text' from @element
+             */
+            else if (step.toLowerCase().contains("text")) {
+                cmd.deselectText(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))), parseTextToEnter(step));
+            }
+            /**
+             * 'index' identify.
+             * Step : Deselect using index 1 from @element
+             */
+            else if (step.toLowerCase().contains("index")) {
+                cmd.deselectIndex(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
+            }
+            /**
+             * 'value' identify.
+             * Step : Deselect using value 'Text' from @element
+             */
+            else if (step.toLowerCase().contains("value")) {
+                cmd.deselectValue(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))), parseTextToEnter(step));
+            }
+        } else {
+            /**
+             * 'text' identify.
+             * Step : Select using text 'Text' from @element
+             */
+            if (step.toLowerCase().contains("text")) {
+                cmd.selectText(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))), parseTextToEnter(step));
+            }
+            /**
+             * 'index' identify.
+             * Step : Select using index 1 from @element
+             */
+            else if (step.toLowerCase().contains("index")) {
+                cmd.selectIndex(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
+            }
+            /**
+             * 'value' identify.
+             * Step : Select using value 'Text' form @element
+             */
+            else if (step.toLowerCase().contains("value")) {
+                cmd.selectValue(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))), parseTextToEnter(step));
+            }
         }
     }
 

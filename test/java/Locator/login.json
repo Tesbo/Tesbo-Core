@@ -8,5 +8,6 @@
   "NewWindow": "//button[@onclick='newBrwTab()']",
   "Register": ".//*[@id='menu-item-374']/a",
   "Home":"//h1",
-  "ExpectedText":"//article/header/h1"
+  "ExpectedText":"//article/header/h1",
+  "DropDown":"//select"
 }
