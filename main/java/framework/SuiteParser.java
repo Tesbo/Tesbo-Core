@@ -22,7 +22,9 @@ public class SuiteParser {
     public static void main(String[] args) {
         SuiteParser p = new SuiteParser();
 
-        System.out.println(p.getTestStepBySuiteandTestCaseName("login.suite", "Enter text in email field"));
+        //System.out.println(p.getTestStepBySuiteandTestCaseName("login.suite", "Enter text in email field"));
+
+        System.out.println(p.getTestNameBySuite("login"));
     }
 
     /**
@@ -171,7 +173,7 @@ public class SuiteParser {
         }
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].toLowerCase().contains("step:") | allLines[j].toLowerCase().contains("step :") |
-                    allLines[j].toLowerCase().contains("verify :") | allLines[j].toLowerCase().contains("verify :")) {
+                    allLines[j].toLowerCase().contains("verify:") | allLines[j].toLowerCase().contains("verify :")) {
                 testSteps.add(allLines[j]);
             }
         }
@@ -180,4 +182,62 @@ public class SuiteParser {
         }
         return testSteps;
     }
+
+
+    /**
+     * Description : return test name
+     * @param suitename
+     * @return
+     */
+    public JSONObject getTestNameBySuite(String suitename) {
+        GetConfiguration configuration = new GetConfiguration();
+        String directoryPath = configuration.getSuitesDirectory();
+
+        JSONArray suiteFileList = getSuites(directoryPath);
+        JSONObject allSuite = new JSONObject();
+
+        JSONObject testNameWithSuites = new JSONObject();
+
+        for (int i = 0; i < suiteFileList.size(); i++) {
+            File name = new File(suiteFileList.get(i).toString());
+            SuiteParser suiteName = new SuiteParser();
+            allSuite.put(name.getName(), suiteName.readSuiteFile(name.getName()));
+        }
+
+        for (Object suite : allSuite.keySet()) {
+            if (suite.toString().contains(suitename)) {
+                JSONArray testNames = getTestNameBysuit((StringBuffer) allSuite.get(suite));
+                if (testNames != null) {
+                    testNameWithSuites.put(suite.toString(), testNames);
+                }
+            }
+        }
+        return testNameWithSuites;
+    }
+
+    /**
+     * @param suite
+     * @return
+     * @Description : get test name by suit.
+     */
+    public JSONArray getTestNameBysuit(StringBuffer suite) {
+
+        String allLines[] = suite.toString().split("[\\r\\n]+");
+        JSONArray testName = new JSONArray();
+
+
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
+                String testNameArray[] = allLines[i].split(":");
+                testName.add(testNameArray[1].trim());
+            }
+        }   // When No Test Available
+        if (testName.size() == 0) {
+
+            //throw new NoTestFoundException("No test found in suite file");
+            return null;
+        }
+        return testName;
+    }
+
 }

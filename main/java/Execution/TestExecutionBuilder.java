@@ -14,7 +14,33 @@ public class TestExecutionBuilder {
 
     public static void main(String[] args) {
         TestExecutionBuilder builder = new TestExecutionBuilder();
-        builder.parallelBuilder(builder.buildExecutionQueueByTag());
+        builder.mainRunner();
+    }
+
+    /**
+     * @return
+     * @Description : run by suite name.
+     */
+    public JSONArray buildExecutionQueueBySuite() {
+        SuiteParser suiteParser = new SuiteParser();
+        GetConfiguration config = new GetConfiguration();
+        JSONArray completeTestObjectArray = new JSONArray();
+        for (String suite : config.getSuite()) {
+            JSONObject testNameWithSuites = suiteParser.getTestNameBySuite(suite);
+            for (Object suiteName : testNameWithSuites.keySet()) {
+                for (Object testName : ((JSONArray) testNameWithSuites.get(suiteName))) {
+                    for (String browser : config.getBrowsers()) {
+                        JSONObject completestTestObject = new JSONObject();
+                        completestTestObject.put("testName", testName);
+                        completestTestObject.put("suiteName", suiteName);
+                        completestTestObject.put("browser", browser);
+                        completeTestObjectArray.add(completestTestObject);
+                    }
+                }
+            }
+        }
+
+        return completeTestObjectArray;
     }
 
     public JSONArray buildExecutionQueueByTag() {
@@ -35,9 +61,7 @@ public class TestExecutionBuilder {
                         completeTestObjectArray.add(completestTestObject);
                     }
                 }
-
             }
-
         }
 
         for (Object a : completeTestObjectArray) {
@@ -46,7 +70,6 @@ public class TestExecutionBuilder {
 
         return completeTestObjectArray;
     }
-
 
     public void parallelBuilder(JSONArray testExecutionQueue) {
 
@@ -74,5 +97,15 @@ public class TestExecutionBuilder {
 
     }
 
-
+    /**
+     * @Description : main runner method.
+     */
+    public void mainRunner() {
+        GetConfiguration config = new GetConfiguration();
+        if (config.getValue().toLowerCase().equals("suite")) {
+            parallelBuilder(buildExecutionQueueBySuite());
+        } else if (config.getValue().toLowerCase().equals("tag")) {
+            parallelBuilder(buildExecutionQueueByTag());
+        }
+    }
 }

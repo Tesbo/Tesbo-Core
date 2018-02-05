@@ -121,6 +121,28 @@ public class GetConfiguration {
         return parser.loadJsonFile(jsonFile.getAbsolutePath()).get("locatorDirectory").toString();
     }
 
+    /**
+     * @Description : get suite name from config file.
+     * @return : suite names.
+     */
+    public ArrayList<String> getSuite() {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        JSONObject by = (JSONObject) run.get("by");
+        return (JSONArray) by.get("suite");
+    }
 
+    /**
+     * @Description : get value name from config file.
+     * @return : by value names.
+     */
+    public String getValue() {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        JSONObject by = (JSONObject) run.get("by");
+        return ((String) by.get("value"));
+    }
 
 }

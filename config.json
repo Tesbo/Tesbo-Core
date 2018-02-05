@@ -1,17 +1,23 @@
 {
-
-  "SuiteDirectory" : "E:/Sellium/selebot/test/java/Suites",
-  "locatorDirectory" : "E:/Sellium/selebot/test/java/Locator",
-
-  "run" :
-  {
-
-    "baseUrl" : "https://vigoreport.io",
-    "by" : {
-      "tag" : ["window"]
+  "SuiteDirectory": "E:/Sellium/selebot/test/java/Suites",
+  "locatorDirectory": "E:/Sellium/selebot/test/java/Locator",
+  "run": {
+    "baseUrl": "https://vigoreport.io",
+    "by": {
+      "value": "suite",
+      "tag": [
+        "select"
+      ],
+      "suite": [
+        "login"
+      ]
     },
-    "browser" : ["chrome"],
-    "parallel" :{"status":true,"count":"1"}
+    "browser": [
+      "chrome"
+    ],
+    "parallel": {
+      "status": true,
+      "count": "1"
+    }
   }
-
 }
