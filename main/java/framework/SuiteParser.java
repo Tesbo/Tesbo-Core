@@ -139,8 +139,6 @@ public class SuiteParser {
             allSuite.put(name.getName(), suiteName.readSuiteFile(name.getName()));
         }
 
-        System.out.println(allSuite.toJSONString());
-
         for (Object suite : allSuite.keySet()) {
             for (String suiteName : configuration.getSuite()) {
                 if (suite.toString().contains(suiteName)) {
@@ -153,7 +151,6 @@ public class SuiteParser {
             }
 
         }
-        System.out.println(testNameWithSuites);
         return testNameWithSuites;
     }
 
