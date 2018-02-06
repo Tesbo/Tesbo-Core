@@ -113,6 +113,15 @@ public class SuiteParser {
         return testName;
     }
 
+    /**
+     *
+     * @param tag
+     * @return
+     * @Discription : Get data as per the tag name and suit name.
+     *                when both is null all the test run in the project.
+     *                If tag is null and only suit name define then only defined suite test is execute.
+     *                If suite is null and only tag name is define then the all the test run they define with the tag name.
+     */
     public JSONObject getTestNameByTag(String tag) {
 
         GetConfiguration configuration = new GetConfiguration();
@@ -131,10 +140,14 @@ public class SuiteParser {
         }
 
         for (Object suite : allSuite.keySet()) {
-            JSONArray testNames = getTestNameByTag(tag, (StringBuffer) allSuite.get(suite));
+            for (String suiteName : configuration.getSuite()) {
+                if (suite.toString().contains(suiteName)) {
+                    JSONArray testNames = getTestNameByTag(tag, (StringBuffer) allSuite.get(suite));
 
-            if (testNames != null) {
-                testNameWithSuites.put(suite.toString(), testNames);
+                    if (testNames != null) {
+                        testNameWithSuites.put(suite.toString(), testNames);
+                    }
+                }
             }
 
         }
@@ -171,7 +184,7 @@ public class SuiteParser {
         }
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].toLowerCase().contains("step:") | allLines[j].toLowerCase().contains("step :") |
-                    allLines[j].toLowerCase().contains("verify :") | allLines[j].toLowerCase().contains("verify :")) {
+                    allLines[j].toLowerCase().contains("verify:") | allLines[j].toLowerCase().contains("verify :")) {
                 testSteps.add(allLines[j]);
             }
         }
@@ -180,4 +193,5 @@ public class SuiteParser {
         }
         return testSteps;
     }
+
 }

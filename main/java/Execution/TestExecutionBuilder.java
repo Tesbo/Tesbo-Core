@@ -35,9 +35,7 @@ public class TestExecutionBuilder {
                         completeTestObjectArray.add(completestTestObject);
                     }
                 }
-
             }
-
         }
 
         for (Object a : completeTestObjectArray) {
@@ -46,7 +44,6 @@ public class TestExecutionBuilder {
 
         return completeTestObjectArray;
     }
-
 
     public void parallelBuilder(JSONArray testExecutionQueue) {
 
@@ -73,6 +70,5 @@ public class TestExecutionBuilder {
 
 
     }
-
 
 }
