@@ -18,7 +18,6 @@ public class StepParser {
     }
 
     public void parseStep(WebDriver driver, String suiteName, String step)
-
     {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
@@ -83,6 +82,17 @@ public class StepParser {
         //select
         if (step.toLowerCase().contains("select")) {
             selectFunction(driver, suiteName, step);
+        }
+
+        //Clear
+        if (step.toLowerCase().contains("clear")) {
+            try {
+                cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).clear();
+                System.out.println("Step Passed");
+            } catch (Exception e) {
+                System.out.println("Step Failed");
+                e.printStackTrace();
+            }
         }
     }
 
