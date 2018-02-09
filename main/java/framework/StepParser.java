@@ -1,7 +1,6 @@
 package framework;
 
 import Selenium.Commands;
-import org.apache.commons.lang3.ObjectUtils;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Arrays;
@@ -17,8 +16,7 @@ public class StepParser {
         parser.parseTextToEnter("Verify that @email was received");
     }
 
-    public void parseStep(WebDriver driver, String suiteName, String step)
-    {
+    public void parseStep(WebDriver driver, String suiteName, String step) {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
@@ -412,7 +410,7 @@ public class StepParser {
     public String parseTextToEnter(String step) {
         String textToEnter = "";
 
-        String[] stepWordList = step.split("\\s+");
+      /*  String[] stepWordList = step.split("\\s+");
 
         for (String word : stepWordList) {
 
@@ -422,7 +420,20 @@ public class StepParser {
             }
 
         }
+*/
 
+        int startPoint = 0;
+        int endPoint = 0;
+
+        startPoint = step.indexOf("'") + 1;
+        endPoint = step.lastIndexOf("'");
+
+        try {
+            textToEnter = step.substring(startPoint, endPoint);
+
+        } catch (StringIndexOutOfBoundsException e) {
+            System.out.println("no string to enter. Create a separate exeception here");
+        }
         return textToEnter;
     }
 

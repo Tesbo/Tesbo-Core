@@ -108,11 +108,8 @@ Step: Enter 'vir@jsbot.io' into @emailTextBox
 End:
 
 
-
-
 Test: Verify password field is display
 #Smoke
-
 Step: Open Url
 Step: Click @SignUpLink
 Verify: @PasswordField is display
