@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report</title>
+</head>
+
+<body>
+
+<p> Roshan Mistry</p>
+<div size="24" align="center">
+    <font size="24" color="#2f74e2">Test Report </font>
+</div>
+<div style="background-color:DodgerBlue;">
+    <font size="18" color="#ffffff">Build Result
+    </font>
+</div>
+
+<script type="text/javascript" language="javascript" src="jquery-1.8.2.min.js"></script>
+
+<script type="text/javascript">
+   $(document).ready(function(e) {
+    $.getJSON( "./Build History/test.json" , function( result ){
+    var s = result;
+   console.log(s);
+document.getElementById("startTime").innerHTML =
+"Start Time : " + s.startTime
+
+document.getElementById("endTime").innerHTML =
+"End Time : " + s.endTime
+
+document.getElementById("totalFailed").innerHTML =
+"Total Failed : " + s.totalFailed
+
+document.getElementById("totalPassed").innerHTML =
+"Total Passed : " + s.totalPassed
+
+document.getElementById("totalTimeTaken").innerHTML =
+"Total Time Taken : " + s.totalTimeTaken +"ms"
+
+    alert("Hello Roshan......");
+
+    s.getJSON( "login.suite" , function( result1 ){
+console.log(result1);
+    });
+
+    });
+    });
+
+</script>
+
+<div color="red">
+    <font id='startTime' color="#34bf18" size="4"> </font>
+</div>
+
+<div color="red">
+    <font id='endTime' color="#34bf18" size="4"> </font>
+</div>
+
+<div color="red">
+    <font id='totalTimeTaken' color="#2e9b18" size="4"> </font>
+</div>
+
+<div color="red">
+    <font id='totalPassed' color="#34bf18" size="4"> </font>
+</div>
+
+<div color="red">
+    <font id='totalFailed' color="red" size="4"> </font>
+</div>
+
+
+</body>
+</html>

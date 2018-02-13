@@ -18,7 +18,7 @@ public class Commands {
 
     protected static Wait<WebDriver> wait;
 
-    public String getElementValue(String elementName, String suiteName) {
+    public String getElementValue(String elementName, String suiteName) throws Exception {
         Utility jsonParser = new Utility();
 
         return jsonParser.loadJsonFile(suiteName).get(elementName).toString();
@@ -444,5 +444,6 @@ public class Commands {
         Select dropDown = new Select(element);
         dropDown.deselectByValue(Text);
     }
+
 
 }

@@ -122,7 +122,7 @@ public class SuiteParser {
      *                If tag is null and only suit name define then only defined suite test is execute.
      *                If suite is null and only tag name is define then the all the test run they define with the tag name.
      */
-    public JSONObject getTestNameByTag(String tag) {
+    public JSONObject getTestNameByTag(String tag) throws Exception {
 
         GetConfiguration configuration = new GetConfiguration();
         String directoryPath = configuration.getSuitesDirectory();

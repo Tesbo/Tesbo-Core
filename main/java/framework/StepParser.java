@@ -1,7 +1,6 @@
 package framework;
 
 import Selenium.Commands;
-import org.apache.commons.lang3.ObjectUtils;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Arrays;
@@ -14,11 +13,10 @@ public class StepParser {
     public static void main(String[] args) {
         StepParser parser = new StepParser();
 
-        parser.parseTextToEnter("Verify that @email was received");
+        parser.parseTextToEnter("roshan mistry 'form Jsbot to' vadodara surat khate");
     }
 
-    public void parseStep(WebDriver driver, String suiteName, String step)
-    {
+    public void parseStep(WebDriver driver, String suiteName, String step) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
@@ -26,37 +24,20 @@ public class StepParser {
         //Clicks
         if (step.toLowerCase().contains("click")) {
             System.out.println(parseElementName(step));
-
-            try {
-                cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).click();
-                System.out.println("Step Passed");
-            } catch (Exception e) {
-                System.out.println("Step Failed");
-                e.printStackTrace();
-            }
+            cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).click();
+            System.out.println("Step Passed");
         }
 
         //Sendkeys
         if (step.toLowerCase().contains("enter")) {
-            try {
-                cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).sendKeys(parseTextToEnter(step));
-                System.out.println("Step Passed");
-            } catch (Exception e) {
-                System.out.println("Step Failed");
-                e.printStackTrace();
-            }
+            cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).sendKeys(parseTextToEnter(step));
+            System.out.println("Step Passed");
         }
 
         // Get URL
         if (step.toLowerCase().contains("url")) {
-            try {
-                driver.get(parseTextToEnter(step));
-                System.out.println("Step Passed");
-            } catch (Exception e) {
-                System.out.println("Step Failed");
-                e.printStackTrace();
-
-            }
+            driver.get(parseTextToEnter(step));
+            System.out.println("Step Passed");
         }
 
         //Switch
@@ -86,13 +67,8 @@ public class StepParser {
 
         //Clear
         if (step.toLowerCase().contains("clear")) {
-            try {
-                cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).clear();
-                System.out.println("Step Passed");
-            } catch (Exception e) {
-                System.out.println("Step Failed");
-                e.printStackTrace();
-            }
+            cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).clear();
+            System.out.println("Step Passed");
         }
     }
 
@@ -246,7 +222,7 @@ public class StepParser {
         }
     }
 
-    public void scrollFunction(WebDriver driver, String suiteName, String step) {
+    public void scrollFunction(WebDriver driver, String suiteName, String step) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
@@ -268,7 +244,7 @@ public class StepParser {
          * number identify.
          * Step : Scroll to coordinate (50,100)
          */
-        else if (!(parseNumverToEnter(step, 0) == null)) {
+        else if (step.toLowerCase().contains("coordinate")) {
             try {
                 String x = parseNumverToEnter(step, 0);
                 String y = parseNumverToEnter(step, 1);
@@ -286,6 +262,10 @@ public class StepParser {
                 cmd.scrollToElement(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
             } catch (NullPointerException e) {
                 System.out.println("No element find.");
+                throw e;
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
             }
         }
     }
@@ -336,7 +316,7 @@ public class StepParser {
         }
     }
 
-    public void selectFunction(WebDriver driver, String suiteName, String step) {
+    public void selectFunction(WebDriver driver, String suiteName, String step) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
@@ -410,19 +390,34 @@ public class StepParser {
     }
 
     public String parseTextToEnter(String step) {
+
         String textToEnter = "";
 
-        String[] stepWordList = step.split("\\s+");
+              /*  String[] stepWordList = step.split("\\s+");
 
-        for (String word : stepWordList) {
+         for (String word : stepWordList) {
 
-            if (word.contains("'")) {
-                int length = word.length() - 1;
-                textToEnter = word.substring(1, length);
-            }
+             if (word.contains("'")) {
+                 int length = word.length() - 1;
+                 textToEnter = word.substring(1, length);
+             }
 
+         }
+
+*/
+
+        int startPoint = 0;
+        int endPoint = 0;
+
+        startPoint = step.indexOf("'") + 1;
+        endPoint = step.lastIndexOf("'");
+
+        try {
+            textToEnter = step.substring(startPoint, endPoint);
+
+        } catch (StringIndexOutOfBoundsException e) {
+            System.out.println("no string to enter. Create a separate exeception here");
         }
-
         return textToEnter;
     }
 
