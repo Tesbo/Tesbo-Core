@@ -31,7 +31,7 @@ public class TestExecutionBuilder {
         long stopTimeSuite = System.currentTimeMillis();
         builder.mainObj.put("endTime", dtf.format(LocalDateTime.now()));
         long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
-        System.out.println(elapsedTimeSuite);
+        //System.out.println(elapsedTimeSuite);
         builder.mainObj.put("totalTimeTaken", elapsedTimeSuite);
         System.out.println("Main : " + builder.mainObj);
         report.writeJsonFile(builder.mainObj);
@@ -60,7 +60,7 @@ public class TestExecutionBuilder {
         }
 
         for (Object a : completeTestObjectArray) {
-            System.out.println(a);
+            //System.out.println(a);
         }
 
         return completeTestObjectArray;
@@ -78,9 +78,9 @@ public class TestExecutionBuilder {
             threadCount = 1;
         }
 
-        System.out.println(threadCount);
+        //System.out.println(threadCount);
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-        System.out.println(testExecutionQueue.size());
+        //System.out.println(testExecutionQueue.size());
         for (int i = 0; i < testExecutionQueue.size(); i++) {
             Runnable worker = new TestExecutor((JSONObject) testExecutionQueue.get(i));
             executor.execute(worker);

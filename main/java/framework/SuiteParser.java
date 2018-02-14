@@ -7,6 +7,7 @@ import selebot.Exception.NoTestStepFoundException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,7 +30,7 @@ public class SuiteParser {
      * @param directory
      * @return give all the file inside a directory
      */
-    public JSONArray getSuites(String directory) {
+    public JSONArray getSuites(String directory) throws IOException {
 
         JSONArray suiteFileList = new JSONArray();
 
@@ -38,7 +39,14 @@ public class SuiteParser {
             suiteFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
+
+            System.out.println("Message : Please Enter valid directory path.");
+
+            System.out.println("'"+directory+"' no files found on your location.");
+
             e.printStackTrace();
+
+            throw e;
         }
 
         return suiteFileList;

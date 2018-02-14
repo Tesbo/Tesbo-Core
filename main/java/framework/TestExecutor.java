@@ -7,6 +7,7 @@ import io.github.bonigarcia.wdm.OperaDriverManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -14,6 +15,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
@@ -22,11 +24,10 @@ import java.time.format.DateTimeFormatter;
 public class TestExecutor implements Runnable {
 
 
-    JSONObject test;
-    WebDriver driver;
-
     public JSONObject testResult = new JSONObject();
     public JSONObject suiteResult = new JSONObject();
+    JSONObject test;
+    WebDriver driver;
 
     public TestExecutor(JSONObject test) {
         this.test = test;
@@ -107,36 +108,59 @@ public class TestExecutor implements Runnable {
                     stepParser.parseStep(driver, test.get("suiteName").toString(), step.toString());
                     stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "pass");
-                } catch (NoSuchElementException NE) {
+                } catch (NoAlertPresentException ae) {
                     J++;
                     StringWriter sw = new StringWriter();
-                    NE.printStackTrace(new PrintWriter(sw));
+                    ae.printStackTrace(new PrintWriter(sw));
+                    ae.printStackTrace();
                     String exceptionAsString = sw.toString();
                     stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
-                    stepResult.put("errorMsg", "Please enter valid element locator.");
+                    stepResult.put("errorMsg", "Please review steps. Alert is not display.");
+                    stepResult.put("fullStackTrace", exceptionAsString);
+                }catch (NoSuchElementException NE) {
+                    J++;
+                    StringWriter sw = new StringWriter();
+                    NE.printStackTrace(new PrintWriter(sw));
+                    NE.printStackTrace();
+                    String exceptionAsString = sw.toString();
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("status", "fail");
+                    stepResult.put("errorMsg", "Locator not find. Please add new locator or update the locator value.");
                     stepResult.put("fullStackTrace", exceptionAsString);
                 } catch (NullPointerException npe) {
                     J++;
                     StringWriter sw = new StringWriter();
                     npe.printStackTrace(new PrintWriter(sw));
+                    npe.printStackTrace();
                     String exceptionAsString = sw.toString();
                     stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
-                    stepResult.put("errorMsg", "Please enter the locator.");
+                    stepResult.put("errorMsg", "Data not found. Please add data.");
                     stepResult.put("fullsTackTrace", exceptionAsString);
+                } catch (FileNotFoundException fe) {
+                    J++;
+                    StringWriter sw = new StringWriter();
+                    fe.printStackTrace(new PrintWriter(sw));
+                    fe.printStackTrace();
+                    String exceptionAsString = sw.toString();
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("status", "fail");
+                    stepResult.put("errorMsg", "Please Enter valid directory path. " + fe.getMessage());
+                    System.out.println("Please Enter valid directory path. " + fe.getMessage());
+                    stepResult.put("fullStackTrace", exceptionAsString);
                 } catch (Exception e) {
                     J++;
                     StringWriter sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
+                    e.printStackTrace();
                     String exceptionAsString = sw.toString();
                     stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
-                    stepResult.put("errorMsg", "Please enter the proper value of the locator. Some thing is going to wrong");
+                    stepResult.put("errorMsg", "Please check the steps.");
                     stepResult.put("fullStackTrace", exceptionAsString);
                 }
             } else if (step.toString().toLowerCase().contains("verify:") | step.toString().toLowerCase().contains("verify :")) {
-                System.out.println(step.toString());
                 try {
                     System.out.println(step.toString());
                     verifyParser.parseVerify(driver, test.get("suiteName").toString(), step.toString());
@@ -146,28 +170,42 @@ public class TestExecutor implements Runnable {
                     J++;
                     StringWriter sw = new StringWriter();
                     NE.printStackTrace(new PrintWriter(sw));
+                    NE.printStackTrace();
                     String exceptionAsString = sw.toString();
                     stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
-                    stepResult.put("errorMsg", "Please enter valid element locator.");
+                    stepResult.put("errorMsg", "PLocator not find. Please add new locator or update the locator.");
                     stepResult.put("fullsTackTrace", exceptionAsString);
                 } catch (NullPointerException npe) {
                     J++;
                     StringWriter sw = new StringWriter();
                     npe.printStackTrace(new PrintWriter(sw));
+                    npe.printStackTrace();
                     String exceptionAsString = sw.toString();
                     stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
-                    stepResult.put("errorMsg", "Please enter the locator.");
+                    stepResult.put("errorMsg", "Data not found. Please add data.");
                     stepResult.put("fullsTackTrace", exceptionAsString);
-                } catch (Exception e) {
+                } catch (FileNotFoundException fe) {
+                    J++;
+                    StringWriter sw = new StringWriter();
+                    fe.printStackTrace(new PrintWriter(sw));
+                    fe.printStackTrace();
+                    String exceptionAsString = sw.toString();
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("status", "fail");
+                    stepResult.put("errorMsg", "Please Enter valid directory path. " + fe.getMessage());
+                    System.out.println("Please Enter valid directory path. " + fe.getMessage());
+                    stepResult.put("fullStackTrace", exceptionAsString);
+                }catch (Exception e) {
                     J++;
                     StringWriter sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
+                    e.printStackTrace();
                     String exceptionAsString = sw.toString();
                     stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
-                    stepResult.put("errorMsg", "Please enter the proper value of the locator. Some thing is going to wrong");
+                    stepResult.put("errorMsg", "Please check the steps.");
                     stepResult.put("fullStackTrace", exceptionAsString);
                 }
             }
@@ -181,7 +219,7 @@ public class TestExecutor implements Runnable {
         long stopTimeSuite = System.currentTimeMillis();
         testResult.put("endTime", dtf.format(LocalDateTime.now()));
         long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
-        System.out.println(elapsedTimeSuite);
+        //System.out.println(elapsedTimeSuite);
         testResult.put("totalTime", elapsedTimeSuite);
         testResult.put("suiteName", test.get("suiteName").toString());
         String browserName = caps.getBrowserName();
@@ -196,7 +234,7 @@ public class TestExecutor implements Runnable {
         } else {
             testResult.put("status", "pass");
         }
-        System.out.println("Test Result : " + testResult.toString());
+        //System.out.println("Test Result : " + testResult.toString());
         return testResult;
     }
 
@@ -218,7 +256,7 @@ public class TestExecutor implements Runnable {
             JSONObject test = (JSONObject) builder.mainObj.get(Name);
             test.put(testResult.get("testName").toString(), testResult);
         }
-        System.out.println("run test : "+builder.mainObj);
+        System.out.println("run test : " + builder.mainObj);
     }
 
 

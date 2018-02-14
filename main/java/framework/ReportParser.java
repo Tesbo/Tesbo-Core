@@ -79,7 +79,7 @@ public class ReportParser {
             Object obj = parser.parse(new FileReader("C:\\Users\\jsbot\\Desktop\\test.json"));
 
             JSONObject jsonObject = (JSONObject) obj;
-            System.out.println(jsonObject);
+            //System.out.println(jsonObject);
             return jsonObject;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -123,15 +123,15 @@ public class ReportParser {
                     if((suitData.get(data.get("testName")))!=null){
                         //System.out.println(suitData.get(data.get("testName")));
                         JSONObject testObj = (JSONObject) suitData.get(data.get("testName"));
-                        System.out.println(testObj.get("totalTime"));
+                        //System.out.println(testObj.get("totalTime"));
 
-                        System.out.println(testObj.get("status"));
+                        //System.out.println(testObj.get("status"));
                         if((testObj.get("status")).equals("pass")){
                             P++;
                             T += Integer.parseInt(testObj.get("totalTime").toString());
                         } else if ((testObj.get("status")).equals("fail")){
                             F++;
-                            System.out.println(testObj);
+                            //System.out.println(testObj);
                             T += Integer.parseInt(testObj.get("totalTime").toString());
                         }
 
@@ -139,15 +139,15 @@ public class ReportParser {
                         //System.out.println("null");
                     }
             }
-                System.out.println("totalPassed : "+P);
+                //System.out.println("totalPassed : "+P);
                 suitData.put("totalPassed",+P);
-                System.out.println("totalFailed : "+F);
+                //System.out.println("totalFailed : "+F);
                 suitData.put("totalFailed",+F);
-                System.out.println("totaltime : "+T);
+                //System.out.println("totaltime : "+T);
                 suitData.put("totalTime",+T);
             }
         }
-        System.out.println(mainObject);
+        //System.out.println(mainObject);
     }
 
     /**
@@ -165,16 +165,16 @@ public class ReportParser {
             if((mainObject.get(suitename.get(j)))!= null){
                 //System.out.println("Ros : "+mainObject.get(suitename.get(j)));
                 JSONObject suitData = (JSONObject) mainObject.get(suitename.get(j));
-                System.out.println(suitData.get("totalFailed"));
+                //System.out.println(suitData.get("totalFailed"));
                 F += Integer.parseInt(suitData.get("totalFailed").toString());
-                System.out.println(suitData.get("totalPassed"));
+                //System.out.println(suitData.get("totalPassed"));
                 P += Integer.parseInt(suitData.get("totalPassed").toString());
             }
         }
-        System.out.println(F);
+        //System.out.println(F);
         mainObject.put("totalFailed",F);
-        System.out.println(P);
+        //System.out.println(P);
         mainObject.put("totalPassed",P);
-        System.out.println(mainObject);
+        //System.out.println(mainObject);
     }
 }

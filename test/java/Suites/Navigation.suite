@@ -4,9 +4,9 @@ Test: Create a new Navigation
 #Regression
 
 Step: Select @USER from left-navigation
-Step: Select @ORGANIZATION" from drop-down under @USER
+Step: Select @ORGANIZATION from drop-down under @USER
 Step: Enter valid @emailaddress
-Strp : wait for 10 seconds
+Step : pause for 10sec
 Verify: Verify that @email was received
 End :
 

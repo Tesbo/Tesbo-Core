@@ -73,7 +73,7 @@ public class StepParser {
     }
 
 
-    public void switchFunction(WebDriver driver, String suiteName, String step) {
+    public void switchFunction(WebDriver driver, String suiteName, String step) throws Exception {
 
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
@@ -161,6 +161,7 @@ public class StepParser {
                         cmd.switchFrameElement(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
                     } catch (NullPointerException e) {
                         System.out.println("No element find.");
+                        throw e;
                     }
                 }
             }
@@ -192,7 +193,7 @@ public class StepParser {
 
         } catch (Exception e) {
             System.out.println("Step Failed");
-            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -264,13 +265,12 @@ public class StepParser {
                 System.out.println("No element find.");
                 throw e;
             } catch (Exception e) {
-                e.printStackTrace();
                 throw e;
             }
         }
     }
 
-    public void pauseFunction(WebDriver driver, String suiteName, String step) {
+    public void pauseFunction(WebDriver driver, String suiteName, String step) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
@@ -282,7 +282,6 @@ public class StepParser {
             try {
                 cmd.pauseElementDisappear(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
             } catch (Exception e) {
-                System.out.println("No element find.");
             }
         }
         /**
@@ -293,7 +292,6 @@ public class StepParser {
             try {
                 cmd.pauseElementClickable(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
             } catch (Exception e) {
-                System.out.println("No element find.");
             }
         }
         /**
@@ -304,7 +302,6 @@ public class StepParser {
             try {
                 cmd.pauseElementDisplay(driver, locator.getLocatorValue(suiteName, parseElementName(step)));
             } catch (Exception e) {
-                System.out.println("No element find.");
             }
         }
         /**
@@ -390,20 +387,18 @@ public class StepParser {
     }
 
     public String parseTextToEnter(String step) {
-
         String textToEnter = "";
 
-              /*  String[] stepWordList = step.split("\\s+");
+      /*  String[] stepWordList = step.split("\\s+");
 
-         for (String word : stepWordList) {
+        for (String word : stepWordList) {
 
-             if (word.contains("'")) {
-                 int length = word.length() - 1;
-                 textToEnter = word.substring(1, length);
-             }
+            if (word.contains("'")) {
+                int length = word.length() - 1;
+                textToEnter = word.substring(1, length);
+            }
 
-         }
-
+        }
 */
 
         int startPoint = 0;
@@ -427,7 +422,7 @@ public class StepParser {
         //extracting string
         numbers = step.replaceAll("[^-?0-9]+", " ");
 
-        System.out.println("Number is: " + Arrays.asList(numbers.trim().split(" ")).get(index));
+        //System.out.println("Number is: " + Arrays.asList(numbers.trim().split(" ")).get(index));
 
         return Arrays.asList(numbers.trim().split(" ")).get(index);
     }

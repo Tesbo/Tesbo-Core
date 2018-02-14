@@ -36,7 +36,6 @@ Step: Click on @Submit_Btn
 Step: Switch to alert then verify text with 'Do you really want to delete this customer?'
 Step: Switch to alert then cancel
 Step: Click on @Submit_Btn
-Step: Switch to alert then accept
 end
 
 Test: Switch window demo
@@ -103,6 +102,7 @@ end
 
 Test: Enter text in email field
 #Regression #Smoke
+Step: pause for 3sec
 Step: Click @loginButton
 Step: Enter 'vir@jsbot.io' into @emailTextBox
 End:
