@@ -16,7 +16,7 @@ public class StepParser {
         parser.parseTextToEnter("roshan mistry 'form Jsbot to' vadodara surat khate");
     }
 
-    public void parseStep(WebDriver driver, String suiteName, String step) throws Exception {
+    public void parseStep(WebDriver driver, String suiteName, String step) {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
