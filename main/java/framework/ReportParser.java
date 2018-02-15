@@ -58,8 +58,8 @@ public class ReportParser {
      * @throws IOException
      * @Decription : Create JSON file.
      */
-    public void writeJsonFile(JSONObject obj) throws IOException {
-        try (FileWriter file = new FileWriter("./htmlReport\\Build History\\test.json")) {
+    public void writeJsonFile(JSONObject obj, String fileName) throws IOException {
+        try (FileWriter file = new FileWriter("./htmlReport\\Build History\\"+fileName+".json")) {
 
             file.write(obj.toJSONString());
             file.flush();

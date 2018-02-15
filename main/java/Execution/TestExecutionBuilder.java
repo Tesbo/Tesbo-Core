@@ -34,7 +34,10 @@ public class TestExecutionBuilder {
         //System.out.println(elapsedTimeSuite);
         builder.mainObj.put("totalTimeTaken", elapsedTimeSuite);
         System.out.println("Main : " + builder.mainObj);
-        report.writeJsonFile(builder.mainObj);
+
+        DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+        report.writeJsonFile(builder.mainObj, "buildResult"+dtf1.format(LocalDateTime.now()));
 
     }
 
