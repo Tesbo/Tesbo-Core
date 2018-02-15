@@ -390,20 +390,18 @@ public class StepParser {
     }
 
     public String parseTextToEnter(String step) {
-
         String textToEnter = "";
 
-              /*  String[] stepWordList = step.split("\\s+");
+      /*  String[] stepWordList = step.split("\\s+");
 
-         for (String word : stepWordList) {
+        for (String word : stepWordList) {
 
-             if (word.contains("'")) {
-                 int length = word.length() - 1;
-                 textToEnter = word.substring(1, length);
-             }
+            if (word.contains("'")) {
+                int length = word.length() - 1;
+                textToEnter = word.substring(1, length);
+            }
 
-         }
-
+        }
 */
 
         int startPoint = 0;
