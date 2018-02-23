@@ -1,0 +1,929 @@
+{
+  "UserDepartment.suite": {
+    "totalTime": 33,
+    "totalFailed": 2,
+    "Create a new Department": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:40:47",
+        "endTime": "2018|02|14 16:40:47",
+        "time": 4,
+        "steps": "Select USER from left-navigation",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:40:47",
+        "endTime": "2018|02|14 16:40:47",
+        "time": 0,
+        "steps": "Select ORGANIZATION from drop-down under USER",
+        "status": "pass"
+      },
+      "3": {
+        "stepIndex": 3,
+        "fullStackTrace": "java.io.FileNotFoundException: E:\\Sellium\\selebot\\test\\java\\Locator\\UserDepartment.json (The system cannot find the file specified)\r\n\tat java.io.FileInputStream.open0(Native Method)\r\n\tat java.io.FileInputStream.open(FileInputStream.java:195)\r\n\tat java.io.FileInputStream.<init>(FileInputStream.java:138)\r\n\tat java.io.FileInputStream.<init>(FileInputStream.java:93)\r\n\tat java.io.FileReader.<init>(FileReader.java:58)\r\n\tat framework.Utility.loadJsonFile(Utility.java:18)\r\n\tat framework.GetLocator.getLocatorValue(GetLocator.java:15)\r\n\tat framework.StepParser.parseStep(StepParser.java:33)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "startTime": "2018|02|14 16:40:47",
+        "endTime": "2018|02|14 16:40:47",
+        "time": 3,
+        "steps": "Enter valid emailaddres s",
+        "status": "fail",
+        "errorMsg": "Please Enter valid directory path. E:\\Sellium\\selebot\\test\\java\\Locator\\UserDepartment.json (The system cannot find the file specified)"
+      },
+      "4": {
+        "stepIndex": 4,
+        "startTime": "2018|02|14 16:40:47",
+        "endTime": "2018|02|14 16:40:47",
+        "time": 0,
+        "steps": "Verify that email was received",
+        "status": "pass"
+      },
+      "totalTime": 7,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:40:47",
+      "endTime": "2018|02|14 16:40:47",
+      "tag": "",
+      "testName": "Create a new Department",
+      "suiteName": "UserDepartment.suite",
+      "status": "fail"
+    },
+    "totalPassed": 0,
+    "Verify Department is Created": {
+      "1": {
+        "stepIndex": 1,
+        "fullStackTrace": "org.openqa.selenium.WebDriverException: unknown error: unhandled inspector error: {\"code\":-32000,\"message\":\"Cannot navigate to invalid URL\"}\n  (Session info: chrome=64.0.3282.167)\n  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64) (WARNING: The server did not provide any stacktrace information)\nCommand duration or timeout: 0 milliseconds\nBuild info: version: '3.7.1', revision: '8a0099a', time: '2017-11-06T21:01:39.354Z'\nSystem info: host: 'DESKTOP-IMHAJHS', ip: '192.168.0.7', os.name: 'Windows 10', os.arch: 'amd64', os.version: '10.0', java.version: '1.8.0_161'\nDriver info: org.openqa.selenium.chrome.ChromeDriver\nCapabilities {acceptInsecureCerts: false, acceptSslCerts: false, applicationCacheEnabled: false, browserConnectionEnabled: false, browserName: chrome, chrome: {chromedriverVersion: 2.35.528161 (5b82f2d2aae0ca..., userDataDir: C:\\Users\\jsbot\\AppData\\Loca...}, cssSelectorsEnabled: true, databaseEnabled: false, handlesAlerts: true, hasTouchScreen: false, javascriptEnabled: true, locationContextEnabled: true, mobileEmulationEnabled: false, nativeEvents: true, networkConnectionEnabled: false, pageLoadStrategy: normal, platform: XP, platformName: XP, rotatable: false, setWindowRect: true, takesHeapSnapshot: true, takesScreenshot: true, unexpectedAlertBehaviour: , unhandledPromptBehavior: , version: 64.0.3282.167, webStorageEnabled: true}\nSession ID: 0ed6fa3b94ddcd9bf589979d9b574730\r\n\tat sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)\r\n\tat sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)\r\n\tat sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)\r\n\tat java.lang.reflect.Constructor.newInstance(Constructor.java:423)\r\n\tat org.openqa.selenium.remote.ErrorHandler.createThrowable(ErrorHandler.java:214)\r\n\tat org.openqa.selenium.remote.ErrorHandler.throwIfResponseFailed(ErrorHandler.java:166)\r\n\tat org.openqa.selenium.remote.http.JsonHttpResponseCodec.reconstructValue(JsonHttpResponseCodec.java:40)\r\n\tat org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:80)\r\n\tat org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:44)\r\n\tat org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:164)\r\n\tat org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:83)\r\n\tat org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)\r\n\tat org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:324)\r\n\tat framework.StepParser.parseStep(StepParser.java:39)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "startTime": "2018|02|14 16:40:55",
+        "endTime": "2018|02|14 16:40:55",
+        "time": 23,
+        "steps": "Open Url",
+        "status": "fail",
+        "errorMsg": "Please check your data."
+      },
+      "2": {
+        "stepIndex": 2,
+        "fullStackTrace": "java.io.FileNotFoundException: E:\\Sellium\\selebot\\test\\java\\Locator\\UserDepartment.json (The system cannot find the file specified)\r\n\tat java.io.FileInputStream.open0(Native Method)\r\n\tat java.io.FileInputStream.open(FileInputStream.java:195)\r\n\tat java.io.FileInputStream.<init>(FileInputStream.java:138)\r\n\tat java.io.FileInputStream.<init>(FileInputStream.java:93)\r\n\tat java.io.FileReader.<init>(FileReader.java:58)\r\n\tat framework.Utility.loadJsonFile(Utility.java:18)\r\n\tat framework.GetLocator.getLocatorValue(GetLocator.java:15)\r\n\tat framework.StepParser.parseStep(StepParser.java:27)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "startTime": "2018|02|14 16:40:55",
+        "endTime": "2018|02|14 16:40:55",
+        "time": 1,
+        "steps": "Click SignUpLink",
+        "status": "fail",
+        "errorMsg": "Please Enter valid directory path. E:\\Sellium\\selebot\\test\\java\\Locator\\UserDepartment.json (The system cannot find the file specified)"
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:40:55",
+        "endTime": "2018|02|14 16:40:55",
+        "time": 0,
+        "steps": " EmailField is display",
+        "status": "pass"
+      },
+      "totalTime": 26,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:40:55",
+      "endTime": "2018|02|14 16:40:55",
+      "tag": "",
+      "testName": "Verify Department is Created",
+      "suiteName": "UserDepartment.suite",
+      "status": "fail"
+    }
+  },
+  "Dashboard.suite": {
+    "totalTime": 17,
+    "totalFailed": 2,
+    "Verify Number of Registered User is Display": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:41:08",
+        "endTime": "2018|02|14 16:41:08",
+        "time": 0,
+        "steps": "Select USER from left-navigation",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:41:08",
+        "endTime": "2018|02|14 16:41:08",
+        "time": 1,
+        "steps": "Select ORGANIZATION from drop-down under USER",
+        "status": "pass"
+      },
+      "3": {
+        "stepIndex": 3,
+        "fullStackTrace": "java.io.FileNotFoundException: E:\\Sellium\\selebot\\test\\java\\Locator\\Dashboard.json (The system cannot find the file specified)\r\n\tat java.io.FileInputStream.open0(Native Method)\r\n\tat java.io.FileInputStream.open(FileInputStream.java:195)\r\n\tat java.io.FileInputStream.<init>(FileInputStream.java:138)\r\n\tat java.io.FileInputStream.<init>(FileInputStream.java:93)\r\n\tat java.io.FileReader.<init>(FileReader.java:58)\r\n\tat framework.Utility.loadJsonFile(Utility.java:18)\r\n\tat framework.GetLocator.getLocatorValue(GetLocator.java:15)\r\n\tat framework.StepParser.parseStep(StepParser.java:33)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "startTime": "2018|02|14 16:41:08",
+        "endTime": "2018|02|14 16:41:08",
+        "time": 2,
+        "steps": "Enter valid emailaddress",
+        "status": "fail",
+        "errorMsg": "Please Enter valid directory path. E:\\Sellium\\selebot\\test\\java\\Locator\\Dashboard.json (The system cannot find the file specified)"
+      },
+      "4": {
+        "stepIndex": 4,
+        "startTime": "2018|02|14 16:41:08",
+        "endTime": "2018|02|14 16:41:08",
+        "time": 0,
+        "steps": "Verify that email was received",
+        "status": "pass"
+      },
+      "totalTime": 4,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:41:08",
+      "endTime": "2018|02|14 16:41:08",
+      "tag": "",
+      "testName": "Verify Number of Registered User is Display",
+      "suiteName": "Dashboard.suite",
+      "status": "fail"
+    },
+    "totalPassed": 0,
+    "Verify Task List Grid is Display": {
+      "1": {
+        "stepIndex": 1,
+        "fullStackTrace": "org.openqa.selenium.WebDriverException: unknown error: unhandled inspector error: {\"code\":-32000,\"message\":\"Cannot navigate to invalid URL\"}\n  (Session info: chrome=64.0.3282.167)\n  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64) (WARNING: The server did not provide any stacktrace information)\nCommand duration or timeout: 0 milliseconds\nBuild info: version: '3.7.1', revision: '8a0099a', time: '2017-11-06T21:01:39.354Z'\nSystem info: host: 'DESKTOP-IMHAJHS', ip: '192.168.0.7', os.name: 'Windows 10', os.arch: 'amd64', os.version: '10.0', java.version: '1.8.0_161'\nDriver info: org.openqa.selenium.chrome.ChromeDriver\nCapabilities {acceptInsecureCerts: false, acceptSslCerts: false, applicationCacheEnabled: false, browserConnectionEnabled: false, browserName: chrome, chrome: {chromedriverVersion: 2.35.528161 (5b82f2d2aae0ca..., userDataDir: C:\\Users\\jsbot\\AppData\\Loca...}, cssSelectorsEnabled: true, databaseEnabled: false, handlesAlerts: true, hasTouchScreen: false, javascriptEnabled: true, locationContextEnabled: true, mobileEmulationEnabled: false, nativeEvents: true, networkConnectionEnabled: false, pageLoadStrategy: normal, platform: XP, platformName: XP, rotatable: false, setWindowRect: true, takesHeapSnapshot: true, takesScreenshot: true, unexpectedAlertBehaviour: , unhandledPromptBehavior: , version: 64.0.3282.167, webStorageEnabled: true}\nSession ID: c74f116e56379e75ff9136d4839c7164\r\n\tat sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)\r\n\tat sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)\r\n\tat sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)\r\n\tat java.lang.reflect.Constructor.newInstance(Constructor.java:423)\r\n\tat org.openqa.selenium.remote.ErrorHandler.createThrowable(ErrorHandler.java:214)\r\n\tat org.openqa.selenium.remote.ErrorHandler.throwIfResponseFailed(ErrorHandler.java:166)\r\n\tat org.openqa.selenium.remote.http.JsonHttpResponseCodec.reconstructValue(JsonHttpResponseCodec.java:40)\r\n\tat org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:80)\r\n\tat org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:44)\r\n\tat org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:164)\r\n\tat org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:83)\r\n\tat org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)\r\n\tat org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:324)\r\n\tat framework.StepParser.parseStep(StepParser.java:39)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "startTime": "2018|02|14 16:41:20",
+        "endTime": "2018|02|14 16:41:20",
+        "time": 10,
+        "steps": "Open Url",
+        "status": "fail",
+        "errorMsg": "Please check your data."
+      },
+      "2": {
+        "stepIndex": 2,
+        "fullStackTrace": "java.io.FileNotFoundException: E:\\Sellium\\selebot\\test\\java\\Locator\\Dashboard.json (The system cannot find the file specified)\r\n\tat java.io.FileInputStream.open0(Native Method)\r\n\tat java.io.FileInputStream.open(FileInputStream.java:195)\r\n\tat java.io.FileInputStream.<init>(FileInputStream.java:138)\r\n\tat java.io.FileInputStream.<init>(FileInputStream.java:93)\r\n\tat java.io.FileReader.<init>(FileReader.java:58)\r\n\tat framework.Utility.loadJsonFile(Utility.java:18)\r\n\tat framework.GetLocator.getLocatorValue(GetLocator.java:15)\r\n\tat framework.StepParser.parseStep(StepParser.java:27)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "startTime": "2018|02|14 16:41:20",
+        "endTime": "2018|02|14 16:41:20",
+        "time": 2,
+        "steps": "Click TaskListBuilder",
+        "status": "fail",
+        "errorMsg": "Please Enter valid directory path. E:\\Sellium\\selebot\\test\\java\\Locator\\Dashboard.json (The system cannot find the file specified)"
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:41:20",
+        "endTime": "2018|02|14 16:41:20",
+        "time": 0,
+        "steps": " TaskListBuilder is display",
+        "status": "pass"
+      },
+      "totalTime": 13,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:41:20",
+      "endTime": "2018|02|14 16:41:20",
+      "tag": "",
+      "testName": "Verify Task List Grid is Display",
+      "suiteName": "Dashboard.suite",
+      "status": "fail"
+    }
+  },
+  "totalFailed": 8,
+  "totalTimeTaken": 581500,
+  "startTime": "2018|02|14 16:40:35",
+  "totalPassed": 9,
+  "endTime": "2018|02|14 16:50:17",
+  "login.suite": {
+    "Switch Alert demo": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:42:18",
+        "endTime": "2018|02|14 16:42:19",
+        "time": 1550,
+        "steps": "Open Url 'http:\/\/demo.guru99.com\/test\/delete_customer.php'",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:42:19",
+        "endTime": "2018|02|14 16:42:23",
+        "time": 3289,
+        "steps": "Enter '53920' into Customer_ID",
+        "status": "pass"
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:42:23",
+        "endTime": "2018|02|14 16:42:26",
+        "time": 3272,
+        "steps": "Click on Submit_Btn",
+        "status": "pass"
+      },
+      "4": {
+        "stepIndex": 4,
+        "startTime": "2018|02|14 16:42:26",
+        "endTime": "2018|02|14 16:42:26",
+        "time": 82,
+        "steps": "Switch to alert then verify text with 'Do you really want to delete this customer?'",
+        "status": "pass"
+      },
+      "5": {
+        "stepIndex": 5,
+        "startTime": "2018|02|14 16:42:26",
+        "endTime": "2018|02|14 16:42:26",
+        "time": 11,
+        "steps": "Switch to alert then cancel",
+        "status": "pass"
+      },
+      "6": {
+        "stepIndex": 6,
+        "startTime": "2018|02|14 16:42:26",
+        "endTime": "2018|02|14 16:42:29",
+        "time": 3155,
+        "steps": "Click on Submit_Btn",
+        "status": "pass"
+      },
+      "totalTime": 11360,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:42:18",
+      "endTime": "2018|02|14 16:42:29",
+      "tag": "",
+      "testName": "Switch Alert demo",
+      "suiteName": "login.suite",
+      "status": "pass"
+    },
+    "Verify password field is display": {
+      "1": {
+        "stepIndex": 1,
+        "fullStackTrace": "org.openqa.selenium.WebDriverException: unknown error: unhandled inspector error: {\"code\":-32000,\"message\":\"Cannot navigate to invalid URL\"}\n  (Session info: chrome=64.0.3282.167)\n  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64) (WARNING: The server did not provide any stacktrace information)\nCommand duration or timeout: 0 milliseconds\nBuild info: version: '3.7.1', revision: '8a0099a', time: '2017-11-06T21:01:39.354Z'\nSystem info: host: 'DESKTOP-IMHAJHS', ip: '192.168.0.7', os.name: 'Windows 10', os.arch: 'amd64', os.version: '10.0', java.version: '1.8.0_161'\nDriver info: org.openqa.selenium.chrome.ChromeDriver\nCapabilities {acceptInsecureCerts: false, acceptSslCerts: false, applicationCacheEnabled: false, browserConnectionEnabled: false, browserName: chrome, chrome: {chromedriverVersion: 2.35.528161 (5b82f2d2aae0ca..., userDataDir: C:\\Users\\jsbot\\AppData\\Loca...}, cssSelectorsEnabled: true, databaseEnabled: false, handlesAlerts: true, hasTouchScreen: false, javascriptEnabled: true, locationContextEnabled: true, mobileEmulationEnabled: false, nativeEvents: true, networkConnectionEnabled: false, pageLoadStrategy: normal, platform: XP, platformName: XP, rotatable: false, setWindowRect: true, takesHeapSnapshot: true, takesScreenshot: true, unexpectedAlertBehaviour: , unhandledPromptBehavior: , version: 64.0.3282.167, webStorageEnabled: true}\nSession ID: aac09c028b90f1053f297c564b94cf77\r\n\tat sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)\r\n\tat sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)\r\n\tat sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)\r\n\tat java.lang.reflect.Constructor.newInstance(Constructor.java:423)\r\n\tat org.openqa.selenium.remote.ErrorHandler.createThrowable(ErrorHandler.java:214)\r\n\tat org.openqa.selenium.remote.ErrorHandler.throwIfResponseFailed(ErrorHandler.java:166)\r\n\tat org.openqa.selenium.remote.http.JsonHttpResponseCodec.reconstructValue(JsonHttpResponseCodec.java:40)\r\n\tat org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:80)\r\n\tat org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:44)\r\n\tat org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:164)\r\n\tat org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:83)\r\n\tat org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)\r\n\tat org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:324)\r\n\tat framework.StepParser.parseStep(StepParser.java:39)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "startTime": "2018|02|14 16:49:49",
+        "endTime": "2018|02|14 16:49:49",
+        "time": 4,
+        "steps": "Open Url",
+        "status": "fail",
+        "errorMsg": "Please check your data."
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:49:49",
+        "fullsTackTrace": "java.lang.NullPointerException\r\n\tat framework.GetLocator.getLocatorValue(GetLocator.java:17)\r\n\tat framework.StepParser.parseStep(StepParser.java:27)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "endTime": "2018|02|14 16:49:49",
+        "time": 1,
+        "steps": "Click SignUpLink",
+        "status": "fail",
+        "errorMsg": "Data not found. Please add data."
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:49:49",
+        "endTime": "2018|02|14 16:49:49",
+        "time": 0,
+        "steps": " PasswordField is display",
+        "status": "pass"
+      },
+      "totalTime": 7,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:49:49",
+      "endTime": "2018|02|14 16:49:49",
+      "tag": "",
+      "testName": "Verify password field is display",
+      "suiteName": "login.suite",
+      "status": "fail"
+    },
+    "totalTime": 419039,
+    "totalFailed": 2,
+    "totalPassed": 9,
+    "scroll demo": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:43:17",
+        "endTime": "2018|02|14 16:43:24",
+        "time": 6574,
+        "steps": "Open Url 'http:\/\/www.DemoQA.com'",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:43:24",
+        "endTime": "2018|02|14 16:43:24",
+        "time": 10,
+        "steps": "Scroll to bottom",
+        "status": "pass"
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:43:24",
+        "endTime": "2018|02|14 16:43:24",
+        "time": 7,
+        "steps": "Scroll to top.",
+        "status": "pass"
+      },
+      "4": {
+        "stepIndex": 4,
+        "startTime": "2018|02|14 16:43:24",
+        "endTime": "2018|02|14 16:43:24",
+        "time": 8,
+        "steps": "Scroll to coordinate (50,100)",
+        "status": "pass"
+      },
+      "5": {
+        "stepIndex": 5,
+        "startTime": "2018|02|14 16:43:24",
+        "endTime": "2018|02|14 16:43:27",
+        "time": 3151,
+        "steps": "Scroll to Register",
+        "status": "pass"
+      },
+      "totalTime": 9751,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:43:17",
+      "endTime": "2018|02|14 16:43:27",
+      "tag": "",
+      "testName": "scroll demo",
+      "suiteName": "login.suite",
+      "status": "pass"
+    },
+    "Navigate demo": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:42:56",
+        "endTime": "2018|02|14 16:43:02",
+        "time": 5552,
+        "steps": "Open Url 'http:\/\/www.DemoQA.com'",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:43:02",
+        "endTime": "2018|02|14 16:43:06",
+        "time": 4229,
+        "steps": "Click on Register",
+        "status": "pass"
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:43:06",
+        "endTime": "2018|02|14 16:43:06",
+        "time": 362,
+        "steps": "Navigate to back",
+        "status": "pass"
+      },
+      "4": {
+        "stepIndex": 4,
+        "startTime": "2018|02|14 16:43:06",
+        "endTime": "2018|02|14 16:43:07",
+        "time": 1212,
+        "steps": "Navigate refresh",
+        "status": "pass"
+      },
+      "5": {
+        "stepIndex": 5,
+        "startTime": "2018|02|14 16:43:07",
+        "endTime": "2018|02|14 16:43:08",
+        "time": 321,
+        "steps": "Navigate to forward",
+        "status": "pass"
+      },
+      "6": {
+        "stepIndex": 6,
+        "startTime": "2018|02|14 16:43:08",
+        "endTime": "2018|02|14 16:43:09",
+        "time": 918,
+        "steps": "Navigate refresh",
+        "status": "pass"
+      },
+      "totalTime": 12596,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:42:56",
+      "endTime": "2018|02|14 16:43:09",
+      "tag": "",
+      "testName": "Navigate demo",
+      "suiteName": "login.suite",
+      "status": "pass"
+    },
+    "Verify Gmail Login login page": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:41:28",
+        "endTime": "2018|02|14 16:41:30",
+        "time": 2480,
+        "steps": "Open URL 'https:\/\/www.linkedin.com'",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:41:30",
+        "endTime": "2018|02|14 16:41:33",
+        "time": 3204,
+        "steps": "Enter 'viral103patel gmail.com' into emailTextBox",
+        "status": "pass"
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:41:33",
+        "endTime": "2018|02|14 16:41:37",
+        "time": 3198,
+        "steps": "Enter 'jsbot 2017' into passwordTextBox",
+        "status": "pass"
+      },
+      "4": {
+        "stepIndex": 4,
+        "startTime": "2018|02|14 16:41:37",
+        "endTime": "2018|02|14 16:41:49",
+        "time": 12893,
+        "steps": "Click on signInTextBox",
+        "status": "pass"
+      },
+      "totalTime": 21776,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:41:28",
+      "endTime": "2018|02|14 16:41:49",
+      "tag": "",
+      "testName": "Verify Gmail Login login page",
+      "suiteName": "login.suite",
+      "status": "pass"
+    },
+    "pause demo": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:43:35",
+        "endTime": "2018|02|14 16:43:42",
+        "time": 7376,
+        "steps": "Open Url 'http:\/\/www.DemoQA.com'",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:43:42",
+        "endTime": "2018|02|14 16:45:25",
+        "time": 103349,
+        "steps": "pause until Home is disappear",
+        "status": "pass"
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:45:25",
+        "endTime": "2018|02|14 16:47:06",
+        "time": 100653,
+        "steps": "pause until Submit_Btn is display",
+        "status": "pass"
+      },
+      "4": {
+        "stepIndex": 4,
+        "startTime": "2018|02|14 16:47:06",
+        "endTime": "2018|02|14 16:47:56",
+        "time": 50002,
+        "steps": "pause for 50sec",
+        "status": "pass"
+      },
+      "5": {
+        "stepIndex": 5,
+        "startTime": "2018|02|14 16:47:56",
+        "endTime": "2018|02|14 16:48:02",
+        "time": 6291,
+        "steps": "pause until Home is clickable",
+        "status": "pass"
+      },
+      "totalTime": 267672,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:43:35",
+      "endTime": "2018|02|14 16:48:02",
+      "tag": "",
+      "testName": "pause demo",
+      "suiteName": "login.suite",
+      "status": "pass"
+    },
+    "verification demo": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:48:10",
+        "endTime": "2018|02|14 16:48:16",
+        "time": 5755,
+        "steps": "Open Url 'http:\/\/www.DemoQA.com'",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:48:16",
+        "endTime": "2018|02|14 16:48:16",
+        "time": 70,
+        "steps": "pause until ExpectedText is display",
+        "status": "pass"
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:48:16",
+        "endTime": "2018|02|14 16:48:36",
+        "time": 20006,
+        "steps": "pause for 20sec",
+        "status": "pass"
+      },
+      "4": {
+        "stepIndex": 4,
+        "startTime": "2018|02|14 16:48:36",
+        "endTime": "2018|02|14 16:48:39",
+        "time": 3132,
+        "steps": " ExpectedText is displayed",
+        "status": "pass"
+      },
+      "5": {
+        "stepIndex": 5,
+        "startTime": "2018|02|14 16:48:39",
+        "endTime": "2018|02|14 16:48:42",
+        "time": 3103,
+        "steps": " ExpectedText text is equal ignore case 'home'",
+        "status": "pass"
+      },
+      "6": {
+        "stepIndex": 6,
+        "startTime": "2018|02|14 16:48:42",
+        "endTime": "2018|02|14 16:48:46",
+        "time": 3105,
+        "steps": " ExpectedText text is equal 'Home'",
+        "status": "pass"
+      },
+      "totalTime": 41356,
+      "7": {
+        "stepIndex": 7,
+        "startTime": "2018|02|14 16:48:46",
+        "endTime": "2018|02|14 16:48:49",
+        "time": 3089,
+        "steps": " ExpectedText text is contains 'Ho'",
+        "status": "pass"
+      },
+      "8": {
+        "stepIndex": 8,
+        "startTime": "2018|02|14 16:48:49",
+        "endTime": "2018|02|14 16:48:52",
+        "time": 3094,
+        "steps": " ExpectedText text is contains ignore case 'ho'",
+        "status": "pass"
+      },
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:48:10",
+      "endTime": "2018|02|14 16:48:52",
+      "tag": "",
+      "testName": "verification demo",
+      "suiteName": "login.suite",
+      "status": "pass"
+    },
+    "Switch Frame demo": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:41:58",
+        "endTime": "2018|02|14 16:42:06",
+        "time": 8253,
+        "steps": "Open Url 'http:\/\/toolsqa.com\/iframe-practice-page\/'",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:42:06",
+        "endTime": "2018|02|14 16:42:06",
+        "time": 107,
+        "steps": "Switch to frame using id 'iframe2'",
+        "status": "pass"
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:42:06",
+        "endTime": "2018|02|14 16:42:06",
+        "time": 5,
+        "steps": "switch to default content",
+        "status": "pass"
+      },
+      "4": {
+        "stepIndex": 4,
+        "startTime": "2018|02|14 16:42:06",
+        "endTime": "2018|02|14 16:42:07",
+        "time": 73,
+        "steps": "Switch to frame using name 'IF1'",
+        "status": "pass"
+      },
+      "5": {
+        "stepIndex": 5,
+        "startTime": "2018|02|14 16:42:07",
+        "endTime": "2018|02|14 16:42:07",
+        "time": 4,
+        "steps": "switch to default content",
+        "status": "pass"
+      },
+      "6": {
+        "stepIndex": 6,
+        "startTime": "2018|02|14 16:42:07",
+        "endTime": "2018|02|14 16:42:10",
+        "time": 3156,
+        "steps": "Switch to frame iframeXpath",
+        "status": "pass"
+      },
+      "totalTime": 11642,
+      "7": {
+        "stepIndex": 7,
+        "startTime": "2018|02|14 16:42:10",
+        "endTime": "2018|02|14 16:42:10",
+        "time": 4,
+        "steps": "Switch to parent frame",
+        "status": "pass"
+      },
+      "8": {
+        "stepIndex": 8,
+        "startTime": "2018|02|14 16:42:10",
+        "endTime": "2018|02|14 16:42:10",
+        "time": 38,
+        "steps": "Switch to frame using id 'iframe2'",
+        "status": "pass"
+      },
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:41:58",
+      "endTime": "2018|02|14 16:42:10",
+      "tag": "",
+      "testName": "Switch Frame demo",
+      "suiteName": "login.suite",
+      "status": "pass"
+    },
+    "Switch window demo": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:42:36",
+        "endTime": "2018|02|14 16:42:40",
+        "time": 3817,
+        "steps": "Open Url 'http:\/\/toolsqa.com\/automation-practice-switch-windows\/'",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:42:40",
+        "endTime": "2018|02|14 16:42:43",
+        "time": 3260,
+        "steps": "Click on NewWindow",
+        "status": "pass"
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:42:43",
+        "endTime": "2018|02|14 16:42:43",
+        "time": 17,
+        "steps": "Switch to new window.",
+        "status": "pass"
+      },
+      "4": {
+        "stepIndex": 4,
+        "startTime": "2018|02|14 16:42:43",
+        "endTime": "2018|02|14 16:42:43",
+        "time": 0,
+        "steps": "close window.",
+        "status": "pass"
+      },
+      "5": {
+        "stepIndex": 5,
+        "startTime": "2018|02|14 16:42:43",
+        "endTime": "2018|02|14 16:42:43",
+        "time": 24,
+        "steps": "Switch to main window.",
+        "status": "pass"
+      },
+      "6": {
+        "stepIndex": 6,
+        "startTime": "2018|02|14 16:42:43",
+        "endTime": "2018|02|14 16:42:48",
+        "time": 4578,
+        "steps": "Click on NewWindow",
+        "status": "pass"
+      },
+      "totalTime": 11697,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:42:36",
+      "endTime": "2018|02|14 16:42:48",
+      "tag": "",
+      "testName": "Switch window demo",
+      "suiteName": "login.suite",
+      "status": "pass"
+    },
+    "select demo": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:49:00",
+        "endTime": "2018|02|14 16:49:01",
+        "time": 1006,
+        "steps": "Open Url 'http:\/\/demo.guru99.com\/selenium\/newtours\/register.php'",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:49:01",
+        "endTime": "2018|02|14 16:49:11",
+        "time": 10003,
+        "steps": "pause for 10sec",
+        "status": "pass"
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:49:11",
+        "endTime": "2018|02|14 16:49:14",
+        "time": 3220,
+        "steps": "Select using text 'ANDORRA' from DropDown",
+        "status": "pass"
+      },
+      "4": {
+        "stepIndex": 4,
+        "startTime": "2018|02|14 16:49:14",
+        "endTime": "2018|02|14 16:49:15",
+        "time": 1006,
+        "steps": "pause for 1sec",
+        "status": "pass"
+      },
+      "5": {
+        "stepIndex": 5,
+        "startTime": "2018|02|14 16:49:15",
+        "endTime": "2018|02|14 16:49:18",
+        "time": 3380,
+        "steps": "Select using index 7 from DropDown",
+        "status": "pass"
+      },
+      "6": {
+        "stepIndex": 6,
+        "startTime": "2018|02|14 16:49:18",
+        "endTime": "2018|02|14 16:49:19",
+        "time": 1014,
+        "steps": "pause for 1sec",
+        "status": "pass"
+      },
+      "totalTime": 24846,
+      "7": {
+        "stepIndex": 7,
+        "startTime": "2018|02|14 16:49:19",
+        "endTime": "2018|02|14 16:49:22",
+        "time": 3205,
+        "steps": "Select using value 'BAHAMAS' form DropDown",
+        "status": "pass"
+      },
+      "8": {
+        "stepIndex": 8,
+        "startTime": "2018|02|14 16:49:22",
+        "endTime": "2018|02|14 16:49:24",
+        "time": 2011,
+        "steps": "pause for 2sec",
+        "status": "pass"
+      },
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:49:00",
+      "endTime": "2018|02|14 16:49:24",
+      "tag": "",
+      "testName": "select demo",
+      "suiteName": "login.suite",
+      "status": "pass"
+    },
+    "Enter text in email field": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:49:33",
+        "endTime": "2018|02|14 16:49:36",
+        "time": 3001,
+        "steps": "pause for 3sec",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:49:36",
+        "fullsTackTrace": "java.lang.NullPointerException\r\n\tat framework.GetLocator.getLocatorValue(GetLocator.java:17)\r\n\tat framework.StepParser.parseStep(StepParser.java:27)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "endTime": "2018|02|14 16:49:36",
+        "time": 1,
+        "steps": "Click loginButton",
+        "status": "fail",
+        "errorMsg": "Data not found. Please add data."
+      },
+      "3": {
+        "stepIndex": 3,
+        "fullStackTrace": "org.openqa.selenium.NoSuchElementException: no such element: Unable to locate element: {\"method\":\"partial link text\",\"selector\":\".\/\/*[@id='login-email']\"}\n  (Session info: chrome=64.0.3282.167)\n  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64) (WARNING: The server did not provide any stacktrace information)\nCommand duration or timeout: 0 milliseconds\nFor documentation on this error, please visit: http:\/\/seleniumhq.org\/exceptions\/no_such_element.html\nBuild info: version: '3.7.1', revision: '8a0099a', time: '2017-11-06T21:01:39.354Z'\nSystem info: host: 'DESKTOP-IMHAJHS', ip: '192.168.0.7', os.name: 'Windows 10', os.arch: 'amd64', os.version: '10.0', java.version: '1.8.0_161'\nDriver info: org.openqa.selenium.chrome.ChromeDriver\nCapabilities {acceptInsecureCerts: false, acceptSslCerts: false, applicationCacheEnabled: false, browserConnectionEnabled: false, browserName: chrome, chrome: {chromedriverVersion: 2.35.528161 (5b82f2d2aae0ca..., userDataDir: C:\\Users\\jsbot\\AppData\\Loca...}, cssSelectorsEnabled: true, databaseEnabled: false, handlesAlerts: true, hasTouchScreen: false, javascriptEnabled: true, locationContextEnabled: true, mobileEmulationEnabled: false, nativeEvents: true, networkConnectionEnabled: false, pageLoadStrategy: normal, platform: XP, platformName: XP, rotatable: false, setWindowRect: true, takesHeapSnapshot: true, takesScreenshot: true, unexpectedAlertBehaviour: , unhandledPromptBehavior: , version: 64.0.3282.167, webStorageEnabled: true}\nSession ID: 4a9ba75d8991013f8a5d3c503dc778db\n*** Element info: {Using=partial link text, value=.\/\/*[@id='login-email']}\r\n\tat sun.reflect.GeneratedConstructorAccessor13.newInstance(Unknown Source)\r\n\tat sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)\r\n\tat java.lang.reflect.Constructor.newInstance(Constructor.java:423)\r\n\tat org.openqa.selenium.remote.ErrorHandler.createThrowable(ErrorHandler.java:214)\r\n\tat org.openqa.selenium.remote.ErrorHandler.throwIfResponseFailed(ErrorHandler.java:166)\r\n\tat org.openqa.selenium.remote.http.JsonHttpResponseCodec.reconstructValue(JsonHttpResponseCodec.java:40)\r\n\tat org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:80)\r\n\tat org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:44)\r\n\tat org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:164)\r\n\tat org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:83)\r\n\tat org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)\r\n\tat org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:370)\r\n\tat org.openqa.selenium.remote.RemoteWebDriver.findElementByPartialLinkText(RemoteWebDriver.java:432)\r\n\tat org.openqa.selenium.By$ByPartialLinkText.findElement(By.java:273)\r\n\tat org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:362)\r\n\tat Selenium.Commands.findElement(Commands.java:76)\r\n\tat framework.StepParser.parseStep(StepParser.java:33)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "startTime": "2018|02|14 16:49:36",
+        "endTime": "2018|02|14 16:49:39",
+        "time": 3333,
+        "steps": "Enter 'vir jsbot.io' into emailTextBox",
+        "status": "fail",
+        "errorMsg": "Locator not find. Please add new locator or update the locator value."
+      },
+      "totalTime": 6336,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:49:33",
+      "endTime": "2018|02|14 16:49:39",
+      "tag": "",
+      "testName": "Enter text in email field",
+      "suiteName": "login.suite",
+      "status": "fail"
+    }
+  },
+  "Navigation.suite": {
+    "Create a new Navigation": {
+      "1": {
+        "stepIndex": 1,
+        "startTime": "2018|02|14 16:49:57",
+        "endTime": "2018|02|14 16:49:57",
+        "time": 0,
+        "steps": "Select USER from left-navigation",
+        "status": "pass"
+      },
+      "2": {
+        "stepIndex": 2,
+        "startTime": "2018|02|14 16:49:57",
+        "endTime": "2018|02|14 16:49:57",
+        "time": 0,
+        "steps": "Select ORGANIZATION from drop-down under USER",
+        "status": "pass"
+      },
+      "3": {
+        "stepIndex": 3,
+        "fullStackTrace": "java.io.FileNotFoundException: E:\\Sellium\\selebot\\test\\java\\Locator\\Navigation.json (The system cannot find the file specified)\r\n\tat java.io.FileInputStream.open0(Native Method)\r\n\tat java.io.FileInputStream.open(FileInputStream.java:195)\r\n\tat java.io.FileInputStream.<init>(FileInputStream.java:138)\r\n\tat java.io.FileInputStream.<init>(FileInputStream.java:93)\r\n\tat java.io.FileReader.<init>(FileReader.java:58)\r\n\tat framework.Utility.loadJsonFile(Utility.java:18)\r\n\tat framework.GetLocator.getLocatorValue(GetLocator.java:15)\r\n\tat framework.StepParser.parseStep(StepParser.java:33)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "startTime": "2018|02|14 16:49:57",
+        "endTime": "2018|02|14 16:49:57",
+        "time": 1,
+        "steps": "Enter valid emailaddress",
+        "status": "fail",
+        "errorMsg": "Please Enter valid directory path. E:\\Sellium\\selebot\\test\\java\\Locator\\Navigation.json (The system cannot find the file specified)"
+      },
+      "4": {
+        "stepIndex": 4,
+        "startTime": "2018|02|14 16:49:57",
+        "endTime": "2018|02|14 16:50:07",
+        "time": 10005,
+        "steps": "pause for 10sec",
+        "status": "pass"
+      },
+      "5": {
+        "stepIndex": 5,
+        "startTime": "2018|02|14 16:50:07",
+        "endTime": "2018|02|14 16:50:07",
+        "time": 0,
+        "steps": "Verify that email was received",
+        "status": "pass"
+      },
+      "totalTime": 10007,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:49:57",
+      "endTime": "2018|02|14 16:50:07",
+      "tag": "",
+      "testName": "Create a new Navigation",
+      "suiteName": "Navigation.suite",
+      "status": "fail"
+    },
+    "Verify Navigation is Created": {
+      "1": {
+        "stepIndex": 1,
+        "fullStackTrace": "org.openqa.selenium.WebDriverException: unknown error: unhandled inspector error: {\"code\":-32000,\"message\":\"Cannot navigate to invalid URL\"}\n  (Session info: chrome=64.0.3282.167)\n  (Driver info: chromedriver=2.35.528161 (5b82f2d2aae0ca24b877009200ced9065a772e73),platform=Windows NT 10.0.16299 x86_64) (WARNING: The server did not provide any stacktrace information)\nCommand duration or timeout: 0 milliseconds\nBuild info: version: '3.7.1', revision: '8a0099a', time: '2017-11-06T21:01:39.354Z'\nSystem info: host: 'DESKTOP-IMHAJHS', ip: '192.168.0.7', os.name: 'Windows 10', os.arch: 'amd64', os.version: '10.0', java.version: '1.8.0_161'\nDriver info: org.openqa.selenium.chrome.ChromeDriver\nCapabilities {acceptInsecureCerts: false, acceptSslCerts: false, applicationCacheEnabled: false, browserConnectionEnabled: false, browserName: chrome, chrome: {chromedriverVersion: 2.35.528161 (5b82f2d2aae0ca..., userDataDir: C:\\Users\\jsbot\\AppData\\Loca...}, cssSelectorsEnabled: true, databaseEnabled: false, handlesAlerts: true, hasTouchScreen: false, javascriptEnabled: true, locationContextEnabled: true, mobileEmulationEnabled: false, nativeEvents: true, networkConnectionEnabled: false, pageLoadStrategy: normal, platform: XP, platformName: XP, rotatable: false, setWindowRect: true, takesHeapSnapshot: true, takesScreenshot: true, unexpectedAlertBehaviour: , unhandledPromptBehavior: , version: 64.0.3282.167, webStorageEnabled: true}\nSession ID: a9c7b147b06427f6814c351f9d15539f\r\n\tat sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)\r\n\tat sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)\r\n\tat sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)\r\n\tat java.lang.reflect.Constructor.newInstance(Constructor.java:423)\r\n\tat org.openqa.selenium.remote.ErrorHandler.createThrowable(ErrorHandler.java:214)\r\n\tat org.openqa.selenium.remote.ErrorHandler.throwIfResponseFailed(ErrorHandler.java:166)\r\n\tat org.openqa.selenium.remote.http.JsonHttpResponseCodec.reconstructValue(JsonHttpResponseCodec.java:40)\r\n\tat org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:80)\r\n\tat org.openqa.selenium.remote.http.AbstractHttpResponseCodec.decode(AbstractHttpResponseCodec.java:44)\r\n\tat org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:164)\r\n\tat org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:83)\r\n\tat org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)\r\n\tat org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:324)\r\n\tat framework.StepParser.parseStep(StepParser.java:39)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "startTime": "2018|02|14 16:50:16",
+        "endTime": "2018|02|14 16:50:16",
+        "time": 5,
+        "steps": "Open Url",
+        "status": "fail",
+        "errorMsg": "Please check your data."
+      },
+      "2": {
+        "stepIndex": 2,
+        "fullStackTrace": "java.io.FileNotFoundException: E:\\Sellium\\selebot\\test\\java\\Locator\\Navigation.json (The system cannot find the file specified)\r\n\tat java.io.FileInputStream.open0(Native Method)\r\n\tat java.io.FileInputStream.open(FileInputStream.java:195)\r\n\tat java.io.FileInputStream.<init>(FileInputStream.java:138)\r\n\tat java.io.FileInputStream.<init>(FileInputStream.java:93)\r\n\tat java.io.FileReader.<init>(FileReader.java:58)\r\n\tat framework.Utility.loadJsonFile(Utility.java:18)\r\n\tat framework.GetLocator.getLocatorValue(GetLocator.java:15)\r\n\tat framework.StepParser.parseStep(StepParser.java:27)\r\n\tat framework.TestExecutor.runTest(TestExecutor.java:108)\r\n\tat framework.TestExecutor.run(TestExecutor.java:247)\r\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\r\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\r\n\tat java.lang.Thread.run(Thread.java:748)\r\n",
+        "startTime": "2018|02|14 16:50:16",
+        "endTime": "2018|02|14 16:50:16",
+        "time": 1,
+        "steps": "Click SignUpLink",
+        "status": "fail",
+        "errorMsg": "Please Enter valid directory path. E:\\Sellium\\selebot\\test\\java\\Locator\\Navigation.json (The system cannot find the file specified)"
+      },
+      "3": {
+        "stepIndex": 3,
+        "startTime": "2018|02|14 16:50:16",
+        "endTime": "2018|02|14 16:50:16",
+        "time": 1,
+        "steps": " EmailField is display",
+        "status": "pass"
+      },
+      "totalTime": 8,
+      "osName": "Windows 10",
+      "browserVersion": "64.0.3282.167",
+      "browserName": "chrome",
+      "startTime": "2018|02|14 16:50:16",
+      "endTime": "2018|02|14 16:50:16",
+      "tag": "",
+      "testName": "Verify Navigation is Created",
+      "suiteName": "Navigation.suite",
+      "status": "fail"
+    },
+    "totalTime": 10015,
+    "totalFailed": 2,
+    "totalPassed": 0
+  }
+}

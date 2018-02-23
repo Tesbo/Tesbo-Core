@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class VerifyParser {
 
-    public void parseVerify(WebDriver driver, String suiteName, String verify) {
+    public void parseVerify(WebDriver driver, String suiteName, String verify) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
         StepParser stepParser = new StepParser();
@@ -46,8 +46,7 @@ public class VerifyParser {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("Step Failed");
-                e.printStackTrace();
+                throw e;
             }
         }
 
@@ -61,7 +60,7 @@ public class VerifyParser {
                     assertThat(cmd.findElement(driver, locator.getLocatorValue(suiteName, stepParser.parseElementName(verify))).isDisplayed()).isEqualTo(true);
             } catch (Exception e) {
                 System.out.println("Step Failed");
-                e.printStackTrace();
+                throw e;
             }
 
         }

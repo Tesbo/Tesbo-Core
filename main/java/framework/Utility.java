@@ -11,19 +11,24 @@ import java.io.IOException;
 public class Utility {
 
 
-    public JSONObject loadJsonFile(String jsonFilePath) {
+    public static JSONObject loadJsonFile(String jsonFilePath) throws Exception {
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = null;
         try {
             Object obj = parser.parse(new FileReader(jsonFilePath));
             jsonObject = (JSONObject) obj;
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw e;
         } catch (IOException e) {
-            e.printStackTrace();
+            throw e;
         } catch (ParseException e) {
-            e.printStackTrace();
+            throw e;
         }
         return jsonObject;
+    }
+
+    public static void main(String[] args) {
+        //JSONObject main = loadJsonFile("E:\\Sellium\\selebot\\config.json");
+        //System.out.println(main.keySet());
     }
 }

@@ -12,18 +12,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.openqa.selenium.support.ui.ExpectedConditions.*;
+import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
+import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOf;
 
 public class Commands {
 
     protected static Wait<WebDriver> wait;
+    public String parantWindow = "";
+    public String childWindow = "";
 
-    public String getElementValue(String elementName, String suiteName) {
+    public String getElementValue(String elementName, String suiteName) throws Exception {
         Utility jsonParser = new Utility();
 
         return jsonParser.loadJsonFile(suiteName).get(elementName).toString();
     }
-
 
     /**
      * @param driver       webdriver object for the Test
@@ -40,20 +42,20 @@ public class Commands {
         WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
         pause(3);
         try {
-            System.out.println("Inside CSS");
+            //System.out.println("Inside CSS");
 
             element = driver.findElement(By.cssSelector(elementvalue));
 
         } catch (NoSuchElementException css) {
 
             try {
-                System.out.println("Inside id");
+                //System.out.println("Inside id");
                 element = driver.findElement(By.id(elementvalue));
 
             } catch (NoSuchElementException id) {
                 try {
 
-                    System.out.println("Inside xpath" + elementvalue);
+                    //System.out.println("Inside xpath" + elementvalue);
 
                     element = driver.findElement(By.xpath(elementvalue));
 
@@ -74,6 +76,7 @@ public class Commands {
                                         element = driver.findElement(By.partialLinkText(elementvalue));
                                     } catch (Exception partialLinkText) {
                                         System.out.println("Please enter valid locator value");
+                                        throw partialLinkText;
                                     }
                                 }
 
@@ -84,8 +87,6 @@ public class Commands {
                 }
 
             }
-
-
         }
 
 
@@ -109,7 +110,6 @@ public class Commands {
         el.sendKeys(text);
     }
 
-
     /**
      * @param el verify element is displayed or not
      */
@@ -117,11 +117,9 @@ public class Commands {
         assertThat(el.isDisplayed()).isTrue();
     }
 
-
     public void openUrl(WebDriver driver, String url) {
         driver.get(url);
     }
-
 
     public void pause(int sec) {
         try {
@@ -131,11 +129,9 @@ public class Commands {
         }
     }
 
-
     public void switchToActiveElement(WebDriver driver) {
         driver.switchTo().activeElement();
     }
-
 
     public void switchToDefaultContent(WebDriver driver) {
         driver.switchTo().defaultContent();
@@ -198,9 +194,6 @@ public class Commands {
     public void switchAlertSendKey(WebDriver driver, String Text) {
         driver.switchTo().alert().sendKeys(Text);
     }
-
-    public String parantWindow = "";
-    public String childWindow = "";
 
     /**
      * @param driver
@@ -360,7 +353,7 @@ public class Commands {
                                             try {
                                                 element = driver.findElement(By.partialLinkText(elementvalue));
                                             } catch (Exception partialLinkText) {
-
+                                                throw partialLinkText;
                                             }
                                         }
                                     }
@@ -444,5 +437,6 @@ public class Commands {
         Select dropDown = new Select(element);
         dropDown.deselectByValue(Text);
     }
+
 
 }

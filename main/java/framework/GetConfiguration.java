@@ -22,13 +22,13 @@ public class GetConfiguration {
         return file.getAbsolutePath();
     }
 
-    public ArrayList<String> getBrowsers() {
+    public ArrayList<String> getBrowsers() throws Exception {
         Utility parser = new Utility();
         return (JSONArray) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("browser");
     }
 
 
-    public ArrayList<String> getTags() {
+    public ArrayList<String> getTags() throws Exception {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
@@ -36,7 +36,7 @@ public class GetConfiguration {
         return (JSONArray) by.get("tag");
     }
 
-    public ArrayList<String> getSuiteName() {
+    public ArrayList<String> getSuiteName() throws Exception {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
@@ -45,7 +45,7 @@ public class GetConfiguration {
 
     }
 
-    public String getRunBy() {
+    public String getRunBy() throws Exception {
         Utility parser = new Utility();
         String runby = ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("by").toString();
         if (runby.toLowerCase().contains("suite")) {
@@ -56,7 +56,7 @@ public class GetConfiguration {
         return null;
     }
 
-    public ArrayList<String> getByValue() {
+    public ArrayList<String> getByValue() throws Exception {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
@@ -80,7 +80,7 @@ public class GetConfiguration {
         return baseUrl;
     }
 
-    public JSONObject getParallel() {
+    public JSONObject getParallel() throws Exception {
         Utility parser = new Utility();
         JSONObject parallelData = (JSONObject) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("parallel");
         JSONObject dataOfparallel = new JSONObject();
@@ -108,14 +108,14 @@ public class GetConfiguration {
         return dataOfparallel;
     }
 
-    public String getSuitesDirectory() {
+    public String getSuitesDirectory() throws Exception {
         Utility parser = new Utility();
         File jsonFile = new File("config.json");
         return parser.loadJsonFile(jsonFile.getAbsolutePath()).get("SuiteDirectory").toString();
     }
 
 
-    public String getLocatorDirectory() {
+    public String getLocatorDirectory() throws Exception {
         Utility parser = new Utility();
         File jsonFile = new File("config.json");
         return parser.loadJsonFile(jsonFile.getAbsolutePath()).get("locatorDirectory").toString();
@@ -125,7 +125,7 @@ public class GetConfiguration {
      * @Description : get suite name from config file.
      * @return : suite names.
      */
-    public ArrayList<String> getSuite() {
+    public ArrayList<String> getSuite() throws Exception {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
