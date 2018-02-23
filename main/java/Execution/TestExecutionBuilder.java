@@ -63,7 +63,7 @@ public class TestExecutionBuilder {
         }
 
         for (Object a : completeTestObjectArray) {
-            //System.out.println(a);
+            System.out.println(a);
         }
 
         return completeTestObjectArray;

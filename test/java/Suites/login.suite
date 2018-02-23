@@ -5,10 +5,21 @@ username : "Admin"
 password : ""
 }
 
+Group : roshan
+Step : Open URL 'https://www.linkedin.com'
+Step : Enter 'viral103patel@gmail.com' into @emailTextBox
+Step : Enter 'jsbot@2017' into @passwordTextBox
+Step : Click on @signInTextBox
+end
+
+Group : Mistry
+Step : Open URL 'https://www.linkedin.com'
+Step : Enter 'viral103patel@gmail.com' into @emailTextBox
+end
+
+
 Test : Verify Gmail Login login page
-
 #login
-
 Step : Open URL 'https://www.linkedin.com'
 Step : Enter 'viral103patel@gmail.com' into @emailTextBox
 Step : Enter 'jsbot@2017' into @passwordTextBox
@@ -112,8 +123,31 @@ End:
 
 Test: Verify password field is display
 #Smoke
-
 Step: Open Url
 Step: Click @SignUpLink
 Verify: @PasswordField is display
 END:
+
+Test: group demo
+#group
+Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
+GroupExecution: 'mistry'
+Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
+Step: Enter '53920' into @Customer_ID
+Step: Click on @Submit_Btn
+Step: Switch to alert then verify text with 'Do you really want to delete this customer?'
+Step: Switch to alert then cancel
+Step: Click on @Submit_Btn
+end
+
+Test: demo for roshan
+#group
+Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
+GroupExecution: 'roshan'
+Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
+Step: Enter '53920' into @Customer_ID
+Step: Click on @Submit_Btn
+Step: Switch to alert then verify text with 'Do you really want to delete this customer?'
+Step: Switch to alert then cancel
+Step: Click on @Submit_Btn
+end
