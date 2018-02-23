@@ -8,7 +8,7 @@
         ""
       ],
       "suite": [
-        ""
+        "Navigation"
       ]
     },
     "browser": [
@@ -16,7 +16,7 @@
     ],
     "parallel": {
       "status": true,
-      "count": "10"
+      "count": "1"
     }
   }
 }
