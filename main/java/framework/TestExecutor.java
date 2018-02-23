@@ -226,17 +226,7 @@ public class TestExecutor implements Runnable {
             } else if (step.toString().toLowerCase().contains("groupexecution:") | step.toString().toLowerCase().contains("groupexecution :")) {
                 System.out.println(step.toString());
                 JSONArray groupResult = new JSONArray();
-                /*JSONObject groupData = null;
 
-                try {
-                    System.out.println(suiteParser.getgroupName());
-                    groupData = suiteParser.getgroupName();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                JSONArray groupName = (JSONArray) groupData.get(test.get("suiteName").toString());
-                System.out.println("Geoup Names : "+groupName);*/
                 JSONArray groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(step.toString()));
                 System.out.println(groupSteps);
                 System.out.println(groupSteps.size());
