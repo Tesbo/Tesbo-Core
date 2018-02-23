@@ -156,7 +156,6 @@ public class SuiteParser {
                     }
                 }
             }
-
         }
         return testNameWithSuites;
     }
