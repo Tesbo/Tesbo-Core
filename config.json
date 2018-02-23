@@ -16,7 +16,7 @@
     ],
     "parallel": {
       "status": true,
-      "count": "1"
+      "count": "10"
     }
   }
 }
