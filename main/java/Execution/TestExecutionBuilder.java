@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,21 +25,17 @@ public class TestExecutionBuilder {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
         builder.mainObj.put("startTime", dtf.format(LocalDateTime.now()));
 
-        builder.parallelBuilder(builder.buildExecutionQueueByTag());
-
-        report.report(builder.mainObj);
+        builder.buildExecution();
 
         long stopTimeSuite = System.currentTimeMillis();
         builder.mainObj.put("endTime", dtf.format(LocalDateTime.now()));
         long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
-        //System.out.println(elapsedTimeSuite);
+
         builder.mainObj.put("totalTimeTaken", elapsedTimeSuite);
         System.out.println("Main : " + builder.mainObj);
 
-        DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-
-        report.writeJsonFile(builder.mainObj, "buildResult"+dtf1.format(LocalDateTime.now()));
-
+        DateTimeFormatter timeFormateForReportJSONFile = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        report.writeJsonFile(builder.mainObj, "buildResult" + timeFormateForReportJSONFile.format(LocalDateTime.now()));
     }
 
     public JSONArray buildExecutionQueueByTag() throws Exception {
@@ -63,7 +60,10 @@ public class TestExecutionBuilder {
         }
 
         for (Object a : completeTestObjectArray) {
-            System.out.println(a);
+            /**
+             * this use for troubleshoot
+             */
+            //System.out.println(a);
         }
 
         return completeTestObjectArray;
@@ -81,9 +81,8 @@ public class TestExecutionBuilder {
             threadCount = 1;
         }
 
-        //System.out.println(threadCount);
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-        //System.out.println(testExecutionQueue.size());
+        System.out.println(testExecutionQueue.size());
         for (int i = 0; i < testExecutionQueue.size(); i++) {
             Runnable worker = new TestExecutor((JSONObject) testExecutionQueue.get(i));
             executor.execute(worker);
@@ -92,4 +91,81 @@ public class TestExecutionBuilder {
         while (!executor.isTerminated()) {
         }
     }
+
+
+    /**
+     * @return
+     * @Description : run by suite name.
+     */
+    public JSONArray buildExecutionQueueBySuite() throws Exception {
+        SuiteParser suiteParser = new SuiteParser();
+        GetConfiguration config = new GetConfiguration();
+        JSONArray completeTestObjectArray = new JSONArray();
+
+        for (String suite : config.getSuite()) {
+            JSONObject testNameWithSuites = suiteParser.getTestNameBySuite(suite);
+            for (Object suiteName : testNameWithSuites.keySet()) {
+                for (Object testName : ((JSONArray) testNameWithSuites.get(suiteName))) {
+                    for (String browser : config.getBrowsers()) {
+                        JSONObject completestTestObject = new JSONObject();
+                        completestTestObject.put("testName", testName);
+                        completestTestObject.put("suiteName", suiteName);
+                        completestTestObject.put("browser", browser);
+                        completeTestObjectArray.add(completestTestObject);
+                    }
+                }
+            }
+        }
+
+        for (Object a : completeTestObjectArray) {
+            /**
+             * this use for troubleshoot
+             */
+            //System.out.println(a);
+        }
+
+        return completeTestObjectArray;
+    }
+
+    public void buildExecution() throws Exception {
+        GetConfiguration config = new GetConfiguration();
+        ReportParser report = new ReportParser();
+
+        int tagSuiteCount = 0;
+
+        /**
+         * @Discription : Run by tag method.
+         */
+        try {
+            ArrayList<String> taglist = config.getTags();
+            if (taglist.isEmpty() || taglist.get(0).equals("")) {
+                System.err.println("Please enter 'Tag' name.");
+            } else {
+                parallelBuilder(buildExecutionQueueByTag());
+                report.reportForTag(mainObj);
+            }
+        } catch (NullPointerException ne) {
+            tagSuiteCount++;
+        }
+
+        /**
+         *@Discription : Run by suit Name.
+         */
+        try {
+            ArrayList<String> suitelist = config.getSuite();
+            if (suitelist.isEmpty() || suitelist.get(0).equals("")) {
+                System.err.println("Please enter 'suite' name.");
+            } else {
+                parallelBuilder(buildExecutionQueueBySuite());
+                report.reportForSuit(mainObj);
+            }
+        } catch (NullPointerException ne) {
+            tagSuiteCount++;
+        }
+
+        if (tagSuiteCount == 2) {
+            System.err.println("Please enter 'Tag name' or 'Suite name' to run test.");
+        }
+    }
+
 }

@@ -5,16 +5,23 @@ username : "Admin"
 password : ""
 }
 
-Group : roshan
+Collection Name: login
 Step : Open URL 'https://www.linkedin.com'
 Step : Enter 'viral103patel@gmail.com' into @emailTextBox
 Step : Enter 'jsbot@2017' into @passwordTextBox
 Step : Click on @signInTextBox
 end
 
-Group : Mistry
+Group : dashboard
 Step : Open URL 'https://www.linkedin.com'
 Step : Enter 'viral103patel@gmail.com' into @emailTextBox
+end
+
+Group : login
+Step : Open URL 'https://www.linkedin.com'
+Step : Enter 'viral103patel@gmail.com' into @emailTextBox
+Step : Enter 'jsbot@2017' into @passwordTextBox
+Step : Click on @signInTextBox
 end
 
 
@@ -127,7 +134,7 @@ Verify: @PasswordField is display
 END:
 
 Test: group demo
-#group
+#abc
 Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
 GroupExecution: 'mistry'
 Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
@@ -141,7 +148,8 @@ end
 Test: demo for roshan
 #group
 Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
-GroupExecution: 'roshan'
+GroupExecution : 'Login'
+GroupExecution : 'dashboard'
 Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
 Step: Enter '53920' into @Customer_ID
 Step: Click on @Submit_Btn
