@@ -133,6 +133,7 @@ Step: Click @SignUpLink
 Verify: @PasswordField is display
 END:
 
+
 Test: group demo
 #abc
 Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'

@@ -1,4 +1,4 @@
-package java.selebot.Exception;
+package TestboException;
 
 public class NoSuiteNameFoundException extends RuntimeException {
 

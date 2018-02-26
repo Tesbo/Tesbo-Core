@@ -40,7 +40,6 @@ public class ReportParser {
     }*/
 
     /**
-     *
      * @return
      * @throws Exception
      * @Description : Get suit Names.
@@ -62,23 +61,46 @@ public class ReportParser {
     }
 
     /**
-     *
      * @param obj
      * @throws IOException
      * @Decription : Create JSON file.
      */
     public void writeJsonFile(JSONObject obj, String fileName) throws IOException {
-        try (FileWriter file = new FileWriter("./htmlReport\\Build History\\"+fileName+".json")) {
+
+
+        try (FileWriter file = new FileWriter("./htmlReport/Build History/" + fileName + ".json")) {
+
 
             file.write(obj.toJSONString());
             file.flush();
 
-        } catch (IOException e) {
+
+        } catch (Exception e) {
+            System.out.println("in exception");
             e.printStackTrace();
             throw e;
         }
 
     }
+
+
+    public void generateReportDir() {
+        File htmlReportMainDir = new File("./htmlReport");
+
+        if (!htmlReportMainDir.exists()) {
+            htmlReportMainDir.mkdir();
+        }
+
+
+        File buildHistory = new File("./htmlReport/Build History");
+
+        if (!buildHistory.exists()) {
+            buildHistory.mkdir();
+        }
+
+
+    }
+
 
     public JSONObject readJsonFile() throws IOException, ParseException {
 
@@ -103,7 +125,6 @@ public class ReportParser {
     }
 
     /**
-     *
      * @param mainObject
      * @param suitename
      * @param testData
@@ -114,7 +135,7 @@ public class ReportParser {
             //System.out.println(testData.size());
             //System.out.println(suitename.get(j));
             //System.out.println("Ros : "+mainObject.get(suitename.get(j)));
-            if((mainObject.get(suitename.get(j)))!= null){
+            if ((mainObject.get(suitename.get(j))) != null) {
 
                 //System.out.println("Roshan : "+mainObject.get(suitename.get(j)));
 
@@ -129,38 +150,37 @@ public class ReportParser {
 
                     //System.out.println("Suit Data : "+suitData.get(data.get("testName")));
 
-                    if((suitData.get(data.get("testName")))!=null){
+                    if ((suitData.get(data.get("testName"))) != null) {
                         //System.out.println(suitData.get(data.get("testName")));
                         JSONObject testObj = (JSONObject) suitData.get(data.get("testName"));
                         //System.out.println(testObj.get("totalTime"));
 
                         //System.out.println(testObj.get("status"));
-                        if((testObj.get("status")).equals("pass")){
+                        if ((testObj.get("status")).equals("pass")) {
                             P++;
                             T += Integer.parseInt(testObj.get("totalTime").toString());
-                        } else if ((testObj.get("status")).equals("fail")){
+                        } else if ((testObj.get("status")).equals("fail")) {
                             F++;
                             //System.out.println(testObj);
                             T += Integer.parseInt(testObj.get("totalTime").toString());
                         }
 
-                    }else {
+                    } else {
                         //System.out.println("null");
                     }
-            }
+                }
                 //System.out.println("totalPassed : "+P);
-                suitData.put("totalPassed",+P);
+                suitData.put("totalPassed", +P);
                 //System.out.println("totalFailed : "+F);
-                suitData.put("totalFailed",+F);
+                suitData.put("totalFailed", +F);
                 //System.out.println("totaltime : "+T);
-                suitData.put("totalTime",+T);
+                suitData.put("totalTime", +T);
             }
         }
         //System.out.println(mainObject);
     }
 
     /**
-     *
      * @param mainObject
      * @param suitename
      * @param testData
@@ -171,7 +191,7 @@ public class ReportParser {
         int P = 0;
         int T = 0;
         for (int j = 0; j <= suitename.size() - 1; j++) {
-            if((mainObject.get(suitename.get(j)))!= null){
+            if ((mainObject.get(suitename.get(j))) != null) {
                 //System.out.println("Ros : "+mainObject.get(suitename.get(j)));
                 JSONObject suitData = (JSONObject) mainObject.get(suitename.get(j));
                 //System.out.println(suitData.get("totalFailed"));
@@ -181,9 +201,9 @@ public class ReportParser {
             }
         }
         //System.out.println(F);
-        mainObject.put("totalFailed",F);
+        mainObject.put("totalFailed", F);
         //System.out.println(P);
-        mainObject.put("totalPassed",P);
+        mainObject.put("totalPassed", P);
         //System.out.println(mainObject);
     }
 }
