@@ -2,7 +2,7 @@ package framework;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import selebot.Exception.NoTestStepFoundException;
+import TestboException.NoTestStepFoundException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//import java.selebot.Exception.NoSuiteNameFoundException;
+//import NoSuiteNameFoundException;
 
 public class SuiteParser {
 

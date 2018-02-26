@@ -1,76 +1,164 @@
 <!DOCTYPE html>
-
-
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Report</title>
-</head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<body>
 
-<p> Roshan Mistry</p>
-<div size="24" align="center">
-    <font size="24" color="#2f74e2">Test Report </font>
+    <title>Tesbo Test Report| </title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <!-- Bootstrap -->
+    <link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="../lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+
+    <!-- Custom Theme Style -->
+    <link href="lib/build/css/custom.min.css" rel="stylesheet">
+</head><body class="nav-md">
+<div class="container body">
+    <div class="main_container">
+        <div class="col-md-3 left_col">
+            <div class="left_col scroll-view">
+                <div class="navbar nav_title" style="border: 0;">
+                    <a href="index.html" class="site_title"> <span>Tesbo Report</span></a>
+                </div>
+                <br/>
+                <br/>
+                <br/>
+
+                <!-- sidebar menu -->
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <div class="menu_section">
+                        <ul class="nav side-menu">
+                            <li><a href="index.html"><i class="fa fa-home"></i> Home </a>
+                            </li>
+                            </li>
+                            <li><a href="currentBuildResult.html"><i class="fa fa-bar-chart-o"></i> Current Build Report</a>
+                            </li>
+
+                        </ul>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+ <div class="right_col" role="main">
+            <!-- top tiles -->
+            <div class="row tile_count">
+                <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-user"></i> Total Builds</span>
+                    <div class="count">4</div>
+
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-clock-o"></i> Average Time</span>
+                    <div class="count">4</div>
+
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
+                    <span class="count_top"><i class="fa fa-user"></i> Total Test Run</span>
+                    <div class="count green">27</div>
+
+                </div>
+
+            </div>  <div class="row">
+                <!-- bar charts group -->
+                <div class="col-md-12 col-sm-6 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Last 10 Build Summary</h2>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content1">
+                            <div id="lastBuildResult" style="width:100%; height:280px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+           <div class="col-md-12 col-sm-6 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Last 10 Build Time Summary</h2>
+
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content1">
+                            <div id="lastBuildTimeResult" style="width:100%; height:280px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+
+
+            </div>
+
+
+            <br/>
+        </div>
+    </div><footer>
+        <div class="pull-right">
+            Tesbo Report Powered By<a href="https://jsbot.io"> JSbot</a>
+        </div>
+        <div class="clearfix"></div>
+    </footer>
+    <!-- /footer content -->
 </div>
-<div style="background-color:DodgerBlue;">
-    <font size="18" color="#ffffff">Build Result
-    </font>
 </div>
 
-<script type="text/javascript" language="javascript" src="jquery-1.8.2.min.js"></script>
+<script>
 
-<script type="text/javascript">
-   $(document).ready(function(e) {
-    $.getJSON( "./Build History/test.json" , function( result ){
-    var s = result;
-   console.log(s);
-document.getElementById("startTime").innerHTML =
-"Start Time : " + s.startTime
+    Morris.Bar({
+        element: 'lastBuildResult',
+        data: [
+            {y: 'build 1 21/2/2018', a: 100, b: 90},
+            {y: 'build 2', a: 75, b: 65},
+            {y: 'build 3', a: 50, b: 40},
+            {y: 'build 4', a: 75, b: 65},
+            {y: '2010', a: 50, b: 40},
+            {y: '2011', a: 75, b: 65},
+            {y: '2012', a: 100, b: 90},
+            {y: '2016', a: 72, b: 6},
+            {y: '2017', a: 753, b: 165},
+            {y: '2018', a: 715, b: 625},
+            {y: '2019', a: 75, b: 650}
 
-document.getElementById("endTime").innerHTML =
-"End Time : " + s.endTime
-
-document.getElementById("totalFailed").innerHTML =
-"Total Failed : " + s.totalFailed
-
-document.getElementById("totalPassed").innerHTML =
-"Total Passed : " + s.totalPassed
-
-document.getElementById("totalTimeTaken").innerHTML =
-"Total Time Taken : " + s.totalTimeTaken +"ms"
-
-    alert("Hello Roshan......");
-
-    s.getJSON( "login.suite" , function( result1 ){
-console.log(result1);
+        ],
+        xkey: 'y',
+        ykeys: ['a', 'b'],
+        barColors: ['#a1d99b', '#fc9272'],
+        labels: ['pass', 'failed']
     });
 
-    });
-    });
 
 </script>
+<script>
 
-<div color="red">
-    <font id='startTime' color="#34bf18" size="4"> </font>
-</div>
-
-<div color="red">
-    <font id='endTime' color="#34bf18" size="4"> </font>
-</div>
-
-<div color="red">
-    <font id='totalTimeTaken' color="#2e9b18" size="4"> </font>
-</div>
-
-<div color="red">
-    <font id='totalPassed' color="#34bf18" size="4"> </font>
-</div>
-
-<div color="red">
-    <font id='totalFailed' color="red" size="4"> </font>
-</div>
-
+    Morris.Line({
+        element: 'lastBuildTimeResult',
+        data: [
+            {y: '2006', a: 100},
+            {y: '2007', a: 75},
+            {y: '2008', a: 50},
+            {y: '2009', a: 75},
+            {y: '2010', a: 50},
+            {y: '2011', a: 75},
+            {y: '2012', a: 100}
+        ],
+        xkey: 'y',
+        ykeys: ['a'],
+        labels: ['Time']
+    });
+</script>
 
 </body>
 </html>
+

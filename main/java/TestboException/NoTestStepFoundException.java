@@ -1,4 +1,4 @@
-package selebot.Exception;
+package TestboException;
 
 public class NoTestStepFoundException extends RuntimeException {
 
