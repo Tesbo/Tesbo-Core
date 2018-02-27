@@ -207,6 +207,8 @@ public class SuiteParser {
                 if ((testNameArray[1].trim().toLowerCase()).contains(groupName.toLowerCase())) {
                     startPoint = i;
                     testStarted = true;
+                } else {
+                    System.out.println("Group name not found please enter valid group name.");
                 }
             }
             if (testStarted) {
