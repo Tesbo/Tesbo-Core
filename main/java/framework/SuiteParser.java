@@ -107,7 +107,7 @@ public class SuiteParser {
 
         for (int i = 0; i < allLines.length; i++) {
             if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
-                if (allLines[i + 1].toLowerCase().equals("#" + tagName.toLowerCase())) {
+                if (allLines[i + 1].toLowerCase().contains("#" + tagName.toLowerCase())) {
                     String testNameArray[] = allLines[i].split(":");
                     testName.add(testNameArray[1].trim());
                 }
