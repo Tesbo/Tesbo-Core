@@ -19,7 +19,7 @@ end
 
 
 Test : Verify Gmail Login login page
-#login
+#login #gtu
 Step : Open URL 'https://www.linkedin.com'
 Step : Enter 'viral103patel@gmail.com' into @emailTextBox
 Step : Enter 'jsbot@2017' into @passwordTextBox
@@ -53,9 +53,9 @@ Test: Switch window demo
 #window
 Step: Open Url 'http://toolsqa.com/automation-practice-switch-windows/'
 Step: Click on @NewWindow
-Step: Switch to new window.
-Step: close window.
-Step: Switch to main window.
+Step: Switch to new window
+Step: close window
+Step: Switch to main window
 Step: Click on @NewWindow
 end
 
