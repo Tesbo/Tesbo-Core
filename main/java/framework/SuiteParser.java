@@ -182,7 +182,7 @@ public class SuiteParser {
         }
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].toLowerCase().contains("step:") | allLines[j].toLowerCase().contains("step :") |
-                    allLines[j].toLowerCase().contains("verify:") | allLines[j].toLowerCase().contains("verify :") | allLines[j].toLowerCase().contains("groupexecution:") | allLines[j].toLowerCase().contains("groupexecution :")) {
+                    allLines[j].toLowerCase().contains("verify:") | allLines[j].toLowerCase().contains("verify :") | allLines[j].toLowerCase().contains("collection:") | allLines[j].toLowerCase().contains("collection :")) {
                 testSteps.add(allLines[j]);
             }
         }
@@ -201,14 +201,12 @@ public class SuiteParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].toLowerCase().contains("group:") | allLines[i].toLowerCase().contains("group :")) {
+            if (allLines[i].toLowerCase().contains("collection name:") | allLines[i].toLowerCase().contains("collection name :")) {
                 String testNameArray[] = allLines[i].split(":");
                 /*System.out.println("Group Names : "+allLines[i]);*/
-                if ((testNameArray[1].trim().toLowerCase()).contains(groupName.toLowerCase())) {
+                if (testNameArray[1].trim().toLowerCase().equalsIgnoreCase(groupName)) {
                     startPoint = i;
                     testStarted = true;
-                } else {
-                    System.out.println("Group name not found please enter valid group name.");
                 }
             }
             if (testStarted) {
@@ -241,7 +239,7 @@ public class SuiteParser {
 
 
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].toLowerCase().contains("group:") | allLines[i].toLowerCase().contains("group :")) {
+            if (allLines[i].toLowerCase().contains("collection name:") | allLines[i].toLowerCase().contains("collection name :")) {
                 /* if (allLines[i + 1].toLowerCase().contains("#" + tagName.toLowerCase())) {*/
                 String testNameArray[] = allLines[i].split(":");
                 testName.add(testNameArray[1].trim());
