@@ -12,16 +12,9 @@ Step : Enter 'jsbot@2017' into @passwordTextBox
 Step : Click on @signInTextBox
 end
 
-Group : dashboard
+Collection Name : dashboard
 Step : Open URL 'https://www.linkedin.com'
 Step : Enter 'viral103patel@gmail.com' into @emailTextBox
-end
-
-Group : login
-Step : Open URL 'https://www.linkedin.com'
-Step : Enter 'viral103patel@gmail.com' into @emailTextBox
-Step : Enter 'jsbot@2017' into @passwordTextBox
-Step : Click on @signInTextBox
 end
 
 
@@ -135,9 +128,9 @@ END:
 
 
 Test: group demo
-#abc
+#abc #group
 Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
-GroupExecution: 'mistry'
+Collection: 'login'
 Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
 Step: Enter '53920' into @Customer_ID
 Step: Click on @Submit_Btn
@@ -147,10 +140,10 @@ Step: Click on @Submit_Btn
 end
 
 Test: demo for roshan
-#group
+#group  #frame
 Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
-GroupExecution : 'Login'
-GroupExecution : 'dashboard'
+Collection : 'Login'
+Collection : 'dashboardlogin'
 Step: Open Url 'http://demo.guru99.com/test/delete_customer.php'
 Step: Enter '53920' into @Customer_ID
 Step: Click on @Submit_Btn

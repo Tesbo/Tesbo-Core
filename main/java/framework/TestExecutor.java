@@ -225,7 +225,7 @@ public class TestExecutor implements Runnable {
                 stepResult.put("time", elapsedTimeStep);
                 testResult.put(stepNumber + 1, stepResult);
                 stepNumber++;
-            } else if (step.toString().toLowerCase().contains("groupexecution:") | step.toString().toLowerCase().contains("groupexecution :")) {
+            } else if (step.toString().toLowerCase().contains("collection:") | step.toString().toLowerCase().contains("collection :")) {
                 JSONArray groupSteps = new JSONArray();
                 try{
                     groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(step.toString()));
@@ -402,7 +402,7 @@ public class TestExecutor implements Runnable {
     public void run() {
         TestExecutionBuilder builder = new TestExecutionBuilder();
         JSONObject testData = new JSONObject();
-        System.out.println("Test Started " + test.get("testName") + "Browser " + test.get("browser"));
+        System.out.println("Test Started " + test.get("testName") + " Browser " + test.get("browser"));
         beforeTest(test.get("browser").toString());
         runTest();
         afterTest();
