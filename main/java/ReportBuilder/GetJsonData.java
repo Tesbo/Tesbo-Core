@@ -1,15 +1,19 @@
 package ReportBuilder;
 
+import org.apache.commons.io.comparator.LastModifiedFileComparator;
+import org.apache.commons.io.filefilter.FileFileFilter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,12 +26,8 @@ public class GetJsonData {
     public static void main(String[] args) {
 
         GetJsonData data = new GetJsonData();
-
         ReportBuilder rb = new ReportBuilder();
-
-
-        data.getAvaerageTimeoftheBuild(rb.getBuildHistoryPath());
-
+        data.getLastBuildResultData(rb.getBuildHistoryPath());
 
     }
 
@@ -39,6 +39,7 @@ public class GetJsonData {
                 TimeUnit.MILLISECONDS.toSeconds(milliseconds) - TimeUnit.MINUTES.toSeconds(
                         TimeUnit.MILLISECONDS.toMinutes(milliseconds)));
     }
+
 
     public File getLastModifiedJsonFile(String dirPath) {
 
@@ -79,14 +80,12 @@ public class GetJsonData {
         JSONParser parser = new JSONParser();
         try {
 
-            System.out.println("file path" + filePath);
 
             FileReader reader = new FileReader(filePath);
             jsonObject = (JSONObject) parser.parse(reader);
 
         } catch (Exception e) {
-            System.out.println("here");
-            e.printStackTrace();
+              e.printStackTrace();
         }
         return jsonObject;
     }
@@ -134,6 +133,120 @@ public class GetJsonData {
 
         return totalTests;
     }
+
+
+    public JSONArray getLastBuildResultData(String directory) {
+
+
+        JSONArray last10BuildDataArray = new JSONArray();
+
+
+        File directory1 = new File(directory);
+        File[] files = directory1.listFiles((FileFilter) FileFileFilter.FILE);
+
+        Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
+
+
+        String startTime = "";
+        int totalPassed = 0;
+        int totalFailed = 0;
+        int totalTimeTaken = 0;
+
+
+        for (File a : files) {
+            JSONObject parser = readJsonFile(new File(a.toString()).getAbsolutePath());
+            JSONObject individualBuildData = new JSONObject();
+
+            startTime = parser.get("startTime").toString().substring(0, 10);
+            totalPassed = Integer.parseInt(parser.get("totalPassed").toString());
+            totalFailed = Integer.parseInt(parser.get("totalFailed").toString());
+            totalTimeTaken = Integer.parseInt(parser.get("totalTimeTaken").toString());
+
+            individualBuildData.put("name", (a.getName().split(".json")[0]).replace("Result_", " ").toUpperCase() + " " + startTime);
+
+            individualBuildData.put("totalPassed", totalPassed);
+            individualBuildData.put("totalFailed", totalFailed);
+
+            individualBuildData.put("buildRunDate", startTime.replace("|", "-"));
+            individualBuildData.put("totalTimeTaken", TimeUnit.MILLISECONDS.toMinutes(totalTimeTaken));
+
+
+            last10BuildDataArray.add(individualBuildData);
+        }
+
+
+
+
+        return last10BuildDataArray;
+
+    }
+
+
+    public int getCurrentBuildTotal(String dir) {
+
+        File currentBuildReport = getLastModifiedJsonFile(dir);
+        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+        int total = Integer.parseInt(parser.get("totalPassed").toString()) + Integer.parseInt(parser.get("totalFailed").toString());
+
+        return total;
+    }
+
+    public int getCurrentBuildPassed(String dir) {
+
+        File currentBuildReport = getLastModifiedJsonFile(dir);
+        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+        int total = Integer.parseInt(parser.get("totalPassed").toString());
+
+        return total;
+    }
+
+    public int getCurrentBuildFailed(String dir) {
+
+        File currentBuildReport = getLastModifiedJsonFile(dir);
+        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+        int total = Integer.parseInt(parser.get("totalFailed").toString());
+
+        return total;
+    }
+
+   public String getCurrentBuildTotalTime (String dir)
+   {
+       File currentBuildReport = getLastModifiedJsonFile(dir);
+       JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+       int total = Integer.parseInt(parser.get("totalTimeTaken").toString());
+
+
+return parseTime(total);
+   }
+
+
+    public String getCurrentBuildStartTime (String dir)
+    {
+        File currentBuildReport = getLastModifiedJsonFile(dir);
+        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+
+        return parser.get("startTime").toString().replace("|","-");
+    }
+
+
+    public String getCurrentBuildEndTime (String dir)
+    {
+        File currentBuildReport = getLastModifiedJsonFile(dir);
+        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+        return parser.get("endTime").toString().replace("|","-");
+    }
+
+
+    public void getCuurrentBuildBrowserWiseData(String dir)
+    {
+        File currentBuildReport = getLastModifiedJsonFile(dir);
+        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+
+    }
+
+
+
+
 
 
 }
