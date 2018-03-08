@@ -1,6 +1,7 @@
 package framework;
 
 import Execution.TestExecutionBuilder;
+import com.google.gson.JsonArray;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -132,6 +133,14 @@ public class ReportParser {
      */
     public void getSuiteTotalData(JSONObject mainObject, JSONArray suitename, JSONArray testData) {
         for (int j = 0; j <= suitename.size() - 1; j++) {
+            TestExecutionBuilder main = new TestExecutionBuilder();
+            JSONArray suite = (JSONArray) main.reportObj.get("suits");
+
+
+            JSONObject suiteResult = new JSONObject();
+            /*for(Object suitName : suite){
+                System.out.println();
+            }*/
             //System.out.println(testData.size());
             //System.out.println(suitename.get(j));
             //System.out.println("Ros : "+mainObject.get(suitename.get(j)));
@@ -140,6 +149,7 @@ public class ReportParser {
                 //System.out.println("Roshan : "+mainObject.get(suitename.get(j)));
 
                 JSONObject suitData = (JSONObject) mainObject.get(suitename.get(j));
+                JSONArray testArray = new JSONArray();
                 int F = 0;
                 int P = 0;
                 int T = 0;
@@ -153,6 +163,7 @@ public class ReportParser {
                     if ((suitData.get(data.get("testName"))) != null) {
                         //System.out.println(suitData.get(data.get("testName")));
                         JSONObject testObj = (JSONObject) suitData.get(data.get("testName"));
+                        testArray.add(testObj);
                         //System.out.println(testObj.get("totalTime"));
 
                         //System.out.println(testObj.get("status"));
@@ -165,6 +176,8 @@ public class ReportParser {
                             T += Integer.parseInt(testObj.get("totalTime").toString());
                         }
 
+                        suiteResult.put("suiteName", testObj.get("suiteName").toString());
+
                     } else {
                         //System.out.println("null");
                     }
@@ -175,6 +188,13 @@ public class ReportParser {
                 suitData.put("totalFailed", +F);
                 //System.out.println("totaltime : "+T);
                 suitData.put("totalTime", +T);
+
+                suiteResult.put("tests",testArray);
+                suiteResult.put("totalPassed", +P);
+                suiteResult.put("totalFailed", +F);
+                suiteResult.put("totalTime", +T);
+
+                suite.add(suiteResult);
             }
         }
         //System.out.println(mainObject);
@@ -205,5 +225,8 @@ public class ReportParser {
         //System.out.println(P);
         mainObject.put("totalPassed", P);
         //System.out.println(mainObject);
+        TestExecutionBuilder main = new TestExecutionBuilder();
+        main.reportObj.put("totalFailed", F);
+        main.reportObj.put("totalFailed", F);
     }
 }
