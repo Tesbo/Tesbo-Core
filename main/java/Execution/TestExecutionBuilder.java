@@ -43,10 +43,7 @@ public class TestExecutionBuilder {
 
 
         DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-
         report.generateReportDir();
-
-
         report.writeJsonFile(builder.mainObj, builder.getbuildReportName());
 
 

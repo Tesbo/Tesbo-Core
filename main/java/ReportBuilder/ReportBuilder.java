@@ -1,6 +1,8 @@
 package ReportBuilder;
 
 import org.apache.commons.io.FileUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,9 +12,14 @@ import java.io.IOException;
 public class ReportBuilder {
 
 
+    GetJsonData data = new GetJsonData();
+    JSONArray dataArray = data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath());
+
+    String buildHistory = new File(getBuildHistoryPath()).getAbsolutePath();
+
     public static void main(String[] args) {
         ReportBuilder builder = new ReportBuilder();
-        //   builder.copyReportLibrary();
+           builder.copyReportLibrary();
 
         StringBuffer indexfile = new StringBuffer();
         //index.html file generator
@@ -27,15 +34,10 @@ public class ReportBuilder {
         indexfile = builder.generateTimeSummaryData(indexfile);
 
 
-
         File file = new File("./htmlReport/index.html");
 
 
-
-
-
         builder.writeReportFile(file.getAbsolutePath(), indexfile);
-
 
 
         //currentbuildresultGenerator
@@ -60,16 +62,18 @@ public class ReportBuilder {
         builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
 
 
-
     }
+
     public String getReportLibPath() {
 
         return "./htmlReport/";
     }
+
     public String getBuildHistoryPath() {
 
         return "./htmlReport/Build History/";
     }
+
     public void writeReportFile(String filePath, StringBuffer fileContent) {
 
         BufferedWriter writer = null;
@@ -84,6 +88,7 @@ public class ReportBuilder {
 
 
     }
+
     public void copyReportLibrary() {
         String source = "./ReportLib/";
         File srcDir = new File(source);
@@ -99,9 +104,6 @@ public class ReportBuilder {
 
 
     }
-
-
-
 
     public StringBuffer generateHeader(StringBuffer sb) {
 
@@ -134,6 +136,7 @@ public class ReportBuilder {
 
         return sb;
     }
+
     public StringBuffer generateBody(StringBuffer sb) {
 
 
@@ -144,6 +147,7 @@ public class ReportBuilder {
         return sb;
 
     }
+
     public StringBuffer generateSideMenu(StringBuffer sb) {
 
 
@@ -194,12 +198,12 @@ public class ReportBuilder {
                 "                </div>\n" +
                 "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
                 "                    <span class=\"count_top\"><i class=\"fa fa-clock-o\"></i> Average Time</span>\n" +
-                "                    <div class=\"count\">"+data.getTotalBuildCount(new File(getBuildHistoryPath()).getAbsolutePath())+"</div>\n" +
+                "                    <div class=\"count\">" + data.getTotalBuildCount(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
                 "\n" +
                 "                </div>\n" +
                 "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
                 "                    <span class=\"count_top\"><i class=\"fa fa-user\"></i> Total Test Run</span>\n" +
-                "                    <div class=\"count green\">"+data.getTotalTestOfTheBuild(new File(getBuildHistoryPath()).getAbsolutePath())+"</div>\n" +
+                "                    <div class=\"count green\">" + data.getTotalTestOfTheBuild(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
                 "\n" +
                 "                </div>\n" +
                 "\n" +
@@ -208,6 +212,7 @@ public class ReportBuilder {
 
         return sb;
     }
+
     public StringBuffer generateSummaryChart(StringBuffer sb) {
 
 
@@ -230,6 +235,7 @@ public class ReportBuilder {
         return sb;
 
     }
+
     public StringBuffer generateTimeSummaryChart(StringBuffer sb) {
 
 
@@ -259,6 +265,7 @@ public class ReportBuilder {
         return sb;
 
     }
+
     public StringBuffer generateFooter(StringBuffer sb) {
 
         sb.append("<footer>\n" +
@@ -274,6 +281,7 @@ public class ReportBuilder {
 
         return sb;
     }
+
     public StringBuffer generateLatestBuildResultData(StringBuffer sb) {
 
 
@@ -282,34 +290,25 @@ public class ReportBuilder {
                 "\n" +
                 "    Morris.Bar({\n" +
                 "        element: 'lastBuildResult',\n" +
-                "        data: [\n" +
-                "            {y: 'build 1 21/2/2018', a: 100, b: 90},\n" +
-                "            {y: 'build 2', a: 75, b: 65},\n" +
-                "            {y: 'build 3', a: 50, b: 40},\n" +
-                "            {y: 'build 4', a: 75, b: 65},\n" +
-                "            {y: '2010', a: 50, b: 40},\n" +
-                "            {y: '2011', a: 75, b: 65},\n" +
-                "            {y: '2012', a: 100, b: 90},\n" +
-                "            {y: '2016', a: 72, b: 6},\n" +
-                "            {y: '2017', a: 753, b: 165},\n" +
-                "            {y: '2018', a: 715, b: 625},\n" +
-                "            {y: '2019', a: 75, b: 650}\n" +
-                "\n" +
-                "        ],\n" +
+                "        data: [\n");
+        for (int i = 0; i < 10; i++) {
+
+            JSONObject obj = (JSONObject) dataArray.get(i);
+            sb.append(" {y: '" + obj.get("name") + "', a: " + obj.get("totalPassed") + ", b: " + obj.get("totalFailed") + "},\n ");
+
+        }
+        sb.append("         ],\n" +
                 "        xkey: 'y',\n" +
                 "        ykeys: ['a', 'b'],\n" +
-
-
                 "        barColors: ['#a1d99b', '#fc9272'],\n" +
                 "        labels: ['pass', 'failed']\n" +
-                "    });\n" +
-                "\n" +
-                "\n" +
-                "</script>\n");
+                "    });" +
+                " </script>\n");
 
 
         return sb;
     }
+
     public StringBuffer generateTimeSummaryData(StringBuffer sb) {
 
 
@@ -317,14 +316,17 @@ public class ReportBuilder {
                 "\n" +
                 "    Morris.Line({\n" +
                 "        element: 'lastBuildTimeResult',\n" +
-                "        data: [\n" +
-                "            {y: '2006', a: 100},\n" +
-                "            {y: '2007', a: 75},\n" +
-                "            {y: '2008', a: 50},\n" +
-                "            {y: '2009', a: 75},\n" +
-                "            {y: '2010', a: 50},\n" +
-                "            {y: '2011', a: 75},\n" +
-                "            {y: '2012', a: 100}\n" +
+                "        data: [\n" );
+
+
+        for (int i = 0; i < 10; i++) {
+
+            JSONObject obj = (JSONObject) dataArray.get(i);
+            sb.append(" {y: '" + obj.get("buildRunDate") + "', a: "+obj.get("totalTimeTaken")+ "},\n ");
+
+        }
+
+               sb.append(
                 "        ],\n" +
                 "        xkey: 'y',\n" +
                 "        ykeys: ['a'],\n" +
@@ -340,49 +342,45 @@ public class ReportBuilder {
     }
 
 
-
     //------------------------------------------------------------------------------------------------------------
 
 
-
-
-    public StringBuffer generateCurrentBuildSummary(StringBuffer sb)
-    {
+    public StringBuffer generateCurrentBuildSummary(StringBuffer sb) {
         sb.append("     <div class=\"right_col\" role=\"main\">\n" +
                 "            <!-- top tiles -->\n" +
                 "            <div class=\"row tile_count\">\n" +
-                "                <div class=\"col-md-2 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\" style=\"border-left : 2px solid #ADB2B5  \">\n" +
                 "                    <span class=\"count_top\"> Total </span>\n" +
-                "                    <div class=\"count\">2500</div>\n" +
+                "                    <div class=\"count\">"+data.getCurrentBuildTotal(new File(getBuildHistoryPath()).getAbsolutePath())+"</div>\n" +
                 "\n" +
                 "                </div>\n" +
-                "                <div class=\"col-md-2 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
                 "                    <span class=\"count_top\"> Passed</span>\n" +
-                "                    <div class=\"count\">123.50</div>\n" +
+                "                    <div class=\"count\">"+data.getCurrentBuildPassed(buildHistory)+"</div>\n" +
                 "\n" +
                 "                </div>\n" +
-                "                <div class=\"col-md-2 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
                 "                    <span class=\"count_top\"> Failed</span>\n" +
-                "                    <div class=\"count \">2,500</div>\n" +
+                "                    <div class=\"count \">"+data.getCurrentBuildFailed(buildHistory)+"</div>\n" +
                 "\n" +
                 "                </div>\n" +
                 "\n" +
-                "                <div class=\"col-md-2 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
                 "                    <span class=\"count_top\"> Total Time</span>\n" +
-                "                    <div class=\"count \">2,500</div>\n" +
+                "                    <div class=\"count \">"+data.getCurrentBuildTotalTime(buildHistory)+"</div>\n" +
                 "\n" +
                 "                </div>\n" +
                 "\n" +
                 "\n" +
-                "                <div class=\"col-md-2 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
                 "                    <span class=\"count_top\"> Start Time</span>\n" +
-                "                    <div class=\"count \">2,500</div>\n" +
+                "                    <div class=\"count \">"+data.getCurrentBuildStartTime(buildHistory)+"</div>\n" +
                 "\n" +
                 "                </div>\n" +
                 "\n" +
-                "                <div class=\"col-md-2 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
                 "                    <span class=\"count_top\"> End Time</span>\n" +
-                "                    <div class=\"count \">2,500</div>\n" +
+                "                    <div class=\"count \">"+data.getCurrentBuildEndTime(buildHistory)+"</div>\n" +
                 "\n" +
                 "                </div>\n" +
                 "\n" +
@@ -391,13 +389,11 @@ public class ReportBuilder {
                 "   ");
 
 
-
         return sb;
     }
 
 
-    public StringBuffer generatePieAndBarChart(StringBuffer sb)
-    {
+    public StringBuffer generatePieAndBarChart(StringBuffer sb) {
 
 
         sb.append("   <div class=\"row\">\n" +
@@ -442,85 +438,82 @@ public class ReportBuilder {
         return sb;
     }
 
-    public StringBuffer generateModuleWiseSummary(StringBuffer sb)
-    {
+    public StringBuffer generateModuleWiseSummary(StringBuffer sb) {
 
-sb.append(" <div class=\"row\">\n" +
-        "\n" +
-        "\n" +
-        "                <div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
-        "                    <div class=\"x_panel\">\n" +
-        "                        <div class=\"x_title\">\n" +
-        "                            <h2>Module Wise Summary\n" +
-        "                            </h2>\n" +
-        "                            <div class=\"clearfix\"></div>\n" +
-        "                        </div>\n" +
-        "                        <div class=\"x_content\">\n" +
-        "                            <table class=\"table table-striped\">\n" +
-        "                                <thead>\n" +
-        "                                <tr>\n" +
-        "                                    <th>#</th>\n" +
-        "                                    <th>Module Name</th>\n" +
-        "                                    <th>Total</th>\n" +
-        "                                    <th>Passed</th>\n" +
-        "                                    <th>Failed</th>\n" +
-        "                                </tr>\n" +
-        "                                </thead>\n" +
-        "                                <tbody>\n" +
-        "                                <tr>\n" +
-        "                                    <th scope=\"row\">1</th>\n" +
-        "                                    <td>Mark</td>\n" +
-        "                                    <td>Otto</td>\n" +
-        "                                    <td>@mdo</td>\n" +
-        "                                    <td>@mdo</td>\n" +
-        "                                </tr>\n" +
-        "                                <tr>\n" +
-        "                                    <th scope=\"row\">2</th>\n" +
-        "                                    <td>Jacob</td>\n" +
-        "                                    <td>Thornton</td>\n" +
-        "\n" +
-        "                                    <td>@mdo</td>\n" +
-        "                                    <td>@fat</td>\n" +
-        "                                </tr>\n" +
-        "                                <tr>\n" +
-        "                                    <th scope=\"row\">3</th>\n" +
-        "                                    <td>Larry</td>\n" +
-        "                                    <td>the Bird</td>\n" +
-        "\n" +
-        "                                    <td>@mdo</td>\n" +
-        "                                    <td>@twitter</td>\n" +
-        "                                </tr>\n" +
-        "                                </tbody>\n" +
-        "                            </table>\n" +
-        "\n" +
-        "                        </div>\n" +
-        "                    </div>\n" +
-        "                </div>\n" +
-        "\n" +
-        "            </div>\n" +
-        "\n" +
-        "            \n" +
-        "        </div>\n" +
-        "           ");
+        sb.append(" <div class=\"row\">\n" +
+                "\n" +
+                "\n" +
+                "                <div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
+                "                    <div class=\"x_panel\">\n" +
+                "                        <div class=\"x_title\">\n" +
+                "                            <h2>Module Wise Summary\n" +
+                "                            </h2>\n" +
+                "                            <div class=\"clearfix\"></div>\n" +
+                "                        </div>\n" +
+                "                        <div class=\"x_content\">\n" +
+                "                            <table class=\"table table-striped\">\n" +
+                "                                <thead>\n" +
+                "                                <tr>\n" +
+                "                                    <th>#</th>\n" +
+                "                                    <th>Module Name</th>\n" +
+                "                                    <th>Total</th>\n" +
+                "                                    <th>Passed</th>\n" +
+                "                                    <th>Failed</th>\n" +
+                "                                </tr>\n" +
+                "                                </thead>\n" +
+                "                                <tbody>\n" +
+                "                                <tr>\n" +
+                "                                    <th scope=\"row\">1</th>\n" +
+                "                                    <td>Mark</td>\n" +
+                "                                    <td>Otto</td>\n" +
+                "                                    <td>@mdo</td>\n" +
+                "                                    <td>@mdo</td>\n" +
+                "                                </tr>\n" +
+                "                                <tr>\n" +
+                "                                    <th scope=\"row\">2</th>\n" +
+                "                                    <td>Jacob</td>\n" +
+                "                                    <td>Thornton</td>\n" +
+                "\n" +
+                "                                    <td>@mdo</td>\n" +
+                "                                    <td>@fat</td>\n" +
+                "                                </tr>\n" +
+                "                                <tr>\n" +
+                "                                    <th scope=\"row\">3</th>\n" +
+                "                                    <td>Larry</td>\n" +
+                "                                    <td>the Bird</td>\n" +
+                "\n" +
+                "                                    <td>@mdo</td>\n" +
+                "                                    <td>@twitter</td>\n" +
+                "                                </tr>\n" +
+                "                                </tbody>\n" +
+                "                            </table>\n" +
+                "\n" +
+                "                        </div>\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
+                "\n" +
+                "            </div>\n" +
+                "\n" +
+                "            \n" +
+                "        </div>\n" +
+                "           ");
 
 
-        return  sb;
+        return sb;
     }
 
 
     /**
      * I think here required the module data as well so it get the identify that how much module we have and how much test in that module
+     *
      * @return
      */
-    public StringBuffer generateModuleSummary(StringBuffer sb)
-    {
-        return  sb;
+    public StringBuffer generateModuleSummary(StringBuffer sb) {
+        return sb;
     }
 
 
-
-    public StringBuffer generateBrowserWiseChartData(StringBuffer sb)
-    {
+    public StringBuffer generateBrowserWiseChartData(StringBuffer sb) {
 
         sb.append("<script>\n" +
                 "\n" +
@@ -543,7 +536,7 @@ sb.append(" <div class=\"row\">\n" +
                 "\n" +
                 "</script>");
 
-        return  sb;
+        return sb;
     }
 
 
@@ -557,8 +550,8 @@ sb.append(" <div class=\"row\">\n" +
                 "        element: 'buildSummary',\n" +
                 "        colors: ['#a1d99b', '#fc9272'],\n" +
                 "        data: [\n" +
-                "            {label: \"passed\", value: 12},\n" +
-                "            {label: \"failed\", value: 30}\n" +
+                "            {label: \"passed\", value: "+data.getCurrentBuildPassed(buildHistory)+"},\n" +
+                "            {label: \"failed\", value: "+data.getCurrentBuildFailed(buildHistory)+"}\n" +
                 "        ]\n" +
                 "\n" +
                 "    });\n" +
@@ -571,9 +564,8 @@ sb.append(" <div class=\"row\">\n" +
                 "</body>\n" +
                 "</html>\n");
 
-        return  sb;
+        return sb;
     }
-
 
 
 }
