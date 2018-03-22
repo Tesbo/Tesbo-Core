@@ -26,8 +26,8 @@ public class TestExecutor implements Runnable {
 
     public JSONObject testResult = new JSONObject();
     public JSONObject suiteResult = new JSONObject();
+    public WebDriver driver;
     JSONObject test;
-    WebDriver driver;
 
     public TestExecutor(JSONObject test) {
         this.test = test;
@@ -99,6 +99,7 @@ public class TestExecutor implements Runnable {
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
         //System.out.println("Steps : " + steps);
         int J = 0;
+        JSONArray stepsArray = new JSONArray();
         for (int i = 0; i <= steps.size() - 1; i++) {
             JSONObject stepResult = new JSONObject();
             long startTimeStep = System.currentTimeMillis();
@@ -167,14 +168,15 @@ public class TestExecutor implements Runnable {
                 stepResult.put("endTime", dtf.format(LocalDateTime.now()));
                 long elapsedTimeStep = stopTimeStep - startTimeStep;
                 stepResult.put("time", elapsedTimeStep);
-                testResult.put(stepNumber + 1, stepResult);
+                //testResult.put(stepNumber + 1, stepResult);
+                stepsArray.add(stepResult);
                 stepNumber++;
             } else if (step.toString().toLowerCase().contains("verify:") | step.toString().toLowerCase().contains("verify :")) {
                 stepResult.put("startTime", dtf.format(LocalDateTime.now()));
                 stepResult.put("stepIndex", stepNumber + 1);
                 try {
                     System.out.println(step.toString());
-                    verifyParser.parseVerify(driver, test.get("suiteName").toString(), step.toString());
+                     verifyParser.parseVerify(driver, test.get("suiteName").toString(), step.toString());
                     stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "pass");
                 } catch (NoSuchElementException NE) {
@@ -223,13 +225,14 @@ public class TestExecutor implements Runnable {
                 stepResult.put("endTime", dtf.format(LocalDateTime.now()));
                 long elapsedTimeStep = stopTimeStep - startTimeStep;
                 stepResult.put("time", elapsedTimeStep);
-                testResult.put(stepNumber + 1, stepResult);
+                // testResult.put(stepNumber + 1, stepResult);
+                stepsArray.add(stepResult);
                 stepNumber++;
             } else if (step.toString().toLowerCase().contains("collection:") | step.toString().toLowerCase().contains("collection :")) {
                 JSONArray groupSteps = new JSONArray();
-                try{
-                    groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(step.toString()));
-                } catch (Exception e){
+                try {
+                     groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(step.toString()));
+                } catch (Exception e) {
                     J++;
                     stepResult.put("startTime", dtf.format(LocalDateTime.now()));
                     stepResult.put("stepIndex", stepNumber + 1);
@@ -245,9 +248,12 @@ public class TestExecutor implements Runnable {
                     stepResult.put("endTime", dtf.format(LocalDateTime.now()));
                     long elapsedTimeStep = stopTimeStep - startTimeStep;
                     stepResult.put("time", elapsedTimeStep);
-                    testResult.put(stepNumber + 1, stepResult);
+                    //testResult.put(stepNumber + 1, stepResult);
+                    stepsArray.add(stepResult);
                     stepNumber++;
                 }
+
+                stepsArray = new JSONArray();
 
                 for (int s = 0; s <= groupSteps.size() - 1; s++) {
                     JSONObject groupResult = new JSONObject();
@@ -370,7 +376,8 @@ public class TestExecutor implements Runnable {
                     groupResult.put("endTime", dtf.format(LocalDateTime.now()));
                     long elapsedTimeStep = stopTimeStep - startTimeStep;
                     groupResult.put("time", elapsedTimeStep);
-                    testResult.put(stepNumber + 1, groupResult);
+                    //testResult.put(stepNumber + 1, groupResult);
+                    stepsArray.add(groupResult);
                     stepNumber++;
                 }
             }
@@ -378,6 +385,7 @@ public class TestExecutor implements Runnable {
 
         long stopTimeSuite = System.currentTimeMillis();
         testResult.put("endTime", dtf.format(LocalDateTime.now()));
+        testResult.put("testStep", stepsArray);
         long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
         //System.out.println(elapsedTimeSuite);
         testResult.put("totalTime", elapsedTimeSuite);
@@ -400,7 +408,6 @@ public class TestExecutor implements Runnable {
 
     @Override
     public void run() {
-        TestExecutionBuilder builder = new TestExecutionBuilder();
         JSONObject testData = new JSONObject();
         System.out.println("Test Started " + test.get("testName") + " Browser " + test.get("browser"));
         beforeTest(test.get("browser").toString());
@@ -409,13 +416,18 @@ public class TestExecutor implements Runnable {
 
         testData.put(testResult.get("testName").toString(), testResult);
 
-        if ((builder.mainObj.get(test.get("suiteName"))) == null) {
-            builder.mainObj.put(testResult.get("suiteName").toString(), testData);
+        //addDataIntoMainObject(test.get("browser").toString(), testData);
+        TestExecutionBuilder builder = new TestExecutionBuilder();
+        if ((builder.mainObj.get("testCase")) == null) {
+            JSONArray stepsArray = new JSONArray();
+            stepsArray.add(testResult);
+            builder.mainObj.put("testCase", stepsArray);
         } else {
             String Name = test.get("suiteName").toString();
-            JSONObject test = (JSONObject) builder.mainObj.get(Name);
-            test.put(testResult.get("testName").toString(), testResult);
+            JSONArray test = (JSONArray) builder.mainObj.get("testCase");
+            test.add(testResult);
         }
+
         //System.out.println("run test : " + builder.mainObj);
     }
 
