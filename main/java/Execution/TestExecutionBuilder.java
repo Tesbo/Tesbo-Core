@@ -25,7 +25,7 @@ public class TestExecutionBuilder {
     public static JSONObject mainObj = new JSONObject();
     public static JSONObject reportObj = new JSONObject();
 
-    public static void main(String[] args) throws Exception {
+    public  void startExecution() throws Exception {
         TestExecutionBuilder builder = new TestExecutionBuilder();
         ReportParser report = new ReportParser();
         long startTimeSuite = System.currentTimeMillis();

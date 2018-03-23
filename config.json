@@ -7,10 +7,9 @@
       "tag": [
         "login"
       ]
-
     },
     "browser": [
-      "chrome"
+      "firefox","chrome"
     ],
     "parallel": {
       "status": true,

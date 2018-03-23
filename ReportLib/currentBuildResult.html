@@ -8,10 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Tesbo Test Report| </title>
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
     <link href="../lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="lib/build/css/custom.min.css" rel="stylesheet">
@@ -143,163 +143,228 @@
                 <div class="col-md-12 col-sm-6 col-xs-12">
                     <div class="x_panel">
                         <div class="x_title">
-                            <h2>Module Wise Summary
+                            <h2>Browser Wise Execution Report
                             </h2>
                             <div class="clearfix"></div>
                         </div>
-                        <div class="x_content">
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Module Name</th>
-                                    <th>Total</th>
-                                    <th>Passed</th>
-                                    <th>Failed</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                    <td>@mdo</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
+                        <br>
 
-                                    <td>@mdo</td>
-                                    <td>@fat</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td>Larry</td>
-                                    <td>the Bird</td>
+                        <div name="browser 1" style="border : 3px solid #E6E9ED ;padding:5px ">
 
-                                    <td>@mdo</td>
-                                    <td>@twitter</td>
-                                </tr>
-                                </tbody>
-                            </table>
 
-                        </div>
-                    </div>
-                </div>
+                            <a class="panel-heading" role="tab"
+                               data-toggle="collapse"
+                               data-parent="#accordion" href="#browser"
+                               aria-expanded="false"
+                               aria-controls="collapseOne">
+                                <h4 class="panel-title">
 
-            </div>
+                                    <div name="browserLogo" align="center" class="accordion" role="tablist"
+                                         aria-multiselectable="true">
 
-            <div class="row">
-                <div class="col-md-12 col-sm-6 col-xs-12">
-                    <div class="x_panel">
-                        <div class="x_title">
-                            <h2><i class="fa fa-align-left"></i> Login
-                            </h2>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="x_content">
+                                            <img src="../htmlReport/lib/Icon/chrome.svg"
+                                                 style="max-width: 100%;height: 20px;">
+                                            <h5>Chrome</h5>
 
-                            <!-- start accordion -->
-                            <div class="accordion" id="Verify User Logout Successfully" role="tablist" aria-multiselectable="true">
-                                <div class="panel">
-                                    <a class="panel-heading" style="background-color: #a1d99b"     role="tab" id="headingOne" data-toggle="collapse"
-                                       data-parent="#accordion" href="#VerifyUserLogoutSuccessfully" aria-expanded="true"
-                                       aria-controls="collapseOne">
-                                        <h4 class="panel-title">Verify User Logout Successfully</h4>
-                                    </a>
-                                    <div id="VerifyUserLogoutSuccessfully" class="panel-collapse collapse in" role="tabpanel"
-                                         aria-labelledby="headingOne">
-                                        <div class="panel-body">
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Step</th>
-                                                    <th>Status</th>
-                                                  </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr>
-                                                    <th scope="row">1</th>
-                                                    <td>Mark</td>
-                                                    <td>Otto</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">2</th>
-                                                    <td>Thornton</td>
-                                                    <td>@fat</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">3</th>
-                                                    <td>the Bird</td>
-                                                    <td>@twitter</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
+                                    </div>
+
+                                </h4>
+                            </a>
+
+
+                            <div name="wholeBrowserDetails" id="browser" class="panel-collapse collapse">
+
+
+                                <!-- -->
+                                <div class="x_panel" class="panel-collapse collapse"
+                                     role="tabpanel"
+                                     aria-labelledby="headingOne">
+                                    <div class="x_title">
+                                        <h2><i class="fa fa-align-left"></i> Login
+                                        </h2>
+
+
+                                        <div class="nav navbar-right" style="padding-top : 5px ">
+                                            <font>Total  : <b>12</b> |</font>
+                                            <font>Passed : <b>10</b> |</font>
+                                            <font>Failed : <b>2</b>  |</font>
+
+                                        </div>
+
+
+
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div name="AllTestList" class="x_content">
+
+                                        <!-- start accordion -->
+                                        <div class="accordion" id="Verify User Logout Successfully" role="tablist"
+                                             aria-multiselectable="true">
+
+
+                                            <div class="panel">
+                                                <a class="panel-heading" role="tab"
+                                                   data-toggle="collapse"
+                                                   data-parent="#accordion" href="#VerifyUserLogoutSuccessfully"
+                                                   aria-expanded="true"
+                                                   aria-controls="collapseOne">
+
+                                                    <h4 class="panel-title">
+
+                                                        <font color="#8BC34A"> Verify User Logout Successfully</font>
+
+                                                        <div class="nav navbar-right ">
+
+                                                            <img src="../htmlReport/lib/Icon/chrome.svg"
+                                                                 style="max-width: 100%;height: 20px;"
+                                                                 data-toggle="tooltip" data-placement="left"
+                                                                 title="64.0.3282.186">
+
+
+                                                            <img src="../htmlReport/lib/Icon/Win10.svg"
+                                                                 style="max-width: 100%;height: 25px;"
+
+                                                                 data-toggle="tooltip" data-placement="left"
+                                                                 title="Windows 10">
+
+
+                                                        </div>
+
+                                                    </h4>
+
+
+                                                </a>
+                                                <div id="VerifyUserLogoutSuccessfully" class="panel-collapse collapse"
+                                                     role="tabpanel"
+                                                     aria-labelledby="headingOne">
+                                                    <div class="panel-body">
+                                                        <table class="table table-bordered">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>Step</th>
+                                                                <th>Status</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr>
+                                                                <th scope="row">1</th>
+                                                                <td>Mark</td>
+                                                                <td>Otto</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">2</th>
+                                                                <td>Thornton</td>
+                                                                <td>@fat</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th scope="row">3</th>
+                                                                <td>the Bird</td>
+                                                                <td>@twitter</td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+
+
+                                                    <div class="panel-body" style="border-style: dotted;">
+                                                        <p><strong>ScreenShot</strong>
+                                                        </p>
+
+                                                        <img src="/Users/viralpatel/Desktop/screenshot.png"
+                                                             style="max-width: 100%;height: auto;">
+
+                                                    </div>
+
+                                                    <br>
+
+
+                                                    <div class="panel-body" style="border-style: dotted;">
+                                                        <p><strong>Stack Trace</strong>
+                                                        </p>
+                                                        Anim pariatur cliche reprehenderit, enim eiusmod high life
+                                                        accusamus terry
+                                                        richardson ad squid. 3 wolf moon officia aute, non cupidatat
+                                                        skateboard
+                                                        dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch
+                                                        3 wolf moon
+                                                        tempor,
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
                                         </div>
                                     </div>
+                                    <!-- end of accordion -->
+
+
+
+                                    <!--   -->
                                 </div>
-                              </div>
-                            <!-- end of accordion -->
-                            <div class="accordion" id="Verify User Login Successfully" role="tablist" aria-multiselectable="true">
-                                <div class="panel">
-                                    <a class="panel-heading" style="background-color: #a1d99b"     role="tab" id="headingTwo" data-toggle="collapse"
-                                       data-parent="#accordion" href="#collapseTwo" aria-expanded="true"
-                                       aria-controls="collapseOne">
-                                        <h4 class="panel-title">Verify User Login Successfully</h4>
-                                    </a>
-                                    <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel"
-                                         aria-labelledby="headingTwo">
-                                        <div class="panel-body">
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Step</th>
-                                                    <th>Status</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr>
-                                                    <th scope="row">1</th>
-                                                    <td>Mark</td>
-                                                    <td>Otto</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">2</th>
-                                                    <td>Thornton</td>
-                                                    <td>@fat</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">3</th>
-                                                    <td>the Bird</td>
-                                                    <td>@twitter</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!--   -->
+
+
+
+
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /page content -->
 
-    <!-- footer content -->
-    <footer>
-        <div class="pull-right">
-            Tesbo Report Powered By<a href="https://jsbot.io"> JSbot</a>
+
+                        </div>
+
+                        <br>
+
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
         </div>
-        <div class="clearfix"></div>
-    </footer>
-    <!-- /footer content -->
+
+
+
+
+    </div>
+
+
 </div>
+
+
+<!-- -->
+
+
+</div>
+
+
+</div>
+<!-- /page content -->
+
+<!-- footer content -->
+<footer>
+    <div class="pull-right">
+        Tesbo Report Powered By<a href="https://jsbot.io"> JSbot</a>
+    </div>
+    -
+    <div class="clearfix"></div>
+</footer>
+<!-- /footer content -->
+
 </div>
 
 
@@ -322,6 +387,13 @@
     });
 
 
+
+
+
+
+
+
+
 </script>
 
 <script>
@@ -335,6 +407,13 @@
         ]
 
     });
+
+
+
+
+
+
+
 
 
 </script>

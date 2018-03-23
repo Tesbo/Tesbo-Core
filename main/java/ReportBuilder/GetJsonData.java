@@ -26,10 +26,13 @@ public class GetJsonData {
     public static void main(String[] args) {
 
         GetJsonData data = new GetJsonData();
-        ReportBuilder rb = new ReportBuilder();
-        data.getLastBuildResultData(rb.getBuildHistoryPath());
+        // ReportBuilder rb = new ReportBuilder();
 
-    }
+
+        System.out.println( data.getCurrentBuildBrowserWiseData("./htmlReport/Build History/","chrome").get("totalPassed")
+);
+
+       }
 
     public static String parseTime(long milliseconds) {
         return String.format(FORMAT,
@@ -85,7 +88,7 @@ public class GetJsonData {
             jsonObject = (JSONObject) parser.parse(reader);
 
         } catch (Exception e) {
-              e.printStackTrace();
+            e.printStackTrace();
         }
         return jsonObject;
     }
@@ -175,8 +178,6 @@ public class GetJsonData {
         }
 
 
-
-
         return last10BuildDataArray;
 
     }
@@ -209,44 +210,156 @@ public class GetJsonData {
         return total;
     }
 
-   public String getCurrentBuildTotalTime (String dir)
-   {
-       File currentBuildReport = getLastModifiedJsonFile(dir);
-       JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
-       int total = Integer.parseInt(parser.get("totalTimeTaken").toString());
-
-
-return parseTime(total);
-   }
-
-
-    public String getCurrentBuildStartTime (String dir)
-    {
+    public String getCurrentBuildTotalTime(String dir) {
         File currentBuildReport = getLastModifiedJsonFile(dir);
         JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+        int total = Integer.parseInt(parser.get("totalTimeTaken").toString());
 
-        return parser.get("startTime").toString().replace("|","-");
+
+        return parseTime(total);
     }
 
 
-    public String getCurrentBuildEndTime (String dir)
-    {
-        File currentBuildReport = getLastModifiedJsonFile(dir);
-        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
-        return parser.get("endTime").toString().replace("|","-");
-    }
-
-
-    public void getCuurrentBuildBrowserWiseData(String dir)
-    {
+    public String getCurrentBuildStartTime(String dir) {
         File currentBuildReport = getLastModifiedJsonFile(dir);
         JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
 
+        return parser.get("startTime").toString().replace("|", "-");
+    }
+
+
+    public String getCurrentBuildEndTime(String dir) {
+        File currentBuildReport = getLastModifiedJsonFile(dir);
+        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+        return parser.get("endTime").toString().replace("|", "-");
+    }
+
+
+    public JSONObject getCurrentBuildBrowserWiseData(String dir, String browserName) {
+
+        File currentBuildReport = getLastModifiedJsonFile(dir);
+        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+
+
+        JSONArray suiteArray = (JSONArray) parser.get("browser");
+
+
+        int totalPass = 0;
+        int totalFail = 0;
+
+        JSONObject passFailData = new JSONObject();
+
+
+
+        for (int i = 0; i < suiteArray.size(); i++) {
+
+
+            JSONObject browser = (JSONObject) suiteArray.get(i);
+
+            try {
+                JSONObject chromeSuite = (JSONObject) browser.get(browserName);
+                JSONArray suiteList = (JSONArray) chromeSuite.get("suits");
+
+                for (Object suiteDetails : suiteList) {
+                    JSONObject suite = (JSONObject) suiteDetails;
+
+                     totalPass = totalPass + Integer.parseInt(suite.get("totalPassed").toString());
+                    totalFail = totalFail + Integer.parseInt(suite.get("totalFailed").toString());
+
+                }
+
+            } catch (Exception e) {
+
+            }
+
+
+        }
+
+        passFailData.put("totalPassed", totalPass);
+        passFailData.put("totalFailed", totalFail);
+
+        return passFailData;
+    }
+
+
+
+    public JSONArray getModuleWiseData(String dir, String browserName) {
+
+        File currentBuildReport = getLastModifiedJsonFile(dir);
+        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+
+        JSONArray suiteArray = (JSONArray) parser.get("browser");
+
+
+
+
+
+        JSONArray suiteList = null;
+
+        for (int i = 0; i < suiteArray.size(); i++) {
+
+
+            JSONObject browser = (JSONObject) suiteArray.get(i);
+
+            try {
+                JSONObject chromeSuite = (JSONObject) browser.get(browserName);
+                 suiteList = (JSONArray) chromeSuite.get("suits");
+
+
+            } catch (Exception e) {
+
+            }
+
+
+        }
+
+
+        return suiteList;
     }
 
 
 
 
+     public JSONArray getBrowserExecutionReport(String dir)
+     {
+
+         File currentBuildReport = getLastModifiedJsonFile(dir);
+         JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+
+
+         JSONArray suiteArray = (JSONArray) parser.get("browser");
+
+
+         return suiteArray;
+
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public JSONArray browserResult(int pass, int fail) {
+        JSONArray browserResult = new JSONArray();
+
+        browserResult.add(pass);
+        browserResult.add(fail);
+
+        return browserResult;
+    }
 
 
 }
