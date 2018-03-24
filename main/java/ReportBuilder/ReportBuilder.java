@@ -629,64 +629,90 @@ public class ReportBuilder {
                 JSONArray testList = (JSONArray) ((JSONObject) suite).get("tests");
 
 
-
-
-
                 sb.append("<div name=\"wholeBrowserDetails\" id=\"" + browser + "\" class=\"panel-collapse collapse\">\n" +
                         "<div class=\"x_panel\" class=\"panel-collapse collapse\"\n" +
                         "role=\"tabpanel\"\n" +
                         "aria-labelledby=\"headingOne\">\n" +
                         "<div class=\"x_title\">\n" +
-                        "<h2><i class=\"fa fa-align-left\"></i> "+((JSONObject)suite).get("suiteName")+"\n" +
+                        "<h2><i class=\"fa fa-align-left\"></i> " + ((JSONObject) suite).get("suiteName") + "\n" +
                         "</h2>\n" +
                         " <div class=\"nav navbar-right\" style=\"padding-top : 5px \">\n" +
-                        "                  <font>Total  : <b>12</b> |</font>\n" +
-                        "                  <font>Passed : <b>10</b> |</font>\n" +
-                        "                  <font>Failed : <b>2</b>  |</font>\n" +
+                        "                  <font>Total  : <b>" + (Integer.parseInt(((JSONObject) suite).get("totalPassed").toString()) + Integer.parseInt(((JSONObject) suite).get("totalFailed").toString())) + "</b> |</font>\n" +
+                        "                  <font>Passed : <b>" + ((JSONObject) suite).get("totalPassed") + "</b> |</font>\n" +
+                        "                  <font>Failed : <b>" + ((JSONObject) suite).get("totalFailed") + "</b>  |</font>\n" +
                         " </div>\n" +
                         "  <div class=\"clearfix\"></div>\n" +
                         " </div>\n" +
                         "                      ");
-
-
-
-
 
                 sb.append("    <div name=\"AllTestList\" class=\"x_content\">\n" +
                         "\n");
 
                 for (Object test : testList) {
 
+                    JSONObject testDetails = (JSONObject) test;
+
+
+                    String osName = "";
+                    if (((JSONObject) test).get("osName").toString().toLowerCase().contains("win")) {
+                        osName = "windows";
+                    }
+
+                    if (((JSONObject) test).get("osName").toString().toLowerCase().contains("linux")) {
+                        osName = "linux";
+                    }
+
+
+                    if (((JSONObject) test).get("osName").toString().toLowerCase().contains("ubantu")) {
+                        osName = "ubantu";
+                    }
+
+                    if (((JSONObject) test).get("osName").toString().toLowerCase().contains("mac")) {
+                        osName = "mac";
+                    }
+
+
+                    String fontColor = "";
+                    if (((JSONObject) test).get("status").toString().toLowerCase().contains("fail")) {
+                        fontColor = "fc9272";
+
+                    }
+
+                    if (((JSONObject) test).get("status").toString().toLowerCase().contains("pass")) {
+                        fontColor = "a1d99b";
+
+                    }
+
                     sb.append(
                             "                                        <!-- start accordion -->\n" +
-                                    "                                        <div class=\"accordion\" id=\"Verify User Logout Successfully\" role=\"tablist\"\n" +
+                                    "                                        <div class=\"accordion\" id=\"" + testDetails.get("testName") + "\" role=\"tablist\"\n" +
                                     "                                             aria-multiselectable=\"true\">\n" +
                                     "\n" +
                                     "\n" +
                                     "                                            <div class=\"panel\">\n" +
                                     "                                                <a class=\"panel-heading\" role=\"tab\"\n" +
                                     "                                                   data-toggle=\"collapse\"\n" +
-                                    "                                                   data-parent=\"#accordion\" href=\"#VerifyUserLogoutSuccessfully\"\n" +
+                                    "                                                   data-parent=\"#accordion\" href=\"#" + browser + testDetails.get("testName").toString().replace(" ", "") + "\"\n" +
                                     "                                                   aria-expanded=\"true\"\n" +
                                     "                                                   aria-controls=\"collapseOne\">\n" +
                                     "\n" +
                                     "                                                    <h4 class=\"panel-title\">\n" +
                                     "\n" +
-                                    "                                                        <font color=\"#8BC34A\"> Verify User Logout Successfully</font>\n" +
+                                    "                                                        <font color=\"#" + fontColor + "\"> " + testDetails.get("testName").toString() + "</font>\n" +
                                     "\n" +
                                     "                                                        <div class=\"nav navbar-right \">\n" +
                                     "\n" +
-                                    "                                                            <img src=\"../htmlReport/lib/Icon/chrome.svg\"\n" +
+                                    "                                                            <img src=\"../htmlReport/lib/Icon/" + browser + ".svg\"\n" +
                                     "                                                                 style=\"max-width: 100%;height: 20px;\"\n" +
                                     "                                                                 data-toggle=\"tooltip\" data-placement=\"left\"\n" +
-                                    "                                                                 title=\"64.0.3282.186\">\n" +
+                                    "                                                                 title=\"" + testDetails.get("browserVersion").toString() + "\">\n" +
                                     "\n" +
                                     "\n" +
-                                    "                                                            <img src=\"../htmlReport/lib/Icon/Win10.svg\"\n" +
+                                    "                                                            <img src=\"../htmlReport/lib/Icon/" + osName + ".svg\"\n" +
                                     "                                                                 style=\"max-width: 100%;height: 25px;\"\n" +
                                     "\n" +
                                     "                                                                 data-toggle=\"tooltip\" data-placement=\"left\"\n" +
-                                    "                                                                 title=\"Windows 10\">\n" +
+                                    "                                                                 title=\"" + osName + "\">\n" +
                                     "\n" +
                                     "\n" +
                                     "                                                        </div>\n" +
@@ -695,7 +721,7 @@ public class ReportBuilder {
                                     "\n" +
                                     "\n" +
                                     "                                                </a>\n" +
-                                    "                                                <div id=\"VerifyUserLogoutSuccessfully\" class=\"panel-collapse collapse\"\n" +
+                                    "                                                <div id=\"" + browser + testDetails.get("testName").toString().replace(" ", "") + "\"\" class=\"panel-collapse collapse\"\n" +
                                     "                                                     role=\"tabpanel\"\n" +
                                     "                                                     aria-labelledby=\"headingOne\">\n" +
                                     "                                                    <div class=\"panel-body\">\n" +
@@ -707,23 +733,26 @@ public class ReportBuilder {
                                     "                                                                <th>Status</th>\n" +
                                     "                                                            </tr>\n" +
                                     "                                                            </thead>\n" +
-                                    "                                                            <tbody>\n" +
-                                    "                                                            <tr>\n" +
-                                    "                                                                <th scope=\"row\">1</th>\n" +
-                                    "                                                                <td>Mark</td>\n" +
-                                    "                                                                <td>Otto</td>\n" +
-                                    "                                                            </tr>\n" +
-                                    "                                                            <tr>\n" +
-                                    "                                                                <th scope=\"row\">2</th>\n" +
-                                    "                                                                <td>Thornton</td>\n" +
-                                    "                                                                <td>@fat</td>\n" +
-                                    "                                                            </tr>\n" +
-                                    "                                                            <tr>\n" +
-                                    "                                                                <th scope=\"row\">3</th>\n" +
-                                    "                                                                <td>the Bird</td>\n" +
-                                    "                                                                <td>@twitter</td>\n" +
-                                    "                                                            </tr>\n" +
-                                    "                                                            </tbody>\n" +
+                                    "                                                            <tbody>\n");
+
+
+                    JSONArray stepList = (JSONArray) ((JSONObject) test).get("testStep");
+
+
+                    for (Object step : stepList) {
+
+                        JSONObject stepDetails = (JSONObject) step;
+                        sb.append(" <tr>\n" +
+                                " <th scope=\"row\">" + stepDetails.get("stepIndex") + "</th>\n" +
+                                " <td>" + stepDetails.get("steps") + "</td>\n" +
+                                " <td>" + stepDetails.get("status") + "</td>\n" +
+                                "</tr>");
+
+                    }
+
+
+                    sb.append(
+                            "                                                            </tbody>\n" +
                                     "                                                        </table>\n" +
                                     "                                                    </div>\n" +
                                     "\n" +
@@ -760,7 +789,6 @@ public class ReportBuilder {
                                     //         "                                    </div>\n" +
                                     "                                ");
 
-
                 }
 
 
@@ -772,7 +800,7 @@ public class ReportBuilder {
 
             //array of the all the tests
 
-            sb.append("</div>\n" +
+            sb.append("</div></div>\n" +
                     " </div>\n" +
                     "</div><br>\n");
 
