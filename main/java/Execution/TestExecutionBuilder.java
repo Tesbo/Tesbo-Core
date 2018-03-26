@@ -1,6 +1,7 @@
 package Execution;
 
 import ReportBuilder.GetJsonData;
+import ReportBuilder.ReportBuilder;
 import framework.GetConfiguration;
 import framework.ReportParser;
 import framework.SuiteParser;
@@ -27,6 +28,7 @@ public class TestExecutionBuilder {
 
     public  void startExecution() throws Exception {
         TestExecutionBuilder builder = new TestExecutionBuilder();
+         ReportBuilder reportBuilder = new ReportBuilder();
         ReportParser report = new ReportParser();
         long startTimeSuite = System.currentTimeMillis();
         JSONArray suits =new JSONArray();
@@ -45,13 +47,11 @@ public class TestExecutionBuilder {
         System.out.println("Main : " + builder.mainObj);
         System.out.println("Report : "+builder.reportObj);
 
-
         DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-
         report.generateReportDir();
-
-
         report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
+
+        reportBuilder.generatReport();
 
 
     }

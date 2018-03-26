@@ -20,11 +20,17 @@ public class ReportBuilder {
     String buildHistory = new File(getBuildHistoryPath()).getAbsolutePath();
     JSONArray dataArray = data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath());
 
-    public static void main(String[] args) {
+    public void generatReport() {
+
+        System.out.println("-----------------------------------------------------------------------");
+        System.out.println("Report Generating started");
+        System.out.println("-----------------------------------------------------------------------");
+
+
         ReportBuilder builder = new ReportBuilder();
         builder.copyReportLibrary();
 
-       /* StringBuffer indexfile = new StringBuffer();
+        StringBuffer indexfile = new StringBuffer();
         //index.html file generator
         indexfile = builder.generateHeader(indexfile);
         indexfile = builder.generateBody(indexfile);
@@ -35,37 +41,25 @@ public class ReportBuilder {
         indexfile = builder.generateFooter(indexfile);
         indexfile = builder.generateLatestBuildResultData(indexfile);
         indexfile = builder.generateTimeSummaryData(indexfile);
-
-*//*
         File file = new File("./htmlReport/index.html");
-
-
         builder.writeReportFile(file.getAbsolutePath(), indexfile);
-*/
 
         //currentbuildresultGenerator
         StringBuffer currentBuildResult = new StringBuffer();
-
-        System.out.println(currentBuildResult.capacity());
-
         currentBuildResult = builder.generateHeader(currentBuildResult);
         currentBuildResult = builder.generateBody(currentBuildResult);
         currentBuildResult = builder.generateSideMenu(currentBuildResult);
         currentBuildResult = builder.generateCurrentBuildSummary(currentBuildResult);
-
         currentBuildResult = builder.generatePieAndBarChart(currentBuildResult);
-
-        //     currentBuildResult = builder.generateModuleWiseSummary(currentBuildResult);
-
         currentBuildResult = builder.generateModuleSummary(currentBuildResult);
         currentBuildResult = builder.generateBrowserWiseChartData(currentBuildResult);
-
         currentBuildResult = builder.generateDonutChartData(currentBuildResult);
-
         File currentBuildFile = new File("./htmlReport/currentBuildResult.html");
+  builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
 
-        builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
-
+        System.out.println("-----------------------------------------------------------------------");
+        System.out.println("Report Generated Sucessfully");
+        System.out.println("-----------------------------------------------------------------------");
 
     }
 
@@ -800,7 +794,6 @@ public class ReportBuilder {
 
     public StringBuffer generateBrowserWiseChartData(StringBuffer sb) {
 
-        System.out.println(data.getCurrentBuildBrowserWiseData(buildHistory, "chrome").get("totalPassed"));
 
         sb.append("<script>\n" +
                 "\n" +
