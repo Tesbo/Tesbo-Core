@@ -7,6 +7,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class ReportParser {
 
@@ -18,8 +19,8 @@ public class ReportParser {
         report.newBrowser(browserData);
 
     }*/
-    public void newReport(JSONObject mainObject,JSONObject reportObj) throws Exception {
-        JSONObject browserData = getBrowser(mainObject,reportObj);
+    public void newReport(JSONObject mainObject, JSONObject reportObj) throws Exception {
+        JSONObject browserData = getBrowser(mainObject, reportObj);
         newBrowser(browserData);
     }
 
@@ -239,11 +240,24 @@ public class ReportParser {
     }
 
     public JSONObject getBrowser(JSONObject mainObj, JSONObject newObj1) throws Exception {
+        //public JSONObject getBrowser() throws Exception {
         //System.out.println("Roshan : " + readJsonFile());
         //JSONObject mainObj = readJsonFile();
         JSONObject newObj = new JSONObject();
         //JSONObject newObj1 = new JSONObject();
+        int F = 0;
+        int P = 0;
         JSONArray testCase = (JSONArray) mainObj.get("testCase");
+        for (int TC = 0; TC < testCase.size(); TC++) {
+            JSONObject TC1 = (JSONObject) testCase.get(TC);
+            if ((TC1.get("status")).equals("pass")) {
+                P++;
+            } else if ((TC1.get("status")).equals("fail")) {
+                F++;
+            }
+        }
+        newObj1.put("totalFailed", F);
+        newObj1.put("totalPassed", P);
         //System.out.println("testCase : " + testCase);
         GetConfiguration config = new GetConfiguration();
         //System.out.println("Browser : " + config.getBrowsers());
@@ -275,7 +289,9 @@ public class ReportParser {
         }
         newObj1.put("browser", newBrowserDataInArray);
         //System.out.println("newMainObj : "+newObj1);
+            //System.out.println("mainObj : "+mainObj);
         return newObj1;
+
     }
 
     public void newBrowser(JSONObject mainObj) throws Exception {
@@ -290,11 +306,17 @@ public class ReportParser {
                 JSONObject newTestData = new JSONObject();
                 if (browser.get(Browser) != null) {
                     JSONArray TCDataArray = (JSONArray) browser.get(Browser);
+                    ArrayList<String> suitName = new ArrayList<>();
                     //System.out.println("browser : " + TCDataArray);
                     for (int TC = 0; TC < TCDataArray.size(); TC++) {
                         JSONObject Test = (JSONObject) TCDataArray.get(TC);
-                        JSONArray suiteName = getSuiteName();
-                        for (Object suite : getSuiteName()) {
+                        suitName.add(Test.get("suiteName").toString());
+                    }
+                    ArrayList<String> onlySuitsName = removeDuplicateFromArray(suitName);
+                    //System.out.println("onlySuitsName : "+onlySuitsName);
+                    for (int TC = 0; TC < TCDataArray.size(); TC++) {
+                        JSONObject Test = (JSONObject) TCDataArray.get(TC);
+                        for (String suite : onlySuitsName) {
                             if (suite.toString().equalsIgnoreCase(Test.get("suiteName").toString())) {
                                 //System.out.println(suite + " : " + Test);
                                 if ((newTestData.get(suite)) == null) {
@@ -308,12 +330,28 @@ public class ReportParser {
                             }
                         }
                     }
+
                     JSONArray newTestDataInArray = new JSONArray();
-                    for (String suite : config.getSuite()) {
-                        newTestData.get(suite + ".suite");
+                    for (String suite : onlySuitsName) {
                         JSONObject br = new JSONObject();
-                        br.put("tests", newTestData.get(suite + ".suite"));
-                        br.put("suiteName", suite + ".suite");
+                        int F = 0;
+                        int P = 0;
+                        int T = 0;
+                        JSONArray testCase = (JSONArray) newTestData.get(suite);;
+                        for (int TC = 0; TC < testCase.size(); TC++) {
+                            JSONObject TC1 = (JSONObject) testCase.get(TC);
+                            T += Integer.parseInt(TC1.get("totalTime").toString());
+                            if ((TC1.get("status")).equals("pass")) {
+                                P++;
+                            } else if ((TC1.get("status")).equals("fail")) {
+                                F++;
+                            }
+                        }
+                        br.put("totalFailed", F);
+                        br.put("totalPassed", P);
+                        br.put("totalTime", T);
+                        br.put("tests", newTestData.get(suite));
+                        br.put("suiteName", suite);
                         newTestDataInArray.add(br);
                     }
                     //newObj1.put("browser", newBrowserDataInArray);
@@ -322,9 +360,32 @@ public class ReportParser {
                     //System.out.println("newTestDataInArray : " + newTestDataInArray);
                     browser.put(Browser, testCash);
                 }
-               // System.out.println("newTestData : " + newTestData);
+                // System.out.println("newTestData : " + newTestData);
             }
         }
         //System.out.println("total : " + mainObj);
+    }
+
+    public ArrayList<String> removeDuplicateFromArray(ArrayList<String> dataArray) {
+        ArrayList<String> resultArray = new ArrayList<String>();
+        for (String data : dataArray) {
+            if (resultArray.size() == 0)
+                resultArray.add(data);
+            else {
+                boolean flag = false;
+                for (String result : resultArray) {
+                    if (data.equalsIgnoreCase(result)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag == false) {
+                    resultArray.add(data);
+                }
+            }
+        }
+        //System.out.println("Result Array :"+resultArray);
+        return resultArray;
+
     }
 }
