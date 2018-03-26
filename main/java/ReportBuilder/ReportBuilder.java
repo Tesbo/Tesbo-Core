@@ -157,33 +157,33 @@ public class ReportBuilder {
 
 
         sb.append("\n" +
-                "        <div class=\"col-md-3 left_col\">\n" +
-                "            <div class=\"left_col scroll-view\">\n" +
-                "                <div class=\"navbar nav_title\" style=\"border: 0;\">\n" +
-                "                    <a href=\"index.html\" class=\"site_title\"> <span>Tesbo Report</span></a>\n" +
-                "                </div>\n" +
-                "                <br/>\n" +
-                "                <br/>\n" +
-                "                <br/>\n" +
+                "<div class=\"col-md-3 left_col\">\n" +
+                "  <div class=\"left_col scroll-view\">\n" +
+                "   <div class=\"navbar nav_title\" style=\"border: 0;\">\n" +
+                "     <a href=\"index.html\" class=\"site_title\"> <span>Tesbo Report</span></a>\n" +
+                "     </div>\n" +
+                "     <br/>\n" +
+                "     <br/>\n" +
+                "     <br/>\n" +
                 "\n" +
-                "                <!-- sidebar menu -->\n" +
-                "                <div id=\"sidebar-menu\" class=\"main_menu_side hidden-print main_menu\">\n" +
-                "                    <div class=\"menu_section\">\n" +
-                "                        <ul class=\"nav side-menu\">\n" +
-                "                            <li><a href=\"index.html\"><i class=\"fa fa-home\"></i> Home </a>\n" +
-                "                            </li>\n" +
-                "                            </li>\n" +
-                "                            <li><a href=\"currentBuildResult.html\"><i class=\"fa fa-bar-chart-o\"></i> Current Build Report</a>\n" +
-                "                            </li>\n" +
+                "  <!-- sidebar menu -->\n" +
+                "<div id=\"sidebar-menu\" class=\"main_menu_side hidden-print main_menu\">\n" +
+                " <div class=\"menu_section\">\n" +
+                "  <ul class=\"nav side-menu\">\n" +
+                "   <li><a href=\"index.html\"><i class=\"fa fa-home\"></i> Home </a>\n" +
+                "   </li>\n" +
+                "   </li>\n" +
+                "   <li><a href=\"currentBuildResult.html\"><i class=\"fa fa-bar-chart-o\"></i> Current Build Report</a>\n" +
+                "   </li>\n" +
                 "\n" +
-                "                        </ul>\n" +
-                "                    </div>\n" +
+                "  </ul>\n" +
+                " </div>\n" +
                 "\n" +
                 "\n" +
-                "                </div>\n" +
+                "</div>\n" +
                 "\n" +
-                "            </div>\n" +
-                "        </div>\n");
+                "</div>\n" +
+                "</div>\n");
 
         return sb;
 
@@ -193,50 +193,46 @@ public class ReportBuilder {
 
         GetJsonData data = new GetJsonData();
 
-        sb.append(" <div class=\"right_col\" role=\"main\">\n" +
-                "            <!-- top tiles -->\n" +
-                "            <div class=\"row tile_count\">\n" +
-                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
-                "                    <span class=\"count_top\"><i class=\"fa fa-user\"></i> Total Builds</span>\n" +
-                "                    <div class=\"count\">" + data.getTotalBuildCount(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
+        sb.append("<div class=\"right_col\" role=\"main\">\n" +
+                "<!-- top tiles -->\n" +
+                "<div class=\"row tile_count\">\n" +
+                " <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "  <span class=\"count_top\"><i class=\"fa fa-user\"></i> Total Builds</span>\n" +
+                "  <div class=\"count\">" + data.getTotalBuildCount(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
                 "\n" +
-                "                </div>\n" +
-                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
-                "                    <span class=\"count_top\"><i class=\"fa fa-clock-o\"></i> Average Time</span>\n" +
-                "                    <div class=\"count\">" + data.getTotalBuildCount(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
+                "  </div>\n" +
+                " <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "  <span class=\"count_top\"><i class=\"fa fa-clock-o\"></i> Average Time</span>\n" +
+                "   <div class=\"count\">" + data.getTotalBuildCount(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
                 "\n" +
-                "                </div>\n" +
-                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
-                "                    <span class=\"count_top\"><i class=\"fa fa-user\"></i> Total Test Run</span>\n" +
-                "                    <div class=\"count green\">" + data.getTotalTestOfTheBuild(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
+                "   </div>\n" +
+                "  <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "   <span class=\"count_top\"><i class=\"fa fa-user\"></i> Total Test Run</span>\n" +
+                "   <div class=\"count green\">" + data.getTotalTestOfTheBuild(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
                 "\n" +
-                "                </div>\n" +
+                "  </div>\n" +
                 "\n" +
-                "            </div>");
-
-
+                " </div>");
         return sb;
     }
 
     public StringBuffer generateSummaryChart(StringBuffer sb) {
 
 
-        sb.append("  <div class=\"row\">\n" +
+        sb.append("<div class=\"row\">\n" +
                 "                <!-- bar charts group -->\n" +
-                "                <div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
-                "                    <div class=\"x_panel\">\n" +
-                "                        <div class=\"x_title\">\n" +
-                "                            <h2>Last 10 Build Summary</h2>\n" +
-                "                            <div class=\"clearfix\"></div>\n" +
-                "                        </div>\n" +
-                "                        <div class=\"x_content1\">\n" +
-                "                            <div id=\"lastBuildResult\" style=\"width:100%; height:280px;\"></div>\n" +
-                "                        </div>\n" +
-                "                    </div>\n" +
-                "                </div>\n" +
-                "                <div class=\"clearfix\"></div>\n");
-
-
+                "<div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
+                "  <div class=\"x_panel\">\n" +
+                "  <div class=\"x_title\">\n" +
+                "  <h2>Last 10 Build Summary</h2>\n" +
+                "  <div class=\"clearfix\"></div>\n" +
+                "  </div>\n" +
+                "  <div class=\"x_content1\">\n" +
+                "  <div id=\"lastBuildResult\" style=\"width:100%; height:280px;\"></div>\n" +
+                "  </div>\n" +
+                "  </div>\n" +
+                "  </div>\n" +
+                "  <div class=\"clearfix\"></div>\n");
         return sb;
 
     }
@@ -244,29 +240,23 @@ public class ReportBuilder {
     public StringBuffer generateTimeSummaryChart(StringBuffer sb) {
 
 
-        sb.append("           <div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
-                "                    <div class=\"x_panel\">\n" +
-                "                        <div class=\"x_title\">\n" +
-                "                            <h2>Last 10 Build Time Summary</h2>\n" +
+        sb.append("<div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
+                "  <div class=\"x_panel\">\n" +
+                "   <div class=\"x_title\">\n" +
+                "    <h2>Last 10 Build Time Summary</h2>\n" +
                 "\n" +
-                "                            <div class=\"clearfix\"></div>\n" +
-                "                        </div>\n" +
-                "                        <div class=\"x_content1\">\n" +
-                "                            <div id=\"lastBuildTimeResult\" style=\"width:100%; height:280px;\"></div>\n" +
-                "                        </div>\n" +
-                "                    </div>\n" +
-                "                </div>\n" +
-                "                <div class=\"clearfix\"></div>\n" +
-                "\n" +
-                "\n" +
-                "            </div>\n" +
-                "\n" +
-                "\n" +
-                "            <br/>\n" +
-                "        </div>\n" +
-                "    </div>");
-
-
+                "   <div class=\"clearfix\"></div>\n" +
+                "   </div>\n" +
+                "   <div class=\"x_content1\">\n" +
+                "   <div id=\"lastBuildTimeResult\" style=\"width:100%; height:280px;\"></div>\n" +
+                "   </div>\n" +
+                "   </div>\n" +
+                "   </div>\n" +
+                "   <div class=\"clearfix\"></div>\n" +
+                "</div>\n" +
+                "<br/>\n" +
+                "</div>\n" +
+                "</div>");
         return sb;
 
     }
@@ -274,15 +264,14 @@ public class ReportBuilder {
     public StringBuffer generateFooter(StringBuffer sb) {
 
         sb.append("<footer>\n" +
-                "        <div class=\"pull-right\">\n" +
-                "            Tesbo Report Powered By<a href=\"https://jsbot.io\"> JSbot</a>\n" +
-                "        </div>\n" +
-                "        <div class=\"clearfix\"></div>\n" +
-                "    </footer>\n" +
-                "    <!-- /footer content -->\n" +
+                "<div class=\"pull-right\">\n" +
+                "Tesbo Report<a href=\"\"> </a>\n" +
+                "</div>\n" +
+                "<div class=\"clearfix\"></div>\n" +
+                "</footer>\n" +
+                "<!-- /footer content -->\n" +
                 "</div>\n" +
                 "</div>\n");
-
 
         return sb;
     }
@@ -293,9 +282,9 @@ public class ReportBuilder {
         sb.append("\n" +
                 "<script>\n" +
                 "\n" +
-                "    Morris.Bar({\n" +
-                "        element: 'lastBuildResult',\n" +
-                "        data: [\n");
+                "Morris.Bar({\n" +
+                "element: 'lastBuildResult',\n" +
+                "data: [\n");
         for (int i = 0; i < 10; i++) {
             try {
 
@@ -307,12 +296,12 @@ public class ReportBuilder {
             }
 
         }
-        sb.append("         ],\n" +
-                "        xkey: 'y',\n" +
-                "        ykeys: ['a', 'b'],\n" +
-                "        barColors: ['#a1d99b', '#fc9272'],\n" +
-                "        labels: ['pass', 'failed']\n" +
-                "    });" +
+        sb.append("],\n" +
+                "xkey: 'y',\n" +
+                "ykeys: ['a', 'b'],\n" +
+                "barColors: ['#a1d99b', '#fc9272'],\n" +
+                "labels: ['pass', 'failed']\n" +
+                "});" +
                 " </script>\n");
 
 
@@ -324,9 +313,9 @@ public class ReportBuilder {
 
         sb.append("<script>\n" +
                 "\n" +
-                "    Morris.Line({\n" +
-                "        element: 'lastBuildTimeResult',\n" +
-                "        data: [\n");
+                "Morris.Line({\n" +
+                "element: 'lastBuildTimeResult',\n" +
+                "data: [\n");
 
 
         for (int i = 0; i < 10; i++) {
@@ -341,11 +330,11 @@ public class ReportBuilder {
         }
 
         sb.append(
-                "        ],\n" +
-                        "        xkey: 'y',\n" +
-                        "        ykeys: ['a'],\n" +
-                        "        labels: ['Time']\n" +
-                        "    });\n" +
+                "],\n" +
+                        "xkey: 'y',\n" +
+                        "ykeys: ['a'],\n" +
+                        "labels: ['Time']\n" +
+                        "});\n" +
                         "</script>\n" +
                         "\n" +
                         "</body>\n" +
@@ -360,47 +349,47 @@ public class ReportBuilder {
 
 
     public StringBuffer generateCurrentBuildSummary(StringBuffer sb) {
-        sb.append("     <div class=\"right_col\" role=\"main\">\n" +
-                "            <!-- top tiles -->\n" +
-                "            <div class=\"row tile_count\">\n" +
-                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\" style=\"border-left : 2px solid #ADB2B5  \">\n" +
-                "                    <span class=\"count_top\"> Total </span>\n" +
-                "                    <div class=\"count\">" + data.getCurrentBuildTotal(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
+        sb.append("<div class=\"right_col\" role=\"main\">\n" +
+                "<!-- top tiles -->\n" +
+                "<div class=\"row tile_count\">\n" +
+                "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\" style=\"border-left : 2px solid #ADB2B5  \">\n" +
+                "<span class=\"count_top\"> Total </span>\n" +
+                "<div class=\"count\">" + data.getCurrentBuildTotal(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
                 "\n" +
-                "                </div>\n" +
-                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
-                "                    <span class=\"count_top\"> Passed</span>\n" +
-                "                    <div class=\"count\">" + data.getCurrentBuildPassed(buildHistory) + "</div>\n" +
+                "</div>\n" +
+                "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "<span class=\"count_top\"> Passed</span>\n" +
+                "<div class=\"count\">" + data.getCurrentBuildPassed(buildHistory) + "</div>\n" +
                 "\n" +
-                "                </div>\n" +
-                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
-                "                    <span class=\"count_top\"> Failed</span>\n" +
-                "                    <div class=\"count \">" + data.getCurrentBuildFailed(buildHistory) + "</div>\n" +
+                "</div>\n" +
+                "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "<span class=\"count_top\"> Failed</span>\n" +
+                "<div class=\"count \">" + data.getCurrentBuildFailed(buildHistory) + "</div>\n" +
                 "\n" +
-                "                </div>\n" +
+                "</div>\n" +
                 "\n" +
-                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
-                "                    <span class=\"count_top\"> Total Time</span>\n" +
-                "                    <div class=\"count \">" + data.getCurrentBuildTotalTime(buildHistory) + "</div>\n" +
+                "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "<span class=\"count_top\"> Total Time</span>\n" +
+                "<div class=\"count \">" + data.getCurrentBuildTotalTime(buildHistory) + "</div>\n" +
                 "\n" +
-                "                </div>\n" +
-                "\n" +
-                "\n" +
-                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
-                "                    <span class=\"count_top\"> Start Time</span>\n" +
-                "                    <div class=\"count \">" + data.getCurrentBuildStartTime(buildHistory) + "</div>\n" +
-                "\n" +
-                "                </div>\n" +
-                "\n" +
-                "                <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
-                "                    <span class=\"count_top\"> End Time</span>\n" +
-                "                    <div class=\"count \">" + data.getCurrentBuildEndTime(buildHistory) + "</div>\n" +
-                "\n" +
-                "                </div>\n" +
+                "</div>\n" +
                 "\n" +
                 "\n" +
-                "            </div>\n" +
-                "   ");
+                "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "<span class=\"count_top\"> Start Time</span>\n" +
+                "<div class=\"count \">" + data.getCurrentBuildStartTime(buildHistory) + "</div>\n" +
+                "\n" +
+                "</div>\n" +
+                "\n" +
+                "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                "<span class=\"count_top\"> End Time</span>\n" +
+                "<div class=\"count \">" + data.getCurrentBuildEndTime(buildHistory) + "</div>\n" +
+                "\n" +
+                "</div>\n" +
+                "\n" +
+                "\n" +
+                "</div>\n" +
+                "");
 
 
         return sb;
@@ -410,44 +399,44 @@ public class ReportBuilder {
     public StringBuffer generatePieAndBarChart(StringBuffer sb) {
 
 
-        sb.append("   <div class=\"row\">\n" +
+        sb.append("<div class=\"row\">\n" +
                 "\n" +
                 "\n" +
-                "                <div class=\"col-md-4 col-sm-6 col-xs-12\">\n" +
-                "                    <div class=\"x_panel\">\n" +
-                "                        <div class=\"x_title\">\n" +
-                "                            <h2>Pie Chart\n" +
+                "<div class=\"col-md-4 col-sm-6 col-xs-12\">\n" +
+                "<div class=\"x_panel\">\n" +
+                "<div class=\"x_title\">\n" +
+                "<h2>Pie Chart\n" +
                 "\n" +
-                "                            </h2>\n" +
+                "</h2>\n" +
                 "\n" +
-                "                            <div class=\"clearfix\"></div>\n" +
-                "                        </div>\n" +
-                "                        <div class=\"x_content1\">\n" +
-                "                            <div id=\"buildSummary\" style=\"width:100%; height:280px;\"></div>\n" +
-                "                        </div>\n" +
-                "                    </div>\n" +
-                "                    <div class=\"clearfix\"></div>\n" +
-                "                </div>\n" +
+                "<div class=\"clearfix\"></div>\n" +
+                "</div>\n" +
+                "<div class=\"x_content1\">\n" +
+                "<div id=\"buildSummary\" style=\"width:100%; height:280px;\"></div>\n" +
+                "</div>\n" +
+                "</div>\n" +
+                "<div class=\"clearfix\"></div>\n" +
+                "</div>\n" +
                 "\n" +
-                "                <div class=\"col-md-8 col-sm-6 col-xs-12\">\n" +
-                "                    <div class=\"x_panel\">\n" +
-                "                        <div class=\"x_title\">\n" +
-                "                            <h2>Browser Wise Report</h2>\n" +
+                "<div class=\"col-md-8 col-sm-6 col-xs-12\">\n" +
+                "<div class=\"x_panel\">\n" +
+                "<div class=\"x_title\">\n" +
+                "<h2>Browser Wise Report</h2>\n" +
                 "\n" +
-                "                            <div class=\"clearfix\"></div>\n" +
-                "                        </div>\n" +
-                "                        <div class=\"x_content1\">\n" +
-                "                            <div id=\"browserReport\" style=\"width:100%; height:280px;\"></div>\n" +
-                "                        </div>\n" +
-                "                    </div>\n" +
-                "                </div>\n" +
-                "                <div class=\"clearfix\"></div>\n" +
-                "\n" +
-                "\n" +
-                "            </div>\n" +
+                "<div class=\"clearfix\"></div>\n" +
+                "</div>\n" +
+                "<div class=\"x_content1\">\n" +
+                "<div id=\"browserReport\" style=\"width:100%; height:280px;\"></div>\n" +
+                "</div>\n" +
+                "</div>\n" +
+                "</div>\n" +
+                "<div class=\"clearfix\"></div>\n" +
                 "\n" +
                 "\n" +
-                "            <br/>\n");
+                "</div>\n" +
+                "\n" +
+                "\n" +
+                "<br/>\n");
 
         return sb;
     }
@@ -480,28 +469,28 @@ public class ReportBuilder {
 
             if (suiteArray.size() > 0) {
 
-                sb.append(" <div class=\"row\">\n" +
+                sb.append("<div class=\"row\">\n" +
                         "\n" +
                         "\n" +
-                        "                <div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
-                        "                    <div class=\"x_panel\">\n" +
-                        "                        <div class=\"x_title\">\n" +
-                        "                            <h2>Module Wise Summary : " + browserName + "\n" +
-                        "                            </h2>\n" +
-                        "                            <div class=\"clearfix\"></div>\n" +
-                        "                        </div>\n" +
-                        "                        <div class=\"x_content\">\n" +
-                        "                            <table class=\"table table-striped\">\n" +
-                        "                                <thead>\n" +
-                        "                                <tr>\n" +
-                        "                                    <th>#</th>\n" +
-                        "                                    <th>Module Name</th>\n" +
-                        "                                    <th>Total</th>\n" +
-                        "                                    <th>Passed</th>\n" +
-                        "                                    <th>Failed</th>\n" +
-                        "                                </tr>\n" +
-                        "                                </thead>\n" +
-                        "                                <tbody>\n");
+                        "<div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
+                        "<div class=\"x_panel\">\n" +
+                        "<div class=\"x_title\">\n" +
+                        "<h2>Module Wise Summary : " + browserName + "\n" +
+                        "</h2>\n" +
+                        "<div class=\"clearfix\"></div>\n" +
+                        "</div>\n" +
+                        "<div class=\"x_content\">\n" +
+                        "<table class=\"table table-striped\">\n" +
+                        "<thead>\n" +
+                        "<tr>\n" +
+                        "<th>#</th>\n" +
+                        "<th>Module Name</th>\n" +
+                        "<th>Total</th>\n" +
+                        "<th>Passed</th>\n" +
+                        "<th>Failed</th>\n" +
+                        "</tr>\n" +
+                        "</thead>\n" +
+                        "<tbody>\n");
 
 
                 for (int i = 0; i < suiteArray.size(); i++) {
@@ -513,23 +502,18 @@ public class ReportBuilder {
                             " <td>" + ((JSONObject) suiteArray.get(i)).get("totalPassed") + "</td>\n" +
                             " <td>" + ((JSONObject) suiteArray.get(i)).get("totalFailed") + "</td>\n" +
                             " </tr>");
-
-
                 }
 
 
                 sb.append("</tbody>\n" +
-                        "                            </table>\n" +
+                        "</table>\n" +
                         "\n" +
-                        "                        </div>\n" +
-                        "                    </div>\n" +
-                        "                </div>\n" +
+                        "</div>\n" +
+                        "</div>\n" +
+                        "</div>\n" +
                         "\n" +
-                        "            </div>\n" +
-                        "\n" +
-                        "            \n" +
-                        "       \n" +
-                        "           ");
+                        "</div>\n" +
+                        "\n");
 
             }
 
@@ -557,17 +541,15 @@ public class ReportBuilder {
 
         //array of all the browser
 
-        sb.append("  <div class=\"row\">\n" +
-                "\n" +
-                "\n" +
-                "                <div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
-                "                    <div class=\"x_panel\">\n" +
-                "                        <div class=\"x_title\">\n" +
-                "                            <h2>Browser Wise Execution Report\n" +
-                "                            </h2>\n" +
-                "                            <div class=\"clearfix\"></div>\n" +
-                "                        </div>\n" +
-                "                        <br>");
+        sb.append("<div class=\"row\">\n" +
+                "<div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
+                "<div class=\"x_panel\">\n" +
+                "<div class=\"x_title\">\n" +
+                "<h2>Browser Wise Execution Report\n" +
+                "</h2>\n" +
+                "<div class=\"clearfix\"></div>\n" +
+                "</div>\n" +
+                "<br>");
 
         for (Object singleBrowser : browserArray) {
 
@@ -592,27 +574,25 @@ public class ReportBuilder {
             browser = browserList.get(0).toString();
 
 
-            sb.append("      <div name=\"browser 1\" style=\"border : 3px solid #E6E9ED ;padding:5px \">\n" +
+            sb.append("<div style=\"border : 3px solid #E6E9ED ;padding:5px \">\n" +
+                    "<a class=\"panel-heading\" role=\"tab\"\n" +
+                    "data-toggle=\"collapse\"\n" +
+                    "data-parent=\"#accordion\" href=\"#" + browser + "\"\n" +
+                    "aria-expanded=\"false\"\n" +
+                    "aria-controls=\"collapseOne\">\n" +
+                    " <h4 class=\"panel-title\">\n" +
                     "\n" +
+                    "<div name=\"browserLogo\" align=\"center\" class=\"accordion\" role=\"tablist\"\n" +
+                    "aria-multiselectable=\"true\">\n" +
                     "\n" +
-                    "       <a class=\"panel-heading\" role=\"tab\"\n" +
-                    " data-toggle=\"collapse\"\n" +
-                    " data-parent=\"#accordion\" href=\"#" + browser + "\"\n" +
-                    " aria-expanded=\"false\"\n" +
-                    "  aria-controls=\"collapseOne\">\n" +
-                    "  <h4 class=\"panel-title\">\n" +
+                    "<img src=\"../htmlReport/lib/Icon/" + browser + ".svg\"\n" +
+                    "style=\"max-width: 100%;height: 20px;\">\n" +
+                    "<h5>" + browser.toUpperCase() + "</h5>\n" +
                     "\n" +
-                    "  <div name=\"browserLogo\" align=\"center\" class=\"accordion\" role=\"tablist\"\n" +
-                    "  aria-multiselectable=\"true\">\n" +
+                    "</div>\n" +
                     "\n" +
-                    " <img src=\"../htmlReport/lib/Icon/" + browser + ".svg\"\n" +
-                    "  style=\"max-width: 100%;height: 20px;\">\n" +
-                    "  <h5>" + browser.toUpperCase() + "</h5>\n" +
-                    "\n" +
-                    "  </div>\n" +
-                    "\n" +
-                    "  </h4>\n" +
-                    "  </a>\n");
+                    "</h4>\n" +
+                    "</a>\n");
 
 
             //array of the all the suites
@@ -629,7 +609,7 @@ public class ReportBuilder {
                 JSONArray testList = (JSONArray) ((JSONObject) suite).get("tests");
 
 
-                sb.append("<div name=\"wholeBrowserDetails\" id=\"" + browser + "\" class=\"panel-collapse collapse\">\n" +
+                sb.append("<div id=\"" + browser + "\" class=\"panel-collapse collapse\">\n" +
                         "<div class=\"x_panel\" class=\"panel-collapse collapse\"\n" +
                         "role=\"tabpanel\"\n" +
                         "aria-labelledby=\"headingOne\">\n" +
@@ -637,22 +617,22 @@ public class ReportBuilder {
                         "<h2><i class=\"fa fa-align-left\"></i> " + ((JSONObject) suite).get("suiteName") + "\n" +
                         "</h2>\n" +
                         " <div class=\"nav navbar-right\" style=\"padding-top : 5px \">\n" +
-                        "                  <font>Total  : <b>" + (Integer.parseInt(((JSONObject) suite).get("totalPassed").toString()) + Integer.parseInt(((JSONObject) suite).get("totalFailed").toString())) + "</b> |</font>\n" +
-                        "                  <font>Passed : <b>" + ((JSONObject) suite).get("totalPassed") + "</b> |</font>\n" +
-                        "                  <font>Failed : <b>" + ((JSONObject) suite).get("totalFailed") + "</b>  |</font>\n" +
+                        "<font>Total  : <b>" + (Integer.parseInt(((JSONObject) suite).get("totalPassed").toString()) + Integer.parseInt(((JSONObject) suite).get("totalFailed").toString())) + "</b> |</font>\n" +
+                        "<font>Passed : <b>" + ((JSONObject) suite).get("totalPassed") + "</b> |</font>\n" +
+                        "<font>Failed : <b>" + ((JSONObject) suite).get("totalFailed") + "</b>  |</font>\n" +
                         " </div>\n" +
                         "  <div class=\"clearfix\"></div>\n" +
                         " </div>\n" +
                         "                      ");
 
-                sb.append("    <div name=\"AllTestList\" class=\"x_content\">\n" +
+                sb.append("<div class=\"x_content\">\n" +
                         "\n");
 
                 for (Object test : testList) {
 
                     JSONObject testDetails = (JSONObject) test;
 
-
+                    boolean isTestFailed = false;
                     String osName = "";
                     if (((JSONObject) test).get("osName").toString().toLowerCase().contains("win")) {
                         osName = "windows";
@@ -675,7 +655,7 @@ public class ReportBuilder {
                     String fontColor = "";
                     if (((JSONObject) test).get("status").toString().toLowerCase().contains("fail")) {
                         fontColor = "fc9272";
-
+                        isTestFailed = true;
                     }
 
                     if (((JSONObject) test).get("status").toString().toLowerCase().contains("pass")) {
@@ -683,57 +663,62 @@ public class ReportBuilder {
 
                     }
 
-                    sb.append(
-                            "                                        <!-- start accordion -->\n" +
-                                    "                                        <div class=\"accordion\" id=\"" + testDetails.get("testName") + "\" role=\"tablist\"\n" +
-                                    "                                             aria-multiselectable=\"true\">\n" +
-                                    "\n" +
-                                    "\n" +
-                                    "                                            <div class=\"panel\">\n" +
-                                    "                                                <a class=\"panel-heading\" role=\"tab\"\n" +
-                                    "                                                   data-toggle=\"collapse\"\n" +
-                                    "                                                   data-parent=\"#accordion\" href=\"#" + browser + testDetails.get("testName").toString().replace(" ", "") + "\"\n" +
-                                    "                                                   aria-expanded=\"true\"\n" +
-                                    "                                                   aria-controls=\"collapseOne\">\n" +
-                                    "\n" +
-                                    "                                                    <h4 class=\"panel-title\">\n" +
-                                    "\n" +
-                                    "                                                        <font color=\"#" + fontColor + "\"> " + testDetails.get("testName").toString() + "</font>\n" +
-                                    "\n" +
-                                    "                                                        <div class=\"nav navbar-right \">\n" +
-                                    "\n" +
-                                    "                                                            <img src=\"../htmlReport/lib/Icon/" + browser + ".svg\"\n" +
-                                    "                                                                 style=\"max-width: 100%;height: 20px;\"\n" +
-                                    "                                                                 data-toggle=\"tooltip\" data-placement=\"left\"\n" +
-                                    "                                                                 title=\"" + testDetails.get("browserVersion").toString() + "\">\n" +
-                                    "\n" +
-                                    "\n" +
-                                    "                                                            <img src=\"../htmlReport/lib/Icon/" + osName + ".svg\"\n" +
-                                    "                                                                 style=\"max-width: 100%;height: 25px;\"\n" +
-                                    "\n" +
-                                    "                                                                 data-toggle=\"tooltip\" data-placement=\"left\"\n" +
-                                    "                                                                 title=\"" + osName + "\">\n" +
-                                    "\n" +
-                                    "\n" +
-                                    "                                                        </div>\n" +
-                                    "\n" +
-                                    "                                                    </h4>\n" +
-                                    "\n" +
-                                    "\n" +
-                                    "                                                </a>\n" +
-                                    "                                                <div id=\"" + browser + testDetails.get("testName").toString().replace(" ", "") + "\"\" class=\"panel-collapse collapse\"\n" +
-                                    "                                                     role=\"tabpanel\"\n" +
-                                    "                                                     aria-labelledby=\"headingOne\">\n" +
-                                    "                                                    <div class=\"panel-body\">\n" +
-                                    "                                                        <table class=\"table table-bordered\">\n" +
-                                    "                                                            <thead>\n" +
-                                    "                                                            <tr>\n" +
-                                    "                                                                <th>#</th>\n" +
-                                    "                                                                <th>Step</th>\n" +
-                                    "                                                                <th>Status</th>\n" +
-                                    "                                                            </tr>\n" +
-                                    "                                                            </thead>\n" +
-                                    "                                                            <tbody>\n");
+
+                    String stacktrace = "";
+                    String screenShotpath = "";
+
+
+                    if (isTestFailed) {
+
+                        try {
+
+                            stacktrace = ((JSONObject) test).get("fullStackTrace").toString();
+                            screenShotpath = ((JSONObject) test).get("screenshot").toString();
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+
+
+                    sb.append("<!-- start accordion -->\n" +
+                            "<div class=\"accordion\" id=\"" + browser + testDetails.get("testName") + "\" role=\"tablist\"\n" +
+                            "aria-multiselectable=\"true\">\n" +
+                            "<div class=\"panel\">\n" +
+                            "<a class=\"panel-heading\" role=\"tab\"\n" +
+                            "data-toggle=\"collapse\"\n" +
+                            "data-parent=\"#accordion\" href=\"#" + browser + testDetails.get("testName").toString().replace(" ", "") + "\"\n" +
+                            "aria-expanded=\"true\"\n" +
+                            "aria-controls=\"collapseOne\">\n" +
+                            "<h4 class=\"panel-title\">\n" +
+                            "<font color=\"#" + fontColor + "\"> " + testDetails.get("testName").toString() + "</font>\n" +
+                            "<div class=\"nav navbar-right \">\n" +
+                            "<img src=\"../htmlReport/lib/Icon/" + browser + ".svg\"\n" +
+                            "style=\"max-width: 100%;height: 20px;\"\n" +
+                            "data-toggle=\"tooltip\" data-placement=\"left\"\n" +
+                            "title=\"" + testDetails.get("browserVersion").toString() + "\">\n" +
+                            "<img src=\"../htmlReport/lib/Icon/" + osName + ".svg\"\n" +
+                            "style=\"max-width: 100%;height: 25px;\"\n" +
+                            "\n" +
+                            "data-toggle=\"tooltip\" data-placement=\"left\"\n" +
+                            "title=\"" + osName + "\">\n" +
+                            "</div>\n" +
+                            "</h4>\n" +
+
+                            "</a>\n" +
+                            "<div id=\"" + browser + testDetails.get("testName").toString().replace(" ", "") + "\" class=\"panel-collapse collapse\"\n" +
+                            "role=\"tabpanel\"\n" +
+                            "aria-labelledby=\"headingOne\">\n" +
+                            "<div class=\"panel-body\">\n" +
+                            "<table class=\"table table-bordered\">\n" +
+                            "<thead>\n" +
+                            "<tr>\n" +
+                            "<th>#</th>\n" +
+                            "<th>Step</th>\n" +
+                            "<th>Status</th>\n" +
+                            "</tr>\n" +
+                            "</thead>\n" +
+                            "<tbody>\n");
 
 
                     JSONArray stepList = (JSONArray) ((JSONObject) test).get("testStep");
@@ -752,42 +737,43 @@ public class ReportBuilder {
 
 
                     sb.append(
-                            "                                                            </tbody>\n" +
-                                    "                                                        </table>\n" +
-                                    "                                                    </div>\n" +
+                            "</tbody>\n" +
+                                    "</table>\n" +
+                                    "</div>\n" +
                                     "\n" +
-                                    "\n" +
-                                    "                                                    <div class=\"panel-body\" style=\"border-style: dotted;\">\n" +
-                                    "                                                        <p><strong>ScreenShot</strong>\n" +
-                                    "                                                        </p>\n" +
-                                    "\n" +
-                                    "                                                        <img src=\"/Users/viralpatel/Desktop/screenshot.png\"\n" +
-                                    "                                                             style=\"max-width: 100%;height: auto;\">\n" +
-                                    "\n" +
-                                    "                                                    </div>\n" +
-                                    "\n" +
-                                    "                                                    <br>\n" +
-                                    "\n" +
-                                    "\n" +
-                                    "                                                    <div class=\"panel-body\" style=\"border-style: dotted;\">\n" +
-                                    "                                                        <p><strong>Stack Trace</strong>\n" +
-                                    "                                                        </p>\n" +
-                                    "                                                        Anim pariatur cliche reprehenderit, enim eiusmod high life\n" +
-                                    "                                                        accusamus terry\n" +
-                                    "                                                        richardson ad squid. 3 wolf moon officia aute, non cupidatat\n" +
-                                    "                                                        skateboard\n" +
-                                    "                                                        dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch\n" +
-                                    "                                                        3 wolf moon\n" +
-                                    "                                                        tempor,\n" +
-                                    "                                                    </div>\n" +
-                                    "\n" +
-                                    "                                                </div>\n" +
-                                    "\n" +
-                                    "\n" +
-                                    "                                            </div>\n" +
-                                    "                                        </div>\n" +
-                                    //         "                                    </div>\n" +
-                                    "                                ");
+                                    "\n");
+
+
+                    if (isTestFailed) {
+                        sb.append(
+                                "<div class=\"panel-body\" style=\"border-style: dotted;\">\n" +
+                                        "<p><strong>ScreenShot</strong>\n" +
+                                        "</p>\n" +
+                                        "\n" +
+                                        "<img src=\" " + screenShotpath + " \" \n" +
+                                        "style=\"max-width: 100%;height: auto;\">\n" +
+
+                                        " </div>\n" +
+                                        "\n");
+                    }
+
+                    if (isTestFailed) {
+                        sb.append(
+                                "<br>\n" +
+
+                                        "<div class=\"panel-body\" style=\"border-style: dotted;\">\n" +
+                                        "<p><strong>Stack Trace</strong>\n" +
+                                        "</p>\n" +
+                                        stacktrace +
+                                        "</div>\n" +
+                                        "\n");
+
+                    }
+                    sb.append(
+                            "</div>\n" +
+
+                                    "</div>\n" +
+                                    "</div>\n");
 
                 }
 
