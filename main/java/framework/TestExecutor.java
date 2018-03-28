@@ -100,6 +100,7 @@ public class TestExecutor implements Runnable {
         //System.out.println("Steps : " + steps);
         int J = 0;
         JSONArray stepsArray = new JSONArray();
+        boolean failFlag = false;
         for (int i = 0; i <= steps.size() - 1; i++) {
             JSONObject stepResult = new JSONObject();
             long startTimeStep = System.currentTimeMillis();
@@ -122,6 +123,7 @@ public class TestExecutor implements Runnable {
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Please review steps. Alert is not display.");
                     stepResult.put("fullStackTrace", exceptionAsString);
+                    failFlag = true;
                 } catch (NoSuchElementException NE) {
                     J++;
                     StringWriter sw = new StringWriter();
@@ -132,6 +134,7 @@ public class TestExecutor implements Runnable {
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Locator not find. Please add new locator or update the locator value.");
                     stepResult.put("fullStackTrace", exceptionAsString);
+                    failFlag = true;
                 } catch (NullPointerException npe) {
                     J++;
                     StringWriter sw = new StringWriter();
@@ -142,6 +145,7 @@ public class TestExecutor implements Runnable {
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Data not found. Please add data.");
                     stepResult.put("fullsTackTrace", exceptionAsString);
+                    failFlag = true;
                 } catch (FileNotFoundException fe) {
                     J++;
                     StringWriter sw = new StringWriter();
@@ -153,6 +157,7 @@ public class TestExecutor implements Runnable {
                     stepResult.put("errorMsg", "Please Enter valid directory path. " + fe.getMessage());
                     System.out.println("Please Enter valid directory path. " + fe.getMessage());
                     stepResult.put("fullStackTrace", exceptionAsString);
+                    failFlag = true;
                 } catch (Exception e) {
                     J++;
                     StringWriter sw = new StringWriter();
@@ -163,6 +168,7 @@ public class TestExecutor implements Runnable {
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Please check the steps.");
                     stepResult.put("fullStackTrace", exceptionAsString);
+                    failFlag = true;
                 }
                 long stopTimeStep = System.currentTimeMillis();
                 stepResult.put("endTime", dtf.format(LocalDateTime.now()));
@@ -171,6 +177,9 @@ public class TestExecutor implements Runnable {
                 //testResult.put(stepNumber + 1, stepResult);
                 stepsArray.add(stepResult);
                 stepNumber++;
+                if(failFlag==true){
+                    break;
+                }
             } else if (step.toString().toLowerCase().contains("verify:") | step.toString().toLowerCase().contains("verify :")) {
                 stepResult.put("startTime", dtf.format(LocalDateTime.now()));
                 stepResult.put("stepIndex", stepNumber + 1);
@@ -189,6 +198,7 @@ public class TestExecutor implements Runnable {
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "PLocator not find. Please add new locator or update the locator.");
                     stepResult.put("fullsTackTrace", exceptionAsString);
+                    failFlag = true;
                 } catch (NullPointerException npe) {
                     J++;
                     StringWriter sw = new StringWriter();
@@ -199,6 +209,7 @@ public class TestExecutor implements Runnable {
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Data not found. Please add data.");
                     stepResult.put("fullsTackTrace", exceptionAsString);
+                    failFlag = true;
                 } catch (FileNotFoundException fe) {
                     J++;
                     StringWriter sw = new StringWriter();
@@ -210,6 +221,7 @@ public class TestExecutor implements Runnable {
                     stepResult.put("errorMsg", "Please Enter valid directory path. " + fe.getMessage());
                     System.out.println("Please Enter valid directory path. " + fe.getMessage());
                     stepResult.put("fullStackTrace", exceptionAsString);
+                    failFlag = true;
                 } catch (Exception e) {
                     J++;
                     StringWriter sw = new StringWriter();
@@ -220,6 +232,7 @@ public class TestExecutor implements Runnable {
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Please check the steps.");
                     stepResult.put("fullStackTrace", exceptionAsString);
+                    failFlag = true;
                 }
                 long stopTimeStep = System.currentTimeMillis();
                 stepResult.put("endTime", dtf.format(LocalDateTime.now()));
@@ -228,6 +241,9 @@ public class TestExecutor implements Runnable {
                 // testResult.put(stepNumber + 1, stepResult);
                 stepsArray.add(stepResult);
                 stepNumber++;
+                if(failFlag==true){
+                    break;
+                }
             } else if (step.toString().toLowerCase().contains("collection:") | step.toString().toLowerCase().contains("collection :")) {
                 JSONArray groupSteps = new JSONArray();
                 try {
@@ -251,6 +267,7 @@ public class TestExecutor implements Runnable {
                     //testResult.put(stepNumber + 1, stepResult);
                     stepsArray.add(stepResult);
                     stepNumber++;
+                    failFlag = true;
                 }
 
                 stepsArray = new JSONArray();
@@ -276,6 +293,7 @@ public class TestExecutor implements Runnable {
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Please review steps. Alert is not display.");
                             groupResult.put("fullStackTrace", exceptionAsString);
+                            break;
                         } catch (NoSuchElementException NE) {
                             J++;
                             StringWriter sw = new StringWriter();
@@ -286,6 +304,7 @@ public class TestExecutor implements Runnable {
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Locator not find. Please add new locator or update the locator value.");
                             groupResult.put("fullStackTrace", exceptionAsString);
+                            break;
                         } catch (NullPointerException npe) {
                             J++;
                             StringWriter sw = new StringWriter();
@@ -296,6 +315,7 @@ public class TestExecutor implements Runnable {
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Data not found. Please add data.");
                             groupResult.put("fullsTackTrace", exceptionAsString);
+                            break;
                         } catch (FileNotFoundException fe) {
                             J++;
                             StringWriter sw = new StringWriter();
@@ -307,6 +327,7 @@ public class TestExecutor implements Runnable {
                             groupResult.put("errorMsg", "Please Enter valid directory path. " + fe.getMessage());
                             System.out.println("Please Enter valid directory path. " + fe.getMessage());
                             groupResult.put("fullStackTrace", exceptionAsString);
+                            break;
                         } catch (Exception e) {
                             J++;
                             StringWriter sw = new StringWriter();
@@ -317,6 +338,7 @@ public class TestExecutor implements Runnable {
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Please check the steps.");
                             groupResult.put("fullStackTrace", exceptionAsString);
+                            break;
                         }
                     } else if (groupStep.toString().toLowerCase().contains("verify:") | groupStep.toString().toLowerCase().contains("verify :")) {
                         try {
@@ -379,6 +401,9 @@ public class TestExecutor implements Runnable {
                     //testResult.put(stepNumber + 1, groupResult);
                     stepsArray.add(groupResult);
                     stepNumber++;
+                    if(failFlag==true){
+                        break;
+                    }
                 }
             }
         }
@@ -399,6 +424,7 @@ public class TestExecutor implements Runnable {
         testResult.put("tag", test.get("tag"));
         if (J >= 1) {
             testResult.put("status", "fail");
+            testResult.put("screenshot", stepParser.screenshot(driver,test.get("suiteName").toString(),test.get("testName").toString()));
         } else {
             testResult.put("status", "pass");
         }
