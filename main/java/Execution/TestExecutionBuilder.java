@@ -29,8 +29,6 @@ public class TestExecutionBuilder {
         TestExecutionBuilder builder = new TestExecutionBuilder();
         ReportParser report = new ReportParser();
         long startTimeSuite = System.currentTimeMillis();
-        JSONArray suits =new JSONArray();
-        builder.reportObj.put("suits",suits);
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
         builder.reportObj.put("startTime", dtf.format(LocalDateTime.now()));
@@ -42,18 +40,13 @@ public class TestExecutionBuilder {
         long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
 
         builder.reportObj.put("totalTimeTaken", elapsedTimeSuite);
-        System.out.println("Main : " + builder.mainObj);
-        System.out.println("Report : "+builder.reportObj);
-
+        //System.out.println("Main : " + builder.mainObj);
 
         DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
         report.generateReportDir();
-
-
         report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
-
-
+        System.out.println("Report : "+builder.reportObj);
     }
 
 
@@ -198,7 +191,7 @@ public class TestExecutionBuilder {
                 System.err.println("Please enter 'Tag' name.");
             } else {
                 parallelBuilder(buildExecutionQueueByTag());
-                report.reportForTag(mainObj);
+                report.newReport(mainObj, reportObj);
             }
         } catch (NullPointerException ne) {
             tagSuiteCount++;
@@ -213,7 +206,7 @@ public class TestExecutionBuilder {
                 System.err.println("Please enter 'suite' name.");
             } else {
                 parallelBuilder(buildExecutionQueueBySuite());
-                report.reportForSuit(mainObj);
+                report.newReport(mainObj, reportObj);
             }
         } catch (NullPointerException ne) {
             tagSuiteCount++;
@@ -223,5 +216,4 @@ public class TestExecutionBuilder {
             System.err.println("Please enter 'Tag name' or 'Suite name' to run test.");
         }
     }
-
 }
