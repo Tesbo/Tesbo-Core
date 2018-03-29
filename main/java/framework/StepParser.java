@@ -1,9 +1,16 @@
 package framework;
 
 import Selenium.Commands;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.Augmenter;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -428,4 +435,36 @@ public class StepParser {
         return Arrays.asList(numbers.trim().split(" ")).get(index);
     }
 
+    public String screenshot(WebDriver driver, String suitName, String testName){
+        generateReportDir();
+        String screenshotName = captureScreen(driver,suitName,testName);
+        System.out.println("Screenshot Name : "+screenshotName);
+        return screenshotName;
+    }
+
+    public void generateReportDir() {
+        File htmlReportMainDir = new File("./screenshots");
+
+        if (!htmlReportMainDir.exists()) {
+            htmlReportMainDir.mkdir();
+        }
+    }
+
+    public String captureScreen(WebDriver driver, String suitName, String testName){
+        String path;
+        try {
+            File filePath = new File("screenshots");
+            WebDriver augmentedDriver = new Augmenter().augment(driver);
+            File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+            //File source = ((TakesScreenshot)augmentedDriver).getScreenshotAs(OutputType.FILE);
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            path = filePath.getAbsolutePath()+"/" + (suitName.split(".s"))[0] +"_"+testName.replaceAll("\\s", "")+"_"+dtf.format(LocalDateTime.now())+".png";
+            System.out.println("path : "+path);
+            FileUtils.copyFile(scrFile, new File(path));
+        }
+        catch(IOException e) {
+            path = "Failed to capture screenshot: " + e.getMessage();
+        }
+        return path;
+    }
 }
