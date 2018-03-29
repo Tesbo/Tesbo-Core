@@ -1,6 +1,7 @@
 package Execution;
 
 import ReportBuilder.GetJsonData;
+import ReportBuilder.*;
 import framework.GetConfiguration;
 import framework.ReportParser;
 import framework.SuiteParser;
@@ -27,7 +28,7 @@ public class TestExecutionBuilder {
 
     public  void startExecution() throws Exception {
         TestExecutionBuilder builder = new TestExecutionBuilder();
-         ReportBuilder reportBuilder = new ReportBuilder();
+        ReportBuilder reportBuilder = new ReportBuilder();
         ReportParser report = new ReportParser();
         long startTimeSuite = System.currentTimeMillis();
         JSONArray suits =new JSONArray();
@@ -197,7 +198,7 @@ public class TestExecutionBuilder {
                 System.err.println("Please enter 'Tag' name.");
             } else {
                 parallelBuilder(buildExecutionQueueByTag());
-                report.reportForTag(mainObj);
+                report.newReport(mainObj, reportObj);
             }
         } catch (NullPointerException ne) {
             tagSuiteCount++;
@@ -212,7 +213,7 @@ public class TestExecutionBuilder {
                 System.err.println("Please enter 'suite' name.");
             } else {
                 parallelBuilder(buildExecutionQueueBySuite());
-                report.reportForSuit(mainObj);
+                report.newReport(mainObj, reportObj);
             }
         } catch (NullPointerException ne) {
             tagSuiteCount++;
@@ -222,5 +223,4 @@ public class TestExecutionBuilder {
             System.err.println("Please enter 'Tag name' or 'Suite name' to run test.");
         }
     }
-
 }

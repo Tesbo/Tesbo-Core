@@ -18,7 +18,7 @@ public class ReportBuilder {
     GetJsonData data = new GetJsonData();
 
     String buildHistory = new File(getBuildHistoryPath()).getAbsolutePath();
-    JSONArray dataArray = data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath());
+    JSONArray dataArray = null ;
 
     public void generatReport() {
 
@@ -26,7 +26,7 @@ public class ReportBuilder {
         System.out.println("Report Generating started");
         System.out.println("-----------------------------------------------------------------------");
 
-
+        dataArray = data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath());
         ReportBuilder builder = new ReportBuilder();
         builder.copyReportLibrary();
 
@@ -55,7 +55,7 @@ public class ReportBuilder {
         currentBuildResult = builder.generateBrowserWiseChartData(currentBuildResult);
         currentBuildResult = builder.generateDonutChartData(currentBuildResult);
         File currentBuildFile = new File("./htmlReport/currentBuildResult.html");
-  builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
+        builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
 
         System.out.println("-----------------------------------------------------------------------");
         System.out.println("Report Generated Sucessfully");
@@ -270,8 +270,14 @@ public class ReportBuilder {
         return sb;
     }
 
-    public StringBuffer generateLatestBuildResultData(StringBuffer sb) {
+    public static void main(String[] args) {
+        ReportBuilder builder = new ReportBuilder();
+        builder.generatReport();
+    }
 
+
+
+    public StringBuffer generateLatestBuildResultData(StringBuffer sb) {
 
         sb.append("\n" +
                 "<script>\n" +
@@ -282,7 +288,7 @@ public class ReportBuilder {
         for (int i = 0; i < 10; i++) {
             try {
 
-                JSONObject obj = (JSONObject) dataArray.get(i);
+                JSONObject obj =  (JSONObject) data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath()).get(i);
                 sb.append(" {y: '" + obj.get("name") + "', a: " + obj.get("totalPassed") + ", b: " + obj.get("totalFailed") + "},\n ");
 
             } catch (Exception e) {
@@ -314,7 +320,7 @@ public class ReportBuilder {
 
         for (int i = 0; i < 10; i++) {
             try {
-                JSONObject obj = (JSONObject) dataArray.get(i);
+                JSONObject obj =  (JSONObject) data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath()).get(i);
                 sb.append(" {y: '" + obj.get("buildRunDate") + "', a: " + obj.get("totalTimeTaken") + "},\n ");
 
             } catch (Exception e) {

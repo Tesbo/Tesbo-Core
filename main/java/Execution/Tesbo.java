@@ -8,6 +8,7 @@ public class Tesbo {
         try {
             builder.startExecution();
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
 

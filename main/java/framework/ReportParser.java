@@ -289,7 +289,7 @@ public class ReportParser {
         }
         newObj1.put("browser", newBrowserDataInArray);
         //System.out.println("newMainObj : "+newObj1);
-            //System.out.println("mainObj : "+mainObj);
+        //System.out.println("mainObj : "+mainObj);
         return newObj1;
 
     }
