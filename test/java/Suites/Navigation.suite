@@ -3,7 +3,7 @@ SuiteName: Navigation
 
 
 Test: Verify Navigation is Created
-#login #hg #group
+#hg #group
 
 Step: Open Url 'https://www.linkedin.com'
 Verify: @emailTextBox is display

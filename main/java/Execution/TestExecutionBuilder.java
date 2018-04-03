@@ -26,6 +26,30 @@ public class TestExecutionBuilder {
     public static JSONObject mainObj = new JSONObject();
     public static JSONObject reportObj = new JSONObject();
 
+    public static void main(String[] args) throws Exception {
+        TestExecutionBuilder builder = new TestExecutionBuilder();
+        ReportParser report = new ReportParser();
+        long startTimeSuite = System.currentTimeMillis();
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
+        builder.reportObj.put("startTime", dtf.format(LocalDateTime.now()));
+
+        builder.buildExecution();
+
+        long stopTimeSuite = System.currentTimeMillis();
+        builder.reportObj.put("endTime", dtf.format(LocalDateTime.now()));
+        long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
+
+        builder.reportObj.put("totalTimeTaken", elapsedTimeSuite);
+        //System.out.println("Main : " + builder.mainObj);
+
+        DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+        report.generateReportDir();
+        //report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
+        System.out.println("Report : "+builder.reportObj);
+    }
+
     public  void startExecution() throws Exception {
         TestExecutionBuilder builder = new TestExecutionBuilder();
         ReportBuilder reportBuilder = new ReportBuilder();
