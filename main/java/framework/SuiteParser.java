@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -33,19 +34,37 @@ public class SuiteParser {
     public JSONArray getSuites(String directory) throws IOException {
 
         JSONArray suiteFileList = new JSONArray();
-
+        boolean flag=false;
+        String file=null;
         try (Stream<Path> paths = Files.walk(Paths.get(directory))) {
 
             suiteFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
+            for(Object suitePath:suiteFileList) {
+                String[] suite=suitePath.toString().split("\\.");
+                if (suite.length == 2) {
+                    if (!suite[1].equalsIgnoreCase("suite")) {
+                        flag=true;
+                        if(file==null)
+                            file="'."+suite[1]+"'";
+                        else
+                            file+=", '."+suite[1]+"'";
+                    }
+                }
+            }
+            if(flag==true){
+                System.err.println(file+" file found");
+                throw (new NoSuchFileException(""));
+            }
         } catch (Exception e) {
-
-            System.out.println("Message : Please Enter valid directory path.");
-
-            System.out.println("'" + directory + "' no files found on your location.");
-
-            e.printStackTrace();
-
+            if(flag==true){
+                System.err.println("Message : Please create only '.suite' file in suite directory.");
+            }
+            else {
+                System.out.println("Message : Please Enter valid directory path.");
+                System.out.println("'" + directory + "' no files found on your location.");
+                e.printStackTrace();
+            }
             throw e;
         }
 
