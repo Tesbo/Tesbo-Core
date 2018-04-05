@@ -381,7 +381,7 @@ public class StepParser {
 
     public String parseElementName(String step) {
 
-        String[] stepWordList = step.split("\\s+");
+        String[] stepWordList = step.split(":|\\s+");
 
         String elementName = "";
 
