@@ -87,6 +87,7 @@ public class TestExecutor implements Runnable {
                 {
                     try {
                         driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
+                        System.out.println("Selenium Address : "+seleniumAddress);
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
@@ -104,6 +105,7 @@ public class TestExecutor implements Runnable {
                 {
                     try {
                         driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
+                        System.out.println("Selenium Address : "+seleniumAddress);
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
@@ -120,6 +122,7 @@ public class TestExecutor implements Runnable {
                 if(seleniumAddress!=null) {
                     try {
                         driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
+                        System.out.println("Selenium Address : "+seleniumAddress);
                     }
                     catch (MalformedURLException e) {
                         e.printStackTrace();
@@ -156,21 +159,14 @@ public class TestExecutor implements Runnable {
         SuiteParser parser = new SuiteParser();
         StepParser stepParser = new StepParser();
         VerifyParser verifyParser = new VerifyParser();
-
         Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
-
         SuiteParser suiteParser = new SuiteParser();
-
         int stepNumber = 0;
-
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
-
         long startTimeSuite = System.currentTimeMillis();
         testResult.put("startTime", dtf.format(LocalDateTime.now()));
         testResult.put("testName", test.get("testName").toString());
-
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
-        //System.out.println("Steps : " + steps);
         int J = 0;
         JSONArray stepsArray = new JSONArray();
         boolean failFlag = false;
@@ -184,7 +180,7 @@ public class TestExecutor implements Runnable {
                 try {
                     System.out.println(step);
                     stepParser.parseStep(driver, test.get("suiteName").toString(), step.toString());
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "pass");
                 } catch (NoAlertPresentException ae) {
                     J++;
@@ -192,7 +188,7 @@ public class TestExecutor implements Runnable {
                     ae.printStackTrace(new PrintWriter(sw));
                     ae.printStackTrace();
                     String exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Please review steps. Alert is not display.");
                     stepResult.put("fullStackTrace", exceptionAsString);
@@ -214,7 +210,7 @@ public class TestExecutor implements Runnable {
                     npe.printStackTrace(new PrintWriter(sw));
                     npe.printStackTrace();
                     String exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Data not found. Please add data.");
                     stepResult.put("fullsTackTrace", exceptionAsString);
@@ -225,7 +221,7 @@ public class TestExecutor implements Runnable {
                     fe.printStackTrace(new PrintWriter(sw));
                     fe.printStackTrace();
                     String exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Please Enter valid directory path. " + fe.getMessage());
                     System.out.println("Please Enter valid directory path. " + fe.getMessage());
@@ -237,7 +233,7 @@ public class TestExecutor implements Runnable {
                     e.printStackTrace(new PrintWriter(sw));
                     e.printStackTrace();
                     String exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Please check the steps.");
                     stepResult.put("fullStackTrace", exceptionAsString);
@@ -258,8 +254,8 @@ public class TestExecutor implements Runnable {
                 stepResult.put("stepIndex", stepNumber + 1);
                 try {
                     System.out.println(step.toString());
-                     verifyParser.parseVerify(driver, test.get("suiteName").toString(), step.toString());
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                    verifyParser.parseVerify(driver, test.get("suiteName").toString(), step.toString());
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "pass");
                 } catch (NoSuchElementException NE) {
                     J++;
@@ -267,7 +263,7 @@ public class TestExecutor implements Runnable {
                     NE.printStackTrace(new PrintWriter(sw));
                     NE.printStackTrace();
                     String exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "PLocator not find. Please add new locator or update the locator.");
                     stepResult.put("fullsTackTrace", exceptionAsString);
@@ -278,7 +274,7 @@ public class TestExecutor implements Runnable {
                     npe.printStackTrace(new PrintWriter(sw));
                     npe.printStackTrace();
                     String exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Data not found. Please add data.");
                     stepResult.put("fullsTackTrace", exceptionAsString);
@@ -289,7 +285,7 @@ public class TestExecutor implements Runnable {
                     fe.printStackTrace(new PrintWriter(sw));
                     fe.printStackTrace();
                     String exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Please Enter valid directory path. " + fe.getMessage());
                     System.out.println("Please Enter valid directory path. " + fe.getMessage());
@@ -301,7 +297,7 @@ public class TestExecutor implements Runnable {
                     e.printStackTrace(new PrintWriter(sw));
                     e.printStackTrace();
                     String exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Please check the steps.");
                     stepResult.put("fullStackTrace", exceptionAsString);
@@ -320,7 +316,7 @@ public class TestExecutor implements Runnable {
             } else if (step.toString().toLowerCase().contains("collection:") | step.toString().toLowerCase().contains("collection :")) {
                 JSONArray groupSteps = new JSONArray();
                 try {
-                     groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(step.toString()));
+                    groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(step.toString()));
                 } catch (Exception e) {
                     J++;
                     stepResult.put("startTime", dtf.format(LocalDateTime.now()));
@@ -329,7 +325,7 @@ public class TestExecutor implements Runnable {
                     e.printStackTrace(new PrintWriter(sw));
                     e.printStackTrace();
                     String exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                    stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Please enter valid collection name.");
                     stepResult.put("fullStackTrace", exceptionAsString);
@@ -354,7 +350,7 @@ public class TestExecutor implements Runnable {
                         try {
                             System.out.println(groupStep);
                             stepParser.parseStep(driver, test.get("suiteName").toString(), groupStep.toString());
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                            groupResult.put("steps", (((groupStep.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "pass");
                         } catch (NoAlertPresentException ae) {
                             J++;
@@ -362,7 +358,7 @@ public class TestExecutor implements Runnable {
                             ae.printStackTrace(new PrintWriter(sw));
                             ae.printStackTrace();
                             String exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                            groupResult.put("steps", (((groupStep.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Please review steps. Alert is not display.");
                             groupResult.put("fullStackTrace", exceptionAsString);
@@ -373,7 +369,7 @@ public class TestExecutor implements Runnable {
                             NE.printStackTrace(new PrintWriter(sw));
                             NE.printStackTrace();
                             String exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                            groupResult.put("steps", (((groupStep.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Locator not find. Please add new locator or update the locator value.");
                             groupResult.put("fullStackTrace", exceptionAsString);
@@ -384,7 +380,7 @@ public class TestExecutor implements Runnable {
                             npe.printStackTrace(new PrintWriter(sw));
                             npe.printStackTrace();
                             String exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                            groupResult.put("steps", (((groupStep.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Data not found. Please add data.");
                             groupResult.put("fullsTackTrace", exceptionAsString);
@@ -395,7 +391,7 @@ public class TestExecutor implements Runnable {
                             fe.printStackTrace(new PrintWriter(sw));
                             fe.printStackTrace();
                             String exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                            groupResult.put("steps", (((groupStep.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Please Enter valid directory path. " + fe.getMessage());
                             System.out.println("Please Enter valid directory path. " + fe.getMessage());
@@ -407,7 +403,7 @@ public class TestExecutor implements Runnable {
                             e.printStackTrace(new PrintWriter(sw));
                             e.printStackTrace();
                             String exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                            groupResult.put("steps", (((groupStep.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Please check the steps.");
                             groupResult.put("fullStackTrace", exceptionAsString);
@@ -417,7 +413,7 @@ public class TestExecutor implements Runnable {
                         try {
                             System.out.println(groupStep.toString());
                             verifyParser.parseVerify(driver, test.get("suiteName").toString(), groupStep.toString());
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                            groupResult.put("steps", (((groupStep.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "pass");
                         } catch (NoSuchElementException NE) {
                             J++;
@@ -425,7 +421,7 @@ public class TestExecutor implements Runnable {
                             NE.printStackTrace(new PrintWriter(sw));
                             NE.printStackTrace();
                             String exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                            groupResult.put("steps", (((groupStep.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "PLocator not find. Please add new locator or update the locator.");
                             groupResult.put("fullsTackTrace", exceptionAsString);
@@ -435,7 +431,7 @@ public class TestExecutor implements Runnable {
                             npe.printStackTrace(new PrintWriter(sw));
                             npe.printStackTrace();
                             String exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                            groupResult.put("steps", (((groupStep.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Data not found. Please add data.");
                             groupResult.put("fullsTackTrace", exceptionAsString);
@@ -445,7 +441,7 @@ public class TestExecutor implements Runnable {
                             fe.printStackTrace(new PrintWriter(sw));
                             fe.printStackTrace();
                             String exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                            groupResult.put("steps", (((groupStep.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Please Enter valid directory path. " + fe.getMessage());
                             System.out.println("Please Enter valid directory path. " + fe.getMessage());
@@ -456,22 +452,16 @@ public class TestExecutor implements Runnable {
                             e.printStackTrace(new PrintWriter(sw));
                             e.printStackTrace();
                             String exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
+                            groupResult.put("steps", (((groupStep.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Please check the steps.");
                             groupResult.put("fullStackTrace", exceptionAsString);
                         }
                     }
-                /*if (F >= 1) {
-                    stepResult.put("status", "fail");
-                } else {
-                    stepResult.put("status", "pass");
-                }*/
                     long stopTimeStep = System.currentTimeMillis();
                     groupResult.put("endTime", dtf.format(LocalDateTime.now()));
                     long elapsedTimeStep = stopTimeStep - startTimeStep;
                     groupResult.put("time", elapsedTimeStep);
-                    //testResult.put(stepNumber + 1, groupResult);
                     stepsArray.add(groupResult);
                     stepNumber++;
                     if(failFlag==true){
@@ -485,7 +475,6 @@ public class TestExecutor implements Runnable {
         testResult.put("endTime", dtf.format(LocalDateTime.now()));
         testResult.put("testStep", stepsArray);
         long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
-        //System.out.println(elapsedTimeSuite);
         testResult.put("totalTime", elapsedTimeSuite);
         testResult.put("suiteName", test.get("suiteName").toString());
         String browserName = caps.getBrowserName();
@@ -501,7 +490,6 @@ public class TestExecutor implements Runnable {
         } else {
             testResult.put("status", "pass");
         }
-        //System.out.println("Test Result : " + testResult.toString());
         return testResult;
     }
 
