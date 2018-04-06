@@ -9,7 +9,13 @@
       ]
     },
     "browser": [
-      "firefox","chrome"
+
+
+
+      
+"firefox",
+      "chrome"
+
     ],
     "parallel": {
       "status": true,

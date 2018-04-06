@@ -4,12 +4,11 @@ import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import javax.xml.bind.SchemaOutputResolver;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.Set;
 
 public class ReportBuilder {
@@ -22,13 +21,14 @@ public class ReportBuilder {
 
     public void generatReport() {
 
-        System.out.println("-----------------------------------------------------------------------");
+       System.out.println("-----------------------------------------------------------------------");
         System.out.println("Report Generating started");
         System.out.println("-----------------------------------------------------------------------");
 
         dataArray = data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath());
         ReportBuilder builder = new ReportBuilder();
-        builder.copyReportLibrary();
+        ReportLibraryFiles files = new ReportLibraryFiles();
+        files.createLibrary();
 
         StringBuffer indexfile = new StringBuffer();
         //index.html file generator
@@ -85,24 +85,35 @@ public class ReportBuilder {
             e.printStackTrace();
         }
 
-
     }
+        public void writeReportFile(String filePath, StringBuilder fileContent) {
 
-    public void copyReportLibrary() {
-        String source = "./ReportLib/";
-        File srcDir = new File(source);
+            BufferedWriter writer = null;
+            try {
+                writer = new BufferedWriter(new FileWriter(filePath, false), 8192 * 4);
+                writer.write(fileContent.toString() + "\n");
+                writer.close();
 
-        String destination = "./htmlReport/";
-        File destDir = new File(destination);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        try {
-            FileUtils.copyDirectory(srcDir, destDir);
-        } catch (IOException e) {
-            e.printStackTrace();
+
         }
 
 
-    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     public StringBuffer generateHeader(StringBuffer sb) {
 
