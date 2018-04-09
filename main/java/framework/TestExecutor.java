@@ -24,6 +24,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
 public class TestExecutor implements Runnable {
 
@@ -70,69 +73,41 @@ public class TestExecutor implements Runnable {
     public void beforeTest(String browserName) {
 
         GetConfiguration config = new GetConfiguration();
+        SeleniumAddress seleAdd=new SeleniumAddress();
+        DesiredCapabilities capability = null;
         String seleniumAddress=null;
-        try {
-             seleniumAddress=config.getSeleniumAddress();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+        ArrayList capabilities=null;
+        seleniumAddress=seleAdd.getSeleniumAddress();
+        if(seleAdd.IsCapabilities(browserName)) {
+            capabilities=seleAdd.getCapabilities(browserName);
         }
         try {
             if (browserName.equalsIgnoreCase("firefox")) {
-                DesiredCapabilities capability = null;
                 capability = DesiredCapabilities.firefox();
                 FirefoxDriverManager.getInstance().setup();
-                capability.setJavascriptEnabled(true);
-                if(seleniumAddress!=null)
-                {
-                    try {
-                        driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
-                        System.out.println("Selenium Address : "+seleniumAddress);
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
-                }else {
-                    driver = new FirefoxDriver(capability);
-                }
-                driver.manage().window().maximize();
+                driver = new FirefoxDriver();
             }
             if (browserName.equalsIgnoreCase("chrome")) {
-                DesiredCapabilities capability = null;
                 capability = DesiredCapabilities.chrome();
                 ChromeDriverManager.getInstance().setup();
-                capability.setJavascriptEnabled(true);
-                if(seleniumAddress!=null)
-                {
-                    try {
-                        driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
-                        System.out.println("Selenium Address : "+seleniumAddress);
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
-                }else {
-                    driver = new ChromeDriver(capability);
-                }
-                driver.manage().window().maximize();
+                driver = new ChromeDriver();
+
             }
             if (browserName.equalsIgnoreCase("ie")) {
-                DesiredCapabilities capability = null;
                 capability = DesiredCapabilities.internetExplorer();
                 InternetExplorerDriverManager.getInstance().setup();
-                capability.setJavascriptEnabled(true);
-                if(seleniumAddress!=null) {
-                    try {
-                        driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
-                        System.out.println("Selenium Address : "+seleniumAddress);
-                    }
-                    catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                else {
-                    driver = new InternetExplorerDriver(capability);
-                }
-                driver.manage().window().maximize();
+                driver = new InternetExplorerDriver();
             }
+
+            if(seleniumAddress!=null && capabilities!=null){
+                capability= seleAdd.setCapabilities(capabilities,capability);
+            }
+
+            if(seleniumAddress!=null)
+            {
+               driver=seleAdd.openRemoteBrowser(seleniumAddress,driver,capability);
+            }
+            driver.manage().window().maximize();
             try {
                 System.out.println(config.getBaseUrl().equals(""));
                 if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {
@@ -145,8 +120,6 @@ public class TestExecutor implements Runnable {
         catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
 
@@ -174,7 +147,8 @@ public class TestExecutor implements Runnable {
             JSONObject stepResult = new JSONObject();
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
-            if (step.toString().toLowerCase().contains("step:") | step.toString().toLowerCase().contains("step :")) {
+            //System.out.println("Trim : "+step.toString().replaceAll("\\s{2,}", " ").trim());
+            if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step :")) {
                 stepResult.put("startTime", dtf.format(LocalDateTime.now()));
                 stepResult.put("stepIndex", stepNumber + 1);
                 try {
@@ -249,7 +223,7 @@ public class TestExecutor implements Runnable {
                 if(failFlag==true){
                     break;
                 }
-            } else if (step.toString().toLowerCase().contains("verify:") | step.toString().toLowerCase().contains("verify :")) {
+            } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify :")) {
                 stepResult.put("startTime", dtf.format(LocalDateTime.now()));
                 stepResult.put("stepIndex", stepNumber + 1);
                 try {
@@ -313,7 +287,7 @@ public class TestExecutor implements Runnable {
                 if(failFlag==true){
                     break;
                 }
-            } else if (step.toString().toLowerCase().contains("collection:") | step.toString().toLowerCase().contains("collection :")) {
+            } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection :")) {
                 JSONArray groupSteps = new JSONArray();
                 try {
                     groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(step.toString()));
