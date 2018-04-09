@@ -1,6 +1,6 @@
 {
-  "SuiteDirectory": "E:/TesBo/tbo/tesbo-core/test/java/Suites",
-  "locatorDirectory": "E:/TesBo/tbo/tesbo-core/test/java/Locator",
+  "SuiteDirectory": "/Volumes/Viral/Projects/SelebotFinal/selebot/test/java/Suites",
+  "locatorDirectory": "/Volumes/Viral/Projects/SelebotFinal/selebot/test/java/Locator",
   "run": {
     "baseUrl": "https://vigoreport.io",
     "by": {
@@ -9,7 +9,13 @@
       ]
     },
     "browser": [
+
+
+
+
+"firefox",
       "chrome"
+
     ],
     "parallel": {
       "status": true,
