@@ -129,6 +129,7 @@ public class TestExecutor implements Runnable {
             {
                driver=seleAdd.openRemoteBrowser(seleniumAddress,driver,capability);
                 driver.manage().window().maximize();
+
             }
 
             try {
