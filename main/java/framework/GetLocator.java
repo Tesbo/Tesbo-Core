@@ -24,6 +24,7 @@ public class GetLocator {
         boolean flag=false;
         String file=null;
         try (Stream<Path> paths = Files.walk(Paths.get(config.getLocatorDirectory()))) {
+            System.out.println("Hello");
             locatorFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
             for(Object locatorPath:locatorFileList) {
@@ -43,7 +44,13 @@ public class GetLocator {
                 throw (new NoSuchFieldException());
             }
         } catch (Exception e) {
-            System.err.println("Message : Please create only '.json' file in Locator directory.");
+            if(flag==true) {
+                System.err.println("Message : Please create only '.json' file in Locator directory.");
+            }
+            else {
+                System.err.println("Message : Please Enter valid directory path for locators.");
+                e.printStackTrace();
+            }
             throw e;
         }
         Utility parser = new Utility();
