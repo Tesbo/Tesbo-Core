@@ -1,14 +1,14 @@
 package ReportBuilder;
 
-import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import javax.xml.bind.SchemaOutputResolver;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Scanner;
 import java.util.Set;
 
 public class ReportBuilder {
@@ -17,11 +17,16 @@ public class ReportBuilder {
     GetJsonData data = new GetJsonData();
 
     String buildHistory = new File(getBuildHistoryPath()).getAbsolutePath();
-    JSONArray dataArray = null ;
+    JSONArray dataArray = null;
+
+    public static void main(String[] args) {
+        ReportBuilder builder = new ReportBuilder();
+        builder.generatReport();
+    }
 
     public void generatReport() {
 
-       System.out.println("-----------------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------");
         System.out.println("Report Generating started");
         System.out.println("-----------------------------------------------------------------------");
 
@@ -86,34 +91,26 @@ public class ReportBuilder {
         }
 
     }
-        public void writeReportFile(String filePath, StringBuilder fileContent) {
 
-            BufferedWriter writer = null;
-            try {
-                writer = new BufferedWriter(new FileWriter(filePath, false), 8192 * 4);
-                writer.write(fileContent.toString() + "\n");
-                writer.close();
+    public void writeReportFile(String filePath, StringBuilder fileContent) {
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        BufferedWriter writer = null;
 
 
+
+
+
+        try {
+            writer = new BufferedWriter(new FileWriter(filePath, false), 8192 * 4);
+            writer.write(fileContent.toString() + "\n");
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+    }
 
     public StringBuffer generateHeader(StringBuffer sb) {
 
@@ -281,13 +278,6 @@ public class ReportBuilder {
         return sb;
     }
 
-    public static void main(String[] args) {
-        ReportBuilder builder = new ReportBuilder();
-        builder.generatReport();
-    }
-
-
-
     public StringBuffer generateLatestBuildResultData(StringBuffer sb) {
 
         sb.append("\n" +
@@ -299,7 +289,7 @@ public class ReportBuilder {
         for (int i = 0; i < 10; i++) {
             try {
 
-                JSONObject obj =  (JSONObject) data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath()).get(i);
+                JSONObject obj = (JSONObject) data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath()).get(i);
                 sb.append(" {y: '" + obj.get("name") + "', a: " + obj.get("totalPassed") + ", b: " + obj.get("totalFailed") + "},\n ");
 
             } catch (Exception e) {
@@ -331,7 +321,7 @@ public class ReportBuilder {
 
         for (int i = 0; i < 10; i++) {
             try {
-                JSONObject obj =  (JSONObject) data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath()).get(i);
+                JSONObject obj = (JSONObject) data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath()).get(i);
                 sb.append(" {y: '" + obj.get("buildRunDate") + "', a: " + obj.get("totalTimeTaken") + "},\n ");
 
             } catch (Exception e) {
@@ -584,6 +574,7 @@ public class ReportBuilder {
 
             browser = browserList.get(0).toString();
 
+            sb.append("<!-- Browser : " + browser + "-->");
 
             sb.append("<div style=\"border : 3px solid #E6E9ED ;padding:5px \">\n" +
                     "<a class=\"panel-heading\" role=\"tab\"\n" +
@@ -612,34 +603,43 @@ public class ReportBuilder {
             JSONArray suiteList = ((JSONArray) ((JSONObject) ((JSONObject) singleBrowser).get(browser)).get("suits"));
 
 
+            sb.append("<div id=\"" + browser + "\" class=\"panel-collapse collapse\">\n");
+
+
             for (Object suite : suiteList)
 
             {
 
 
+                sb.append("<!-- Suite : " + ((JSONObject) suite).get("suiteName") + "-->");
+
+
                 JSONArray testList = (JSONArray) ((JSONObject) suite).get("tests");
+                sb.append(
 
-
-                sb.append("<div id=\"" + browser + "\" class=\"panel-collapse collapse\">\n" +
                         "<div class=\"x_panel\" class=\"panel-collapse collapse\"\n" +
-                        "role=\"tabpanel\"\n" +
-                        "aria-labelledby=\"headingOne\">\n" +
-                        "<div class=\"x_title\">\n" +
-                        "<h2><i class=\"fa fa-align-left\"></i> " + ((JSONObject) suite).get("suiteName") + "\n" +
-                        "</h2>\n" +
-                        " <div class=\"nav navbar-right\" style=\"padding-top : 5px \">\n" +
-                        "<font>Total  : <b>" + (Integer.parseInt(((JSONObject) suite).get("totalPassed").toString()) + Integer.parseInt(((JSONObject) suite).get("totalFailed").toString())) + "</b> |</font>\n" +
-                        "<font>Passed : <b>" + ((JSONObject) suite).get("totalPassed") + "</b> |</font>\n" +
-                        "<font>Failed : <b>" + ((JSONObject) suite).get("totalFailed") + "</b>  |</font>\n" +
-                        " </div>\n" +
-                        "  <div class=\"clearfix\"></div>\n" +
-                        " </div>\n" +
-                        "                      ");
+                                "role=\"tabpanel\"\n" +
+                                "aria-labelledby=\"headingOne\">\n" +
+                                "<div class=\"x_title\">\n" +
+                                "<h2><i class=\"fa fa-align-left\"></i> " + ((JSONObject) suite).get("suiteName") + "\n" +
+                                "</h2>\n" +
+                                " <div class=\"nav navbar-right\" style=\"padding-top : 5px \">\n" +
+                                "<font>Total  : <b>" + (Integer.parseInt(((JSONObject) suite).get("totalPassed").toString()) + Integer.parseInt(((JSONObject) suite).get("totalFailed").toString())) + "</b> |</font>\n" +
+                                "<font>Passed : <b>" + ((JSONObject) suite).get("totalPassed") + "</b> |</font>\n" +
+                                "<font>Failed : <b>" + ((JSONObject) suite).get("totalFailed") + "</b>  |</font>\n" +
+                                " </div>\n" +
+                                "  <div class=\"clearfix\"></div>\n" +
+                                " </div>\n" +
+                                "                      ");
 
                 sb.append("<div class=\"x_content\">\n" +
                         "\n");
 
                 for (Object test : testList) {
+
+
+                    sb.append("<!-- test : " + test + "-->");
+
 
                     JSONObject testDetails = (JSONObject) test;
 
@@ -737,6 +737,10 @@ public class ReportBuilder {
 
                     for (Object step : stepList) {
 
+
+                        sb.append("<!-- Step : " + step + "-->");
+
+
                         JSONObject stepDetails = (JSONObject) step;
                         sb.append(" <tr>\n" +
                                 " <th scope=\"row\">" + stepDetails.get("stepIndex") + "</th>\n" +
@@ -780,8 +784,10 @@ public class ReportBuilder {
                                         "\n");
 
                     }
+
+
                     sb.append(
-                            "</div>\n" +
+                                    "</div>\n" +
 
                                     "</div>\n" +
                                     "</div>\n");
@@ -797,13 +803,13 @@ public class ReportBuilder {
 
             //array of the all the tests
 
-            sb.append("</div></div>\n" +
+            sb.append("<div></div></div>\n" +
                     " </div>\n" +
-                    "</div><br>\n");
+                    "<br>\n");
 
 
         }
-
+sb.append("<div>");
 
         return sb;
     }
