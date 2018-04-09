@@ -3,6 +3,7 @@ package framework;
 import Execution.TestExecutionBuilder;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
+import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
 import io.github.bonigarcia.wdm.OperaDriverManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,11 +14,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -29,44 +33,116 @@ public class TestExecutor implements Runnable {
     public WebDriver driver;
     JSONObject test;
 
+    public static void main(String[] args) throws Exception {
+        TestExecutionBuilder builder = new TestExecutionBuilder();
+        ReportParser report = new ReportParser();
+        long startTimeSuite = System.currentTimeMillis();
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
+        builder.reportObj.put("startTime", dtf.format(LocalDateTime.now()));
+
+        builder.buildExecution();
+
+        long stopTimeSuite = System.currentTimeMillis();
+        builder.reportObj.put("endTime", dtf.format(LocalDateTime.now()));
+        long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
+
+        builder.reportObj.put("totalTimeTaken", elapsedTimeSuite);
+        //System.out.println("Main : " + builder.mainObj);
+
+        DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+        report.generateReportDir();
+        //report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
+        System.out.println("Report : "+builder.reportObj);
+    }
+
     public TestExecutor(JSONObject test) {
         this.test = test;
     }
 
+    /**
+     * @auther :
+     * @lastModifiedBy: Ankit Mistry
+     *
+     * @param browserName
+     */
     public void beforeTest(String browserName) {
 
         GetConfiguration config = new GetConfiguration();
-
+        String seleniumAddress=null;
+        try {
+             seleniumAddress=config.getSeleniumAddress();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         try {
             if (browserName.equalsIgnoreCase("firefox")) {
+                DesiredCapabilities capability = null;
+                capability = DesiredCapabilities.firefox();
                 FirefoxDriverManager.getInstance().setup();
-                driver = new FirefoxDriver();
-            }
-            if (browserName.equalsIgnoreCase("chrome")) {
-
-                ChromeDriverManager.getInstance().setup();
-
-                driver = new ChromeDriver();
+                capability.setJavascriptEnabled(true);
+                if(seleniumAddress!=null)
+                {
+                    try {
+                        driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
+                        System.out.println("Selenium Address : "+seleniumAddress);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    driver = new FirefoxDriver(capability);
+                }
                 driver.manage().window().maximize();
             }
-
-
-            if (browserName.equalsIgnoreCase("ie")) {
-                OperaDriverManager.getInstance().setup();
-                driver = new InternetExplorerDriver();
+            if (browserName.equalsIgnoreCase("chrome")) {
+                DesiredCapabilities capability = null;
+                capability = DesiredCapabilities.chrome();
+                ChromeDriverManager.getInstance().setup();
+                capability.setJavascriptEnabled(true);
+                if(seleniumAddress!=null)
+                {
+                    try {
+                        driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
+                        System.out.println("Selenium Address : "+seleniumAddress);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    driver = new ChromeDriver(capability);
+                }
+                driver.manage().window().maximize();
             }
-
+            if (browserName.equalsIgnoreCase("ie")) {
+                DesiredCapabilities capability = null;
+                capability = DesiredCapabilities.internetExplorer();
+                InternetExplorerDriverManager.getInstance().setup();
+                capability.setJavascriptEnabled(true);
+                if(seleniumAddress!=null) {
+                    try {
+                        driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
+                        System.out.println("Selenium Address : "+seleniumAddress);
+                    }
+                    catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    driver = new InternetExplorerDriver(capability);
+                }
+                driver.manage().window().maximize();
+            }
             try {
                 System.out.println(config.getBaseUrl().equals(""));
                 if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {
                     driver.get(config.getBaseUrl());
-                } else {
                 }
-            } catch (org.openqa.selenium.WebDriverException e) {
+                else { }
             }
-
-
-        } catch (Exception e) {
+            catch (org.openqa.selenium.WebDriverException e) { }
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -83,21 +159,14 @@ public class TestExecutor implements Runnable {
         SuiteParser parser = new SuiteParser();
         StepParser stepParser = new StepParser();
         VerifyParser verifyParser = new VerifyParser();
-
         Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
-
         SuiteParser suiteParser = new SuiteParser();
-
         int stepNumber = 0;
-
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
-
         long startTimeSuite = System.currentTimeMillis();
         testResult.put("startTime", dtf.format(LocalDateTime.now()));
         testResult.put("testName", test.get("testName").toString());
-
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
-        //System.out.println("Steps : " + steps);
         int J = 0;
         JSONArray stepsArray = new JSONArray();
         boolean failFlag = false;
@@ -185,7 +254,7 @@ public class TestExecutor implements Runnable {
                 stepResult.put("stepIndex", stepNumber + 1);
                 try {
                     System.out.println(step.toString());
-                     verifyParser.parseVerify(driver, test.get("suiteName").toString(), step.toString());
+                    verifyParser.parseVerify(driver, test.get("suiteName").toString(), step.toString());
                     stepResult.put("steps", (((step.toString().split(": "))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "pass");
                 } catch (NoSuchElementException NE) {
@@ -247,7 +316,7 @@ public class TestExecutor implements Runnable {
             } else if (step.toString().toLowerCase().contains("collection:") | step.toString().toLowerCase().contains("collection :")) {
                 JSONArray groupSteps = new JSONArray();
                 try {
-                     groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(step.toString()));
+                    groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(step.toString()));
                 } catch (Exception e) {
                     J++;
                     stepResult.put("startTime", dtf.format(LocalDateTime.now()));
@@ -389,16 +458,10 @@ public class TestExecutor implements Runnable {
                             groupResult.put("fullStackTrace", exceptionAsString);
                         }
                     }
-                /*if (F >= 1) {
-                    stepResult.put("status", "fail");
-                } else {
-                    stepResult.put("status", "pass");
-                }*/
                     long stopTimeStep = System.currentTimeMillis();
                     groupResult.put("endTime", dtf.format(LocalDateTime.now()));
                     long elapsedTimeStep = stopTimeStep - startTimeStep;
                     groupResult.put("time", elapsedTimeStep);
-                    //testResult.put(stepNumber + 1, groupResult);
                     stepsArray.add(groupResult);
                     stepNumber++;
                     if(failFlag==true){
@@ -412,7 +475,6 @@ public class TestExecutor implements Runnable {
         testResult.put("endTime", dtf.format(LocalDateTime.now()));
         testResult.put("testStep", stepsArray);
         long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
-        //System.out.println(elapsedTimeSuite);
         testResult.put("totalTime", elapsedTimeSuite);
         testResult.put("suiteName", test.get("suiteName").toString());
         String browserName = caps.getBrowserName();
@@ -428,7 +490,6 @@ public class TestExecutor implements Runnable {
         } else {
             testResult.put("status", "pass");
         }
-        //System.out.println("Test Result : " + testResult.toString());
         return testResult;
     }
 
