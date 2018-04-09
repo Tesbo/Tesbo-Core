@@ -1,6 +1,8 @@
 package framework;
 
 import Execution.TestExecutionBuilder;
+import io.appium.java_client.MobileElement;
+import io.appium.java_client.android.AndroidDriver;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
@@ -27,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class TestExecutor implements Runnable {
 
@@ -34,6 +37,8 @@ public class TestExecutor implements Runnable {
     public JSONObject testResult = new JSONObject();
     public JSONObject suiteResult = new JSONObject();
     public WebDriver driver;
+    //public AndroidDriver driver;
+
     JSONObject test;
 
     public static void main(String[] args) throws Exception {
@@ -86,18 +91,35 @@ public class TestExecutor implements Runnable {
                 capability = DesiredCapabilities.firefox();
                 FirefoxDriverManager.getInstance().setup();
                 driver = new FirefoxDriver();
+                driver.manage().window().maximize();
             }
             if (browserName.equalsIgnoreCase("chrome")) {
                 capability = DesiredCapabilities.chrome();
                 ChromeDriverManager.getInstance().setup();
                 driver = new ChromeDriver();
+                driver.manage().window().maximize();
 
             }
             if (browserName.equalsIgnoreCase("ie")) {
                 capability = DesiredCapabilities.internetExplorer();
                 InternetExplorerDriverManager.getInstance().setup();
                 driver = new InternetExplorerDriver();
+                driver.manage().window().maximize();
             }
+            if (browserName.equalsIgnoreCase("android")) {
+                capability =new DesiredCapabilities();
+                if(capabilities!=null){
+                    capability= seleAdd.setCapabilities(capabilities,capability);
+                }
+                try {
+                    driver = new AndroidDriver(new URL("http://0.0.0.0:4723/wd/hub"), capability);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+
+                driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+            }
+
 
             if(seleniumAddress!=null && capabilities!=null){
                 capability= seleAdd.setCapabilities(capabilities,capability);
@@ -106,8 +128,9 @@ public class TestExecutor implements Runnable {
             if(seleniumAddress!=null)
             {
                driver=seleAdd.openRemoteBrowser(seleniumAddress,driver,capability);
+                driver.manage().window().maximize();
             }
-            driver.manage().window().maximize();
+
             try {
                 System.out.println(config.getBaseUrl().equals(""));
                 if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {
