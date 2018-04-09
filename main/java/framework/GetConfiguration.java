@@ -24,9 +24,26 @@ public class GetConfiguration {
 
     public ArrayList<String> getBrowsers() throws Exception {
         Utility parser = new Utility();
-        return (JSONArray) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("browser");
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        JSONObject browser = (JSONObject) run.get("browser");
+        return (JSONArray) browser.get("name");
     }
 
+    public JSONObject getCapabilities() throws Exception {
+        Utility parser = new Utility();
+        JSONObject capabilities =null;
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        JSONObject browser = (JSONObject) run.get("browser");
+        capabilities = (JSONObject) browser.get("capabilities");
+
+        if(capabilities==null||capabilities.equals(""))
+            return  null;
+        else
+            return (JSONObject) browser.get("capabilities");
+
+    }
 
     public ArrayList<String> getTags() throws Exception {
         Utility parser = new Utility();
@@ -34,6 +51,21 @@ public class GetConfiguration {
         JSONObject run = (JSONObject) main.get("run");
         JSONObject by = (JSONObject) run.get("by");
         return (JSONArray) by.get("tag");
+    }
+
+    public String getSeleniumAddress() throws Exception {
+        Utility parser = new Utility();
+        String seleniumAddress =null;
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        try {
+             seleniumAddress = run.get("seleniumAddress").toString();
+
+        }catch (Exception e){}
+        if(seleniumAddress==null||seleniumAddress.equals(""))
+            return  null;
+        else
+            return run.get("seleniumAddress").toString();
     }
 
     public ArrayList<String> getSuiteName() throws Exception {
