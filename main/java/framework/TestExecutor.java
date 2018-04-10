@@ -3,6 +3,7 @@ package framework;
 import Execution.TestExecutionBuilder;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSDriver;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
@@ -35,9 +36,7 @@ public class TestExecutor implements Runnable {
 
 
     public JSONObject testResult = new JSONObject();
-    public JSONObject suiteResult = new JSONObject();
     public WebDriver driver;
-    //public AndroidDriver driver;
 
     JSONObject test;
 
@@ -78,13 +77,12 @@ public class TestExecutor implements Runnable {
     public void beforeTest(String browserName) {
 
         GetConfiguration config = new GetConfiguration();
-        SeleniumAddress seleAdd=new SeleniumAddress();
         DesiredCapabilities capability = null;
         String seleniumAddress=null;
         ArrayList capabilities=null;
-        seleniumAddress=seleAdd.getSeleniumAddress();
-        if(seleAdd.IsCapabilities(browserName)) {
-            capabilities=seleAdd.getCapabilities(browserName);
+        seleniumAddress=getSeleniumAddress();
+        if(IsCapabilities(browserName)) {
+            capabilities=getCapabilities(browserName);
         }
         try {
             if (browserName.equalsIgnoreCase("firefox")) {
@@ -106,38 +104,19 @@ public class TestExecutor implements Runnable {
                 driver = new InternetExplorerDriver();
                 driver.manage().window().maximize();
             }
-            if (browserName.equalsIgnoreCase("android")) {
-                capability =new DesiredCapabilities();
-                if(capabilities!=null){
-                    capability= seleAdd.setCapabilities(capabilities,capability);
-                }
-                try {
-                    driver = new AndroidDriver(new URL("http://0.0.0.0:4723/wd/hub"), capability);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-
-                driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-            }
-
-
             if(seleniumAddress!=null && capabilities!=null){
-                capability= seleAdd.setCapabilities(capabilities,capability);
-            }
 
-            if(seleniumAddress!=null)
-            {
-               driver=seleAdd.openRemoteBrowser(seleniumAddress,driver,capability);
+                capability= setCapabilities(capabilities,capability);
+            }
+            if(seleniumAddress!=null) {
+               driver=openRemoteBrowser(driver,capability,seleniumAddress);
                 driver.manage().window().maximize();
-
             }
-
             try {
                 System.out.println(config.getBaseUrl().equals(""));
                 if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {
                     driver.get(config.getBaseUrl());
                 }
-                else { }
             }
             catch (org.openqa.selenium.WebDriverException e) { }
         }
@@ -516,5 +495,107 @@ public class TestExecutor implements Runnable {
 
         //System.out.println("run test : " + builder.mainObj);
     }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param browserName
+     * @return
+     */
+    public boolean IsCapabilities(String browserName) {
+        GetConfiguration config = new GetConfiguration();
+        JSONObject capabilities = null;
+        boolean browser = false;
+        try {
+            capabilities = config.getCapabilities();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (capabilities != null) {
+            Set<String> browserCaps = (Set<String>) capabilities.keySet();
+            for (String browserCap : browserCaps) {
+                if (browserCap.equalsIgnoreCase(browserName)) {
+                    if (((ArrayList<String>) capabilities.get(browserCap)).size() == 0)
+                        browser = false;
+                    else
+                        browser = true;
+                }
+            }
+        }
+        return browser;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public String getSeleniumAddress() {
+        GetConfiguration config = new GetConfiguration();
+        String seleniumAddress=null;
+        try {
+            seleniumAddress=config.getSeleniumAddress();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return seleniumAddress;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param browserName
+     * @return
+     */
+    public ArrayList<String> getCapabilities(String browserName) {
+        GetConfiguration config = new GetConfiguration();
+        JSONObject capabilities=null;
+        try {
+            capabilities=config.getCapabilities();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        ArrayList<String> capabilitieList= (ArrayList<String>) capabilities.get(browserName);
+
+        return capabilitieList;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param Capabilities
+     * @param capability
+     * @return
+     */
+    public DesiredCapabilities setCapabilities(ArrayList<String> Capabilities,DesiredCapabilities capability) {
+        for(Object cap:Capabilities) {
+            JSONObject objCap= (JSONObject) cap;
+            Set capKey=objCap.keySet();
+            Collection capValue= objCap.values();
+            capability.setCapability(capKey.iterator().next().toString(),capValue.iterator().next());
+        }
+        return capability;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param seleniumAddress
+     * @param driver
+     * @param capability
+     * @return
+     */
+    public WebDriver openRemoteBrowser(WebDriver driver,DesiredCapabilities capability,String seleniumAddress) {
+        try {
+            driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
+            System.out.println("Selenium Address : "+seleniumAddress);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return driver;
+    }
+
 
 }
