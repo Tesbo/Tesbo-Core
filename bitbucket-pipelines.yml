@@ -13,5 +13,5 @@ pipelines:
         script: # Modify the commands below to build your repository.
           - mvn -B verify # -B batch mode makes Maven less verbose
           - mvn package
-          - curl -X POST "https://${govira:bQfgUCbgVVV24JHnNfSA}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"target/tesbo.jar"
+          - curl -X POST "https://${govira:bQfgUCbgVVV24JHnNfSA}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"target/tesbo-0.0.1.jar"
 
