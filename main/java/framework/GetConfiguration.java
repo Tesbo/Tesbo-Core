@@ -53,6 +53,11 @@ public class GetConfiguration {
         return (JSONArray) by.get("tag");
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
     public String getSeleniumAddress() throws Exception {
         Utility parser = new Utility();
         String seleniumAddress =null;
@@ -65,8 +70,9 @@ public class GetConfiguration {
         if(seleniumAddress==null||seleniumAddress.equals(""))
             return  null;
         else
-            return run.get("seleniumAddress").toString();
+            return seleniumAddress;
     }
+
 
     public ArrayList<String> getSuiteName() throws Exception {
         Utility parser = new Utility();
