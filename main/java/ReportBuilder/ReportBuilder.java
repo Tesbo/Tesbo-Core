@@ -1,5 +1,6 @@
 package ReportBuilder;
 
+import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -18,6 +19,7 @@ public class ReportBuilder {
 
     String buildHistory = new File(getBuildHistoryPath()).getAbsolutePath();
     JSONArray dataArray = null;
+    Logger logger = new Logger();
 
     public static void main(String[] args) {
         ReportBuilder builder = new ReportBuilder();
@@ -26,9 +28,9 @@ public class ReportBuilder {
 
     public void generatReport() {
 
-        System.out.println("-----------------------------------------------------------------------");
-        System.out.println("Report Generating started");
-        System.out.println("-----------------------------------------------------------------------");
+        logger.titleLog("-----------------------------------------------------------------------");
+        logger.titleLog("Report Generating started");
+       logger.titleLog("-----------------------------------------------------------------------");
 
         dataArray = data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath());
         ReportBuilder builder = new ReportBuilder();

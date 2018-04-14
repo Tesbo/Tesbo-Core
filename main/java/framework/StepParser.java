@@ -1,6 +1,7 @@
 package framework;
 
 import Selenium.Commands;
+import logger.Logger;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.OutputType;
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class StepParser {
 
 
+    Logger logger = new Logger();
     public static void main(String[] args) {
         StepParser parser = new StepParser();
 
@@ -29,24 +31,25 @@ public class StepParser {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
+        logger.stepLog(step);
 
         //Clicks
         if (step.toLowerCase().contains("click")) {
             System.out.println(parseElementName(step));
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
-            System.out.println("Step Passed");
+            logger.testPassed();
         }
 
         //Sendkeys
         if (step.toLowerCase().contains("enter")) {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(step));
-            System.out.println("Step Passed");
+            logger.testPassed();
         }
 
         // Get URL
         if (step.toLowerCase().contains("url")) {
             driver.get(parseTextToEnter(step));
-            System.out.println("Step Passed");
+            logger.testPassed();
         }
 
         //Switch
@@ -77,7 +80,7 @@ public class StepParser {
         //Clear
         if (step.toLowerCase().contains("clear")) {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
-            System.out.println("Step Passed");
+            logger.testPassed();
         }
 
 

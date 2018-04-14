@@ -6,6 +6,7 @@ import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
 import io.github.bonigarcia.wdm.OperaDriverManager;
+import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.Capabilities;
@@ -37,6 +38,8 @@ public class TestExecutor implements Runnable {
     public WebDriver driver;
 
     JSONObject test;
+
+    Logger logger = new Logger();
 
     public static void main(String[] args) throws Exception {
         TestExecutionBuilder builder = new TestExecutionBuilder();
@@ -145,6 +148,9 @@ public class TestExecutor implements Runnable {
         long startTimeSuite = System.currentTimeMillis();
         testResult.put("startTime", dtf.format(LocalDateTime.now()));
         testResult.put("testName", test.get("testName").toString());
+
+        logger.testLog("Test :" + test.get("testName").toString());
+
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
         int J = 0;
         JSONArray stepsArray = new JSONArray();
