@@ -1,9 +1,7 @@
 package framework;
 
 import Execution.TestExecutionBuilder;
-import io.appium.java_client.MobileElement;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.ios.IOSDriver;
+
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
@@ -86,41 +84,38 @@ public class TestExecutor implements Runnable {
         }
         try {
 
+
+            if(seleniumAddress ==null)
+            {
                 if (browserName.equalsIgnoreCase("firefox")) {
-                    capability = DesiredCapabilities.firefox();
                     FirefoxDriverManager.getInstance().setup();
+                    System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE,"true");
+                    System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
                     if(seleniumAddress==null) {
                         driver = new FirefoxDriver();
-                        driver.manage().window().maximize();
                     }
                 }
                 if (browserName.equalsIgnoreCase("chrome")) {
-                    System.out.println("Hello");
-                    capability = DesiredCapabilities.chrome();
                     ChromeDriverManager.getInstance().setup();
                     if(seleniumAddress==null) {
                         driver = new ChromeDriver();
-                        driver.manage().window().maximize();
                     }
-
                 }
                 if (browserName.equalsIgnoreCase("ie")) {
-                    capability = DesiredCapabilities.internetExplorer();
                     InternetExplorerDriverManager.getInstance().setup();
                     if(seleniumAddress==null) {
                         driver = new InternetExplorerDriver();
-                        driver.manage().window().maximize();
                     }
                 }
 
-            if(seleniumAddress!=null && capabilities!=null){
-
+            }else {
                 capability= setCapabilities(capabilities,capability);
+                driver=openRemoteBrowser(driver,capability,seleniumAddress);
             }
-            if(seleniumAddress!=null) {
-               driver=openRemoteBrowser(driver,capability,seleniumAddress);
-                driver.manage().window().maximize();
-            }
+
+
+            driver.manage().window().maximize();
+
             try {
                 System.out.println(config.getBaseUrl().equals(""));
                 if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {

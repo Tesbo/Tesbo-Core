@@ -113,11 +113,6 @@ public class ReportLibraryFiles {
                 e.printStackTrace();
             }
 
-        try {
-            System.out.println(in.read());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();
@@ -127,7 +122,6 @@ public class ReportLibraryFiles {
 
             br = new BufferedReader(new InputStreamReader(in));
             while ((line = br.readLine()) != null) {
-                System.out.println(line+"\n");
                 sb.append(line+"\n");
             }
 
