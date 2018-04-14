@@ -194,9 +194,7 @@ public class GetJsonData {
 
     public int getCurrentBuildPassed(String dir) {
 
-        System.out.println(dir);
         File currentBuildReport = getLastModifiedJsonFile(dir);
-        System.out.println(currentBuildReport.getAbsolutePath());
         JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
         int total = Integer.parseInt(parser.get("totalPassed").toString());
 

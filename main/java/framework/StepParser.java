@@ -401,18 +401,6 @@ public class StepParser {
     public String parseTextToEnter(String step) {
         String textToEnter = "";
 
-      /*  String[] stepWordList = step.split("\\s+");
-
-        for (String word : stepWordList) {
-
-            if (word.contains("'")) {
-                int length = word.length() - 1;
-                textToEnter = word.substring(1, length);
-            }
-
-        }
-*/
-
         int startPoint = 0;
         int endPoint = 0;
 
@@ -433,8 +421,6 @@ public class StepParser {
 
         //extracting string
         numbers = step.replaceAll("[^-?0-9]+", " ");
-
-        //System.out.println("Number is: " + Arrays.asList(numbers.trim().split(" ")).get(index));
 
         return Arrays.asList(numbers.trim().split(" ")).get(index);
     }
@@ -460,7 +446,6 @@ public class StepParser {
             File filePath = new File("screenshots");
             WebDriver augmentedDriver = new Augmenter().augment(driver);
             File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-            //File source = ((TakesScreenshot)augmentedDriver).getScreenshotAs(OutputType.FILE);
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
             path = filePath.getAbsolutePath()+"/" + (suitName.split(".s"))[0] +"_"+testName.replaceAll("\\s", "")+"_"+dtf.format(LocalDateTime.now())+".png";
             System.out.println("path : "+path);

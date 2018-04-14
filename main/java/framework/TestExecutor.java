@@ -117,7 +117,6 @@ public class TestExecutor implements Runnable {
             driver.manage().window().maximize();
 
             try {
-                System.out.println(config.getBaseUrl().equals(""));
                 if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {
                     driver.get(config.getBaseUrl());
                 }
@@ -158,12 +157,10 @@ public class TestExecutor implements Runnable {
             JSONObject stepResult = new JSONObject();
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
-            //System.out.println("Trim : "+step.toString().replaceAll("\\s{2,}", " ").trim());
             if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step :")) {
                 stepResult.put("startTime", dtf.format(LocalDateTime.now()));
                 stepResult.put("stepIndex", stepNumber + 1);
                 try {
-                    System.out.println(step);
                     stepParser.parseStep(driver, test, step.toString());
                     stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "pass");
@@ -192,7 +189,6 @@ public class TestExecutor implements Runnable {
                 stepResult.put("startTime", dtf.format(LocalDateTime.now()));
                 stepResult.put("stepIndex", stepNumber + 1);
                 try {
-                    System.out.println(step.toString());
                     verifyParser.parseVerify(driver, test.get("suiteName").toString(), step.toString());
                     stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "pass");
@@ -351,7 +347,6 @@ public class TestExecutor implements Runnable {
                         }
                     } else if (groupStep.toString().toLowerCase().contains("verify:") | groupStep.toString().toLowerCase().contains("verify :")) {
                         try {
-                            System.out.println(groupStep.toString());
                             verifyParser.parseVerify(driver, test.get("suiteName").toString(), groupStep.toString());
                             groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "pass");
@@ -456,9 +451,7 @@ public class TestExecutor implements Runnable {
             JSONArray test = (JSONArray) builder.mainObj.get("testCase");
             test.add(testResult);
         }
-
-        //System.out.println("run test : " + builder.mainObj);
-    }
+   }
 
     /**
      * @auther : Ankit Mistry
@@ -554,8 +547,7 @@ public class TestExecutor implements Runnable {
     public WebDriver openRemoteBrowser(WebDriver driver,DesiredCapabilities capability,String seleniumAddress) {
         try {
             driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
-            System.out.println("Selenium Address : "+seleniumAddress);
-        } catch (MalformedURLException e) {
+       } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         return driver;

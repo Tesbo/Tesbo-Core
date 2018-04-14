@@ -24,7 +24,7 @@ public class GetLocator {
         boolean flag=false;
         String file=null;
         try (Stream<Path> paths = Files.walk(Paths.get(config.getLocatorDirectory()))) {
-            System.out.println("Hello");
+
             locatorFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
             for(Object locatorPath:locatorFileList) {

@@ -42,14 +42,12 @@ public class Commands {
         WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
         pause(3);
         try {
-            //System.out.println("Inside CSS");
 
             element = driver.findElement(By.cssSelector(elementvalue));
 
         } catch (NoSuchElementException css) {
 
             try {
-                //System.out.println("Inside id");
                 element = driver.findElement(By.id(elementvalue));
 
             } catch (NoSuchElementException id) {
@@ -74,9 +72,9 @@ public class Commands {
                                 } catch (Exception linkText) {
                                     try {
                                         element = driver.findElement(By.partialLinkText(elementvalue));
-                                    } catch (Exception partialLinkText) {
+                                    } catch (NoSuchElementException e) {
                                         System.out.println("Please enter valid locator value");
-                                        throw partialLinkText;
+                                        throw  e;
                                     }
                                 }
 

@@ -74,7 +74,6 @@ public class SeleniumAddress {
     public WebDriver openRemoteBrowser(String seleniumAddress,WebDriver driver,DesiredCapabilities capability) {
         try {
             driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
-            System.out.println("Selenium Address : "+seleniumAddress);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

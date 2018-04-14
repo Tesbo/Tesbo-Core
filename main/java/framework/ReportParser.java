@@ -87,7 +87,6 @@ public class ReportParser {
 
 
         } catch (Exception e) {
-            System.out.println("in exception");
             e.printStackTrace();
             throw e;
         }
@@ -119,7 +118,6 @@ public class ReportParser {
             Object obj = parser.parse(new FileReader("C:\\Users\\jsbot\\Desktop\\buildResult_4.json"));
 
             JSONObject jsonObject = (JSONObject) obj;
-            //System.out.println(jsonObject);
             return jsonObject;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -146,56 +144,35 @@ public class ReportParser {
 
 
             JSONObject suiteResult = new JSONObject();
-            /*for(Object suitName : suite){
-                System.out.println();
-            }*/
-            //System.out.println(testData.size());
-            //System.out.println(suitename.get(j));
-            //System.out.println("Ros : "+mainObject.get(suitename.get(j)));
             if ((mainObject.get(suitename.get(j))) != null) {
 
-                //System.out.println("Roshan : "+mainObject.get(suitename.get(j)));
 
                 JSONObject suitData = (JSONObject) mainObject.get(suitename.get(j) + "firefox");
-                System.out.println("suit Data : " + suitData);
                 JSONArray testArray = new JSONArray();
                 int F = 0;
                 int P = 0;
                 int T = 0;
                 for (int i = 0; i <= testData.size() - 1; i++) {
-                    //System.out.println(testData.get(i));
                     JSONObject data = (JSONObject) testData.get(i);
-                    //System.out.println(data.get("testName"));
-
-                    //System.out.println("Suit Data : "+suitData.get(data.get("testName")));
 
                     if ((suitData.get(data.get("testName"))) != null) {
-                        //System.out.println(suitData.get(data.get("testName")));
                         JSONObject testObj = (JSONObject) suitData.get(data.get("testName"));
                         testArray.add(testObj);
-                        //System.out.println(testObj.get("totalTime"));
-
-                        //System.out.println(testObj.get("status"));
                         if ((testObj.get("status")).equals("pass")) {
                             P++;
                             T += Integer.parseInt(testObj.get("totalTime").toString());
                         } else if ((testObj.get("status")).equals("fail")) {
                             F++;
-                            //System.out.println(testObj);
                             T += Integer.parseInt(testObj.get("totalTime").toString());
                         }
 
                         suiteResult.put("suiteName", testObj.get("suiteName").toString());
 
                     } else {
-                        //System.out.println("null");
                     }
                 }
-                //System.out.println("totalPassed : "+P);
                 suitData.put("totalPassed", +P);
-                //System.out.println("totalFailed : "+F);
                 suitData.put("totalFailed", +F);
-                //System.out.println("totaltime : "+T);
                 suitData.put("totalTime", +T);
 
                 suiteResult.put("tests", testArray);
@@ -206,7 +183,6 @@ public class ReportParser {
                 suite.add(suiteResult);
             }
         }
-        //System.out.println(mainObject);
     }
 
     /**
@@ -221,30 +197,21 @@ public class ReportParser {
         int T = 0;
         for (int j = 0; j <= suitename.size() - 1; j++) {
             if ((mainObject.get(suitename.get(j))) != null) {
-                //System.out.println("Ros : "+mainObject.get(suitename.get(j)));
                 JSONObject suitData = (JSONObject) mainObject.get(suitename.get(j));
-                //System.out.println(suitData.get("totalFailed"));
                 F += Integer.parseInt(suitData.get("totalFailed").toString());
-                //System.out.println(suitData.get("totalPassed"));
                 P += Integer.parseInt(suitData.get("totalPassed").toString());
             }
         }
-        //System.out.println(F);
         mainObject.put("totalFailed", F);
-        //System.out.println(P);
+
         mainObject.put("totalPassed", P);
-        //System.out.println(mainObject);
         TestExecutionBuilder main = new TestExecutionBuilder();
         main.reportObj.put("totalFailed", F);
         main.reportObj.put("totalPassed", P);
     }
 
     public JSONObject getBrowser(JSONObject mainObj, JSONObject newObj1) throws Exception {
-        //public JSONObject getBrowser() throws Exception {
-        //System.out.println("Roshan : " + readJsonFile());
-        //JSONObject mainObj = readJsonFile();
         JSONObject newObj = new JSONObject();
-        //JSONObject newObj1 = new JSONObject();
         int F = 0;
         int P = 0;
         JSONArray testCase = (JSONArray) mainObj.get("testCase");
@@ -258,16 +225,11 @@ public class ReportParser {
         }
         newObj1.put("totalFailed", F);
         newObj1.put("totalPassed", P);
-        //System.out.println("testCase : " + testCase);
         GetConfiguration config = new GetConfiguration();
-        //System.out.println("Browser : " + config.getBrowsers());
         for (String Browser : config.getBrowsers()) {
             for (int TC = 0; TC < testCase.size(); TC++) {
                 JSONObject TC1 = (JSONObject) testCase.get(TC);
-                //System.out.println("browserName : " + TC1.get("browserName"));
-                //System.out.println("suite : " + TC1.get("suiteName"));
                 if (Browser.equalsIgnoreCase(TC1.get("browserName").toString())) {
-                    //System.out.println("TC : " + TC1);
                     if ((newObj.get(Browser)) == null) {
                         JSONArray TCData = new JSONArray();
                         TCData.add(TC1);
@@ -278,7 +240,6 @@ public class ReportParser {
                     }
                 }
             }
-            //System.out.println(Browser);
         }
         JSONArray newBrowserDataInArray = new JSONArray();
         for (String Browser : config.getBrowsers()) {
@@ -288,8 +249,6 @@ public class ReportParser {
             newBrowserDataInArray.add(br);
         }
         newObj1.put("browser", newBrowserDataInArray);
-        //System.out.println("newMainObj : "+newObj1);
-        //System.out.println("mainObj : "+mainObj);
         return newObj1;
 
     }
@@ -297,7 +256,6 @@ public class ReportParser {
     public void newBrowser(JSONObject mainObj) throws Exception {
         GetConfiguration config = new GetConfiguration();
         JSONArray browserDataArreay = (JSONArray) mainObj.get("browser");
-        //System.out.println("browserDataArray : " + browserDataArreay);
 
         for (int brw = 0; brw < browserDataArreay.size(); brw++) {
             JSONObject browser = (JSONObject) browserDataArreay.get(brw);
@@ -307,18 +265,15 @@ public class ReportParser {
                 if (browser.get(Browser) != null) {
                     JSONArray TCDataArray = (JSONArray) browser.get(Browser);
                     ArrayList<String> suitName = new ArrayList<>();
-                    //System.out.println("browser : " + TCDataArray);
                     for (int TC = 0; TC < TCDataArray.size(); TC++) {
                         JSONObject Test = (JSONObject) TCDataArray.get(TC);
                         suitName.add(Test.get("suiteName").toString());
                     }
                     ArrayList<String> onlySuitsName = removeDuplicateFromArray(suitName);
-                    //System.out.println("onlySuitsName : "+onlySuitsName);
                     for (int TC = 0; TC < TCDataArray.size(); TC++) {
                         JSONObject Test = (JSONObject) TCDataArray.get(TC);
                         for (String suite : onlySuitsName) {
                             if (suite.toString().equalsIgnoreCase(Test.get("suiteName").toString())) {
-                                //System.out.println(suite + " : " + Test);
                                 if ((newTestData.get(suite)) == null) {
                                     JSONArray TCData = new JSONArray();
                                     TCData.add(Test);
@@ -354,17 +309,13 @@ public class ReportParser {
                         br.put("suiteName", suite);
                         newTestDataInArray.add(br);
                     }
-                    //newObj1.put("browser", newBrowserDataInArray);
                     JSONObject testCash = new JSONObject();
                     testCash.put("suits", newTestDataInArray);
-                    //System.out.println("newTestDataInArray : " + newTestDataInArray);
                     browser.put(Browser, testCash);
                 }
-                // System.out.println("newTestData : " + newTestData);
             }
         }
-        //System.out.println("total : " + mainObj);
-    }
+      }
 
     public ArrayList<String> removeDuplicateFromArray(ArrayList<String> dataArray) {
         ArrayList<String> resultArray = new ArrayList<String>();
@@ -384,7 +335,6 @@ public class ReportParser {
                 }
             }
         }
-        //System.out.println("Result Array :"+resultArray);
         return resultArray;
 
     }
