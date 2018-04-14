@@ -1,13 +1,14 @@
 package framework;
 
 import Selenium.Commands;
+import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class VerifyParser {
 
-    public void parseVerify(WebDriver driver, String suiteName, String verify) throws Exception {
+    public void parseVerify(WebDriver driver, JSONObject test, String verify) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
         StepParser stepParser = new StepParser();
@@ -21,13 +22,13 @@ public class VerifyParser {
                      * Verify: @element text is equal ignore case "Text"
                      */
                     if (verify.toLowerCase().contains("ignore case")) {
-                        assertThat(cmd.findElement(driver, locator.getLocatorValue(suiteName, stepParser.parseElementName(verify))).getText()).isEqualToIgnoringCase(stepParser.parseTextToEnter(verify));
+                        assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).isEqualToIgnoringCase(stepParser.parseTextToEnter(test,verify));
                     }
                     /**
                      * Verify: @element text is equal "Text"
                      */
                     else {
-                        assertThat(cmd.findElement(driver, locator.getLocatorValue(suiteName, stepParser.parseElementName(verify))).getText()).isEqualTo(stepParser.parseTextToEnter(verify));
+                        assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).isEqualTo(stepParser.parseTextToEnter(test,verify));
                     }
                 }
                 //contains
@@ -36,13 +37,13 @@ public class VerifyParser {
                      * Verify: @element text is contains ignore case "Text".
                      */
                     if (verify.toLowerCase().contains("ignore case")) {
-                        assertThat(cmd.findElement(driver, locator.getLocatorValue(suiteName, stepParser.parseElementName(verify))).getText()).containsIgnoringCase(stepParser.parseTextToEnter(verify));
+                        assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).containsIgnoringCase(stepParser.parseTextToEnter(test,verify));
                     }
                     /**
                      * Verify: @element text is contains "Text".
                      */
                     else {
-                        assertThat(cmd.findElement(driver, locator.getLocatorValue(suiteName, stepParser.parseElementName(verify))).getText()).contains(stepParser.parseTextToEnter(verify));
+                        assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).contains(stepParser.parseTextToEnter(test,verify));
                     }
                 }
             } catch (Exception e) {
@@ -57,7 +58,7 @@ public class VerifyParser {
                  * Verify: @element is displayed
                  * Verify: @element should displayed
                  */
-                    assertThat(cmd.findElement(driver, locator.getLocatorValue(suiteName, stepParser.parseElementName(verify))).isDisplayed()).isEqualTo(true);
+                    assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).isDisplayed()).isEqualTo(true);
             } catch (Exception e) {
                 System.out.println("Step Failed");
                 throw e;

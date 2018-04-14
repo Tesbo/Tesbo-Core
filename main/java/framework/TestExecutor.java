@@ -95,7 +95,6 @@ public class TestExecutor implements Runnable {
                     }
                 }
                 if (browserName.equalsIgnoreCase("chrome")) {
-                    System.out.println("Hello");
                     capability = DesiredCapabilities.chrome();
                     ChromeDriverManager.getInstance().setup();
                     if(seleniumAddress==null) {
@@ -198,7 +197,7 @@ public class TestExecutor implements Runnable {
                 stepResult.put("stepIndex", stepNumber + 1);
                 try {
                     System.out.println(step.toString());
-                    verifyParser.parseVerify(driver, test.get("suiteName").toString(), step.toString());
+                    verifyParser.parseVerify(driver, test, step.toString());
                     stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "pass");
                 } catch (NoSuchElementException NE) {
@@ -260,7 +259,7 @@ public class TestExecutor implements Runnable {
             } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection :")) {
                 JSONArray groupSteps = new JSONArray();
                 try {
-                    groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(step.toString()));
+                    groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(test,step.toString()));
                 } catch (Exception e) {
                     J++;
                     stepResult.put("startTime", dtf.format(LocalDateTime.now()));
@@ -357,7 +356,7 @@ public class TestExecutor implements Runnable {
                     } else if (groupStep.toString().toLowerCase().contains("verify:") | groupStep.toString().toLowerCase().contains("verify :")) {
                         try {
                             System.out.println(groupStep.toString());
-                            verifyParser.parseVerify(driver, test.get("suiteName").toString(), groupStep.toString());
+                            verifyParser.parseVerify(driver, test, groupStep.toString());
                             groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "pass");
                         } catch (NoSuchElementException NE) {

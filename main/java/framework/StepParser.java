@@ -22,7 +22,7 @@ public class StepParser {
     public static void main(String[] args) {
         StepParser parser = new StepParser();
 
-        parser.parseTextToEnter("roshan mistry 'form Jsbot to' vadodara surat khate");
+        //parser.parseTextToEnter("roshan mistry 'form Jsbot to' vadodara surat khate");
     }
 
     public void parseStep(WebDriver driver, JSONObject test, String step) throws Exception {
@@ -39,19 +39,19 @@ public class StepParser {
 
         //Sendkeys
         if (step.toLowerCase().contains("enter")) {
-            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(step));
+            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test,step));
             System.out.println("Step Passed");
         }
 
         // Get URL
         if (step.toLowerCase().contains("url")) {
-            driver.get(parseTextToEnter(step));
+            driver.get(parseTextToEnter(test,step));
             System.out.println("Step Passed");
         }
 
         //Switch
         if (step.toLowerCase().contains("switch")) {
-            switchFunction(driver, test.get("suiteName").toString(), step);
+            switchFunction(driver, test, step);
         }
 
         //navigate
@@ -71,7 +71,7 @@ public class StepParser {
 
         //select
         if (step.toLowerCase().contains("select")) {
-            selectFunction(driver, test.get("suiteName").toString(), step);
+            selectFunction(driver, test, step);
         }
 
         //Clear
@@ -85,7 +85,7 @@ public class StepParser {
     }
 
 
-    public void switchFunction(WebDriver driver, String suiteName, String step) throws Exception {
+    public void switchFunction(WebDriver driver, JSONObject test, String step) throws Exception {
 
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
@@ -122,14 +122,14 @@ public class StepParser {
                  */
                 else if (step.toLowerCase().contains("verify text")) {
                     String alertText = cmd.switchAlertRead(driver);
-                    assertThat(alertText).containsIgnoringCase(parseTextToEnter(step));
+                    assertThat(alertText).containsIgnoringCase(parseTextToEnter(test,step));
                 }
                 /**
                  * enter identify.
                  * Step : Switch to alert then enter 'Text'.
                  */
                 else if (step.toLowerCase().contains("enter")) {
-                    cmd.switchAlertSendKey(driver, parseTextToEnter(step));
+                    cmd.switchAlertSendKey(driver, parseTextToEnter(test,step));
                 }
             }
 
@@ -147,13 +147,13 @@ public class StepParser {
                 if (step.toLowerCase().contains("using")) {
                     //Step : Switch to frame using id 'FrameID'.
                     if (step.toLowerCase().contains("id")) {
-                        System.out.println("id : " + parseTextToEnter(step));
-                        cmd.switchFrame(driver, parseTextToEnter(step));
+                        System.out.println("id : " + parseTextToEnter(test,step));
+                        cmd.switchFrame(driver, parseTextToEnter(test,step));
                     }
                     //Step : Switch to frame using name 'FrameName'.
                     else if (step.toLowerCase().contains("name")) {
-                        System.out.println("name : " + parseTextToEnter(step));
-                        cmd.switchFrame(driver, parseTextToEnter(step));
+                        System.out.println("name : " + parseTextToEnter(test,step));
+                        cmd.switchFrame(driver, parseTextToEnter(test,step));
                     }
                 }
                 /**
@@ -170,7 +170,7 @@ public class StepParser {
                  */
                 else if (parseElementName(step) != null) {
                     try {
-                        cmd.switchFrameElement(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
+                        cmd.switchFrameElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
                     } catch (NullPointerException e) {
                         System.out.println("No element find.");
                         throw e;
@@ -325,7 +325,7 @@ public class StepParser {
         }
     }
 
-    public void selectFunction(WebDriver driver, String suiteName, String step) throws Exception {
+    public void selectFunction(WebDriver driver, JSONObject test, String step) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
@@ -335,28 +335,28 @@ public class StepParser {
              * Step : Deselect all from @element
              */
             if (step.toLowerCase().contains("all")) {
-                cmd.deselectAll(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
+                cmd.deselectAll(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
             }
             /**
              * 'text' identify.
              * Step : Deselect using text 'Text' from @element
              */
             else if (step.toLowerCase().contains("text")) {
-                cmd.deselectText(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))), parseTextToEnter(step));
+                cmd.deselectText(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))), parseTextToEnter(test,step));
             }
             /**
              * 'index' identify.
              * Step : Deselect using index 1 from @element
              */
             else if (step.toLowerCase().contains("index")) {
-                cmd.deselectIndex(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
+                cmd.deselectIndex(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
             }
             /**
              * 'value' identify.
              * Step : Deselect using value 'Text' from @element
              */
             else if (step.toLowerCase().contains("value")) {
-                cmd.deselectValue(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))), parseTextToEnter(step));
+                cmd.deselectValue(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))), parseTextToEnter(test,step));
             }
         } else {
             /**
@@ -364,21 +364,21 @@ public class StepParser {
              * Step : Select using text 'Text' from @element
              */
             if (step.toLowerCase().contains("text")) {
-                cmd.selectText(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))), parseTextToEnter(step));
+                cmd.selectText(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))), parseTextToEnter(test,step));
             }
             /**
              * 'index' identify.
              * Step : Select using index 1 from @element
              */
             else if (step.toLowerCase().contains("index")) {
-                cmd.selectIndex(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
+                cmd.selectIndex(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
             }
             /**
              * 'value' identify.
              * Step : Select using value 'Text' form @element
              */
             else if (step.toLowerCase().contains("value")) {
-                cmd.selectValue(cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))), parseTextToEnter(step));
+                cmd.selectValue(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))), parseTextToEnter(test,step));
             }
         }
     }
@@ -398,20 +398,8 @@ public class StepParser {
         return elementName;
     }
 
-    public String parseTextToEnter(String step) {
+    public String parseTextToEnter(JSONObject test, String step) {
         String textToEnter = "";
-
-      /*  String[] stepWordList = step.split("\\s+");
-
-        for (String word : stepWordList) {
-
-            if (word.contains("'")) {
-                int length = word.length() - 1;
-                textToEnter = word.substring(1, length);
-            }
-
-        }
-*/
 
         int startPoint = 0;
         int endPoint = 0;
