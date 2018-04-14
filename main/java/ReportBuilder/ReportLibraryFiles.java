@@ -127,7 +127,6 @@ public class ReportLibraryFiles {
 
             br = new BufferedReader(new InputStreamReader(in));
             while ((line = br.readLine()) != null) {
-                System.out.println(line+"\n");
                 sb.append(line+"\n");
             }
 

@@ -54,6 +54,10 @@ public class TestExecutionBuilder {
         TestExecutionBuilder builder = new TestExecutionBuilder();
         ReportBuilder reportBuilder = new ReportBuilder();
         ReportParser report = new ReportParser();
+
+
+
+
         long startTimeSuite = System.currentTimeMillis();
         JSONArray suits =new JSONArray();
         builder.reportObj.put("suits",suits);
