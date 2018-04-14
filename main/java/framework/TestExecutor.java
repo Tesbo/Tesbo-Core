@@ -85,25 +85,34 @@ public class TestExecutor implements Runnable {
             capabilities=getCapabilities(browserName);
         }
         try {
-            if (browserName.equalsIgnoreCase("firefox")) {
-                capability = DesiredCapabilities.firefox();
-                FirefoxDriverManager.getInstance().setup();
-                driver = new FirefoxDriver();
-                driver.manage().window().maximize();
-            }
-            if (browserName.equalsIgnoreCase("chrome")) {
-                capability = DesiredCapabilities.chrome();
-                ChromeDriverManager.getInstance().setup();
-                driver = new ChromeDriver();
-                driver.manage().window().maximize();
 
-            }
-            if (browserName.equalsIgnoreCase("ie")) {
-                capability = DesiredCapabilities.internetExplorer();
-                InternetExplorerDriverManager.getInstance().setup();
-                driver = new InternetExplorerDriver();
-                driver.manage().window().maximize();
-            }
+                if (browserName.equalsIgnoreCase("firefox")) {
+                    capability = DesiredCapabilities.firefox();
+                    FirefoxDriverManager.getInstance().setup();
+                    if(seleniumAddress==null) {
+                        driver = new FirefoxDriver();
+                        driver.manage().window().maximize();
+                    }
+                }
+                if (browserName.equalsIgnoreCase("chrome")) {
+                    System.out.println("Hello");
+                    capability = DesiredCapabilities.chrome();
+                    ChromeDriverManager.getInstance().setup();
+                    if(seleniumAddress==null) {
+                        driver = new ChromeDriver();
+                        driver.manage().window().maximize();
+                    }
+
+                }
+                if (browserName.equalsIgnoreCase("ie")) {
+                    capability = DesiredCapabilities.internetExplorer();
+                    InternetExplorerDriverManager.getInstance().setup();
+                    if(seleniumAddress==null) {
+                        driver = new InternetExplorerDriver();
+                        driver.manage().window().maximize();
+                    }
+                }
+
             if(seleniumAddress!=null && capabilities!=null){
 
                 capability= setCapabilities(capabilities,capability);
