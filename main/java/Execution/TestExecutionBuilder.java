@@ -54,27 +54,27 @@ public class TestExecutionBuilder {
         TestExecutionBuilder builder = new TestExecutionBuilder();
         ReportBuilder reportBuilder = new ReportBuilder();
         ReportParser report = new ReportParser();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
         long startTimeSuite = System.currentTimeMillis();
         JSONArray suits =new JSONArray();
-        builder.reportObj.put("suits",suits);
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
+
+        builder.reportObj.put("suits",suits);
         builder.reportObj.put("startTime", dtf.format(LocalDateTime.now()));
 
+        /*Build Running start*/
         builder.buildExecution();
 
         long stopTimeSuite = System.currentTimeMillis();
         builder.reportObj.put("endTime", dtf.format(LocalDateTime.now()));
+
+
         long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
-
         builder.reportObj.put("totalTimeTaken", elapsedTimeSuite);
-        System.out.println("Main : " + builder.mainObj);
-        System.out.println("Report : "+builder.reportObj);
 
-        DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        /*Report Generation*/
         report.generateReportDir();
         report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
-
         reportBuilder.generatReport();
 
 
@@ -84,35 +84,23 @@ public class TestExecutionBuilder {
     public String getbuildReportName() {
         String newName;
         GetJsonData data = new GetJsonData();
-
         File buildHistory = new File("./htmlReport/Build History");
-
         JSONArray suiteFileList = new JSONArray();
-
         try (Stream<Path> paths = Files.walk(Paths.get(buildHistory.getAbsolutePath()))) {
-
             suiteFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
-
         }
 
         if (suiteFileList.size() > 0) {
-
             File lastModifiedfile = data.getLastModifiedJsonFile(buildHistory.getAbsolutePath());
-
             String getFile = lastModifiedfile.getName();
-
-
             String getCount[] = getFile.split("_")[1].split(".json");
-
             newName = "buildResult_" + (Integer.parseInt(getCount[0]) + 1);
 
         } else {
-
             newName = "buildResult_1";
         }
-
 
         return newName;
     }
@@ -137,13 +125,6 @@ public class TestExecutionBuilder {
                     }
                 }
             }
-        }
-
-        for (Object a : completeTestObjectArray) {
-            /**
-             * this use for troubleshoot
-             */
-            //System.out.println(a);
         }
 
         return completeTestObjectArray;
@@ -195,13 +176,6 @@ public class TestExecutionBuilder {
                     }
                 }
             }
-        }
-
-        for (Object a : completeTestObjectArray) {
-            /**
-             * this use for troubleshoot
-             */
-            //System.out.println(a);
         }
 
         return completeTestObjectArray;
