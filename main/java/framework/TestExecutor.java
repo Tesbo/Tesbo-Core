@@ -153,7 +153,7 @@ public class TestExecutor implements Runnable {
                 stepResult.put("stepIndex", stepNumber + 1);
                 try {
                     System.out.println(step);
-                    stepParser.parseStep(driver, test.get("suiteName").toString(), step.toString());
+                    stepParser.parseStep(driver, test, step.toString());
                     stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "pass");
                 } catch (NoAlertPresentException ae) {
@@ -324,7 +324,7 @@ public class TestExecutor implements Runnable {
                     if (groupStep.toString().toLowerCase().contains("step:") | groupStep.toString().toLowerCase().contains("step :")) {
                         try {
                             System.out.println(groupStep);
-                            stepParser.parseStep(driver, test.get("suiteName").toString(), groupStep.toString());
+                            stepParser.parseStep(driver, test, groupStep.toString());
                             groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "pass");
                         } catch (NoAlertPresentException ae) {

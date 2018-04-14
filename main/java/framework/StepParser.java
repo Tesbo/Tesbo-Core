@@ -2,6 +2,7 @@ package framework;
 
 import Selenium.Commands;
 import org.apache.commons.io.FileUtils;
+import org.json.simple.JSONObject;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -24,7 +25,7 @@ public class StepParser {
         parser.parseTextToEnter("roshan mistry 'form Jsbot to' vadodara surat khate");
     }
 
-    public void parseStep(WebDriver driver, String suiteName, String step) throws Exception {
+    public void parseStep(WebDriver driver, JSONObject test, String step) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
@@ -32,13 +33,13 @@ public class StepParser {
         //Clicks
         if (step.toLowerCase().contains("click")) {
             System.out.println(parseElementName(step));
-            cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).click();
+            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
             System.out.println("Step Passed");
         }
 
         //Sendkeys
         if (step.toLowerCase().contains("enter")) {
-            cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).sendKeys(parseTextToEnter(step));
+            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(step));
             System.out.println("Step Passed");
         }
 
@@ -50,7 +51,7 @@ public class StepParser {
 
         //Switch
         if (step.toLowerCase().contains("switch")) {
-            switchFunction(driver, suiteName, step);
+            switchFunction(driver, test.get("suiteName").toString(), step);
         }
 
         //navigate
@@ -60,24 +61,27 @@ public class StepParser {
 
         //scroll
         if (step.toLowerCase().contains("scroll")) {
-            scrollFunction(driver, suiteName, step);
+            scrollFunction(driver, test.get("suiteName").toString(), step);
         }
 
         //pause
         if (step.toLowerCase().contains("pause")) {
-            pauseFunction(driver, suiteName, step);
+            pauseFunction(driver, test.get("suiteName").toString(), step);
         }
 
         //select
         if (step.toLowerCase().contains("select")) {
-            selectFunction(driver, suiteName, step);
+            selectFunction(driver, test.get("suiteName").toString(), step);
         }
 
         //Clear
         if (step.toLowerCase().contains("clear")) {
-            cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))).clear();
+            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
             System.out.println("Step Passed");
         }
+
+
+
     }
 
 
