@@ -43,7 +43,13 @@ public class GetLocator {
                 throw (new NoSuchFieldException());
             }
         } catch (Exception e) {
-            System.err.println("Message : Please create only '.json' file in Locator directory.");
+            if(flag==true) {
+                System.err.println("Message : Please create only '.json' file in Locator directory.");
+            }
+            else {
+                System.err.println("Message : Please Enter valid directory path for locators.");
+                e.printStackTrace();
+            }
             throw e;
         }
         Utility parser = new Utility();
