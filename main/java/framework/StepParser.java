@@ -40,7 +40,7 @@ public class StepParser {
 
         //Sendkeys
         if (step.toLowerCase().contains("enter")) {
-            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(step));
+            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test,step));
         }
 
         // Get URL
@@ -70,7 +70,7 @@ public class StepParser {
 
         //select
         if (step.toLowerCase().contains("select")) {
-            selectFunction(driver, test.get("suiteName").toString(), step);
+            selectFunction(driver, test, step);
         }
 
         //Clear
