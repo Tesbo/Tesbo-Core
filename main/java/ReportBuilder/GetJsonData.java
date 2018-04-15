@@ -23,16 +23,6 @@ public class GetJsonData {
 
     private static final String FORMAT = "%02d H %02d M %02d S";
 
-    public static void main(String[] args) {
-
-        GetJsonData data = new GetJsonData();
-        // ReportBuilder rb = new ReportBuilder();
-
-
-        System.out.println( data.getCurrentBuildBrowserWiseData("./htmlReport/Build History/","chrome").get("totalPassed")
-);
-
-       }
 
     public static String parseTime(long milliseconds) {
         return String.format(FORMAT,

@@ -290,7 +290,6 @@ public class TestExecutor implements Runnable {
 
                     if (groupStep.toString().toLowerCase().contains("step:") | groupStep.toString().toLowerCase().contains("step :")) {
                         try {
-                            System.out.println(groupStep);
                             stepParser.parseStep(driver, test, groupStep.toString());
                             groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "pass");
@@ -439,7 +438,6 @@ public class TestExecutor implements Runnable {
     @Override
     public void run() {
         JSONObject testData = new JSONObject();
-        System.out.println("Test Started " + test.get("testName") + " Browser " + test.get("browser"));
         beforeTest(test.get("browser").toString());
         runTest();
         afterTest();

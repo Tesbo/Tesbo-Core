@@ -34,22 +34,17 @@ public class StepParser {
         logger.stepLog(step);
 
         //Clicks
-        if (step.toLowerCase().contains("click")) {
-            System.out.println(parseElementName(step));
-            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
-            logger.testPassed();
+        if (step.toLowerCase().contains("click")) { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
         }
 
         //Sendkeys
         if (step.toLowerCase().contains("enter")) {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(step));
-            logger.testPassed();
         }
 
         // Get URL
         if (step.toLowerCase().contains("url")) {
             driver.get(parseTextToEnter(step));
-            logger.testPassed();
         }
 
         //Switch
@@ -80,8 +75,8 @@ public class StepParser {
         //Clear
         if (step.toLowerCase().contains("clear")) {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
-            logger.testPassed();
         }
+        logger.testPassed("Passed");
 
 
 
@@ -150,12 +145,10 @@ public class StepParser {
                 if (step.toLowerCase().contains("using")) {
                     //Step : Switch to frame using id 'FrameID'.
                     if (step.toLowerCase().contains("id")) {
-                        System.out.println("id : " + parseTextToEnter(step));
                         cmd.switchFrame(driver, parseTextToEnter(step));
                     }
                     //Step : Switch to frame using name 'FrameName'.
                     else if (step.toLowerCase().contains("name")) {
-                        System.out.println("name : " + parseTextToEnter(step));
                         cmd.switchFrame(driver, parseTextToEnter(step));
                     }
                 }
@@ -175,7 +168,7 @@ public class StepParser {
                     try {
                         cmd.switchFrameElement(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
                     } catch (NullPointerException e) {
-                        System.out.println("No element find.");
+                        System.out.println("No element found.");
                         throw e;
                     }
                 }
@@ -207,7 +200,7 @@ public class StepParser {
             }
 
         } catch (Exception e) {
-            System.out.println("Step Failed");
+            logger.testFailed("Step Failed");
             throw e;
         }
     }
@@ -266,7 +259,7 @@ public class StepParser {
                 String y = parseNumverToEnter(step, 1);
                 cmd.scrollToCoordinate(driver, x, y);
             } catch (NullPointerException e) {
-                System.out.println("No coordinate find.");
+                System.out.println("No coordinate found");
             }
         }
         /**
@@ -277,7 +270,7 @@ public class StepParser {
             try {
                 cmd.scrollToElement(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
             } catch (NullPointerException e) {
-                System.out.println("No element find.");
+                System.out.println("No element found");
                 throw e;
             } catch (Exception e) {
                 throw e;
@@ -414,7 +407,7 @@ public class StepParser {
             textToEnter = step.substring(startPoint, endPoint);
 
         } catch (StringIndexOutOfBoundsException e) {
-            System.out.println("no string to enter. Create a separate exeception here");
+     //       System.out.println("no string to enter");
         }
         return textToEnter;
     }
@@ -431,7 +424,6 @@ public class StepParser {
     public String screenshot(WebDriver driver, String suitName, String testName){
         generateReportDir();
         String screenshotName = captureScreen(driver,suitName,testName);
-        System.out.println("Screenshot Name : "+screenshotName);
         return screenshotName;
     }
 
@@ -451,7 +443,6 @@ public class StepParser {
             File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
             path = filePath.getAbsolutePath()+"/" + (suitName.split(".s"))[0] +"_"+testName.replaceAll("\\s", "")+"_"+dtf.format(LocalDateTime.now())+".png";
-            System.out.println("path : "+path);
             FileUtils.copyFile(scrFile, new File(path));
         }
         catch(IOException e) {

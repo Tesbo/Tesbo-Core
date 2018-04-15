@@ -59,6 +59,7 @@ public class TestExecutionBuilder {
         builder.reportObj.put("totalTimeTaken", elapsedTimeSuite);
 
         /*Report Generation*/
+
         report.generateReportDir();
         report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
         reportBuilder.generatReport();
