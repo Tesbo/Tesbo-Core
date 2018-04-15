@@ -21,11 +21,6 @@ import java.util.stream.Stream;
 public class SuiteParser {
 
 
-    public static void main(String[] args) {
-        SuiteParser p = new SuiteParser();
-
-        System.out.println(p.getGroupTestStepBySuiteandTestCaseName("login.suite", "roshan"));
-    }
 
     /**
      * @param directory

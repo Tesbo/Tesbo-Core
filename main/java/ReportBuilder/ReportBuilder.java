@@ -1,5 +1,7 @@
 package ReportBuilder;
 
+import com.diogonunes.jcdp.color.api.Ansi;
+import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -18,6 +20,7 @@ public class ReportBuilder {
 
     String buildHistory = new File(getBuildHistoryPath()).getAbsolutePath();
     JSONArray dataArray = null;
+    Logger logger = new Logger();
 
     public static void main(String[] args) {
         ReportBuilder builder = new ReportBuilder();
@@ -25,10 +28,10 @@ public class ReportBuilder {
     }
 
     public void generatReport() {
+        logger.titleLog("-----------------------------------------------------------------------");
+        logger.titleLog("Build Execution Completed");
+        logger.titleLog("-----------------------------------------------------------------------\n");
 
-        System.out.println("-----------------------------------------------------------------------");
-        System.out.println("Report Generating started");
-        System.out.println("-----------------------------------------------------------------------");
 
         dataArray = data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath());
         ReportBuilder builder = new ReportBuilder();
@@ -62,9 +65,10 @@ public class ReportBuilder {
         File currentBuildFile = new File("./htmlReport/currentBuildResult.html");
         builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
 
-        System.out.println("-----------------------------------------------------------------------");
-        System.out.println("Report Generated Sucessfully");
-        System.out.println("-----------------------------------------------------------------------");
+
+        logger.customeLog("\nReport Generated at :" +file.getAbsolutePath()+"\n", Ansi.FColor.NONE);
+        logger.titleLog("-----------------------------------------------------------------------");
+
 
     }
 
@@ -95,9 +99,6 @@ public class ReportBuilder {
     public void writeReportFile(String filePath, StringBuilder fileContent) {
 
         BufferedWriter writer = null;
-
-
-
 
 
         try {
@@ -350,6 +351,15 @@ public class ReportBuilder {
 
 
     public StringBuffer generateCurrentBuildSummary(StringBuffer sb) {
+
+
+        logger.customeLog("| Total : " + data.getCurrentBuildTotal(new File(getBuildHistoryPath()).getAbsolutePath()), Ansi.FColor.NONE);
+        logger.customeLog(" | Passed : " + data.getCurrentBuildPassed(buildHistory), Ansi.FColor.NONE);
+        logger.customeLog(" | Failed : " + data.getCurrentBuildFailed(buildHistory), Ansi.FColor.NONE);
+        logger.customeLog(" | Time : " + data.getCurrentBuildTotalTime(buildHistory)+" |\n", Ansi.FColor.NONE);
+
+
+
         sb.append("<div class=\"right_col\" role=\"main\">\n" +
                 "<!-- top tiles -->\n" +
                 "<div class=\"row tile_count\">\n" +
@@ -796,7 +806,7 @@ public class ReportBuilder {
 
 
                     sb.append(
-                                    "</div>\n" +
+                            "</div>\n" +
 
                                     "</div>\n" +
                                     "</div>\n");
@@ -818,7 +828,7 @@ public class ReportBuilder {
 
 
         }
-sb.append("<div>");
+        sb.append("<div>");
 
         return sb;
     }

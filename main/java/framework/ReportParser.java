@@ -36,7 +36,6 @@ public class ReportParser {
         //JSONObject mainObject = readJsonFile();
         JSONArray suiteName = getSuiteName();
         JSONArray testDetais = build.buildExecutionQueueByTag();
-        //System.out.println("Obj 1 : "+mainObject);
         getSuiteTotalData(mainObject, suiteName, testDetais);
         getbuildTotalData(mainObject, suiteName, testDetais);
     }
@@ -45,7 +44,6 @@ public class ReportParser {
         //JSONObject mainObject = readJsonFile();
         JSONArray suiteName = getSuiteName();
         JSONArray testDetais = build.buildExecutionQueueBySuite();
-        //System.out.println("Obj 1 : "+mainObject);
         getSuiteTotalData(mainObject, suiteName, testDetais);
         getbuildTotalData(mainObject, suiteName, testDetais);
     }

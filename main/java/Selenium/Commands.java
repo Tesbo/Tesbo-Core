@@ -53,8 +53,6 @@ public class Commands {
             } catch (NoSuchElementException id) {
                 try {
 
-                    //System.out.println("Inside xpath" + elementvalue);
-
                     element = driver.findElement(By.xpath(elementvalue));
 
                 } catch (Exception xpath) {

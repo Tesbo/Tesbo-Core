@@ -6,6 +6,7 @@ import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
 import io.github.bonigarcia.wdm.OperaDriverManager;
+import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.Capabilities;
@@ -37,6 +38,8 @@ public class TestExecutor implements Runnable {
     public WebDriver driver;
 
     JSONObject test;
+
+    Logger logger = new Logger();
 
     public static void main(String[] args) throws Exception {
         TestExecutionBuilder builder = new TestExecutionBuilder();
@@ -146,6 +149,9 @@ public class TestExecutor implements Runnable {
         long startTimeSuite = System.currentTimeMillis();
         testResult.put("startTime", dtf.format(LocalDateTime.now()));
         testResult.put("testName", test.get("testName").toString());
+
+        logger.testLog("Test :" + test.get("testName").toString());
+
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
         int J = 0;
         JSONArray stepsArray = new JSONArray();
@@ -286,7 +292,6 @@ public class TestExecutor implements Runnable {
 
                     if (groupStep.toString().toLowerCase().contains("step:") | groupStep.toString().toLowerCase().contains("step :")) {
                         try {
-                            System.out.println(groupStep);
                             stepParser.parseStep(driver, test, groupStep.toString());
                             groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "pass");
@@ -436,7 +441,6 @@ public class TestExecutor implements Runnable {
     @Override
     public void run() {
         JSONObject testData = new JSONObject();
-        System.out.println("Test Started " + test.get("testName") + " Browser " + test.get("browser"));
         beforeTest(test.get("browser").toString());
         runTest();
         afterTest();

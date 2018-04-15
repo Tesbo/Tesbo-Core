@@ -27,8 +27,4 @@ public class Utility {
         return jsonObject;
     }
 
-    public static void main(String[] args) {
-        //JSONObject main = loadJsonFile("E:\\Sellium\\selebot\\config.json");
-        //System.out.println(main.keySet());
-    }
 }

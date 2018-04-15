@@ -12,10 +12,6 @@ import java.util.ArrayList;
  */
 public class GetConfiguration {
 
-    public static void main(String[] args) {
-        GetConfiguration get = new GetConfiguration();
-        System.out.println(get.getBaseUrl());
-    }
 
     public String getConfigFilePath() {
         File file = new File("config.json");

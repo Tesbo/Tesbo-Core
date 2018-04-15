@@ -2,6 +2,7 @@ package framework;
 
 import Selenium.Commands;
 import org.json.simple.JSONObject;
+import logger.Logger;
 import org.openqa.selenium.WebDriver;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,6 +13,7 @@ public class VerifyParser {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
         StepParser stepParser = new StepParser();
+        Logger logger = new Logger();
 
         //Text verification.
         if (verify.toLowerCase().contains("text")) {
@@ -60,7 +62,7 @@ public class VerifyParser {
                  */
                     assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).isDisplayed()).isEqualTo(true);
             } catch (Exception e) {
-                System.out.println("Step Failed");
+                logger.testFailed("Step Failed");
                 throw e;
             }
 

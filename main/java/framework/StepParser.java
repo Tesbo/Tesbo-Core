@@ -1,6 +1,7 @@
 package framework;
 
 import Selenium.Commands;
+import logger.Logger;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.OutputType;
@@ -18,6 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StepParser {
 
+
+    Logger logger = new Logger();
     DataDrivenParser dataDrivenParser =new DataDrivenParser();
     public static void main(String[] args) {
         StepParser parser = new StepParser();
@@ -29,24 +32,20 @@ public class StepParser {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
+        logger.stepLog(step);
 
         //Clicks
-        if (step.toLowerCase().contains("click")) {
-            System.out.println(parseElementName(step));
-            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
-            System.out.println("Step Passed");
+        if (step.toLowerCase().contains("click")) { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
         }
 
         //Sendkeys
         if (step.toLowerCase().contains("enter")) {
-            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test,step));
-            System.out.println("Step Passed");
+            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(step));
         }
 
         // Get URL
         if (step.toLowerCase().contains("url")) {
             driver.get(parseTextToEnter(test,step));
-            System.out.println("Step Passed");
         }
 
         //Switch
@@ -71,14 +70,14 @@ public class StepParser {
 
         //select
         if (step.toLowerCase().contains("select")) {
-            selectFunction(driver, test, step);
+            selectFunction(driver, test.get("suiteName").toString(), step);
         }
 
         //Clear
         if (step.toLowerCase().contains("clear")) {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
-            System.out.println("Step Passed");
         }
+        logger.testPassed("Passed");
 
 
 
@@ -172,7 +171,7 @@ public class StepParser {
                     try {
                         cmd.switchFrameElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
                     } catch (NullPointerException e) {
-                        System.out.println("No element find.");
+                        System.out.println("No element found.");
                         throw e;
                     }
                 }
@@ -204,7 +203,7 @@ public class StepParser {
             }
 
         } catch (Exception e) {
-            System.out.println("Step Failed");
+            logger.testFailed("Step Failed");
             throw e;
         }
     }
@@ -263,7 +262,7 @@ public class StepParser {
                 String y = parseNumverToEnter(step, 1);
                 cmd.scrollToCoordinate(driver, x, y);
             } catch (NullPointerException e) {
-                System.out.println("No coordinate find.");
+                System.out.println("No coordinate found");
             }
         }
         /**
@@ -274,7 +273,7 @@ public class StepParser {
             try {
                 cmd.scrollToElement(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
             } catch (NullPointerException e) {
-                System.out.println("No element find.");
+                System.out.println("No element found");
                 throw e;
             } catch (Exception e) {
                 throw e;
@@ -411,18 +410,18 @@ public class StepParser {
         int startPoint = 0;
         int endPoint = 0;
 
-        if(step.contains("{") && step.contains("}")){
+        if (step.contains("{") && step.contains("}")) {
             startPoint = step.indexOf("{") + 1;
             endPoint = step.lastIndexOf("}");
 
             try {
-                String headerName= step.substring(startPoint, endPoint);
-                textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(),test.get("dataSetName").toString()),headerName, (Integer) test.get("row"));
+                String headerName = step.substring(startPoint, endPoint);
+                textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"));
 
             } catch (StringIndexOutOfBoundsException e) {
                 System.out.println("no string to enter. Create a separate exeception here");
             }
-        }else {
+        } else {
             startPoint = step.indexOf("'") + 1;
             endPoint = step.lastIndexOf("'");
 
@@ -430,12 +429,14 @@ public class StepParser {
                 textToEnter = step.substring(startPoint, endPoint);
 
             } catch (StringIndexOutOfBoundsException e) {
-                System.out.println("no string to enter. Create a separate exeception here");
+                //       System.out.println("no string to enter");
             }
         }
+            return textToEnter;
 
-        return textToEnter;
     }
+
+
 
     public String parseNumverToEnter(String step, int index) {
         String numbers;
@@ -449,7 +450,6 @@ public class StepParser {
     public String screenshot(WebDriver driver, String suitName, String testName){
         generateReportDir();
         String screenshotName = captureScreen(driver,suitName,testName);
-        System.out.println("Screenshot Name : "+screenshotName);
         return screenshotName;
     }
 
@@ -469,7 +469,6 @@ public class StepParser {
             File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
             path = filePath.getAbsolutePath()+"/" + (suitName.split(".s"))[0] +"_"+testName.replaceAll("\\s", "")+"_"+dtf.format(LocalDateTime.now())+".png";
-            System.out.println("path : "+path);
             FileUtils.copyFile(scrFile, new File(path));
         }
         catch(IOException e) {
