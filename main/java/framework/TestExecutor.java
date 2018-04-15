@@ -432,7 +432,7 @@ public class TestExecutor implements Runnable {
         if (J >= 1) {
             testResult.put("status", "fail");
             testResult.put("screenshot", stepParser.screenshot(driver,test.get("suiteName").toString(),test.get("testName").toString()));
-            testResult.put("fullsTackTrace",exceptionAsString);
+            testResult.put("fullStackTrace",exceptionAsString);
         } else {
             testResult.put("status", "pass");
         }

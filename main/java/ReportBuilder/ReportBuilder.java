@@ -679,15 +679,24 @@ public class ReportBuilder {
                     String screenShotpath = "";
 
 
+                    System.out.println("Test " + test);
+
+
+                    System.out.println(((JSONObject) test).get("testName") + "" + isTestFailed);
+
+
+
                     if (isTestFailed) {
 
                         try {
-
                             stacktrace = ((JSONObject) test).get("fullStackTrace").toString();
+
+                            System.out.println("StackTrace " + stacktrace);
+
                             screenShotpath = ((JSONObject) test).get("screenshot").toString();
 
                         } catch (Exception e) {
-
+                           e.printStackTrace();
                         }
                     }
 
