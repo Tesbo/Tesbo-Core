@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StepParser {
 
-
+    DataDrivenParser dataDrivenParser =new DataDrivenParser();
     public static void main(String[] args) {
         StepParser parser = new StepParser();
 
@@ -398,21 +398,42 @@ public class StepParser {
         return elementName;
     }
 
+    /**
+     * @auther :
+     * @lastModifiedBy: Ankit Mistry
+     * @param test
+     * @param step
+     * @return
+     */
     public String parseTextToEnter(JSONObject test, String step) {
         String textToEnter = "";
 
         int startPoint = 0;
         int endPoint = 0;
 
-        startPoint = step.indexOf("'") + 1;
-        endPoint = step.lastIndexOf("'");
+        if(step.contains("{") && step.contains("}")){
+            startPoint = step.indexOf("{") + 1;
+            endPoint = step.lastIndexOf("}");
 
-        try {
-            textToEnter = step.substring(startPoint, endPoint);
+            try {
+                String headerName= step.substring(startPoint, endPoint);
+                textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(),test.get("dataSetName").toString()),headerName, (Integer) test.get("row"));
 
-        } catch (StringIndexOutOfBoundsException e) {
-            System.out.println("no string to enter. Create a separate exeception here");
+            } catch (StringIndexOutOfBoundsException e) {
+                System.out.println("no string to enter. Create a separate exeception here");
+            }
+        }else {
+            startPoint = step.indexOf("'") + 1;
+            endPoint = step.lastIndexOf("'");
+
+            try {
+                textToEnter = step.substring(startPoint, endPoint);
+
+            } catch (StringIndexOutOfBoundsException e) {
+                System.out.println("no string to enter. Create a separate exeception here");
+            }
         }
+
         return textToEnter;
     }
 

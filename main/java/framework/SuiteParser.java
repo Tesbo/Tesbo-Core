@@ -200,8 +200,8 @@ public class SuiteParser {
             }
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].toLowerCase().contains("step:") | allLines[j].toLowerCase().contains("step :") |
-                    allLines[j].toLowerCase().contains("verify:") | allLines[j].toLowerCase().contains("verify :") | allLines[j].toLowerCase().contains("collection:") | allLines[j].toLowerCase().contains("collection :")) {
+            if (allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step :") |
+                    allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify :") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection :")) {
                 testSteps.add(allLines[j]);
             }
         }
@@ -209,6 +209,48 @@ public class SuiteParser {
             throw new NoTestStepFoundException("Steps are not defined for test : " + testName);
         }
         return testSteps;
+    }
+
+    /**
+     *
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     *
+     * @param suiteName
+     * @param testName
+     * @return
+     */
+    public String getTestDataSetBySuiteAndTestCaseName(String suiteName, String testName) {
+        StringBuffer suiteDetails = readSuiteFile(suiteName);
+        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        String testDataSet = null;
+        int startPoint = 0;
+        boolean testStarted = false;
+        int endpoint = 0;
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
+                String testNameArray[] = allLines[i].split(":");
+                if (testNameArray[1].trim().contains(testName)) {
+                    startPoint = i;
+                    testStarted = true;
+                }
+            }
+            if (testStarted) {
+                if (allLines[i].toLowerCase().contains("end")) {
+                    endpoint = i;
+                    break;
+                }
+            }
+        }
+        for (int j = startPoint; j < endpoint; j++) {
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet :")
+                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) {
+                testDataSet=allLines[j];
+                break;
+            }
+        }
+
+        return testDataSet;
     }
 
 
