@@ -222,7 +222,6 @@ public class SuiteParser {
         for (int i = 0; i < allLines.length; i++) {
             if (allLines[i].toLowerCase().contains("collection name:") | allLines[i].toLowerCase().contains("collection name :")) {
                 String testNameArray[] = allLines[i].split(":");
-                /*System.out.println("Group Names : "+allLines[i]);*/
                 if (testNameArray[1].trim().toLowerCase().equalsIgnoreCase(groupName)) {
                     startPoint = i;
                     testStarted = true;
@@ -307,7 +306,6 @@ public class SuiteParser {
 
         }
 
-        //System.out.println("Ros : " + testNameWithSuites);
 
         return testNameWithSuites;
     }

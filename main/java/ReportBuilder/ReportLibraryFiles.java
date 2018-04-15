@@ -113,11 +113,6 @@ public class ReportLibraryFiles {
                 e.printStackTrace();
             }
 
-        try {
-            System.out.println(in.read());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();

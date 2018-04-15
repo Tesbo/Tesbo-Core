@@ -143,7 +143,7 @@ public class TestExecutionBuilder {
         }
 
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-        System.out.println(testExecutionQueue.size());
+
         for (int i = 0; i < testExecutionQueue.size(); i++) {
             Runnable worker = new TestExecutor((JSONObject) testExecutionQueue.get(i));
             executor.execute(worker);

@@ -1,9 +1,7 @@
 package framework;
 
 import Execution.TestExecutionBuilder;
-import io.appium.java_client.MobileElement;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.ios.IOSDriver;
+
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
@@ -86,40 +84,38 @@ public class TestExecutor implements Runnable {
         }
         try {
 
+
+            if(seleniumAddress ==null)
+            {
                 if (browserName.equalsIgnoreCase("firefox")) {
-                    capability = DesiredCapabilities.firefox();
                     FirefoxDriverManager.getInstance().setup();
+                    System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE,"true");
+                    System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
                     if(seleniumAddress==null) {
                         driver = new FirefoxDriver();
-                        driver.manage().window().maximize();
                     }
                 }
                 if (browserName.equalsIgnoreCase("chrome")) {
-                    capability = DesiredCapabilities.chrome();
                     ChromeDriverManager.getInstance().setup();
                     if(seleniumAddress==null) {
                         driver = new ChromeDriver();
-                        driver.manage().window().maximize();
                     }
-
                 }
                 if (browserName.equalsIgnoreCase("ie")) {
-                    capability = DesiredCapabilities.internetExplorer();
                     InternetExplorerDriverManager.getInstance().setup();
                     if(seleniumAddress==null) {
                         driver = new InternetExplorerDriver();
-                        driver.manage().window().maximize();
                     }
                 }
 
-            if(seleniumAddress!=null && capabilities!=null){
-
+            }else {
                 capability= setCapabilities(capabilities,capability);
+                driver=openRemoteBrowser(driver,capability,seleniumAddress);
             }
-            if(seleniumAddress!=null) {
-               driver=openRemoteBrowser(driver,capability,seleniumAddress);
-                driver.manage().window().maximize();
-            }
+
+
+            driver.manage().window().maximize();
+
             try {
                 System.out.println(config.getBaseUrl().equals(""));
                 if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {
@@ -162,12 +158,10 @@ public class TestExecutor implements Runnable {
             JSONObject stepResult = new JSONObject();
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
-            //System.out.println("Trim : "+step.toString().replaceAll("\\s{2,}", " ").trim());
             if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step :")) {
                 stepResult.put("startTime", dtf.format(LocalDateTime.now()));
                 stepResult.put("stepIndex", stepNumber + 1);
                 try {
-                    System.out.println(step);
                     stepParser.parseStep(driver, test, step.toString());
                     stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "pass");
@@ -432,7 +426,7 @@ public class TestExecutor implements Runnable {
         if (J >= 1) {
             testResult.put("status", "fail");
             testResult.put("screenshot", stepParser.screenshot(driver,test.get("suiteName").toString(),test.get("testName").toString()));
-            testResult.put("fullStackTrace",exceptionAsString);
+            testResult.put("fullsTackTrace",exceptionAsString);
         } else {
             testResult.put("status", "pass");
         }
@@ -460,9 +454,7 @@ public class TestExecutor implements Runnable {
             JSONArray test = (JSONArray) builder.mainObj.get("testCase");
             test.add(testResult);
         }
-
-        //System.out.println("run test : " + builder.mainObj);
-    }
+   }
 
     /**
      * @auther : Ankit Mistry
@@ -558,8 +550,7 @@ public class TestExecutor implements Runnable {
     public WebDriver openRemoteBrowser(WebDriver driver,DesiredCapabilities capability,String seleniumAddress) {
         try {
             driver = new RemoteWebDriver(new URL(seleniumAddress),capability);
-            System.out.println("Selenium Address : "+seleniumAddress);
-        } catch (MalformedURLException e) {
+       } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         return driver;
