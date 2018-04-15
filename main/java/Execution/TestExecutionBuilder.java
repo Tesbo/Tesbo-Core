@@ -2,10 +2,7 @@ package Execution;
 
 import ReportBuilder.GetJsonData;
 import ReportBuilder.*;
-import framework.GetConfiguration;
-import framework.ReportParser;
-import framework.SuiteParser;
-import framework.TestExecutor;
+import framework.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
