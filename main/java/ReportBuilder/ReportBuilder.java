@@ -287,7 +287,7 @@ public class ReportBuilder {
                 "Morris.Bar({\n" +
                 "element: 'lastBuildResult',\n" +
                 "data: [\n");
-        for (int i = 0; i < 10; i++) {
+        for (int i = 9; i >=0 ; i--) {
             try {
 
                 JSONObject obj = (JSONObject) data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath()).get(i);

@@ -137,7 +137,7 @@ public class GetJsonData {
         File directory1 = new File(directory);
         File[] files = directory1.listFiles((FileFilter) FileFileFilter.FILE);
 
-        Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_COMPARATOR);
+        Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
 
 
         String startTime = "";
@@ -167,6 +167,7 @@ public class GetJsonData {
             last10BuildDataArray.add(individualBuildData);
         }
 
+        System.out.println(last10BuildDataArray);
 
         return last10BuildDataArray;
 
