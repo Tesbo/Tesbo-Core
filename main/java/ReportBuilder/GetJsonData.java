@@ -167,7 +167,6 @@ public class GetJsonData {
             last10BuildDataArray.add(individualBuildData);
         }
 
-        System.out.println(last10BuildDataArray);
 
         return last10BuildDataArray;
 
