@@ -1,6 +1,6 @@
 {
-  "SuiteDirectory": "/Volumes/Viral/Projects/SelebotFinal/selebot/test/java/Suites",
-  "locatorDirectory": "/Volumes/Viral/Projects/SelebotFinal/selebot/test/java/Locator",
+  "SuiteDirectory": "E:/Projects/TesBo/New/LetestUpdateClone/tesbo-core/test/java/Suites",
+  "locatorDirectory": "E:/Projects/TesBo/New/LetestUpdateClone/tesbo-core/test/java/Locator",
   "run": {
     "baseUrl": "https://vigoreport.io",
     "by": {
@@ -8,15 +8,11 @@
         "login"
       ]
     },
-    "browser": [
-
-
-
-
-"firefox",
-      "chrome"
-
-    ],
+    "browser": {
+      "name": [
+        "chrome"
+      ]
+    },
     "parallel": {
       "status": true,
       "count": "1"

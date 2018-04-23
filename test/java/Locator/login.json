@@ -8,6 +8,6 @@
   "NewWindow": "//button[@onclick='newBrwTab()']",
   "Register": ".//*[@id='menu-item-374']/a",
   "Home":"//h1",
-  "ExpectedText":"//article/header/h1",
+  "ExpectedText":"(//li[class=contains(text(),'menu-item menu-item-type-post_type menu-item-object-page menu-item-')])[2]",
   "DropDown":"//select"
 }

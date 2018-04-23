@@ -40,7 +40,6 @@ public class GetConfiguration {
             return (JSONObject) browser.get("capabilities");
 
     }
-
     public ArrayList<String> getTags() throws Exception {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());

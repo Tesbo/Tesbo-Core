@@ -1,13 +1,13 @@
-Group : dashboard1
+Collection: dashboard1
 Step : Open URL 'https://www.linkedin.com'
 Step : Enter 'viral103patel@gmail.com' into @emailTextBox
 end
 
-Group : login1
-Step : Open URL 'https://www.linkedin.com'
-Step : Enter 'viral103patel@gmail.com' into @emailTextBox
-Step : Enter 'jsbot@2017' into @passwordTextBox
-Step : Click on @signInTextBox
+Collection: login1
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter 'viral103patel@gmail.com' into @emailTextBox
+Step: Enter 'jsbot@2017' into @passwordTextBox
+Step: Click on @signInTextBox
 end
 
 
@@ -26,7 +26,7 @@ Test: Verify Task List Grid is Display
 
 
 Step: Open Url
-GroupExecution : login1
+Collection: login1
 Step: Click @TaskListBuilder
 Verify: @TaskListBuilder is display
 End :
@@ -39,7 +39,7 @@ Step: Select USER from left-navigation
 Step: Select @ORGANIZATION from drop-down under @USER
 Step: Enter valid @emailaddress
 Verify: Verify that @email was received
-End :
+End
 
 Test: Verify Registered User is Display
 #DubTest
@@ -48,7 +48,7 @@ Step: Select USER from left-navigation
 Step: Select @ORGANIZATION from drop-down under @USER
 Step: Enter valid @emailaddress
 Verify: Verify that @email was received
-End :
+End
 
 
 
