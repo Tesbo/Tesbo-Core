@@ -56,8 +56,16 @@ public class GetLocator {
         Utility parser = new Utility();
 
         JSONObject main = parser.loadJsonFile(config.getLocatorDirectory() + "/" + suiteName.split(".suite")[0] + ".json");
-
-        return main.get(LocatorName).toString();
+        String LocatorsName = null;
+        try{
+            LocatorsName= main.get(LocatorName).toString();
+        }catch (Exception e)
+        {
+            System.err.println("Locator '"+LocatorName + "' is not found.");
+            e.printStackTrace();
+        }
+        
+        return LocatorsName;
     }
 
 }
