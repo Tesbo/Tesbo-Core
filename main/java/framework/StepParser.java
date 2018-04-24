@@ -424,12 +424,13 @@ public class StepParser {
         } else {
             startPoint = step.indexOf("'") + 1;
             endPoint = step.lastIndexOf("'");
-
             try {
                 textToEnter = step.substring(startPoint, endPoint);
 
             } catch (StringIndexOutOfBoundsException e) {
-                //       System.out.println("no string to enter");
+                System.err.println("No string found to enter on element.");
+                e.printStackTrace();
+                throw e;
             }
         }
             return textToEnter;
