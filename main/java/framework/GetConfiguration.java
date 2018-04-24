@@ -12,7 +12,6 @@ import java.util.ArrayList;
  */
 public class GetConfiguration {
 
-
     public String getConfigFilePath() {
         File file = new File("config.json");
         return file.getAbsolutePath();
@@ -111,9 +110,7 @@ public class GetConfiguration {
 
         try {
             baseUrl = ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("baseUrl").toString();
-        } catch (Exception e) {
-            System.out.println("Base URL is not defined");
-        }
+        } catch (Exception e) { }
 
 
         return baseUrl;

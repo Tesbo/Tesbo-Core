@@ -1,5 +1,6 @@
 package framework;
 
+import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import Exception.TesboException;
@@ -19,8 +20,7 @@ import java.util.stream.Stream;
 //import NoSuiteNameFoundException;
 
 public class SuiteParser {
-
-
+    Logger logger = new Logger();
 
     /**
      * @param directory
@@ -48,16 +48,16 @@ public class SuiteParser {
                 }
             }
             if(flag==true){
-                System.err.println(file+" file found");
+                logger.errorLog(file+" file found");
                 throw (new NoSuchFileException(""));
             }
         } catch (Exception e) {
             if(flag==true){
-                System.err.println("Message : Please create only '.suite' file in suite directory.");
+                logger.testFailed("Message : Please create only '.suite' file in suite directory.");
             }
             else {
-                System.out.println("Message : Please Enter valid directory path.");
-                System.out.println("'" + directory + "' no files found on your location.");
+                logger.testFailed("Message : Please Enter valid directory path.");
+                logger.testFailed("'" + directory + "' no files found on your location.");
                 e.printStackTrace();
             }
             throw e;

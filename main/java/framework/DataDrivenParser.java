@@ -29,7 +29,6 @@ public class DataDrivenParser {
                 if(excelUrl.length==2)
                 {
                     String filePath=excelUrl[1];
-                    //System.out.println(filePath);
                     File file = new File(filePath);
                     String ext = Files.getFileExtension(filePath);
 
@@ -62,7 +61,6 @@ public class DataDrivenParser {
 
             }
         }
-        //System.out.println("DataSet : "+flag);
         return flag;
     }
 
@@ -127,7 +125,6 @@ public class DataDrivenParser {
                 if (allLines[i].contains("\"excelFile\" :") | allLines[i].contains("\"excelFile\":")) {
                     String[] excelUrl = allLines[i].replaceAll("[\"| |,]", "").split(":", 2);
                     filePath = excelUrl[1];
-                   // System.out.println(filePath);
                     break;
                 }
         }
@@ -144,7 +141,6 @@ public class DataDrivenParser {
         boolean flag=false;
         for (int i = 0; i < allLines.length; i++) {
             if(allLines[i].toLowerCase().contains("dataset.excelfile")){
-                //System.out.println(allLines[i]);
                 String[] steps=allLines[i].split(" ");
                 for(String step:steps)
                 {
@@ -220,7 +216,6 @@ public class DataDrivenParser {
                     }
                 }
             }
-            //System.out.println(excelData);
             file.close();
         } catch (Exception e) {
             e.printStackTrace();
