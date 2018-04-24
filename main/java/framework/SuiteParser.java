@@ -2,7 +2,7 @@ package framework;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import TestboException.NoTestStepFoundException;
+import Exception.TesboException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -176,24 +176,32 @@ public class SuiteParser {
         StringBuffer suiteDetails = readSuiteFile(suiteName);
         String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
         JSONArray testSteps = new JSONArray();
+        int testCount=0;
         int startPoint = 0;
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
             if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
                 String testNameArray[] = allLines[i].split(":");
+
                 if (testNameArray[1].trim().contains(testName)) {
                     startPoint = i;
                     testStarted = true;
                 }
+                if (testStarted)
+                    testCount++;
             }
             if (testStarted) {
+
                 if (allLines[i].toLowerCase().contains("end")) {
                     endpoint = i;
-                    testStarted = false;
+                    break;
                 }
             }
         }
+        if(testCount>=2 || endpoint==0)
+            throw new TesboException("End Step is not found for '"+testName+ "' test");
+
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step :") |
                     allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify :") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection :")) {
@@ -201,8 +209,10 @@ public class SuiteParser {
             }
         }
         if (testSteps.size() == 0) {
-            throw new NoTestStepFoundException("Steps are not defined for test : " + testName);
+            throw new TesboException("Steps are not defined for test : " + testName);
         }
+
+
         return testSteps;
     }
 
@@ -278,7 +288,7 @@ public class SuiteParser {
             }
         }
         if (testSteps.size() == 0) {
-            throw new NoTestStepFoundException("Steps are not defined for test : " + groupName);
+            throw new TesboException("Steps are not defined for test : " + groupName);
         }
         return testSteps;
     }

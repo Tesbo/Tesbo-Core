@@ -47,7 +47,18 @@ public class GetConfiguration {
         JSONObject by = (JSONObject) run.get("by");
         return (JSONArray) by.get("tag");
     }
-
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public JSONObject getBy() throws Exception {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        JSONObject by = (JSONObject) run.get("by");
+        return by;
+    }
     /**
      * @auther : Ankit Mistry
      * @lastModifiedBy:
@@ -67,8 +78,6 @@ public class GetConfiguration {
         else
             return seleniumAddress;
     }
-
-
     public ArrayList<String> getSuiteName() throws Exception {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
@@ -77,7 +86,6 @@ public class GetConfiguration {
         return (JSONArray) by.get("suite");
 
     }
-
     public String getRunBy() throws Exception {
         Utility parser = new Utility();
         String runby = ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("by").toString();
@@ -88,7 +96,6 @@ public class GetConfiguration {
         }
         return null;
     }
-
     public ArrayList<String> getByValue() throws Exception {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
@@ -96,7 +103,6 @@ public class GetConfiguration {
         JSONObject by = (JSONObject) run.get("by");
         return (JSONArray) by.get("suite");
     }
-
     public String getBaseUrl() {
         Utility parser = new Utility();
 
