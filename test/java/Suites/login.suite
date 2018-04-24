@@ -13,17 +13,17 @@ Step : Click on @signInTextBox
 end
 
 Collection Name : dashboard
-Step : Open URL 'https://www.linkedin.com'
+Step: Open URL 'https://www.linkedin.com'
 Step : Enter 'viral103patel@gmail.com' into @emailTextBox
 end
 
 
-Test : Verify Gmail Login login page
+Test: Verify Gmail Login login page
 #login #gtu
-Step : Open URL 'https://www.linkedin.com'
-Step : Enter 'viral103patel@gmail.com' into @emailTextBox
-Step : Enter 'jsbot@2017' into @passwordTextBox
-Step : Click on @signInTextBox
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter 'viral103patel@gmail.com' into @emailTextBox
+Step: Enter 'jsbot2017' into passwordTextBox
+Step: Click on @signInTextBox
 end
 
 
@@ -91,12 +91,12 @@ Test: verification demo
 #verification
 Step: Open Url 'http://www.DemoQA.com'
 Step: pause until @ExpectedText is display
-Step: pause for 20sec
+Step: pause for 5sec
 verify: @ExpectedText is displayed
-Verify: @ExpectedText text is equal ignore case 'home'
-Verify: @ExpectedText text is equal 'Home'
-Verify: @ExpectedText text is contains 'Ho'
-Verify: @ExpectedText text is contains ignore case 'ho'
+Verify: @ExpectedText text is equal ignore case 'about us'
+Verify: @ExpectedText text is equal 'About us'
+Verify: @ExpectedText text is contains 'About'
+Verify: @ExpectedText text is contains ignore case 'about'
 end
 
 Test: select demo

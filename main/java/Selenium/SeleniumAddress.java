@@ -1,5 +1,6 @@
-package framework;
+package Selenium;
 
+import framework.GetConfiguration;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
