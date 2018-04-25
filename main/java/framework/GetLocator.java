@@ -1,5 +1,6 @@
 package framework;
 
+import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -12,6 +13,7 @@ import java.util.stream.Stream;
 
 public class GetLocator {
 
+    Logger logger = new Logger();
     public static void main(String[] args) {
         GetLocator lc = new GetLocator();
         //lc.getLocatorValue("login.suite", "gmailLink");
@@ -41,15 +43,15 @@ public class GetLocator {
                 }
             }
             if(flag==true){
-                System.err.println(file+" file found");
+                logger.errorLog(file+" file found");
                 throw (new NoSuchFieldException());
             }
         } catch (Exception e) {
             if(flag==true) {
-                System.err.println("Message : Please create only '.json' file in Locator directory.");
+                logger.errorLog("Message : Please create only '.json' file in Locator directory.");
             }
             else {
-                System.err.println("Message : Please Enter valid directory path for locators.");
+                logger.errorLog("Message : Please Enter valid directory path for locators.");
                 e.printStackTrace();
             }
             throw e;
@@ -62,7 +64,7 @@ public class GetLocator {
             LocatorsName= main.get(LocatorName).toString();
         }catch (NullPointerException e)
         {
-            System.err.println("Locator '"+LocatorName + "' is not found.");
+            logger.errorLog("Locator '"+LocatorName + "' is not found.");
             e.printStackTrace();
         }
         

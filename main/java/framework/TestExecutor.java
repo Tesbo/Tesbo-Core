@@ -39,7 +39,7 @@ public class TestExecutor implements Runnable {
 
     JSONObject test;
 
-    Logger logger = new Logger();
+    static Logger logger = new Logger();
 
     public static void main(String[] args) throws Exception {
         TestExecutionBuilder builder = new TestExecutionBuilder();
@@ -56,13 +56,12 @@ public class TestExecutor implements Runnable {
         long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
 
         builder.reportObj.put("totalTimeTaken", elapsedTimeSuite);
-        //System.out.println("Main : " + builder.mainObj);
 
         DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
         report.generateReportDir();
         //report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
-        System.out.println("Report : "+builder.reportObj);
+        logger.stepLog("Report : "+builder.reportObj);
     }
 
     public TestExecutor(JSONObject test) {
@@ -120,7 +119,6 @@ public class TestExecutor implements Runnable {
             driver.manage().window().maximize();
 
             try {
-                System.out.println(config.getBaseUrl().equals(""));
                 if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {
                     driver.get(config.getBaseUrl());
                 }
@@ -196,7 +194,7 @@ public class TestExecutor implements Runnable {
                 stepResult.put("startTime", dtf.format(LocalDateTime.now()));
                 stepResult.put("stepIndex", stepNumber + 1);
                 try {
-                    System.out.println(step.toString());
+                    logger.stepLog(step.toString());
                     verifyParser.parseVerify(driver, test, step.toString());
                     stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "pass");
@@ -231,7 +229,7 @@ public class TestExecutor implements Runnable {
                     stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
                     stepResult.put("errorMsg", "Please Enter valid directory path. " + fe.getMessage());
-                    System.out.println("Please Enter valid directory path. " + fe.getMessage());
+                    logger.errorLog("Please Enter valid directory path. " + fe.getMessage());
                     stepResult.put("fullStackTrace", exceptionAsString);
                     failFlag = true;
                 } catch (Exception e) {
@@ -337,7 +335,7 @@ public class TestExecutor implements Runnable {
                             groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Please Enter valid directory path. " + fe.getMessage());
-                            System.out.println("Please Enter valid directory path. " + fe.getMessage());
+                            logger.errorLog("Please Enter valid directory path. " + fe.getMessage());
                             groupResult.put("fullStackTrace", exceptionAsString);
                             break;
                         } catch (Exception e) {
@@ -354,7 +352,7 @@ public class TestExecutor implements Runnable {
                         }
                     } else if (groupStep.toString().toLowerCase().contains("verify:") | groupStep.toString().toLowerCase().contains("verify :")) {
                         try {
-                            System.out.println(groupStep.toString());
+                            logger.stepLog(groupStep.toString());
                             verifyParser.parseVerify(driver, test, groupStep.toString());
                             groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "pass");
@@ -387,7 +385,7 @@ public class TestExecutor implements Runnable {
                             groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                             groupResult.put("status", "fail");
                             groupResult.put("errorMsg", "Please Enter valid directory path. " + fe.getMessage());
-                            System.out.println("Please Enter valid directory path. " + fe.getMessage());
+                            logger.errorLog("Please Enter valid directory path. " + fe.getMessage());
                             groupResult.put("fullStackTrace", exceptionAsString);
                         } catch (Exception e) {
                             J++;

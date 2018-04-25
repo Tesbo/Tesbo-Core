@@ -1,6 +1,7 @@
 package Selenium;
 
 import framework.Utility;
+import logger.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
@@ -20,6 +21,7 @@ public class Commands {
     protected static Wait<WebDriver> wait;
     public String parantWindow = "";
     public String childWindow = "";
+    Logger logger=new Logger();
 
     public String getElementValue(String elementName, String suiteName) throws Exception {
         Utility jsonParser = new Utility();
@@ -71,7 +73,7 @@ public class Commands {
                                     try {
                                         element = driver.findElement(By.partialLinkText(elementvalue));
                                     } catch (NoSuchElementException e) {
-                                        System.out.println("Please enter valid locator value");
+                                        logger.testFailed("Please enter valid locator value");
                                         throw  e;
                                     }
                                 }

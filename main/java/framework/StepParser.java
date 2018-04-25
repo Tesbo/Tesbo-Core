@@ -146,12 +146,10 @@ public class StepParser {
                 if (step.toLowerCase().contains("using")) {
                     //Step : Switch to frame using id 'FrameID'.
                     if (step.toLowerCase().contains("id")) {
-                        System.out.println("id : " + parseTextToEnter(test,step));
                         cmd.switchFrame(driver, parseTextToEnter(test,step));
                     }
                     //Step : Switch to frame using name 'FrameName'.
                     else if (step.toLowerCase().contains("name")) {
-                        System.out.println("name : " + parseTextToEnter(test,step));
                         cmd.switchFrame(driver, parseTextToEnter(test,step));
                     }
                 }
@@ -171,7 +169,7 @@ public class StepParser {
                     try {
                         cmd.switchFrameElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
                     } catch (NullPointerException e) {
-                        System.out.println("No element found.");
+                        logger.errorLog("No element found.");
                         throw e;
                     }
                 }
@@ -262,7 +260,7 @@ public class StepParser {
                 String y = parseNumverToEnter(step, 1);
                 cmd.scrollToCoordinate(driver, x, y);
             } catch (NullPointerException e) {
-                System.out.println("No coordinate found");
+                logger.testFailed("No coordinate found");
             }
         }
         /**
@@ -273,7 +271,7 @@ public class StepParser {
             try {
                 cmd.scrollToElement(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
             } catch (NullPointerException e) {
-                System.out.println("No element found");
+                logger.testFailed("No element found");
                 throw e;
             } catch (Exception e) {
                 throw e;
@@ -419,7 +417,7 @@ public class StepParser {
                 textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"));
 
             } catch (StringIndexOutOfBoundsException e) {
-                System.out.println("no string to enter. Create a separate exeception here");
+                logger.testFailed("no string to enter. Create a separate exeception here");
             }
         } else {
             startPoint = step.indexOf("'") + 1;
@@ -428,7 +426,7 @@ public class StepParser {
                 textToEnter = step.substring(startPoint, endPoint);
 
             } catch (StringIndexOutOfBoundsException e) {
-                System.err.println("No string found to enter on element.");
+                logger.testFailed("No string found to enter on element.");
                 e.printStackTrace();
                 throw e;
             }

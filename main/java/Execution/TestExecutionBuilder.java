@@ -24,7 +24,7 @@ public class TestExecutionBuilder {
     public static JSONObject mainObj = new JSONObject();
     public static JSONObject reportObj = new JSONObject();
     DataDrivenParser dataDrivenParser =new DataDrivenParser();
-
+    Logger logger = new Logger();
 
 
 
@@ -126,7 +126,7 @@ public class TestExecutionBuilder {
         try {
             ArrayList<String> taglist = config.getTags();
             if (taglist.isEmpty() || taglist.get(0).equals("")) {
-                System.err.println("Please enter 'Tag' name.");
+                logger.errorLog("Please enter 'Tag' name.");
             } else {
                 parallelBuilder(buildExecutionQueueByTag());
                 report.newReport(mainObj, reportObj);
@@ -141,7 +141,7 @@ public class TestExecutionBuilder {
         try {
             ArrayList<String> suitelist = config.getSuite();
             if (suitelist.isEmpty() || suitelist.get(0).equals("")) {
-                System.err.println("Please enter 'suite' name.");
+                logger.errorLog("Please enter 'suite' name.");
             } else {
                 parallelBuilder(buildExecutionQueueBySuite());
                 report.newReport(mainObj, reportObj);
@@ -151,7 +151,7 @@ public class TestExecutionBuilder {
         }
 
         if (tagSuiteCount == 2) {
-            System.err.println("Please enter 'Tag name' or 'Suite name' to run test.");
+            logger.errorLog("Please enter 'Tag name' or 'Suite name' to run test.");
         }
     }
 
