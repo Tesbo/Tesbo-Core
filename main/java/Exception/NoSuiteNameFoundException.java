@@ -1,4 +1,4 @@
-package TestboException;
+package Exception;
 
 public class NoSuiteNameFoundException extends RuntimeException {
 

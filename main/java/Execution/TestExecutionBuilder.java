@@ -91,11 +91,11 @@ public class TestExecutionBuilder {
     }
 
     public void parallelBuilder(JSONArray testExecutionQueue) throws Exception {
-
+        Validation validation=new Validation();
         GetConfiguration config = new GetConfiguration();
         JSONObject parallelConfig = config.getParallel();
         int threadCount = 0;
-
+        validation.endStepValidation(testExecutionQueue);
         if (parallelConfig.get("status").toString().equals("true")) {
             threadCount = Integer.parseInt(parallelConfig.get("count").toString());
         } else {
@@ -114,9 +114,10 @@ public class TestExecutionBuilder {
     }
 
     public void buildExecution() throws Exception {
+        Validation validation=new Validation();
         GetConfiguration config = new GetConfiguration();
         ReportParser report = new ReportParser();
-
+        validation.beforeExecutionValidation();
         int tagSuiteCount = 0;
 
         /**
