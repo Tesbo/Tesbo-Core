@@ -3,7 +3,7 @@ package framework;
 import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
+import Exception.TesboException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +21,8 @@ public class GetLocator {
 
     public String getLocatorValue(String suiteName, String LocatorName) throws Exception {
         if(LocatorName.equals(""))
-            throw new NullPointerException("Locator is not define.") ;
+            throw new TesboException("Locator is not define.") ;
+
         GetConfiguration config = new GetConfiguration();
         JSONArray locatorFileList = new JSONArray();
         boolean flag=false;
