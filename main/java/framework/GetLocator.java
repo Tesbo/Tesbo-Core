@@ -14,10 +14,6 @@ import java.util.stream.Stream;
 public class GetLocator {
 
     Logger logger = new Logger();
-    public static void main(String[] args) {
-        GetLocator lc = new GetLocator();
-        //lc.getLocatorValue("login.suite", "gmailLink");
-    }
 
     public String getLocatorValue(String suiteName, String LocatorName) throws Exception {
         if(LocatorName.equals(""))
@@ -65,8 +61,8 @@ public class GetLocator {
             LocatorsName= main.get(LocatorName).toString();
         }catch (NullPointerException e)
         {
-            logger.errorLog("Locator '"+LocatorName + "' is not found.");
-            e.printStackTrace();
+            throw new TesboException("Locator '"+LocatorName + "' is not found.");
+
         }
         
         return LocatorsName;
