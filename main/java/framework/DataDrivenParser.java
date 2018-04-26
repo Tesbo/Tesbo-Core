@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import Exception.TesboException;
 
 
 public class DataDrivenParser {
@@ -32,15 +33,15 @@ public class DataDrivenParser {
                     File file = new File(filePath);
                     String ext = Files.getFileExtension(filePath);
 
-                    if(file.exists())
+                    if(file.exists()) {
                         flag = true;
-                    else
-                        throw new FileNotFoundException("File Not Found On "+filePath);
-
+                    }else {
+                        throw new FileNotFoundException("File Not Found On " + filePath);
+                    }
                     if(!ext.equalsIgnoreCase("xlsx"))
-                        throw new FileNotFoundException("Require only '.xlsx' file :"+filePath);
+                        throw new TesboException("Require only '.xlsx' file :"+filePath);
                 }else{
-                    throw new NullPointerException("Please Enter File Path");
+                    throw new TesboException("Please Enter File Path in DataSet");
                 }
 
             }
@@ -48,7 +49,7 @@ public class DataDrivenParser {
         return flag;
     }
 
-    public boolean isDataSet(String suiteName) throws Exception {
+    public boolean isDataSet(String suiteName) {
         SuiteParser suiteParser=new SuiteParser();
         StringBuffer suite= suiteParser.readSuiteFile(suiteName);
         String allLines[] = suite.toString().split("[\\r\\n]+");
@@ -64,7 +65,7 @@ public class DataDrivenParser {
         return flag;
     }
 
-    public boolean dataSetIsExistInSuite(String suiteName, String dataSetName) throws Exception {
+    public boolean dataSetIsExistInSuite(String suiteName, String dataSetName) {
         SuiteParser suiteParser=new SuiteParser();
         StringBuffer suite= suiteParser.readSuiteFile(suiteName);
         String allLines[] = suite.toString().split("[\\r\\n]+");
@@ -86,9 +87,9 @@ public class DataDrivenParser {
 
         }
         if(!isDataSetName)
-            throw new Exception("Data Set " + dataSetName + " is not found in suite");
+            throw new TesboException("Data Set " + dataSetName + " is not found in suite");
         if(!flag)
-            throw new Exception("Excel File url is not found in " + dataSetName + " Data Set");
+            throw new TesboException("Excel File url is not found in " + dataSetName + " Data Set");
 
         return flag;
 
@@ -159,15 +160,13 @@ public class DataDrivenParser {
                         }
                     }
                 }
-
                 flag=true;
-
             }
         }
         if(flag) {
             return excelHeaderList;
         }else
-            throw new NullPointerException("Excel data is not used in suite file.");
+            throw new TesboException("Excel data is not used in suite file.");
     }
 
     public JSONArray getHeaderValuefromExcel(String url,ArrayList<String> dataSetValues)
