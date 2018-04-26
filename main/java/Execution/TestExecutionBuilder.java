@@ -151,7 +151,7 @@ public class TestExecutionBuilder {
         }
 
         if (tagSuiteCount == 2) {
-            logger.errorLog("Please enter 'Tag name' or 'Suite name' to run test.");
+            //logger.errorLog("Please enter 'Tag name' or 'Suite name' to run test.");
         }
     }
 
