@@ -32,7 +32,8 @@ public class StepParser {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
-        logger.stepLog(step);
+        if (!step.toLowerCase().contains("enter") && !step.toLowerCase().contains("url"))
+            logger.stepLog(step);
 
         //Clicks
         if (step.toLowerCase().contains("click")) { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
@@ -415,14 +416,17 @@ public class StepParser {
             try {
                 String headerName = step.substring(startPoint, endPoint);
                 textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"));
+                logger.stepLog(step.replace(headerName, textToEnter));
 
             } catch (StringIndexOutOfBoundsException e) {
+                logger.stepLog(step);
                 logger.testFailed("no string to enter. Create a separate exeception here");
             }
         } else {
             startPoint = step.indexOf("'") + 1;
             endPoint = step.lastIndexOf("'");
             try {
+                logger.stepLog(step);
                 textToEnter = step.substring(startPoint, endPoint);
 
             } catch (StringIndexOutOfBoundsException e) {
