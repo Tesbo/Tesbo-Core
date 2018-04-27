@@ -5,7 +5,7 @@ import Execution.TestExecutionBuilder;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
-import io.github.bonigarcia.wdm.OperaDriverManager;
+
 import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -29,7 +29,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class TestExecutor implements Runnable {
 
@@ -83,13 +82,12 @@ public class TestExecutor implements Runnable {
         seleniumAddress=getSeleniumAddress();
         if(IsCapabilities(browserName)) {
             capabilities=getCapabilities(browserName);
+            if(capabilities!=null)
+                capability= setCapabilities(capabilities,capability);
         }
         try {
-
-
-            if(seleniumAddress ==null)
-            {
                 if (browserName.equalsIgnoreCase("firefox")) {
+                    capability = DesiredCapabilities.firefox();
                     FirefoxDriverManager.getInstance().setup();
                     System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE,"true");
                     System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
@@ -98,20 +96,24 @@ public class TestExecutor implements Runnable {
                     }
                 }
                 if (browserName.equalsIgnoreCase("chrome")) {
+                    capability = DesiredCapabilities.chrome();
                     ChromeDriverManager.getInstance().setup();
                     if(seleniumAddress==null) {
                         driver = new ChromeDriver();
                     }
                 }
                 if (browserName.equalsIgnoreCase("ie")) {
+                    capability = DesiredCapabilities.internetExplorer();
                     InternetExplorerDriverManager.getInstance().setup();
                     if(seleniumAddress==null) {
                         driver = new InternetExplorerDriver();
                     }
                 }
 
-            }else {
-                capability= setCapabilities(capabilities,capability);
+
+
+            if(seleniumAddress !=null)
+            {
                 driver=openRemoteBrowser(driver,capability,seleniumAddress);
             }
 
