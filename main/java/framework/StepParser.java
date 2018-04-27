@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-
+import Exception.TesboException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StepParser {
@@ -426,9 +426,7 @@ public class StepParser {
                 textToEnter = step.substring(startPoint, endPoint);
 
             } catch (StringIndexOutOfBoundsException e) {
-                logger.testFailed("No string found to enter on element.");
-                e.printStackTrace();
-                throw e;
+                throw new TesboException("No string found to enter on element.");
             }
         }
             return textToEnter;
