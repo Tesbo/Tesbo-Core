@@ -177,35 +177,43 @@ public class TestExecutionBuilder {
                     for (Object testName : ((JSONArray) testNameWithSuites.get(suiteName))) {
                         String dataSetName=null;
                         int dataSize=0;
+                        String dataType=null;
                         for (String browser : config.getBrowsers()) {
                             if(isDataSetInSuite){
                                 dataSetName=suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(),testName.toString());
                                 if(dataSetName!=null) {
-                                    if(dataDrivenParser.dataSetIsExistInSuite(suiteName.toString(),dataSetName.replace(" ","").split(":")[1])) {
-                                        ArrayList<String> columnNameList=new ArrayList<String>();
-                                        columnNameList= dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(),testName.toString()));
-                                        if (columnNameList.size() == 0) {
-                                            throw new NullPointerException("Data set value is not use on 'Test: "+ testName +"' steps");
-                                        }
+                                    ArrayList<String> columnNameList=new ArrayList<String>();
+                                    columnNameList= dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(),testName.toString()));
+                                    if (columnNameList.size() == 0) {
+                                        throw new NullPointerException("Data set value is not use on 'Test: "+ testName +"' steps");
+                                    }
+                                    dataType=dataDrivenParser.dataSetIsExistInSuite(suiteName.toString(),dataSetName.replace(" ","").split(":")[1],columnNameList);
+                                    if(dataType.equalsIgnoreCase("excel")) {
                                         dataSize= dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(),dataSetName.replace(" ","").split(":")[1]),columnNameList).size();
                                     }
                                 }
                             }
-                            if(dataSize!=0){
-                                for(int i=1;i<=dataSize;i++) {
+                            if(dataSize!=0) {
+                                for (int i = 1; i <= dataSize; i++) {
                                     JSONObject completestTestObject = new JSONObject();
                                     completestTestObject.put("testName", testName);
                                     completestTestObject.put("suiteName", suiteName);
                                     completestTestObject.put("browser", browser);
+                                    completestTestObject.put("dataType", dataType);
                                     completestTestObject.put("row", i);
-                                    completestTestObject.put("dataSetName", dataSetName.replace(" ","").split(":")[1]);
+                                    completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
                                     completeTestObjectArray.add(completestTestObject);
                                 }
-                            }else {
+                            }
+                            else {
                                 JSONObject completestTestObject = new JSONObject();
                                 completestTestObject.put("testName", testName);
                                 completestTestObject.put("suiteName", suiteName);
                                 completestTestObject.put("browser", browser);
+                                if(dataType.equalsIgnoreCase("global")){
+                                    completestTestObject.put("dataType", dataType);
+                                    completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
+                                }
                                 completeTestObjectArray.add(completestTestObject);
                             }
                         }
@@ -241,18 +249,19 @@ public class TestExecutionBuilder {
                         String dataSetName=null;
                         int dataSize=0;
                         boolean data=false;
+                        String dataType=null;
                         for (String browser : config.getBrowsers()) {
                             if(isDataSetInSuite){
                                 dataSetName=suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(),testName.toString());
                                 if(dataSetName!=null) {
-                                    if(dataDrivenParser.dataSetIsExistInSuite(suiteName.toString(),dataSetName.replace(" ","").split(":")[1])) {
-                                        ArrayList<String> columnNameList=new ArrayList<String>();
-                                        columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(), testName.toString()));
+                                    ArrayList<String> columnNameList=new ArrayList<String>();
+                                    columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(), testName.toString()));
+                                    if (columnNameList.size() == 0) {
+                                        throw new NullPointerException("Data set value is not use on 'Test: "+ testName +"' steps");
+                                    }
+                                    dataType=dataDrivenParser.dataSetIsExistInSuite(suiteName.toString(),dataSetName.replace(" ","").split(":")[1],columnNameList);
+                                    if(dataType.equalsIgnoreCase("excel")) {
                                         dataSize= dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(),dataSetName.replace(" ","").split(":")[1]),columnNameList).size();
-                                        if (columnNameList.size() == 0) {
-                                            throw new NullPointerException("Data set value is not use on 'Test: "+ testName +"' steps");
-                                        }
-
                                     }
                                 }
                             }
@@ -263,6 +272,7 @@ public class TestExecutionBuilder {
                                     completestTestObject.put("tag", tag);
                                     completestTestObject.put("suiteName", suiteName);
                                     completestTestObject.put("browser", browser);
+                                    completestTestObject.put("dataType", dataType);
                                     completestTestObject.put("row", i);
                                     completestTestObject.put("dataSetName", dataSetName.replace(" ","").split(":")[1]);
                                     completeTestObjectArray.add(completestTestObject);
@@ -273,6 +283,10 @@ public class TestExecutionBuilder {
                                 completestTestObject.put("tag", tag);
                                 completestTestObject.put("suiteName", suiteName);
                                 completestTestObject.put("browser", browser);
+                                if(dataType.equalsIgnoreCase("global")){
+                                    completestTestObject.put("dataType", dataType);
+                                    completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
+                                }
                                 completeTestObjectArray.add(completestTestObject);
                             }
                         }

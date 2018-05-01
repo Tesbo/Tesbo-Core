@@ -1,6 +1,7 @@
 package framework;
 
 import com.google.common.io.Files;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -12,6 +13,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import Exception.TesboException;
+
+import javax.xml.crypto.dsig.keyinfo.KeyName;
 
 
 public class DataDrivenParser {
@@ -41,7 +44,7 @@ public class DataDrivenParser {
                     if(!ext.equalsIgnoreCase("xlsx"))
                         throw new TesboException("Require only '.xlsx' file :"+filePath);
                 }else{
-                    throw new TesboException("Please Enter File Path in DataSet");
+                    throw new TesboException("Please Enter File Path");
                 }
 
             }
@@ -49,7 +52,7 @@ public class DataDrivenParser {
         return flag;
     }
 
-    public boolean isDataSet(String suiteName) {
+    public boolean isDataSet(String suiteName) throws Exception {
         SuiteParser suiteParser=new SuiteParser();
         StringBuffer suite= suiteParser.readSuiteFile(suiteName);
         String allLines[] = suite.toString().split("[\\r\\n]+");
@@ -65,11 +68,12 @@ public class DataDrivenParser {
         return flag;
     }
 
-    public boolean dataSetIsExistInSuite(String suiteName, String dataSetName) {
+    public String dataSetIsExistInSuite(String suiteName, String dataSetName,ArrayList<String> keyName) {
         SuiteParser suiteParser=new SuiteParser();
         StringBuffer suite= suiteParser.readSuiteFile(suiteName);
         String allLines[] = suite.toString().split("[\\r\\n]+");
         boolean flag=false,isDataSetName=false;
+        String type=null;
 
         for (int i = 0; i < allLines.length; i++) {
             if(allLines[i].contains("\""+dataSetName+"\" :") | allLines[i].contains("\""+dataSetName+"\":")){
@@ -78,20 +82,38 @@ public class DataDrivenParser {
 
             if(isDataSetName) {
                 if (allLines[i].contains("\"excelFile\" :") | allLines[i].contains("\"excelFile\":")) {
+                    type="excel";
                     flag=true;
                     break;
+                }
+                if(keyName.size()>0) {
+                    for(String key:keyName) {
+                        if (allLines[i].contains("\""+key+"\" :") | allLines[i].contains("\""+key+"\":")) {
+                            type = "global";
+                            flag = true;
+                            break;
+                        }
+                    }
+
                 }
                 if(allLines[i].contains("}"))
                     break;
             }
 
         }
-        if(!isDataSetName)
-            throw new TesboException("Data Set " + dataSetName + " is not found in suite");
-        if(!flag)
-            throw new TesboException("Excel File url is not found in " + dataSetName + " Data Set");
 
-        return flag;
+        if(!isDataSetName )
+            throw new TesboException("Data Set " + dataSetName + " is not found in suite");
+
+        if(type.equalsIgnoreCase("excel"))
+            if(!flag)
+                throw new TesboException("Excel File url is not found in " + dataSetName + " Data Set");
+
+        if(type.equalsIgnoreCase("global"))
+            if(!flag)
+                throw new TesboException("Data is not found in " + dataSetName + " Data Set");
+
+        return type;
 
     }
 
@@ -267,6 +289,42 @@ public class DataDrivenParser {
             e.printStackTrace();
         }
         return CellData;
+    }
+
+
+
+    public String getGlobalDataValue(String suiteName, String dataSetName,String keyName) {
+        SuiteParser suiteParser=new SuiteParser();
+        StringBuffer suite= suiteParser.readSuiteFile(suiteName);
+        String allLines[] = suite.toString().split("[\\r\\n]+");
+        boolean isDataSetName=false,isKeyName=false;
+        String KeyValue=null;
+
+        for (int i = 0; i < allLines.length; i++) {
+            if(allLines[i].contains("\""+dataSetName+"\" :") | allLines[i].contains("\""+dataSetName+"\":")){
+                isDataSetName=true;
+            }
+            if(isDataSetName) {
+                if (allLines[i].contains("\""+keyName+"\" :") | allLines[i].contains("\""+keyName+"\":")) {
+                    try{
+                        KeyValue=allLines[i].replaceAll("[\"| |,]","").split(":")[1];
+                        isKeyName=true;
+                        break;
+                    }catch (Exception E){
+                        throw new TesboException("Key value is not found in dataSet");
+                    }
+
+                }
+
+                if(allLines[i].contains("}"))
+                    break;
+            }
+
+        }
+
+
+        return KeyValue;
+
     }
 
 

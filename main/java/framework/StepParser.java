@@ -412,15 +412,30 @@ public class StepParser {
         if (step.contains("{") && step.contains("}")) {
             startPoint = step.indexOf("{") + 1;
             endPoint = step.lastIndexOf("}");
-
+            String headerName = step.substring(startPoint, endPoint);
             try {
-                String headerName = step.substring(startPoint, endPoint);
-                textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"));
-                logger.stepLog(step.replace(headerName, textToEnter));
+                if(test.get("dataType").toString().equalsIgnoreCase("excel")) {
+                    try {
 
-            } catch (StringIndexOutOfBoundsException e) {
-                logger.stepLog(step);
-                logger.testFailed("no string to enter. Create a separate exeception here");
+                        textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"));
+                        logger.stepLog(step.replace(headerName, textToEnter));
+
+                    } catch (StringIndexOutOfBoundsException e) {
+                        logger.stepLog(step);
+                        logger.testFailed("no string to enter. Create a separate exeception here");
+                    }
+                }
+            }
+            catch (Exception e){}
+            try {
+                if(test.get("dataType").toString().equalsIgnoreCase("global")){
+                    textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(),headerName);
+                    logger.stepLog(step.replace(headerName, textToEnter));
+
+                }
+            }
+            catch (Exception e){
+                throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
             }
         } else {
             startPoint = step.indexOf("'") + 1;
