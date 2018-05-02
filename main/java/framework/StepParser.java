@@ -4,13 +4,16 @@ import Selenium.Commands;
 import logger.Logger;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONObject;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.Augmenter;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -36,11 +39,17 @@ public class StepParser {
             logger.stepLog(step);
 
         //Clicks
-        if (step.toLowerCase().contains("click")) { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
+        if (step.toLowerCase().contains("click")) {
+            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
+        }
+
+        //Press Key
+        if (step.toLowerCase().contains("press")) {
+           pressKey(driver,test,step);
         }
 
         //Sendkeys
-        if (step.toLowerCase().contains("enter")) {
+        if (step.toLowerCase().contains("enter") &&(!step.toLowerCase().contains("press"))) {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test,step));
         }
 
@@ -449,7 +458,6 @@ public class StepParser {
             }
         }
             return textToEnter;
-
     }
 
 
@@ -491,5 +499,34 @@ public class StepParser {
             path = "Failed to capture screenshot: " + e.getMessage();
         }
         return path;
+    }
+
+    public void pressKey(WebDriver driver, JSONObject test, String step) throws Exception {
+
+        Commands cmd = new Commands();
+        GetLocator locator = new GetLocator();
+        Actions actions = new Actions(driver);
+        if(step.toLowerCase().contains("enter")){
+            if(step.toLowerCase().contains("@")){
+                cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(Keys.ENTER);
+            }else {
+                actions.sendKeys(Keys.ENTER).build().perform();
+            }
+            logger.stepLog(step);
+        }else if(step.toLowerCase().contains("tab")) {
+            actions.sendKeys(Keys.TAB).build().perform();
+        }else if(step.toLowerCase().contains("plus")) {
+            String[] Steps=step.split(" ");
+            for(int i=0;i<Steps.length;i++){
+                if(Steps[i].equalsIgnoreCase("plus")){
+                    try {
+                        actions.keyDown(Keys.CONTROL).sendKeys(Steps[i + 1].replaceAll("'", "").toLowerCase()).keyUp(Keys.CONTROL).perform();
+                    } catch (Exception e){
+                        throw new TesboException("Please Enter key name.");
+                    }
+                }
+            }
+
+        }
     }
 }
