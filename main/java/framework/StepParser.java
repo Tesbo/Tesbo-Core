@@ -35,7 +35,7 @@ public class StepParser {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
-        if (!step.toLowerCase().contains("enter") && !step.toLowerCase().contains("url"))
+        if (!step.toLowerCase().contains("{") && !step.toLowerCase().contains("}") )
             logger.stepLog(step);
 
         //Clicks
@@ -87,6 +87,7 @@ public class StepParser {
         if (step.toLowerCase().contains("clear")) {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
         }
+
         logger.testPassed("Passed");
 
 
@@ -450,7 +451,7 @@ public class StepParser {
             startPoint = step.indexOf("'") + 1;
             endPoint = step.lastIndexOf("'");
             try {
-                logger.stepLog(step);
+
                 textToEnter = step.substring(startPoint, endPoint);
 
             } catch (StringIndexOutOfBoundsException e) {
@@ -512,7 +513,7 @@ public class StepParser {
             }else {
                 actions.sendKeys(Keys.ENTER).build().perform();
             }
-            logger.stepLog(step);
+
         }else if(step.toLowerCase().contains("tab")) {
             actions.sendKeys(Keys.TAB).build().perform();
         }else if(step.toLowerCase().contains("plus")) {
