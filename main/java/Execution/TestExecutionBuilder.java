@@ -210,10 +210,12 @@ public class TestExecutionBuilder {
                                 completestTestObject.put("testName", testName);
                                 completestTestObject.put("suiteName", suiteName);
                                 completestTestObject.put("browser", browser);
-                                if(dataType.equalsIgnoreCase("global")){
-                                    completestTestObject.put("dataType", dataType);
-                                    completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
-                                }
+                                try{
+                                    if(dataType.equalsIgnoreCase("global")){
+                                        completestTestObject.put("dataType", dataType);
+                                        completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
+                                    }
+                                }catch (Exception e){}
                                 completeTestObjectArray.add(completestTestObject);
                             }
                         }
@@ -283,10 +285,13 @@ public class TestExecutionBuilder {
                                 completestTestObject.put("tag", tag);
                                 completestTestObject.put("suiteName", suiteName);
                                 completestTestObject.put("browser", browser);
-                                if(dataType.equalsIgnoreCase("global")){
-                                    completestTestObject.put("dataType", dataType);
-                                    completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
-                                }
+                                try{
+                                    if(dataType.equalsIgnoreCase("global")){
+                                        completestTestObject.put("dataType", dataType);
+                                        completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
+                                    }
+                                }catch (Exception e){}
+
                                 completeTestObjectArray.add(completestTestObject);
                             }
                         }
