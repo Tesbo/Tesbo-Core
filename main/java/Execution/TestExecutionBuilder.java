@@ -178,23 +178,23 @@ public class TestExecutionBuilder {
                         String dataSetName=null;
                         int dataSize=0;
                         String dataType=null;
-                        for (String browser : config.getBrowsers()) {
-                            if(isDataSetInSuite){
-                                dataSetName=suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(),testName.toString());
-                                if(dataSetName!=null) {
-                                    ArrayList<String> columnNameList=new ArrayList<String>();
-                                    columnNameList= dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(),testName.toString()));
-                                    if (columnNameList.size() == 0) {
-                                        throw new NullPointerException("Data set value is not use on 'Test: "+ testName +"' steps");
-                                    }
-                                    dataType=dataDrivenParser.dataSetIsExistInSuite(suiteName.toString(),dataSetName.replace(" ","").split(":")[1],columnNameList);
-                                    if(dataType.equalsIgnoreCase("excel")) {
-                                        dataSize= dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(),dataSetName.replace(" ","").split(":")[1]),columnNameList).size();
-                                    }
+                        if(isDataSetInSuite){
+                            dataSetName=suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(),testName.toString());
+                            if(dataSetName!=null) {
+                                ArrayList<String> columnNameList=new ArrayList<String>();
+                                columnNameList= dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(),testName.toString()));
+                                if (columnNameList.size() == 0) {
+                                    throw new NullPointerException("Data set value is not use on 'Test: "+ testName +"' steps");
+                                }
+                                dataType=dataDrivenParser.dataSetIsExistInSuite(suiteName.toString(),dataSetName.replace(" ","").split(":")[1],columnNameList);
+                                if(dataType.equalsIgnoreCase("excel")) {
+                                    dataSize= dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(),dataSetName.replace(" ","").split(":")[1]),columnNameList).size();
                                 }
                             }
-                            if(dataSize!=0) {
-                                for (int i = 1; i <= dataSize; i++) {
+                        }
+                        if(dataSize!=0) {
+                            for (int i = 1; i <= dataSize; i++) {
+                                for (String browser : config.getBrowsers()) {
                                     JSONObject completestTestObject = new JSONObject();
                                     completestTestObject.put("testName", testName);
                                     completestTestObject.put("suiteName", suiteName);
@@ -205,17 +205,20 @@ public class TestExecutionBuilder {
                                     completeTestObjectArray.add(completestTestObject);
                                 }
                             }
-                            else {
+                        }
+                        else {
+                            for (String browser : config.getBrowsers()) {
                                 JSONObject completestTestObject = new JSONObject();
                                 completestTestObject.put("testName", testName);
                                 completestTestObject.put("suiteName", suiteName);
                                 completestTestObject.put("browser", browser);
-                                try{
-                                    if(dataType.equalsIgnoreCase("global")){
+                                try {
+                                    if (dataType.equalsIgnoreCase("global")) {
                                         completestTestObject.put("dataType", dataType);
                                         completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
                                     }
-                                }catch (Exception e){}
+                                } catch (Exception e) {
+                                }
                                 completeTestObjectArray.add(completestTestObject);
                             }
                         }
@@ -252,23 +255,23 @@ public class TestExecutionBuilder {
                         int dataSize=0;
                         boolean data=false;
                         String dataType=null;
-                        for (String browser : config.getBrowsers()) {
-                            if(isDataSetInSuite){
-                                dataSetName=suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(),testName.toString());
-                                if(dataSetName!=null) {
-                                    ArrayList<String> columnNameList=new ArrayList<String>();
-                                    columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(), testName.toString()));
-                                    if (columnNameList.size() == 0) {
-                                        throw new NullPointerException("Data set value is not use on 'Test: "+ testName +"' steps");
-                                    }
-                                    dataType=dataDrivenParser.dataSetIsExistInSuite(suiteName.toString(),dataSetName.replace(" ","").split(":")[1],columnNameList);
-                                    if(dataType.equalsIgnoreCase("excel")) {
-                                        dataSize= dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(),dataSetName.replace(" ","").split(":")[1]),columnNameList).size();
-                                    }
+                        if(isDataSetInSuite){
+                            dataSetName=suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(),testName.toString());
+                            if(dataSetName!=null) {
+                                ArrayList<String> columnNameList=new ArrayList<String>();
+                                columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(), testName.toString()));
+                                if (columnNameList.size() == 0) {
+                                    throw new NullPointerException("Data set value is not use on 'Test: "+ testName +"' steps");
+                                }
+                                dataType=dataDrivenParser.dataSetIsExistInSuite(suiteName.toString(),dataSetName.replace(" ","").split(":")[1],columnNameList);
+                                if(dataType.equalsIgnoreCase("excel")) {
+                                    dataSize= dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(),dataSetName.replace(" ","").split(":")[1]),columnNameList).size();
                                 }
                             }
-                            if(dataSize!=0){
-                                for(int i=1;i<=dataSize;i++) {
+                        }
+                        if(dataSize!=0){
+                            for(int i=1;i<=dataSize;i++) {
+                                for (String browser : config.getBrowsers()) {
                                     JSONObject completestTestObject = new JSONObject();
                                     completestTestObject.put("testName", testName);
                                     completestTestObject.put("tag", tag);
@@ -276,25 +279,27 @@ public class TestExecutionBuilder {
                                     completestTestObject.put("browser", browser);
                                     completestTestObject.put("dataType", dataType);
                                     completestTestObject.put("row", i);
-                                    completestTestObject.put("dataSetName", dataSetName.replace(" ","").split(":")[1]);
+                                    completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
                                     completeTestObjectArray.add(completestTestObject);
                                 }
-                            }else {
+                            }
+                        }else {
+                            for (String browser : config.getBrowsers()) {
                                 JSONObject completestTestObject = new JSONObject();
                                 completestTestObject.put("testName", testName);
                                 completestTestObject.put("tag", tag);
                                 completestTestObject.put("suiteName", suiteName);
                                 completestTestObject.put("browser", browser);
-                                try{
-                                    if(dataType.equalsIgnoreCase("global")){
+                                try {
+                                    if (dataType.equalsIgnoreCase("global")) {
                                         completestTestObject.put("dataType", dataType);
                                         completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
                                     }
-                                }catch (Exception e){}
-
+                                } catch (Exception e) { }
                                 completeTestObjectArray.add(completestTestObject);
                             }
                         }
+
 
                     }
                 }
