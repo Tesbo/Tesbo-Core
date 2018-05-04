@@ -248,8 +248,9 @@ public class SuiteParser {
             }
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet :")
-                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) {
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("dataset :") | allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("dataset:")) {
+                if (!(allLines[j].contains("DataSet :") | allLines[j].contains("DataSet:")))
+                    throw new TesboException("Write 'DataSet' keyword in test");
                 testDataSet=allLines[j];
                 break;
             }
