@@ -1,7 +1,6 @@
 package framework;
 
 import com.google.common.io.Files;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import Exception.TesboException;
 
-import javax.xml.crypto.dsig.keyinfo.KeyName;
 
 
 public class DataDrivenParser {
@@ -28,21 +26,23 @@ public class DataDrivenParser {
             if(allLines[i].contains("Test :") | allLines[i].contains("Test:"))
                 break;
 
-            if(allLines[i].contains("\"excelFile\" :") | allLines[i].contains("\"excelFile\":")){
+            if(allLines[i].toLowerCase().contains("\"excelfile\" :") | allLines[i].toLowerCase().contains("\"excelfile\":")){
+                if (!(allLines[i].contains("\"excelFile\" :") | allLines[i].contains("\"excelFile\":")))
+                    throw new TesboException("Write 'excelFile' keyword in Data Set");
+
                 String[] excelUrl= allLines[i].replaceAll("[\"| |,]","").split(":",2);
                 if(excelUrl.length==2)
                 {
                     String filePath=excelUrl[1];
                     File file = new File(filePath);
                     String ext = Files.getFileExtension(filePath);
-
                     if(file.exists()) {
                         flag = true;
                     }else {
-                        throw new FileNotFoundException("File Not Found On " + filePath);
+                        throw new FileNotFoundException("Excel file Not Found On " + filePath);
                     }
                     if(!ext.equalsIgnoreCase("xlsx"))
-                        throw new TesboException("Require only '.xlsx' file :"+filePath);
+                        throw new TesboException("Required only '.xlsx' file : "+filePath);
                 }else{
                     throw new TesboException("Please Enter File Path");
                 }
@@ -74,12 +74,10 @@ public class DataDrivenParser {
         String allLines[] = suite.toString().split("[\\r\\n]+");
         boolean flag=false,isDataSetName=false;
         String type=null;
-
         for (int i = 0; i < allLines.length; i++) {
             if(allLines[i].contains("\""+dataSetName+"\" :") | allLines[i].contains("\""+dataSetName+"\":")){
                 isDataSetName=true;
             }
-
             if(isDataSetName) {
                 if (allLines[i].contains("\"excelFile\" :") | allLines[i].contains("\"excelFile\":")) {
                     type="excel";
