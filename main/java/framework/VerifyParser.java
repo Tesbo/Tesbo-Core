@@ -67,6 +67,27 @@ public class VerifyParser {
             }
 
         }
+
+        if (verify.toLowerCase().contains("page title")) {
+
+                //equal
+
+                if (verify.toLowerCase().contains("equal")) {
+                    /**
+                     * Verify : Page Title is equal to ignore case 'Google search'
+                     */
+                    if (verify.toLowerCase().contains("ignore case")) {
+                        assertThat(driver.getTitle()).isEqualToIgnoringCase(stepParser.parseTextToEnter(test,verify));
+                    }
+                    /**
+                     * Verify : Page Title is equal to 'Google search'
+                     */
+                    else {
+                        assertThat(driver.getTitle()).isEqualTo(stepParser.parseTextToEnter(test,verify));
+                    }
+                }
+
+        }
     }
 }
 
