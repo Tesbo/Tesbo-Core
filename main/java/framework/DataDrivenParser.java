@@ -101,7 +101,7 @@ public class DataDrivenParser {
         }
 
         if(!isDataSetName )
-            throw new TesboException("Data Set " + dataSetName + " is not found in suite");
+            throw new TesboException("'"+dataSetName + "' is not found in Data Set");
 
         if(type.equalsIgnoreCase("excel"))
             if(!flag)
