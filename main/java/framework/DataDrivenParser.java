@@ -59,7 +59,9 @@ public class DataDrivenParser {
         boolean flag=false;
         for (int i = 0; i < allLines.length; i++) {
 
-            if(allLines[i].contains("DataSet :") | allLines[i].contains("DataSet:")){
+            if(allLines[i].toLowerCase().contains("dataset :") | allLines[i].contains("dataset:")){
+                if (!(allLines[i].contains("DataSet :") | allLines[i].contains("DataSet:")))
+                    throw new TesboException("Write 'DataSet' keyword in suite");
                 flag = true;
                 break;
 
