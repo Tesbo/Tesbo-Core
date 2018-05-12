@@ -455,7 +455,7 @@ public class StepParser {
                 textToEnter = step.substring(startPoint, endPoint);
 
             } catch (StringIndexOutOfBoundsException e) {
-                throw new TesboException("No string found to enter on element.");
+                throw new TesboException("No string found to enter.");
             }
         }
             return textToEnter;
