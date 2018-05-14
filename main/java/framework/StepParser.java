@@ -529,5 +529,6 @@ public class StepParser {
             }
 
         }
+        else {throw new TesboException("Please enter valid step.");}
     }
 }
