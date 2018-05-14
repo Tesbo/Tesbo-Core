@@ -689,10 +689,10 @@ public class ReportBuilder {
                     String screenShotpath = "";
 
 
-                    System.out.println("Test " + test);
+                    //System.out.println("Test " + test);
 
 
-                    System.out.println(((JSONObject) test).get("testName") + "" + isTestFailed);
+                    //System.out.println(((JSONObject) test).get("testName") + "" + isTestFailed);
 
 
 
@@ -701,7 +701,7 @@ public class ReportBuilder {
                         try {
                             stacktrace = ((JSONObject) test).get("fullStackTrace").toString();
 
-                            System.out.println("StackTrace " + stacktrace);
+                            //System.out.println("StackTrace " + stacktrace);
 
                             screenShotpath = ((JSONObject) test).get("screenshot").toString();
 
