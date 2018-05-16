@@ -88,6 +88,14 @@ public class StepParser {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
         }
 
+        //Close Window
+        if (step.toLowerCase().contains("close window")) {
+            /**
+             * Step : close window.
+             */
+             cmd.closeWindow(driver);
+        }
+
         logger.testPassed("Passed");
 
 
@@ -203,12 +211,7 @@ public class StepParser {
                 else if (step.toLowerCase().contains("main") || step.toLowerCase().contains("parent")) {
                     cmd.switchMainWindow(driver);
                 }
-                /**
-                 * Step : close window.
-                 */
-                else if (step.toLowerCase().contains("close")) {
-                    cmd.closeWindow(driver);
-                }
+
             }
 
         } catch (Exception e) {
