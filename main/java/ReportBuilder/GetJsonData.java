@@ -1,5 +1,7 @@
 package ReportBuilder;
 
+import com.diogonunes.jcdp.color.api.Ansi;
+import logger.Logger;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.json.simple.JSONArray;
@@ -23,6 +25,7 @@ public class GetJsonData {
 
     private static final String FORMAT = "%02d H %02d M %02d S";
 
+Logger logger = new Logger();
 
     public static String parseTime(long milliseconds) {
         return String.format(FORMAT,
@@ -147,26 +150,31 @@ public class GetJsonData {
 
 
         for (File a : files) {
-            JSONObject parser = readJsonFile(new File(a.toString()).getAbsolutePath());
-            JSONObject individualBuildData = new JSONObject();
 
-            startTime = parser.get("startTime").toString().substring(0, 10);
-            totalPassed = Integer.parseInt(parser.get("totalPassed").toString());
-            totalFailed = Integer.parseInt(parser.get("totalFailed").toString());
-            totalTimeTaken = Integer.parseInt(parser.get("totalTimeTaken").toString());
+            try {
 
-            individualBuildData.put("name", (a.getName().split(".json")[0]).replace("Result_", " ").toUpperCase() + " " + startTime);
+                JSONObject parser = readJsonFile(new File(a.toString()).getAbsolutePath());
+                JSONObject individualBuildData = new JSONObject();
 
-            individualBuildData.put("totalPassed", totalPassed);
-            individualBuildData.put("totalFailed", totalFailed);
+                startTime = parser.get("startTime").toString().substring(0, 10);
+                totalPassed = Integer.parseInt(parser.get("totalPassed").toString());
+                totalFailed = Integer.parseInt(parser.get("totalFailed").toString());
+                totalTimeTaken = Integer.parseInt(parser.get("totalTimeTaken").toString());
 
-            individualBuildData.put("buildRunDate", startTime.replace("|", "-"));
-            individualBuildData.put("totalTimeTaken", TimeUnit.MILLISECONDS.toMinutes(totalTimeTaken));
+                individualBuildData.put("name", (a.getName().split(".json")[0]).replace("Result_", " ").toUpperCase() + " " + startTime);
+
+                individualBuildData.put("totalPassed", totalPassed);
+                individualBuildData.put("totalFailed", totalFailed);
+
+                individualBuildData.put("buildRunDate", startTime.replace("|", "-"));
+                individualBuildData.put("totalTimeTaken", TimeUnit.MILLISECONDS.toMinutes(totalTimeTaken));
 
 
-            last10BuildDataArray.add(individualBuildData);
+                last10BuildDataArray.add(individualBuildData);
+            }catch(Exception e){
+            logger.customeLog("Seems Like Report History File Correpted",Ansi.FColor.RED);
+            }
         }
-
 
         return last10BuildDataArray;
 

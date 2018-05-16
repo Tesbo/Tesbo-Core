@@ -1,6 +1,6 @@
 {
-  "SuiteDirectory": "E:/Projects/TesBo/New/LetestUpdateClone/tesbo-core/test/java/Suites",
-  "locatorDirectory": "E:/Projects/TesBo/New/LetestUpdateClone/tesbo-core/test/java/Locator",
+  "SuiteDirectory": "E:/TesBo/tesbo-core/test/java/Suites",
+  "locatorDirectory": "E:/TesBo/tesbo-core/test/java/Locator",
   "run": {
     "baseUrl": "https://vigoreport.io",
     "by": {

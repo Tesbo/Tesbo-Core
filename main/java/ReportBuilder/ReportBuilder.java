@@ -700,15 +700,23 @@ public class ReportBuilder {
 
                         try {
                             stacktrace = ((JSONObject) test).get("fullStackTrace").toString();
+                            System.out.println("StackTrace " + stacktrace);
+                            } catch (Exception e) {
+                            logger.errorLog("StackTrace Not Found");
 
+                        }
+                        try {
+                            screenShotpath = ((JSONObject) test).get("screenshot").toString();
                             //System.out.println("StackTrace " + stacktrace);
 
-                            screenShotpath = ((JSONObject) test).get("screenshot").toString();
-
                         } catch (Exception e) {
-                           e.printStackTrace();
+                            logger.errorLog("Screenshot Not Found");
+
                         }
                     }
+
+
+
 
 
                     sb.append("<!-- start accordion -->\n" +
