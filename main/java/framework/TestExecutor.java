@@ -6,6 +6,7 @@ import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -88,7 +89,7 @@ public class TestExecutor implements Runnable {
         try {
                 if (browserName.equalsIgnoreCase("firefox")) {
                     capability = DesiredCapabilities.firefox();
-                    FirefoxDriverManager.getInstance().setup();
+                    WebDriverManager.firefoxdriver().setup();
                     System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE,"true");
                     System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
                     if(seleniumAddress==null) {
@@ -97,14 +98,15 @@ public class TestExecutor implements Runnable {
                 }
                 if (browserName.equalsIgnoreCase("chrome")) {
                     capability = DesiredCapabilities.chrome();
-                    ChromeDriverManager.getInstance().setup();
+                    WebDriverManager.chromedriver().setup();
+
                     if(seleniumAddress==null) {
                         driver = new ChromeDriver();
                     }
                 }
                 if (browserName.equalsIgnoreCase("ie")) {
                     capability = DesiredCapabilities.internetExplorer();
-                    InternetExplorerDriverManager.getInstance().setup();
+                    WebDriverManager.iedriver().setup();
                     if(seleniumAddress==null) {
                         driver = new InternetExplorerDriver();
                     }
