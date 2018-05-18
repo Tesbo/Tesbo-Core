@@ -152,7 +152,7 @@ public class TestExecutor implements Runnable {
         testResult.put("startTime", dtf.format(LocalDateTime.now()));
         testResult.put("testName", test.get("testName").toString());
 
-        logger.testLog("Test :" + test.get("testName").toString());
+        logger.testLog("Test:" + test.get("testName").toString());
 
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
         int J = 0;
@@ -166,12 +166,13 @@ public class TestExecutor implements Runnable {
             JSONObject stepResult = new JSONObject();
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
+            stepResult.put("steps", stepParser.stepModifierForReport(step.toString()));
+
             if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step :")) {
                 stepResult.put("startTime", dtf.format(LocalDateTime.now()));
                 stepResult.put("stepIndex", stepNumber + 1);
                 try {
                     stepParser.parseStep(driver, test, step.toString());
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "pass");
                 } catch (Exception ae) {
                     J++;
@@ -179,7 +180,6 @@ public class TestExecutor implements Runnable {
                     ae.printStackTrace(new PrintWriter(sw));
                     ae.printStackTrace();
                     exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
                     stepResult.put("status", "fail");
                     stepResult.put("fullStackTrace", exceptionAsString);
                     stepResult.put("errorMsg", "Something Went Wrong");
