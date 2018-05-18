@@ -111,7 +111,7 @@ public class SuiteParser {
     /**
      * @param tagName
      * @param suite
-     * @return
+     * @return List of Test based on suite Data
      */
     public JSONArray getTestNameByTag(String tagName, StringBuffer suite) {
 
@@ -121,10 +121,21 @@ public class SuiteParser {
 
         for (int i = 0; i < allLines.length; i++) {
             if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
-                if (allLines[i + 1].toLowerCase().contains("#" + tagName.toLowerCase())) {
-                    String testNameArray[] = allLines[i].split(":");
-                    testName.add(testNameArray[1].trim());
+
+                String tagLine = allLines[i + 1].toLowerCase();
+
+                String[] tagArray = tagLine.split("#");
+
+                for(String  tag : tagArray)
+                {
+
+                    if (tag.toLowerCase().trim().equals(tagName.toLowerCase())) {
+                        String testNameArray[] = allLines[i].split(":");
+                        testName.add(testNameArray[1].trim());
+                    }
+
                 }
+
             }
         }   // When No Test Available
         if (testName.size() == 0) {
