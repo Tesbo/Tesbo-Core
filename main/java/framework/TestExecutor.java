@@ -47,22 +47,18 @@ public class TestExecutor implements Runnable {
         long startTimeSuite = System.currentTimeMillis();
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
-        builder.reportObj.put("startTime", dtf.format(LocalDateTime.now()));
 
         builder.buildExecution();
 
         long stopTimeSuite = System.currentTimeMillis();
-        builder.reportObj.put("endTime", dtf.format(LocalDateTime.now()));
         long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
 
-        builder.reportObj.put("totalTimeTaken", elapsedTimeSuite);
 
         DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
         report.generateReportDir();
         //report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
-        logger.stepLog("Report : "+builder.reportObj);
-    }
+      }
 
     public TestExecutor(JSONObject test) {
         this.test = test;
@@ -127,7 +123,9 @@ public class TestExecutor implements Runnable {
                     driver.get(config.getBaseUrl());
                 }
             }
-            catch (org.openqa.selenium.WebDriverException e) { }
+            catch (org.openqa.selenium.WebDriverException e) {
+                e.printStackTrace();
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -155,6 +153,7 @@ public class TestExecutor implements Runnable {
         logger.testLog("Test:" + test.get("testName").toString());
 
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
+
         int J = 0;
         JSONArray stepsArray = new JSONArray();
         boolean failFlag = false;
@@ -333,24 +332,29 @@ public class TestExecutor implements Runnable {
 
     @Override
     public void run() {
-        JSONObject testData = new JSONObject();
-        beforeTest(test.get("browser").toString());
-        runTest();
-        afterTest();
+        try {
+            JSONObject testData = new JSONObject();
+            beforeTest(test.get("browser").toString());
+            runTest();
+            afterTest();
 
-        testData.put(testResult.get("testName").toString(), testResult);
 
-        //addDataIntoMainObject(test.get("browser").toString(), testData);
-        TestExecutionBuilder builder = new TestExecutionBuilder();
-        if ((builder.mainObj.get("testCase")) == null) {
-            JSONArray stepsArray = new JSONArray();
-            stepsArray.add(testResult);
-            builder.mainObj.put("testCase", stepsArray);
-        } else {
-            String Name = test.get("suiteName").toString();
-            JSONArray test = (JSONArray) builder.mainObj.get("testCase");
-            test.add(testResult);
+
+
+            System.out.println("Test Result" + testResult.get("testName").toString());
+
+
+            testData.put(testResult.get("testName").toString(), testResult);
+
+            //addDataIntoMainObject(test.get("browser").toString(), testData);
+            TestExecutionBuilder builder = new TestExecutionBuilder();
+
+
+        }catch(Exception e)
+        {
+            e.printStackTrace();
         }
+
    }
 
     /**

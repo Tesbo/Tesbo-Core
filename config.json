@@ -5,17 +5,17 @@
     "baseUrl": "https://vigoreport.io",
     "by": {
       "tag": [
-        "login"
+        "window"
       ]
     },
     "browser": {
       "name": [
-        "chrome"
+        "firefox"
       ]
     },
     "parallel": {
       "status": true,
-      "count": "1"
+      "count": "10"
     }
   }
 }

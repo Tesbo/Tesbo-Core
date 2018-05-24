@@ -64,6 +64,7 @@ Logger logger = new Logger();
             suiteFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return suiteFileList.size();
@@ -95,6 +96,7 @@ Logger logger = new Logger();
             suiteFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         int totalTime = 0;
@@ -118,6 +120,7 @@ Logger logger = new Logger();
             suiteFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         int totalTests = 0;
@@ -267,7 +270,7 @@ Logger logger = new Logger();
                 }
 
             } catch (Exception e) {
-
+e.printStackTrace();
             }
 
 
@@ -305,7 +308,7 @@ Logger logger = new Logger();
 
 
             } catch (Exception e) {
-
+e.printStackTrace();
             }
 
 

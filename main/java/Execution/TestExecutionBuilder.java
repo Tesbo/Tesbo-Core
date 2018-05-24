@@ -21,8 +21,6 @@ import java.util.stream.Stream;
 
 public class TestExecutionBuilder {
 
-    public static JSONObject mainObj = new JSONObject();
-    public static JSONObject reportObj = new JSONObject();
     DataDrivenParser dataDrivenParser =new DataDrivenParser();
     Logger logger = new Logger();
 
@@ -43,23 +41,22 @@ public class TestExecutionBuilder {
         JSONArray suits =new JSONArray();
 
 
-        builder.reportObj.put("suits",suits);
-        builder.reportObj.put("startTime", dtf.format(LocalDateTime.now()));
-
+        System.out.println(builder.reportObj);
+  /*      builder.reportObj.put("startTime", dtf.format(LocalDateTime.now()));
+*/
         /*Build Running start*/
         builder.buildExecution();
 
         long stopTimeSuite = System.currentTimeMillis();
-        builder.reportObj.put("endTime", dtf.format(LocalDateTime.now()));
-
+  /*      builder.reportObj.put("endTime", dtf.format(LocalDateTime.now()));
+*/
 
         long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
-        builder.reportObj.put("totalTimeTaken", elapsedTimeSuite);
-
+     /*   builder.reportObj.put("totalTimeTaken", elapsedTimeSuite);
+*/
         /*Report Generation*/
 
         report.generateReportDir();
-        report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
         reportBuilder.generatReport();
 
 
@@ -75,6 +72,8 @@ public class TestExecutionBuilder {
             suiteFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
+
+       e.printStackTrace();
         }
 
         if (suiteFileList.size() > 0) {
@@ -129,9 +128,9 @@ public class TestExecutionBuilder {
                 logger.errorLog("Please enter 'Tag' name.");
             } else {
                 parallelBuilder(buildExecutionQueueByTag());
-                report.newReport(mainObj, reportObj);
             }
-        } catch (NullPointerException ne) {
+        } catch (Exception ne) {
+            ne.printStackTrace();
             tagSuiteCount++;
         }
 
@@ -144,9 +143,9 @@ public class TestExecutionBuilder {
                 logger.errorLog("Please enter 'suite' name.");
             } else {
                 parallelBuilder(buildExecutionQueueBySuite());
-                report.newReport(mainObj, reportObj);
-            }
-        } catch (NullPointerException ne) {
+             }
+        } catch (Exception ne) {
+           ne.printStackTrace();
             tagSuiteCount++;
         }
 
@@ -218,6 +217,7 @@ public class TestExecutionBuilder {
                                         completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
                                     }
                                 } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
                                 completeTestObjectArray.add(completestTestObject);
                             }
@@ -295,7 +295,7 @@ public class TestExecutionBuilder {
                                         completestTestObject.put("dataType", dataType);
                                         completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
                                     }
-                                } catch (Exception e) { }
+                                } catch (Exception e) { e.printStackTrace();}
                                 completeTestObjectArray.add(completestTestObject);
                             }
                         }
