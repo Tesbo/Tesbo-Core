@@ -70,7 +70,15 @@ public class DataDrivenParser {
         return flag;
     }
 
-    public String dataSetIsExistInSuite(String suiteName, String dataSetName,ArrayList<String> keyName) {
+
+    /**
+     *
+     * @param suiteName
+     * @param dataSetName
+     * @param keyName
+     * @return
+     */
+    public String checkDataTypeIsExcelOrGlobleInDataset(String suiteName, String dataSetName,ArrayList<String> keyName) {
         SuiteParser suiteParser=new SuiteParser();
         StringBuffer suite= suiteParser.readSuiteFile(suiteName);
         String allLines[] = suite.toString().split("[\\r\\n]+");

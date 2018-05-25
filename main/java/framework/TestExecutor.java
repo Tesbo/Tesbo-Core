@@ -145,12 +145,7 @@ public class TestExecutor implements Runnable {
         Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
         SuiteParser suiteParser = new SuiteParser();
         int stepNumber = 0;
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
-        long startTimeSuite = System.currentTimeMillis();
-        testResult.put("startTime", dtf.format(LocalDateTime.now()));
-        testResult.put("testName", test.get("testName").toString());
 
-        logger.testLog("Test:" + test.get("testName").toString());
 
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
 
@@ -162,65 +157,36 @@ public class TestExecutor implements Runnable {
 
 
         for (int i = 0; i <= steps.size() - 1; i++) {
-            JSONObject stepResult = new JSONObject();
+
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
-            stepResult.put("steps", stepParser.stepModifierForReport(step.toString()));
 
             if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step :")) {
-                stepResult.put("startTime", dtf.format(LocalDateTime.now()));
-                stepResult.put("stepIndex", stepNumber + 1);
                 try {
                     stepParser.parseStep(driver, test, step.toString());
-                    stepResult.put("status", "pass");
                 } catch (Exception ae) {
-                    J++;
-                    StringWriter sw = new StringWriter();
-                    ae.printStackTrace(new PrintWriter(sw));
-                    ae.printStackTrace();
-                    exceptionAsString = sw.toString();
-                    stepResult.put("status", "fail");
-                    stepResult.put("fullStackTrace", exceptionAsString);
-                    stepResult.put("errorMsg", "Something Went Wrong");
-                    failFlag = true;
                 }
                 long stopTimeStep = System.currentTimeMillis();
-                stepResult.put("endTime", dtf.format(LocalDateTime.now()));
-                long elapsedTimeStep = stopTimeStep - startTimeStep;
-                stepResult.put("time", elapsedTimeStep);
-                //testResult.put(stepNumber + 1, stepResult);
-                stepsArray.add(stepResult);
                 stepNumber++;
                 if(failFlag==true){
                     break;
                 }
             } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify :")) {
-                stepResult.put("startTime", dtf.format(LocalDateTime.now()));
-                stepResult.put("stepIndex", stepNumber + 1);
                 try {
                     logger.stepLog(step.toString());
                     verifyParser.parseVerify(driver, test, step.toString());
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                    stepResult.put("status", "pass");
-                } catch (Exception NE) {
+               } catch (Exception NE) {
                     J++;
                     StringWriter sw = new StringWriter();
                     NE.printStackTrace(new PrintWriter(sw));
                     NE.printStackTrace();
                     exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                    stepResult.put("status", "fail");
-                    stepResult.put("errorMsg", "Locator not find. Please add new locator or update the locator.");
-                    stepResult.put("fullStackTrace", exceptionAsString);
-                    failFlag = true;
+                     failFlag = true;
                 }
                 long stopTimeStep = System.currentTimeMillis();
-                stepResult.put("endTime", dtf.format(LocalDateTime.now()));
-                long elapsedTimeStep = stopTimeStep - startTimeStep;
-                stepResult.put("time", elapsedTimeStep);
+                 long elapsedTimeStep = stopTimeStep - startTimeStep;
                 // testResult.put(stepNumber + 1, stepResult);
-                stepsArray.add(stepResult);
-                stepNumber++;
+                 stepNumber++;
                 if(failFlag==true){
                     break;
                 }
@@ -230,75 +196,44 @@ public class TestExecutor implements Runnable {
                     groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(test,step.toString()));
                 } catch (Exception e) {
                     J++;
-                    stepResult.put("startTime", dtf.format(LocalDateTime.now()));
-                    stepResult.put("stepIndex", stepNumber + 1);
-                    StringWriter sw = new StringWriter();
+                     StringWriter sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
                     e.printStackTrace();
                     exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                    stepResult.put("status", "fail");
-                    stepResult.put("errorMsg", "Something Went Wrong");
-                    stepResult.put("fullStackTrace", exceptionAsString);
-                    long stopTimeStep = System.currentTimeMillis();
-                    stepResult.put("endTime", dtf.format(LocalDateTime.now()));
-                    long elapsedTimeStep = stopTimeStep - startTimeStep;
-                    stepResult.put("time", elapsedTimeStep);
-                    //testResult.put(stepNumber + 1, stepResult);
-                    stepsArray.add(stepResult);
-                    stepNumber++;
+                     stepNumber++;
                     failFlag = true;
                 }
 
                 stepsArray = new JSONArray();
 
                 for (int s = 0; s <= groupSteps.size() - 1; s++) {
-                    JSONObject groupResult = new JSONObject();
                     Object groupStep = groupSteps.get(s);
-                    groupResult.put("startTime", dtf.format(LocalDateTime.now()));
-                    groupResult.put("stepIndex", stepNumber + 1);
 
                     if (groupStep.toString().toLowerCase().contains("step:") | groupStep.toString().toLowerCase().contains("step :")) {
                         try {
                             stepParser.parseStep(driver, test, groupStep.toString());
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                            groupResult.put("status", "pass");
                         } catch (Exception ae) {
                             J++;
                             StringWriter sw = new StringWriter();
                             ae.printStackTrace(new PrintWriter(sw));
                             ae.printStackTrace();
                             exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                            groupResult.put("status", "fail");
-                            groupResult.put("errorMsg", "Something Went Wrong");
-                            groupResult.put("fullStackTrace", exceptionAsString);
                             break;
                         }
                     } else if (groupStep.toString().toLowerCase().contains("verify:") | groupStep.toString().toLowerCase().contains("verify :")) {
                         try {
                             logger.stepLog(groupStep.toString());
                             verifyParser.parseVerify(driver, test, groupStep.toString());
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                            groupResult.put("status", "pass");
-                        } catch (Exception NE) {
+                         } catch (Exception NE) {
                             J++;
                             StringWriter sw = new StringWriter();
                             NE.printStackTrace(new PrintWriter(sw));
                             NE.printStackTrace();
                             exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                            groupResult.put("status", "fail");
-                            groupResult.put("errorMsg", "Something Went Wrong");
-                            groupResult.put("fullStackTrace", exceptionAsString);
-                        }
+                       }
                     }
                     long stopTimeStep = System.currentTimeMillis();
-                    groupResult.put("endTime", dtf.format(LocalDateTime.now()));
-                    long elapsedTimeStep = stopTimeStep - startTimeStep;
-                    groupResult.put("time", elapsedTimeStep);
-                    stepsArray.add(groupResult);
-                    stepNumber++;
+                stepNumber++;
                     if(failFlag==true){
                         break;
                     }
@@ -308,25 +243,7 @@ public class TestExecutor implements Runnable {
 
         long stopTimeSuite = System.currentTimeMillis();
 
-        testResult.put("endTime", dtf.format(LocalDateTime.now()));
-        testResult.put("testStep", stepsArray);
-        long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
-        testResult.put("totalTime", elapsedTimeSuite);
-        testResult.put("suiteName", test.get("suiteName").toString());
-        String browserName = caps.getBrowserName();
-        testResult.put("browserName", browserName);
-        String browserVersion = caps.getVersion();
-        testResult.put("browserVersion", browserVersion);
-        String os = System.getProperty("os.name");
-        testResult.put("osName", os);
-        testResult.put("tag", test.get("tag"));
-        if (J >= 1) {
-            testResult.put("status", "fail");
-            testResult.put("screenshot", stepParser.screenshot(driver,test.get("suiteName").toString(),test.get("testName").toString()));
-            testResult.put("fullStackTrace",exceptionAsString);
-        } else {
-            testResult.put("status", "pass");
-        }
+
         return testResult;
     }
 
@@ -341,7 +258,6 @@ public class TestExecutor implements Runnable {
 
 
 
-            System.out.println("Test Result" + testResult.get("testName").toString());
 
 
             testData.put(testResult.get("testName").toString(), testResult);

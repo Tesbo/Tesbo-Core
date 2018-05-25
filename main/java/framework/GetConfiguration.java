@@ -25,7 +25,7 @@ public class GetConfiguration {
         return (JSONArray) browser.get("name");
     }
 
-    public JSONObject getCapabilities() throws Exception {
+    public JSONObject getCapabilities()  {
         Utility parser = new Utility();
         JSONObject capabilities =null;
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
@@ -39,7 +39,7 @@ public class GetConfiguration {
             return (JSONObject) browser.get("capabilities");
 
     }
-    public ArrayList<String> getTags() throws Exception {
+    public ArrayList<String> getTags() {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
@@ -51,7 +51,7 @@ public class GetConfiguration {
      * @lastModifiedBy:
      * @return
      */
-    public JSONObject getBy() throws Exception {
+    public JSONObject getBy()  {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
@@ -63,7 +63,7 @@ public class GetConfiguration {
      * @lastModifiedBy:
      * @return
      */
-    public String getSeleniumAddress() throws Exception {
+    public String getSeleniumAddress()  {
         Utility parser = new Utility();
         String seleniumAddress =null;
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
@@ -77,7 +77,7 @@ public class GetConfiguration {
         else
             return seleniumAddress;
     }
-    public ArrayList<String> getSuiteName() throws Exception {
+    public ArrayList<String> getSuiteName() {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
@@ -85,7 +85,7 @@ public class GetConfiguration {
         return (JSONArray) by.get("suite");
 
     }
-    public String getRunBy() throws Exception {
+    public String getRunBy()  {
         Utility parser = new Utility();
         String runby = ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("by").toString();
         if (runby.toLowerCase().contains("suite")) {
@@ -95,7 +95,7 @@ public class GetConfiguration {
         }
         return null;
     }
-    public ArrayList<String> getByValue() throws Exception {
+    public ArrayList<String> getByValue()  {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
@@ -116,7 +116,7 @@ public class GetConfiguration {
         return baseUrl;
     }
 
-    public JSONObject getParallel() throws Exception {
+    public JSONObject getParallel() {
         Utility parser = new Utility();
         JSONObject parallelData = (JSONObject) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("parallel");
         JSONObject dataOfparallel = new JSONObject();
@@ -144,14 +144,14 @@ public class GetConfiguration {
         return dataOfparallel;
     }
 
-    public String getSuitesDirectory() throws Exception {
+    public String getSuitesDirectory()  {
         Utility parser = new Utility();
         File jsonFile = new File("config.json");
         return parser.loadJsonFile(jsonFile.getAbsolutePath()).get("SuiteDirectory").toString();
     }
 
 
-    public String getLocatorDirectory() throws Exception {
+    public String getLocatorDirectory() {
         Utility parser = new Utility();
         File jsonFile = new File("config.json");
         return parser.loadJsonFile(jsonFile.getAbsolutePath()).get("locatorDirectory").toString();
@@ -161,7 +161,7 @@ public class GetConfiguration {
      * @Description : get suite name from config file.
      * @return : suite names.
      */
-    public ArrayList<String> getSuite() throws Exception {
+    public ArrayList<String> getSuite()  {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");

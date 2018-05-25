@@ -38,13 +38,15 @@ public class TestExecutionBuilder {
         ReportParser report = new ReportParser();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
         long startTimeSuite = System.currentTimeMillis();
-        JSONArray suits =new JSONArray();
 
 
-        System.out.println(builder.reportObj);
+
   /*      builder.reportObj.put("startTime", dtf.format(LocalDateTime.now()));
 */
         /*Build Running start*/
+
+
+
         builder.buildExecution();
 
         long stopTimeSuite = System.currentTimeMillis();
@@ -123,35 +125,14 @@ public class TestExecutionBuilder {
          * @Discription : Run by tag method.
          */
         try {
-            ArrayList<String> taglist = config.getTags();
-            if (taglist.isEmpty() || taglist.get(0).equals("")) {
-                logger.errorLog("Please enter 'Tag' name.");
-            } else {
-                parallelBuilder(buildExecutionQueueByTag());
-            }
+
+                parallelBuilder(buildExecutionQueue());
+
         } catch (Exception ne) {
             ne.printStackTrace();
-            tagSuiteCount++;
+
         }
 
-        /**
-         *@Discription : Run by suit Name.
-         */
-        try {
-            ArrayList<String> suitelist = config.getSuite();
-            if (suitelist.isEmpty() || suitelist.get(0).equals("")) {
-                logger.errorLog("Please enter 'suite' name.");
-            } else {
-                parallelBuilder(buildExecutionQueueBySuite());
-             }
-        } catch (Exception ne) {
-           ne.printStackTrace();
-            tagSuiteCount++;
-        }
-
-        if (tagSuiteCount == 2) {
-            //logger.errorLog("Please enter 'Tag name' or 'Suite name' to run test.");
-        }
     }
 
     /**
@@ -160,13 +141,44 @@ public class TestExecutionBuilder {
      * @return
      * @throws Exception
      */
-    public JSONArray buildExecutionQueueBySuite() throws Exception {
+    public JSONArray buildExecutionQueue(){
         SuiteParser suiteParser = new SuiteParser();
         GetConfiguration config = new GetConfiguration();
         JSONArray completeTestObjectArray = new JSONArray();
+        int tagSuiteCount = 0;
+
+        ArrayList<String> suiteOrTaglist = null;
+        boolean isTag = false;
+        boolean isSuite = false;
+
+
+
+
+        if(config.getRunBy().equals("tag"))
+        {
+            suiteOrTaglist = config.getTags();
+            isTag=true;
+        }
+
+        if(config.getRunBy().equals("suite"))
+        {
+            suiteOrTaglist = config.getSuite();
+            isSuite=true;
+        }
+
+        System.out.println(suiteOrTaglist + "" + isTag);
+
         try{
-            for (String suite : config.getSuite()) {
-                JSONObject testNameWithSuites = suiteParser.getTestNameBySuite(suite);
+            for (String suite : suiteOrTaglist) {
+
+                JSONObject testNameWithSuites = null;
+                if(isSuite) {
+                    testNameWithSuites  = suiteParser.getTestNameBySuite(suite);
+                }
+                if(isTag) {
+                     testNameWithSuites = suiteParser.getTestNameByTag(suite);
+                }
+
                 for (Object suiteName : testNameWithSuites.keySet()) {
                     boolean isDataSetInSuite=false;
                     if(dataDrivenParser.isDataSet(suiteName.toString())) {
@@ -185,9 +197,13 @@ public class TestExecutionBuilder {
                                 if (columnNameList.size() == 0) {
                                     throw new NullPointerException("Data set value is not use on 'Test: "+ testName +"' steps");
                                 }
-                                dataType=dataDrivenParser.dataSetIsExistInSuite(suiteName.toString(),dataSetName.replace(" ","").split(":")[1],columnNameList);
+
+                                dataType=dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(suiteName.toString(),dataSetName.replace(" ","").split(":")[1],columnNameList);
+
                                 if(dataType.equalsIgnoreCase("excel")) {
+
                                     dataSize= dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(),dataSetName.replace(" ","").split(":")[1]),columnNameList).size();
+
                                 }
                             }
                         }
@@ -229,85 +245,10 @@ public class TestExecutionBuilder {
         {
             e.printStackTrace();
         }
+
+
         return completeTestObjectArray;
     }
 
-    /**
-     * @auther :
-     * @lastModifiedBy: Ankit Mistry
-     * @return
-     * @throws Exception
-     */
-    public JSONArray buildExecutionQueueByTag() throws Exception {
-        SuiteParser suiteParser = new SuiteParser();
-        GetConfiguration config = new GetConfiguration();
-        JSONArray completeTestObjectArray = new JSONArray();
-        try {
-            for (String tag : config.getTags()) {
-                JSONObject testNameWithSuites = suiteParser.getTestNameByTag(tag);
-                for (Object suiteName : testNameWithSuites.keySet()) {
-                    boolean isDataSetInSuite=false;
-                    if(dataDrivenParser.isDataSet(suiteName.toString())) {
-                        isDataSetInSuite= dataDrivenParser.isExcel(suiteName.toString());
-                    }
-                    for (Object testName : ((JSONArray) testNameWithSuites.get(suiteName))) {
-                        String dataSetName=null;
-                        int dataSize=0;
-                        boolean data=false;
-                        String dataType=null;
-                        if(isDataSetInSuite){
-                            dataSetName=suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(),testName.toString());
-                            if(dataSetName!=null) {
-                                ArrayList<String> columnNameList=new ArrayList<String>();
-                                columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(), testName.toString()));
-                                if (columnNameList.size() == 0) {
-                                    throw new NullPointerException("Data set value is not use on 'Test: "+ testName +"' steps");
-                                }
-                                dataType=dataDrivenParser.dataSetIsExistInSuite(suiteName.toString(),dataSetName.replace(" ","").split(":")[1],columnNameList);
-                                if(dataType.equalsIgnoreCase("excel")) {
-                                    dataSize= dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(),dataSetName.replace(" ","").split(":")[1]),columnNameList).size();
-                                }
-                            }
-                        }
-                        if(dataSize!=0){
-                            for(int i=1;i<=dataSize;i++) {
-                                for (String browser : config.getBrowsers()) {
-                                    JSONObject completestTestObject = new JSONObject();
-                                    completestTestObject.put("testName", testName);
-                                    completestTestObject.put("tag", tag);
-                                    completestTestObject.put("suiteName", suiteName);
-                                    completestTestObject.put("browser", browser);
-                                    completestTestObject.put("dataType", dataType);
-                                    completestTestObject.put("row", i);
-                                    completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
-                                    completeTestObjectArray.add(completestTestObject);
-                                }
-                            }
-                        }else {
-                            for (String browser : config.getBrowsers()) {
-                                JSONObject completestTestObject = new JSONObject();
-                                completestTestObject.put("testName", testName);
-                                completestTestObject.put("tag", tag);
-                                completestTestObject.put("suiteName", suiteName);
-                                completestTestObject.put("browser", browser);
-                                try {
-                                    if (dataType.equalsIgnoreCase("global")) {
-                                        completestTestObject.put("dataType", dataType);
-                                        completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
-                                    }
-                                } catch (Exception e) { e.printStackTrace();}
-                                completeTestObjectArray.add(completestTestObject);
-                            }
-                        }
 
-
-                    }
-                }
-            }
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return completeTestObjectArray;
-    }
 }
