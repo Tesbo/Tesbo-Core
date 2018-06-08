@@ -56,17 +56,17 @@
 <div class="row tile_count">
  <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
   <span class="count_top"><i class="fa fa-user"></i> Total Builds</span>
-  <div class="count">4</div>
+  <div class="count">0</div>
 
   </div>
  <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
   <span class="count_top"><i class="fa fa-clock-o"></i> Average Time</span>
-   <div class="count">4</div>
+   <div class="count">0</div>
 
    </div>
   <div class="col-md-4 col-sm-4 col-xs-6 tile_stats_count">
    <span class="count_top"><i class="fa fa-user"></i> Total Test Run</span>
-   <div class="count green">41</div>
+   <div class="count green">0</div>
 
   </div>
 
@@ -115,11 +115,7 @@ Tesbo Report<a href=""> </a>
 Morris.Bar({
 element: 'lastBuildResult',
 data: [
- {y: 'BUILD 1 2018|05|24', a: 0, b: 2},
-  {y: 'BUILD 2 2018|05|24', a: 0, b: 2},
-  {y: 'BUILD 3 2018|05|24', a: 17, b: 8},
-  {y: 'BUILD 4 2018|05|24', a: 8, b: 4},
- ],
+],
 xkey: 'y',
 ykeys: ['a', 'b'],
 barColors: ['#a1d99b', '#fc9272'],
@@ -130,11 +126,7 @@ labels: ['pass', 'failed']
 Morris.Line({
 element: 'lastBuildTimeResult',
 data: [
- {y: '2018-05-24', a: 5},
-  {y: '2018-05-24', a: 6},
-  {y: '2018-05-24', a: 0},
-  {y: '2018-05-24', a: 0},
- ],
+],
 xkey: 'y',
 ykeys: ['a'],
 labels: ['Time']

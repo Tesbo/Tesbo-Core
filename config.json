@@ -1,21 +1,21 @@
 {
-  "SuiteDirectory": "E:/TesBo/tesbo-core/test/java/Suites",
-  "locatorDirectory": "E:/TesBo/tesbo-core/test/java/Locator",
+  "SuiteDirectory": "/Volumes/Viral/Tesbo/tesbo-core/test/java/Suites",
+  "locatorDirectory": "/Volumes/Viral/Tesbo/tesbo-core/test/java/Locator",
   "run": {
     "baseUrl": "https://vigoreport.io",
     "by": {
       "tag": [
-        "window"
+        "login"
       ]
     },
     "browser": {
       "name": [
-        "firefox"
+        "chrome"
       ]
     },
     "parallel": {
       "status": true,
-      "count": "10"
+      "count": "1"
     }
   }
 }
