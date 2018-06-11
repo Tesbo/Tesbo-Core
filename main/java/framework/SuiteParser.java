@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 //import NoSuiteNameFoundException;
 
 public class SuiteParser {
+
     Logger logger = new Logger();
 
     /**
@@ -179,10 +180,11 @@ public class SuiteParser {
 
     /**
      * Not completed need to work on this...
-     *
+     * @lastModifiedBy: Ankit Mistry
      * @param suiteName
      * @return
      */
+
     public JSONArray getTestStepBySuiteandTestCaseName(String suiteName, String testName) {
         StringBuffer suiteDetails = readSuiteFile(suiteName);
         String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
@@ -215,7 +217,10 @@ public class SuiteParser {
 
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step :") |
-                    allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify :") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection :")) {
+                    allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify :") |
+                    allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection :") |
+                    allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("close:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("close :") |
+                    ( allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("]"))) {
                 testSteps.add(allLines[j]);
             }
         }
@@ -425,6 +430,59 @@ public class SuiteParser {
             return null;
         }
         return testName;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param suiteName
+     * @param testName
+     * @return
+     */
+    public JSONArray getSessionListFromTest(String suiteName, String testName) {
+        StringBuffer suiteDetails = readSuiteFile(suiteName);
+        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        JSONArray testSteps = new JSONArray();
+        int testCount=0;
+        int startPoint = 0;
+        boolean testStarted = false;
+        int endpoint = 0;
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
+                String testNameArray[] = allLines[i].split(":");
+
+                if (testNameArray[1].trim().contains(testName)) {
+                    startPoint = i;
+                    testStarted = true;
+                }
+                if (testStarted)
+                    testCount++;
+            }
+            if (testStarted) {
+
+                if (allLines[i].toLowerCase().contains("end")) {
+                    endpoint = i;
+                    break;
+                }
+            }
+        }
+
+        if(testCount>=2 || endpoint==0)
+            throw new TesboException("End Step is not found for '"+testName+ "' test");
+
+        for (int j = startPoint; j < endpoint; j++) {
+            if (allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("session:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("session :") ) {
+                String[] SessionStep=allLines[j].split("[:|,]");
+                for (String session:SessionStep)
+                {
+                    if(!(session.equals("Session")))
+                    {
+                        testSteps.add(session.trim());
+                    }
+                }
+            }
+        }
+        return testSteps;
     }
 
 }
