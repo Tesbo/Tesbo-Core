@@ -293,6 +293,10 @@ public class SuiteParser {
                 }
             }
         }
+        if(startPoint==0)
+        {
+            throw new TesboException("Collection name not define properly.");
+        }
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].toLowerCase().contains("step:") | allLines[j].toLowerCase().contains("step :") |
                     allLines[j].toLowerCase().contains("verify:") | allLines[j].toLowerCase().contains("verify :")) {

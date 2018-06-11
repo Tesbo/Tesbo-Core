@@ -193,7 +193,7 @@ public class TestExecutor implements Runnable {
             } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection :")) {
                 JSONArray groupSteps = new JSONArray();
                 try {
-                    groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(test,step.toString()));
+                    groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.getCollectionName(step.toString()));
                 } catch (Exception e) {
                     J++;
                      StringWriter sw = new StringWriter();
@@ -255,12 +255,7 @@ public class TestExecutor implements Runnable {
             runTest();
             afterTest();
 
-
-
-
-
-
-            testData.put(testResult.get("testName").toString(), testResult);
+            //testData.put(testResult.get("testName").toString(), testResult);
 
             //addDataIntoMainObject(test.get("browser").toString(), testData);
             TestExecutionBuilder builder = new TestExecutionBuilder();

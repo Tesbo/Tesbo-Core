@@ -561,13 +561,6 @@ public class StepParser {
         return finalstep;
     }
 
-
-    public static void main(String[] args) {
-        StepParser parser = new StepParser();
-
-        parser.stepModifierForReport("Step : enter 'viralfgnsryhnsfbfnrt@gmail.com' on @ElementName");
-    }
-
     /**
      * @param step
      * @return return sentences that will remove step : or step: keyword
@@ -583,5 +576,21 @@ public class StepParser {
         return finalStep;
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param step
+     * @return
+     *
+     */
+    public String getCollectionName(String step) {
+        String textToEnter = null;
+        try {
+            textToEnter = step.split(":")[1].trim();
+        } catch (Exception e) {
+            throw new TesboException("Pleas enter collection name");
+        }
+        return textToEnter;
+    }
 
 }
