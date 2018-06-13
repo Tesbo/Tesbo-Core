@@ -90,7 +90,6 @@ public class TestExecutor implements Runnable {
         }
     }
 
-
     public JSONObject runTest() {
         SuiteParser parser = new SuiteParser();
         StepParser stepParser = new StepParser();
@@ -114,7 +113,7 @@ public class TestExecutor implements Runnable {
                 validation.sessionNotDefineOnTest(steps,listOfSession);
                 initializeSessionRunTime(step);
             }
-            if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step :")) {
+            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
                 try {
                     stepParser.parseStep(driver, test, step.toString());
                 } catch (Exception ae) { }
@@ -123,7 +122,7 @@ public class TestExecutor implements Runnable {
                 if(failFlag==true){
                     break;
                 }
-            } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify :")) {
+            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
                 try {
                     logger.stepLog(step.toString());
                     verifyParser.parseVerify(driver, test, step.toString());
@@ -142,7 +141,7 @@ public class TestExecutor implements Runnable {
                 if(failFlag==true){
                     break;
                 }
-            } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("close:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("close :")) {
+            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Close:")) {
                 try {
                     logger.stepLog(step.toString());
                     String sessionName=step.toString().split(":")[1].trim();
@@ -165,11 +164,13 @@ public class TestExecutor implements Runnable {
                 }
 
 
-            } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection :")) {
+            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:") ) {
                 JSONArray groupSteps = new JSONArray();
                 try {
                     groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(test,step.toString()));
                 } catch (Exception e) {
+                    if(groupSteps.size()==0)
+                        throw e;
                     J++;
                      StringWriter sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
@@ -184,7 +185,7 @@ public class TestExecutor implements Runnable {
                 for (int s = 0; s <= groupSteps.size() - 1; s++) {
                     Object groupStep = groupSteps.get(s);
 
-                    if (groupStep.toString().toLowerCase().contains("step:") | groupStep.toString().toLowerCase().contains("step :")) {
+                    if (groupStep.toString().contains("Step:") ) {
                         try {
                             stepParser.parseStep(driver, test, groupStep.toString());
                         } catch (Exception ae) {
@@ -195,7 +196,7 @@ public class TestExecutor implements Runnable {
                             exceptionAsString = sw.toString();
                             break;
                         }
-                    } else if (groupStep.toString().toLowerCase().contains("verify:") | groupStep.toString().toLowerCase().contains("verify :")) {
+                    } else if (groupStep.toString().contains("Verify:")) {
                         try {
                             logger.stepLog(groupStep.toString());
                             verifyParser.parseVerify(driver, test, groupStep.toString());
@@ -421,7 +422,7 @@ public class TestExecutor implements Runnable {
      * @param step
      */
     public void initializeSessionRunTime(Object step) {
-        if( step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("[") && step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("]")){
+        if( step.toString().replaceAll("\\s{2,}", " ").trim().contains("[") && step.toString().replaceAll("\\s{2,}", " ").trim().contains("]")){
             String testStep= step.toString().replace("[", "").replace("]","");
             for(Object session:listOfSession)
             {

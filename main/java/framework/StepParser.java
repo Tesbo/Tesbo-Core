@@ -577,11 +577,10 @@ public class StepParser {
         String finalStep = "";
         if (step.contains("Step:")) {
             finalStep = step.split("Step:")[1];
-        } else if (step.contains("Step :")) {
-            finalStep = step.split("Step :")[1];
         }
         return finalStep;
     }
+
 
 
 }

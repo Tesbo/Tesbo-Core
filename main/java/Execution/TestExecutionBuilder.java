@@ -39,13 +39,9 @@ public class TestExecutionBuilder {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
         long startTimeSuite = System.currentTimeMillis();
 
-
-
   /*      builder.reportObj.put("startTime", dtf.format(LocalDateTime.now()));
 */
         /*Build Running start*/
-
-
 
         builder.buildExecution();
 
@@ -166,8 +162,6 @@ public class TestExecutionBuilder {
             isSuite=true;
         }
 
-        System.out.println(suiteOrTaglist + "" + isTag);
-
         try{
             for (String suite : suiteOrTaglist) {
 
@@ -233,7 +227,7 @@ public class TestExecutionBuilder {
                                         completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
                                     }
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    //e.printStackTrace();
                                 }
                                 completeTestObjectArray.add(completestTestObject);
                             }

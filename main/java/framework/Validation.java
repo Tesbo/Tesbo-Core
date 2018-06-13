@@ -153,7 +153,7 @@ public class Validation {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -161,7 +161,6 @@ public class Validation {
         JSONObject parallelExecution = null;
         try {
              parallelExecution=  getCofig.getParallel();
-            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -177,11 +176,9 @@ public class Validation {
         SuiteParser suiteParser=new SuiteParser();
 
         //Validation for end step
-
         if(testExecutionQueue.size()>0){
             for (int i = 0; i < testExecutionQueue.size(); i++) {
                 JSONObject test= (JSONObject) testExecutionQueue.get(i);
-
                 suiteParser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(),test.get("testName").toString());
             }
         }
@@ -220,6 +217,16 @@ public class Validation {
                     throw new TesboException("Session '" + step.toString().replaceAll("\\[|\\]", "") + "' is not declare.");
                 }
             }
+        }
+
+    }
+
+    public void keyWordValidation(String step) {
+
+        if(step.replaceAll("\\s{2,}", " ").trim().contains("Step :") | step.replaceAll("\\s{2,}", " ").trim().contains("step:") | step.replaceAll("\\s{2,}", " ").trim().contains("step :")
+           | step.replaceAll("\\s{2,}", " ").trim().contains("Verify :") | step.replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.replaceAll("\\s{2,}", " ").trim().contains("verify :")
+           | step.replaceAll("\\s{2,}", " ").trim().contains("Collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.replaceAll("\\s{2,}", " ").trim().contains("collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("close:") | step.replaceAll("\\s{2,}", " ").trim().contains("close :")){
+            throw new TesboException("Please write valid keyword for this \"" +step+"\"");
         }
 
     }
