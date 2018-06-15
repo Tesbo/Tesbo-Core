@@ -470,12 +470,6 @@ public class StepParser {
         return Arrays.asList(numbers.trim().split(" ")).get(index);
     }
 
-    public String screenshot(WebDriver driver, String suitName, String testName) {
-        generateReportDir();
-        String screenshotName = captureScreen(driver, suitName, testName);
-        return screenshotName;
-    }
-
     public void generateReportDir() {
         File htmlReportMainDir = new File("./screenshots");
 
@@ -484,20 +478,6 @@ public class StepParser {
         }
     }
 
-    public String captureScreen(WebDriver driver, String suitName, String testName) {
-        String path;
-        try {
-            File filePath = new File("screenshots");
-            WebDriver augmentedDriver = new Augmenter().augment(driver);
-            File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-            path = filePath.getAbsolutePath() + "/" + (suitName.split(".s"))[0] + "_" + testName.replaceAll("\\s", "") + "_" + dtf.format(LocalDateTime.now()) + ".png";
-            FileUtils.copyFile(scrFile, new File(path));
-        } catch (IOException e) {
-            path = "Failed to capture screenshot: " + e.getMessage();
-        }
-        return path;
-    }
 
     public void pressKey(WebDriver driver, JSONObject test, String step) throws Exception {
 

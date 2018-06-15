@@ -2,6 +2,7 @@ package framework;
 
 import DataCollector.BuildReportDataObject;
 import Execution.TestExecutionBuilder;
+import Selenium.Commands;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import logger.Logger;
 import org.json.simple.JSONArray;
@@ -126,6 +127,7 @@ public class TestExecutor implements Runnable {
     public JSONObject runTest() {
         SuiteParser parser = new SuiteParser();
         StepParser stepParser = new StepParser();
+        Commands selCmd = new Commands();
         VerifyParser verifyParser = new VerifyParser();
         Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
         SuiteParser suiteParser = new SuiteParser();
@@ -154,6 +156,8 @@ public class TestExecutor implements Runnable {
         JSONArray stepsArray = new JSONArray();
 
         String exceptionAsString = null;
+        String screenShotPath = null;
+
 
         JSONArray testStepArray = new JSONArray();
 
@@ -175,8 +179,11 @@ public class TestExecutor implements Runnable {
                     stepParser.parseStep(driver, test, step.toString());
 
                 } catch (Exception ae) {
-                    stepPassed = false;
-                }
+                    StringWriter sw = new StringWriter();
+                    ae.printStackTrace(new PrintWriter(sw));
+                    ae.printStackTrace();
+                    exceptionAsString = sw.toString();
+                    stepPassed = false;   }
                 long stopTimeStep = System.currentTimeMillis();
                 stepNumber++;
             } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify :")) {
@@ -230,7 +237,6 @@ public class TestExecutor implements Runnable {
                         ae.printStackTrace();
                         exceptionAsString = sw.toString();
                         stepPassed = false;
-                        break;
                     }
                 }
                 long stopTimeStep = System.currentTimeMillis();
@@ -241,7 +247,7 @@ public class TestExecutor implements Runnable {
             if (!stepPassed) {
                 stepReportObject.put("status", "failed");
                 testResult = "failed";
-                break;
+                screenShotPath =  selCmd. captureScreenshot(driver,test.get("suiteName").toString(),test.get("testName").toString());
             } else {
                 stepReportObject.put("status", "passed");
             }
@@ -251,6 +257,12 @@ public class TestExecutor implements Runnable {
             stepReportObject.put("endTime", stepEndTime);
 
             testStepArray.add(stepReportObject);
+
+
+            if(!stepPassed)
+            {
+                break;
+            }
 
         }
 
@@ -262,14 +274,14 @@ public class TestExecutor implements Runnable {
 
         if (testResult.equals("failed")) {
             testReportObject.put("fullStackTrace", exceptionAsString);
-            testReportObject.put("screenShot", "");
+            testReportObject.put("screenShot", screenShotPath);
         }
 
 
         testReportObject.put("totalTime", stopTimeTest);
         testReportObject.put("status", testResult);
 
-        buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(), testReportObject);
+        buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(),test.get("testName").toString(), testReportObject);
         return testReportObject;
     }
 
