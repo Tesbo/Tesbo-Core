@@ -41,19 +41,18 @@ public class ReportParser {
      * @throws IOException
      * @Decription : Create JSON file.
      */
-    public void writeJsonFile(JSONObject obj, String fileName) throws IOException {
+    public void writeJsonFile(JSONObject obj, String fileName) {
 
 
-        try (FileWriter file = new FileWriter("./htmlReport/Build History/" + fileName + ".json")) {
-
+        try  {
+            FileWriter file = new FileWriter("./htmlReport/Build History/" + fileName + ".json");
 
             file.write(obj.toJSONString());
-            file.flush();
+          //  file.flush();
 
-
+file.close();
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
         }
 
     }

@@ -1,5 +1,6 @@
 package ReportBuilder;
 
+import Execution.TestExecutionBuilder;
 import com.diogonunes.jcdp.color.api.Ansi;
 import logger.Logger;
 import org.json.simple.JSONArray;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ReportBuilder {
+public class ReportBuilder implements Runnable {
 
 
     GetJsonData data = new GetJsonData();
@@ -28,11 +29,6 @@ public class ReportBuilder {
     }
 
 
-
-
-
-
-
     public void generatReport() {
         logger.titleLog("-----------------------------------------------------------------------");
         logger.titleLog("Build Execution Completed");
@@ -41,38 +37,45 @@ public class ReportBuilder {
 
         dataArray = data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath());
         ReportBuilder builder = new ReportBuilder();
-        ReportLibraryFiles files = new ReportLibraryFiles();
-        files.createLibrary();
 
         StringBuffer indexfile = new StringBuffer();
         //index.html file generator
-        indexfile = builder.generateHeader(indexfile);
-        indexfile = builder.generateBody(indexfile);
-        indexfile = builder.generateSideMenu(indexfile);
-        indexfile = builder.generateTopHeader(indexfile);
-        indexfile = builder.generateSummaryChart(indexfile);
-        indexfile = builder.generateTimeSummaryChart(indexfile);
-        indexfile = builder.generateFooter(indexfile);
-        indexfile = builder.generateLatestBuildResultData(indexfile);
-        indexfile = builder.generateTimeSummaryData(indexfile);
         File file = new File("./htmlReport/index.html");
-        builder.writeReportFile(file.getAbsolutePath(), indexfile);
-
-        //currentbuildresultGenerator
-        StringBuffer currentBuildResult = new StringBuffer();
-        currentBuildResult = builder.generateHeader(currentBuildResult);
-        currentBuildResult = builder.generateBody(currentBuildResult);
-        currentBuildResult = builder.generateSideMenu(currentBuildResult);
-        currentBuildResult = builder.generateCurrentBuildSummary(currentBuildResult);
-        currentBuildResult = builder.generatePieAndBarChart(currentBuildResult);
-        currentBuildResult = builder.generateModuleSummary(currentBuildResult);
-        currentBuildResult = builder.generateBrowserWiseChartData(currentBuildResult);
-        currentBuildResult = builder.generateDonutChartData(currentBuildResult);
         File currentBuildFile = new File("./htmlReport/currentBuildResult.html");
+        StringBuffer currentBuildResult = null;
+        try {
+            indexfile = builder.generateHeader(indexfile);
+            indexfile = builder.generateBody(indexfile);
+            indexfile = builder.generateSideMenu(indexfile);
+            indexfile = builder.generateTopHeader(indexfile);
+            indexfile = builder.generateSummaryChart(indexfile);
+            indexfile = builder.generateTimeSummaryChart(indexfile);
+            indexfile = builder.generateFooter(indexfile);
+            indexfile = builder.generateLatestBuildResultData(indexfile);
+            indexfile = builder.generateTimeSummaryData(indexfile);
+
+
+            builder.writeReportFile(file.getAbsolutePath(), indexfile);
+
+            //currentbuildresultGenerator
+            currentBuildResult = new StringBuffer();
+            currentBuildResult = builder.generateHeader(currentBuildResult);
+            currentBuildResult = builder.generateBody(currentBuildResult);
+            currentBuildResult = builder.generateSideMenu(currentBuildResult);
+            currentBuildResult = builder.generateCurrentBuildSummary(currentBuildResult);
+            currentBuildResult = builder.generatePieAndBarChart(currentBuildResult);
+            currentBuildResult = builder.generateModuleSummary(currentBuildResult);
+            currentBuildResult = builder.generateBrowserWiseChartData(currentBuildResult);
+            currentBuildResult = builder.generateDonutChartData(currentBuildResult);
+            builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
 
-
-        logger.customeLog("\nReport Generated at :" +file.getAbsolutePath()+"\n", Ansi.FColor.NONE);
+        logger.customeLog("\nReport Generated at :" + file.getAbsolutePath() + "\n", Ansi.FColor.NONE);
         logger.titleLog("-----------------------------------------------------------------------");
 
 
@@ -293,7 +296,7 @@ public class ReportBuilder {
                 "Morris.Bar({\n" +
                 "element: 'lastBuildResult',\n" +
                 "data: [\n");
-        for (int i = 9; i >=0 ; i--) {
+        for (int i = 9; i >= 0; i--) {
             try {
 
                 JSONObject obj = (JSONObject) data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath()).get(i);
@@ -362,8 +365,7 @@ public class ReportBuilder {
         logger.customeLog("| Total : " + data.getCurrentBuildTotal(new File(getBuildHistoryPath()).getAbsolutePath()), Ansi.FColor.NONE);
         logger.customeLog(" | Passed : " + data.getCurrentBuildPassed(buildHistory), Ansi.FColor.NONE);
         logger.customeLog(" | Failed : " + data.getCurrentBuildFailed(buildHistory), Ansi.FColor.NONE);
-        logger.customeLog(" | Time : " + data.getCurrentBuildTotalTime(buildHistory)+" |\n", Ansi.FColor.NONE);
-
+        logger.customeLog(" | Time : " + data.getCurrentBuildTotalTime(buildHistory) + " |\n", Ansi.FColor.NONE);
 
 
         sb.append("<div class=\"right_col\" role=\"main\">\n" +
@@ -701,12 +703,11 @@ public class ReportBuilder {
                     //System.out.println(((JSONObject) test).get("testName") + "" + isTestFailed);
 
 
-
                     if (isTestFailed) {
 
                         try {
                             stacktrace = ((JSONObject) test).get("fullStackTrace").toString();
-                            } catch (Exception e) {
+                        } catch (Exception e) {
                             logger.errorLog("StackTrace Not Found");
 
                         }
@@ -719,9 +720,6 @@ public class ReportBuilder {
 
                         }
                     }
-
-
-
 
 
                     sb.append("<!-- start accordion -->\n" +
@@ -903,4 +901,41 @@ public class ReportBuilder {
     }
 
 
+    public void startThread() {
+        System.out.println("insider Start thread");
+        ReportBuilder rb = new ReportBuilder();
+
+        Thread t1 = new Thread(rb);
+
+        t1.start();
+    }
+
+
+    @Override
+    public void run() {
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        while (TestExecutionBuilder.buildRunning) {
+            try {
+
+                generatReport();
+
+                try {
+                    Thread.sleep(13000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+            } catch (Exception e) {
+            }
+        }
+
+
+    }
 }
