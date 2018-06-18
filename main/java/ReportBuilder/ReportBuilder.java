@@ -27,6 +27,12 @@ public class ReportBuilder {
         builder.generatReport();
     }
 
+
+
+
+
+
+
     public void generatReport() {
         logger.titleLog("-----------------------------------------------------------------------");
         logger.titleLog("Build Execution Completed");

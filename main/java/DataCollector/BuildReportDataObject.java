@@ -14,7 +14,7 @@ public class BuildReportDataObject {
 
         checkForTheBrowser(browser);
         checkForTheSuite(browser, suite);
-        checkForTheTest(browser,suite,testResultObject);
+        checkForTheTest(browser, suite, testResultObject);
 
         mainReportObject.put("browser", browserArray);
 
@@ -27,7 +27,6 @@ public class BuildReportDataObject {
         JSONObject browserObject = new JSONObject();
         JSONObject suiteObject = new JSONObject();
         JSONArray suiteArray = new JSONArray();
-        System.out.println("Size --------------------------" + browserArray.size());
 
         if (browserArray.size() == 0) {
 
@@ -136,7 +135,7 @@ public class BuildReportDataObject {
         if (suitesArray.size() == 0) {
 
             individualSuiteObject.put("suiteName", suite);
-            individualSuiteObject.put("tests",testArray);
+            individualSuiteObject.put("tests", testArray);
             individualSuiteObject.put("totalTime", "");
             individualSuiteObject.put("totalFailed", "");
             individualSuiteObject.put("totalPassed", "");
@@ -151,9 +150,13 @@ public class BuildReportDataObject {
                 for (int i = 0; i < size; i++) {
                     try {
 
-                        JSONObject suiteTempObject = (JSONObject) ((JSONObject) suitesArray.get(i)).get(suite);
+                        JSONObject suiteTempObject = (JSONObject) ((JSONObject) suitesArray.get(i));
 
-                        if (suiteTempObject.size() > 0) {
+                        System.out.println(((JSONObject) suitesArray.get(i)).get("suiteName"));
+
+                        System.out.println("Suite Count" + ((JSONObject) suitesArray.get(i)).size());
+
+                        if (suiteTempObject.get("suiteName").equals(suite)) {
                             suiteFlag = true;
                             break;
                         }
@@ -163,7 +166,7 @@ public class BuildReportDataObject {
                 }
 
                 if (!suiteFlag) {
-                    individualSuiteObject.put("tests",testArray);
+                    individualSuiteObject.put("tests", testArray);
                     individualSuiteObject.put("suiteName", suite);
                     individualSuiteObject.put("totalTime", "");
                     individualSuiteObject.put("totalFailed", "");
@@ -180,12 +183,7 @@ public class BuildReportDataObject {
 
 
 
-
-
-
-
     public void checkForTheTest(String browserName, String suite, JSONObject testResult) {
-
 
 
         JSONObject suiteObject = getBrowserObject(browserName);
@@ -196,35 +194,48 @@ public class BuildReportDataObject {
 
         int size = suitesArray.size();
 
-        for(int i = 0;i<size;i++)
-        {
+        double totalPassed = 0, totalFailed = 0;
+        double totalTime = 0.0;
+        JSONObject tempSuiteObject = null;
+        int suiteCount = 0;
+        JSONArray testArray = null;
 
 
-            JSONObject tempSuiteObject = (JSONObject)suitesArray.get(i);
-        String suiteName = tempSuiteObject.get("suiteName").toString();
+        //lopping for finding suite
+        for (int i = 0; i < size; i++) {
 
-            if(suiteName.equals(suite))
-            {
-                JSONArray testArray = (JSONArray) tempSuiteObject.get("tests");
+
+            tempSuiteObject = (JSONObject) suitesArray.get(i);
+            String suiteName = tempSuiteObject.get("suiteName").toString();
+
+
+            if (suiteName.equals(suite)) {
+                testArray = (JSONArray) tempSuiteObject.get("tests");
+
                 testArray.add(testResult);
-                tempSuiteObject.put("tests",testArray);
-                newSuiteArray.add(tempSuiteObject);
+                suiteCount = i;
+
             }
+
+
 
 
         }
 
-        System.out.println("New Suite" + newSuiteArray);
+        try {
+            tempSuiteObject.put("totalTime", totalTime);
+            tempSuiteObject.put("totalFailed", totalFailed);
+            tempSuiteObject.put("totalPassed", totalPassed);
+            tempSuiteObject.put("tests", testArray);
+            newSuiteArray.set(suiteCount, tempSuiteObject);
+        } catch (Exception e) {
+            newSuiteArray.add(tempSuiteObject);
+
+        }
+
+
+
         setBrowserObject(browserName, newSuiteArray);
-
-
-
-
-
-
-
-
-
 
 
     }

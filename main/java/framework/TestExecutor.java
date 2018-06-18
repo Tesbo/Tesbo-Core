@@ -249,6 +249,7 @@ public class TestExecutor implements Runnable {
                 testResult = "failed";
                 screenShotPath =  selCmd. captureScreenshot(driver,test.get("suiteName").toString(),test.get("testName").toString());
             } else {
+                testResult = "passed";
                 stepReportObject.put("status", "passed");
             }
 
