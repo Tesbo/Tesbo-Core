@@ -110,7 +110,7 @@ public class TestExecutor implements Runnable {
         BuildReportDataObject buildReport = new BuildReportDataObject();
         String testResult = "";
         int stepNumber = 0;
-        Validation validation=new Validation();
+        Validation validation = new Validation();
         JSONObject testReportObject = new JSONObject();
 
 
@@ -125,7 +125,7 @@ public class TestExecutor implements Runnable {
 
         /*Getting step using SuiteName and Testcase Name*/
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
-        System.out.println("Steps :"+steps);
+        System.out.println("Steps :" + steps);
         int J = 0;
         JSONArray stepsArray = new JSONArray();
         boolean failFlag = false;
@@ -149,9 +149,9 @@ public class TestExecutor implements Runnable {
             stepReportObject.put("steps", step.toString());
 
 
-            if(isSession){
-                validation.sessionNotDeclareOnTest(steps,listOfSession);
-                validation.sessionNotDefineOnTest(steps,listOfSession);
+            if (isSession) {
+                validation.sessionNotDeclareOnTest(steps, listOfSession);
+                validation.sessionNotDefineOnTest(steps, listOfSession);
                 initializeSessionRunTime(step);
             }
             if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step :")) {
@@ -163,11 +163,12 @@ public class TestExecutor implements Runnable {
                     ae.printStackTrace(new PrintWriter(sw));
                     ae.printStackTrace();
                     exceptionAsString = sw.toString();
-                    stepPassed = false;   }
+                    stepPassed = false;
+                }
                 long stopTimeStep = System.currentTimeMillis();
                 stepNumber++;
             } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify :")) {
-                if(failFlag==true){
+                if (failFlag == true) {
                     break;
                 }
             } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
@@ -188,29 +189,27 @@ public class TestExecutor implements Runnable {
                 // testResult.put(stepNumber + 1, stepResult);
                 stepNumber++;
 
-                 stepNumber++;
-                if(failFlag==true){
+                stepNumber++;
+                if (failFlag == true) {
                     break;
                 }
             } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Close:")) {
                 try {
                     logger.stepLog(step.toString());
-                    String sessionName=step.toString().split(":")[1].trim();
-                    boolean isSession=false;
-                    for(Map.Entry session:sessionList.entrySet()){
-                        if(session.getKey().toString().equals(sessionName)){
-                            isSession=true;
+                    String sessionName = step.toString().split(":")[1].trim();
+                    boolean isSession = false;
+                    for (Map.Entry session : sessionList.entrySet()) {
+                        if (session.getKey().toString().equals(sessionName)) {
+                            isSession = true;
                             break;
                         }
                     }
-                    if(isSession){
+                    if (isSession) {
                         afterTest(sessionName);
+                    } else {
+                        throw new TesboException("Session '" + sessionName + "' is not available.");
                     }
-                    else{
-                        throw new TesboException("Session '"+sessionName+"' is not available.");
-                    }
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     throw new TesboException("Session name is not found for close.");
                 }
 
@@ -220,7 +219,7 @@ public class TestExecutor implements Runnable {
                 try {
                     groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(test, step.toString()));
                 } catch (Exception e) {
-                    if(groupSteps.size()==0)
+                    if (groupSteps.size() == 0)
                         throw e;
                     J++;
                     StringWriter sw = new StringWriter();
@@ -236,7 +235,7 @@ public class TestExecutor implements Runnable {
                 for (int s = 0; s <= groupSteps.size() - 1; s++) {
                     Object groupStep = groupSteps.get(s);
 
-                    if (groupStep.toString().contains("Step:") ) {
+                    if (groupStep.toString().contains("Step:")) {
                         try {
                             stepParser.parseStep(driver, test, groupStep.toString());
                         } catch (Exception ae) {
@@ -259,59 +258,58 @@ public class TestExecutor implements Runnable {
                             exceptionAsString = sw.toString();
                         }
                     }
-                long stopTimeStep = System.currentTimeMillis();
-                stepNumber++;
+                    long stopTimeStep = System.currentTimeMillis();
+                    stepNumber++;
+                }
+
+                Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
+
+                testReportObject.put("browserVersion", caps.getVersion());
+                testReportObject.put("osName", caps.getPlatform().toString());
+
+
+                if (!stepPassed) {
+                    stepReportObject.put("status", "failed");
+                    testResult = "failed";
+                    screenShotPath = selCmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
+                } else {
+                    testResult = "passed";
+                    stepReportObject.put("status", "passed");
+                }
+
+                long stepEndTime = System.currentTimeMillis();
+
+                stepReportObject.put("endTime", stepEndTime);
+
+                testStepArray.add(stepReportObject);
+
+
+                if (!stepPassed) {
+                    break;
+                }
+
             }
 
-            Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
 
-            testReportObject.put("browserVersion", caps.getVersion());
-            testReportObject.put("osName", caps.getPlatform().toString());
+            long stopTimeTest = System.currentTimeMillis();
 
 
-            if (!stepPassed) {
-                stepReportObject.put("status", "failed");
-                testResult = "failed";
-                screenShotPath =  selCmd. captureScreenshot(driver,test.get("suiteName").toString(),test.get("testName").toString());
-            } else {
-                testResult = "passed";
-                stepReportObject.put("status", "passed");
+            testReportObject.put("testStep", testStepArray);
+
+            if (testResult.equals("failed")) {
+                testReportObject.put("fullStackTrace", exceptionAsString);
+                testReportObject.put("screenShot", screenShotPath);
             }
 
-            long stepEndTime = System.currentTimeMillis();
+            long stopTimeSuite = System.currentTimeMillis();
 
-            stepReportObject.put("endTime", stepEndTime);
+            testReportObject.put("totalTime", stopTimeTest - startTime);
+            testReportObject.put("status", testResult);
 
-            testStepArray.add(stepReportObject);
-
-
-            if(!stepPassed)
-            {
-                break;
-            }
-
+            buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(), test.get("testName").toString(), testReportObject);
+            return testReportObject;
         }
-
-
-        long stopTimeTest = System.currentTimeMillis();
-
-
-        testReportObject.put("testStep", testStepArray);
-
-        if (testResult.equals("failed")) {
-            testReportObject.put("fullStackTrace", exceptionAsString);
-            testReportObject.put("screenShot", screenShotPath);
-        }
-
-        long stopTimeSuite = System.currentTimeMillis();
-
-        testReportObject.put("totalTime", stopTimeTest-startTime);
-        testReportObject.put("status", testResult);
-
-        buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(),test.get("testName").toString(), testReportObject);
-        return testReportObject;
     }
-
     @Override
     public void run() {
         try {

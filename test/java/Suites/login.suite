@@ -19,11 +19,18 @@ end
 
 
 Test: Verify Gmail Login login page
-#login #gtu
+#login
+Session: user1,user2
+[user1]
 Step: Open URL 'https://www.linkedin.com'
 Step: Enter 'viral103patel@gmail.com' into @emailTextBox
-Step: Enter 'jsbot2017' into passwordTextBox
+Step: Enter 'jsbot2017' into @passwordTextBox
 Step: Click on @signInTextBox
+close session : user1
+[user2]
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter 'Mahesh@gmail.com' into @emailTextBox
+Step: Enter 'jsbot2017' into @passwordTextBox
 end
 
 
