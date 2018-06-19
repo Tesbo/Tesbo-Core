@@ -65,7 +65,6 @@ public class Validation {
         if(Files.notExists(Paths.get(locatorDirectory))){
             throw new TesboException("Please enter valid locator directory path.");
         }
-
     }
 
     public void baseUrlValidation() {
@@ -225,7 +224,10 @@ public class Validation {
 
         if(step.replaceAll("\\s{2,}", " ").trim().contains("Step :") | step.replaceAll("\\s{2,}", " ").trim().contains("step:") | step.replaceAll("\\s{2,}", " ").trim().contains("step :")
            | step.replaceAll("\\s{2,}", " ").trim().contains("Verify :") | step.replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.replaceAll("\\s{2,}", " ").trim().contains("verify :")
-           | step.replaceAll("\\s{2,}", " ").trim().contains("Collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.replaceAll("\\s{2,}", " ").trim().contains("collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("close:") | step.replaceAll("\\s{2,}", " ").trim().contains("close :")){
+           | step.replaceAll("\\s{2,}", " ").trim().contains("Collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.replaceAll("\\s{2,}", " ").trim().contains("collection :")
+           | step.replaceAll("\\s{2,}", " ").trim().contains("ExtCode :") | step.replaceAll("\\s{2,}", " ").trim().contains("extCode:") | step.replaceAll("\\s{2,}", " ").trim().contains("extCode :")
+           | step.replaceAll("\\s{2,}", " ").trim().contains("extcode :") | step.replaceAll("\\s{2,}", " ").trim().contains("extcode:") | step.replaceAll("\\s{2,}", " ").trim().contains("Extcode :") | step.replaceAll("\\s{2,}", " ").trim().contains("Extcode:")
+           | step.replaceAll("\\s{2,}", " ").trim().contains("Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("close:") | step.replaceAll("\\s{2,}", " ").trim().contains("close :")){
             throw new TesboException("Please write valid keyword for this \"" +step+"\"");
         }
 

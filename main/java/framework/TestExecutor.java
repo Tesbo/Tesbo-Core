@@ -1,9 +1,9 @@
 package framework;
 
 import Execution.TestExecutionBuilder;
+import Selenium.ExtCode;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import logger.Logger;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
@@ -14,23 +14,33 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import Exception.TesboException;
+import org.reflections.Reflections;
+import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+
+import java.util.Set;
 
 public class TestExecutor implements Runnable {
 
 
     public JSONObject testResult = new JSONObject();
-    public WebDriver driver;
-    public WebDriver[] SessionDriver=null;
+    protected static WebDriver driver;
+    //protected WebDriver[] SessionDriver=null;
     JSONObject test;
     public Map<String,WebDriver> sessionList=new HashMap<String, WebDriver>();
     JSONArray listOfSession;
     static Logger logger = new Logger();
     boolean isSession=false;
+
 
     public static void main(String[] args) throws Exception {
         TestExecutionBuilder builder = new TestExecutionBuilder();
@@ -50,6 +60,9 @@ public class TestExecutor implements Runnable {
         report.generateReportDir();
         //report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
       }
+
+    public TestExecutor() {
+    }
 
     public TestExecutor(JSONObject test) {
         this.test = test;
@@ -163,6 +176,15 @@ public class TestExecutor implements Runnable {
                     throw new TesboException("Session name is not found for close.");
                 }
 
+
+            }else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
+                String extVal=null;
+                try {
+                    extVal=step.toString().split(":")[1].trim();
+                } catch (Exception e) {
+                    throw new TesboException("ExtCode step has no value");
+                }
+                runAllAnnotatedWith(ExtCode.class,extVal);
 
             } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:") ) {
                 JSONArray groupSteps = new JSONArray();
@@ -385,9 +407,7 @@ public class TestExecutor implements Runnable {
                 if (seleniumAddress == null) {
                     driver = new InternetExplorerDriver();
                 }
-
             }
-
             if(session !=null)
             {
                 sessionList.put(session.toString(), driver);
@@ -451,6 +471,47 @@ public class TestExecutor implements Runnable {
             logger.stepLog(step.toString());
         }
 
+    }
+
+    /**
+     *
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param annotation
+     * @param tagVal
+     * @throws Exception
+     */
+    public static void runAllAnnotatedWith(Class<? extends Annotation> annotation, String tagVal){
+        boolean flag=false;
+        try {
+            Reflections reflections = new Reflections(new ConfigurationBuilder()
+                    .setUrls(ClasspathHelper.forPackage("ExtTestCode"))
+                    .setScanners(new MethodAnnotationsScanner()));
+            Set<Method> methods = reflections.getMethodsAnnotatedWith(annotation);
+            for (Method m : methods) {
+                if (m.getAnnotation(ExtCode.class) != null) {
+                    if (m.getAnnotation(ExtCode.class).value().equals(tagVal)) {
+                        if(!flag) {
+                            flag = true;
+                            m.invoke(null);
+                        }else {
+                            throw new TesboException("Multiple tag found :"+tagVal);
+                        }
+                    }
+                }
+            }
+            if (!flag)
+                throw new TesboException("'" + tagVal + "' is not found");
+        }
+        catch (Exception e){
+            try {
+                throw e;
+            } catch (IllegalAccessException e1) {
+                e1.printStackTrace();
+            } catch (InvocationTargetException e1) {
+                e1.printStackTrace();
+            }
+        }
     }
 
 }
