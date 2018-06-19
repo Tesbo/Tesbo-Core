@@ -31,7 +31,7 @@ public class TestExecutor implements Runnable {
 
    // public JSONObject testResult = new JSONObject();
     public WebDriver driver;
-    public WebDriver[] SessionDriver=null;
+   // public WebDriver[] SessionDriver=null;
     JSONObject test;
 
     public TestExecutor(JSONObject test) {
@@ -68,73 +68,14 @@ public class TestExecutor implements Runnable {
      * @lastModifiedBy: Ankit Mistry
      *
      */
-    public void beforeTest() {
+    public void beforeTest(String browserName) {
         SuiteParser suiteParser=new SuiteParser();
         listOfSession=suiteParser.getSessionListFromTest(test.get("suiteName").toString(),test.get("testName").toString());
         if(listOfSession.size()>1){ isSession=true; }
         else { initializeBrowser(null); }
     }
-    public void beforeTest(String browserName) {
-
-        GetConfiguration config = new GetConfiguration();
-        DesiredCapabilities capability = null;
-        String seleniumAddress = null;
-        ArrayList capabilities = null;
-        seleniumAddress = getSeleniumAddress();
-        if (IsCapabilities(browserName)) {
-            capabilities = getCapabilities(browserName);
-            if (capabilities != null)
-                capability = setCapabilities(capabilities, capability);
-        }
-        try {
-            if (browserName.equalsIgnoreCase("firefox")) {
-                capability = DesiredCapabilities.firefox();
-                WebDriverManager.firefoxdriver().setup();
-                System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "true");
-                System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE, "/dev/null");
-                if (seleniumAddress == null) {
-                    driver = new FirefoxDriver();
-                }
-            }
-            if (browserName.equalsIgnoreCase("chrome")) {
-                capability = DesiredCapabilities.chrome();
-                WebDriverManager.chromedriver().setup();
-
-                if (seleniumAddress == null) {
-                    driver = new ChromeDriver();
-                }
-            }
-            if (browserName.equalsIgnoreCase("ie")) {
-                capability = DesiredCapabilities.internetExplorer();
-                WebDriverManager.iedriver().setup();
-                if (seleniumAddress == null) {
-                    driver = new InternetExplorerDriver();
-                }
-            }
 
 
-            if (seleniumAddress != null) {
-                driver = openRemoteBrowser(driver, capability, seleniumAddress);
-            }
-
-
-            driver.manage().window().maximize();
-
-            try {
-                if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {
-                    driver.get(config.getBaseUrl());
-                }
-            } catch (org.openqa.selenium.WebDriverException e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void afterTest() {
-        driver.quit();
     public void afterTest(String sessionName) {
         if(sessionName!=null){
             for (Map.Entry session : sessionList.entrySet()) {
@@ -164,7 +105,6 @@ public class TestExecutor implements Runnable {
         StepParser stepParser = new StepParser();
         Commands selCmd = new Commands();
         VerifyParser verifyParser = new VerifyParser();
-        Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
         SuiteParser suiteParser = new SuiteParser();
         BuildReportDataObject buildReport = new BuildReportDataObject();
         String testResult = "";
@@ -178,15 +118,13 @@ public class TestExecutor implements Runnable {
         /*Adding data into the report*/
         testReportObject.put("startTime", startTime);
         testReportObject.put("browserName", test.get("browser"));
-        testReportObject.put("browserVersion", caps.getVersion());
-        testReportObject.put("osName", caps.getPlatform().toString());
         testReportObject.put("testName", test.get("testName").toString());
         testReportObject.put("suiteName", test.get("suiteName").toString());
 
 
         /*Getting step using SuiteName and Testcase Name*/
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
-
+        System.out.println("Steps :"+steps);
         int J = 0;
         JSONArray stepsArray = new JSONArray();
         boolean failFlag = false;
@@ -312,6 +250,11 @@ public class TestExecutor implements Runnable {
                 stepNumber++;
             }
 
+            Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
+
+            testReportObject.put("browserVersion", caps.getVersion());
+            testReportObject.put("osName", caps.getPlatform().toString());
+
 
             if (!stepPassed) {
                 stepReportObject.put("status", "failed");
@@ -362,7 +305,7 @@ public class TestExecutor implements Runnable {
             JSONObject testData = new JSONObject();
             beforeTest(test.get("browser").toString());
             runTest();
-            afterTest();
+            afterTest(null);
 
 
           //  testData.put(testResult.get("testName").toString(), testResult);

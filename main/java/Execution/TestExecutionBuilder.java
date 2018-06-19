@@ -45,9 +45,9 @@ public class TestExecutionBuilder {
 
         TestExecutionBuilder.buildRunning = true;
         BuildReportDataObject brdo = new BuildReportDataObject();
-        brdo.startThread();
+     /*  brdo.startThread();
        reportBuilder.startThread();
-
+*/
 
         long startTimeSuite = System.currentTimeMillis();
 
