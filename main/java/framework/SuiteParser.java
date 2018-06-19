@@ -224,9 +224,9 @@ public class SuiteParser {
         for (int j = startPoint; j < endpoint; j++) {
 
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Close:") |
+                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
                     allLines[j].replaceAll("\\s{2,}", " ").trim().contains("ExtCode:") |
-                    ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]"))) {
+                    ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
                 testSteps.add(allLines[j]);
             }
             else{

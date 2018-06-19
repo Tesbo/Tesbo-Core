@@ -125,6 +125,7 @@ public class TestExecutor implements Runnable {
                 validation.sessionNotDeclareOnTest(steps,listOfSession);
                 validation.sessionNotDefineOnTest(steps,listOfSession);
                 initializeSessionRunTime(step);
+
             }
             if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
                 try {
@@ -154,10 +155,10 @@ public class TestExecutor implements Runnable {
                 if(failFlag==true){
                     break;
                 }
-            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Close:")) {
+            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("[Close:") && step.toString().replaceAll("\\s{2,}", " ").trim().contains("]")) {
                 try {
                     logger.stepLog(step.toString());
-                    String sessionName=step.toString().split(":")[1].trim();
+                    String sessionName=step.toString().replaceAll("\\[|\\]","").split(":")[1].trim();
                     boolean isSession=false;
                     for(Map.Entry session:sessionList.entrySet()){
                         if(session.getKey().toString().equals(sessionName)){
@@ -167,6 +168,7 @@ public class TestExecutor implements Runnable {
                     }
                     if(isSession){
                         afterTest(sessionName);
+
                     }
                     else{
                         throw new TesboException("Session '"+sessionName+"' is not available.");
@@ -465,10 +467,10 @@ public class TestExecutor implements Runnable {
                         }
                     }
 
-
+                    logger.stepLog(step.toString());
                 }
             }
-            logger.stepLog(step.toString());
+
         }
 
     }
