@@ -31,7 +31,7 @@ public class TestExecutor implements Runnable {
 
    // public JSONObject testResult = new JSONObject();
     public WebDriver driver;
-   // public WebDriver[] SessionDriver=null;
+
     JSONObject test;
 
     public TestExecutor(JSONObject test) {
@@ -67,6 +67,7 @@ public class TestExecutor implements Runnable {
      * @auther :
      * @lastModifiedBy: Ankit Mistry
      *
+     * @param browserName
      */
     public void beforeTest(String browserName) {
         SuiteParser suiteParser=new SuiteParser();
