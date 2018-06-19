@@ -23,11 +23,11 @@ public class DataDrivenParser {
         String allLines[] = suite.toString().split("[\\r\\n]+");
         boolean flag=false;
         for (int i = 0; i < allLines.length; i++) {
-            if(allLines[i].contains("Test :") | allLines[i].contains("Test:"))
+            if(allLines[i].contains("Test:"))
                 break;
 
-            if(allLines[i].toLowerCase().contains("\"excelfile\" :") | allLines[i].toLowerCase().contains("\"excelfile\":")){
-                if (!(allLines[i].contains("\"excelFile\" :") | allLines[i].contains("\"excelFile\":")))
+            if(allLines[i].contains("\"excelFile\":")){
+                if (!(allLines[i].contains("\"excelFile\":")))
                     throw new TesboException("Write 'excelFile' keyword in Data Set");
 
                 String[] excelUrl= allLines[i].replaceAll("[\"| |,]","").split(":",2);
@@ -59,8 +59,8 @@ public class DataDrivenParser {
         boolean flag=false;
         for (int i = 0; i < allLines.length; i++) {
 
-            if(allLines[i].toLowerCase().contains("dataset :") | allLines[i].contains("dataset:")){
-                if (!(allLines[i].contains("DataSet :") | allLines[i].contains("DataSet:")))
+            if(allLines[i].contains("DataSet:")){
+                if (!(allLines[i].contains("DataSet:")))
                     throw new TesboException("Write 'DataSet' keyword in suite");
                 flag = true;
                 break;
@@ -85,18 +85,18 @@ public class DataDrivenParser {
         boolean flag=false,isDataSetName=false;
         String type=null;
         for (int i = 0; i < allLines.length; i++) {
-            if(allLines[i].contains("\""+dataSetName+"\" :") | allLines[i].contains("\""+dataSetName+"\":")){
+            if(allLines[i].contains("\""+dataSetName+"\":") ){
                 isDataSetName=true;
             }
             if(isDataSetName) {
-                if (allLines[i].contains("\"excelFile\" :") | allLines[i].contains("\"excelFile\":")) {
+                if (allLines[i].contains("\"excelFile\":")) {
                     type="excel";
                     flag=true;
                     break;
                 }
                 if(keyName.size()>0) {
                     for(String key:keyName) {
-                        if (allLines[i].contains("\""+key+"\" :") | allLines[i].contains("\""+key+"\":")) {
+                        if (allLines[i].contains("\""+key+"\":")) {
                             type = "global";
                             flag = true;
                             break;
@@ -153,7 +153,7 @@ public class DataDrivenParser {
                 flag = true;
 
             if (flag){
-                if (allLines[i].contains("\"excelFile\" :") | allLines[i].contains("\"excelFile\":")) {
+                if (allLines[i].contains("\"excelFile\":")) {
                     String[] excelUrl = allLines[i].replaceAll("[\"| |,]", "").split(":", 2);
                     filePath = excelUrl[1];
                     break;
@@ -171,11 +171,11 @@ public class DataDrivenParser {
         String allLines[] = suite.toString().split("[\\r\\n]+");
         boolean flag=false;
         for (int i = 0; i < allLines.length; i++) {
-            if(allLines[i].toLowerCase().contains("dataset.excelfile")){
+            if(allLines[i].contains("DataSet.excelFile")){
                 String[] steps=allLines[i].split(" ");
                 for(String step:steps)
                 {
-                    if(step.toLowerCase().contains("dataset.excelfile")){
+                    if(step.contains("DataSet.excelFile")){
                         if(excelHeaderList.size()==0) {
                             excelHeaderList.add(step.split("\\.")[2]);
                         }
@@ -309,11 +309,11 @@ public class DataDrivenParser {
         String KeyValue=null;
 
         for (int i = 0; i < allLines.length; i++) {
-            if(allLines[i].contains("\""+dataSetName+"\" :") | allLines[i].contains("\""+dataSetName+"\":")){
+            if(allLines[i].contains("\""+dataSetName+"\":")){
                 isDataSetName=true;
             }
             if(isDataSetName) {
-                if (allLines[i].contains("\""+keyName+"\" :") | allLines[i].contains("\""+keyName+"\":")) {
+                if (allLines[i].contains("\""+keyName+"\":")) {
                     try{
                         KeyValue=allLines[i].replaceAll("[\"| |,]","").split(":")[1];
                         isKeyName=true;
