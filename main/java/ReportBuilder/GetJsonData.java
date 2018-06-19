@@ -64,6 +64,7 @@ Logger logger = new Logger();
             suiteFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return suiteFileList.size();
@@ -95,6 +96,7 @@ Logger logger = new Logger();
             suiteFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         int totalTime = 0;
@@ -118,13 +120,19 @@ Logger logger = new Logger();
             suiteFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         int totalTests = 0;
 
         for (Object a : suiteFileList) {
             JSONObject parser = readJsonFile(new File(a.toString()).getAbsolutePath());
+        try {
             totalTests = totalTests + Integer.parseInt(parser.get("totalPassed").toString()) + Integer.parseInt(parser.get("totalFailed").toString());
+        }catch(Exception e)
+        {
+
+        }
         }
 
         return totalTests;
@@ -183,35 +191,77 @@ Logger logger = new Logger();
 
     public int getCurrentBuildTotal(String dir) {
 
-        File currentBuildReport = getLastModifiedJsonFile(dir);
-        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
-        int total = Integer.parseInt(parser.get("totalPassed").toString()) + Integer.parseInt(parser.get("totalFailed").toString());
+        int total =0;
+try {
+    File currentBuildReport = getLastModifiedJsonFile(dir);
+    JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+
+    total = Integer.parseInt(parser.get("totalPassed").toString()) + Integer.parseInt(parser.get("totalFailed").toString());
+
+}catch (Exception e)
+{
+
+}
 
         return total;
     }
 
     public int getCurrentBuildPassed(String dir) {
 
-        File currentBuildReport = getLastModifiedJsonFile(dir);
-        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
-        int total = Integer.parseInt(parser.get("totalPassed").toString());
+
+        int total = 0;
+try{
+    File currentBuildReport = getLastModifiedJsonFile(dir);
+    JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+
+    total = Integer.parseInt(parser.get("totalPassed").toString());
+
+}catch (Exception e)
+{
+
+}
+
+
 
         return total;
     }
 
     public int getCurrentBuildFailed(String dir) {
 
-        File currentBuildReport = getLastModifiedJsonFile(dir);
-        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
-        int total = Integer.parseInt(parser.get("totalFailed").toString());
+
+        int total = 0;
+        try{
+
+            File currentBuildReport = getLastModifiedJsonFile(dir);
+            JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+
+            total = Integer.parseInt(parser.get("totalFailed").toString());
+
+        }catch (Exception e)
+        {
+
+        }
+
+
+
+
+
 
         return total;
     }
 
     public String getCurrentBuildTotalTime(String dir) {
-        File currentBuildReport = getLastModifiedJsonFile(dir);
-        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
-        int total = Integer.parseInt(parser.get("totalTimeTaken").toString());
+        int total = 0;
+        try{
+            File currentBuildReport = getLastModifiedJsonFile(dir);
+            JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+
+            total = Integer.parseInt(parser.get("totalTimeTaken").toString());
+
+        }catch (Exception e)
+        {
+
+        }
 
 
         return parseTime(total);
@@ -219,8 +269,16 @@ Logger logger = new Logger();
 
 
     public String getCurrentBuildStartTime(String dir) {
-        File currentBuildReport = getLastModifiedJsonFile(dir);
-        JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+        JSONObject parser = null;
+        try {
+
+            File currentBuildReport = getLastModifiedJsonFile(dir);
+             parser = readJsonFile(currentBuildReport.getAbsolutePath());
+
+        }catch (Exception e)
+        {
+
+        }
 
         return parser.get("startTime").toString().replace("|", "-");
     }
@@ -267,7 +325,7 @@ Logger logger = new Logger();
                 }
 
             } catch (Exception e) {
-
+e.printStackTrace();
             }
 
 
@@ -305,7 +363,7 @@ Logger logger = new Logger();
 
 
             } catch (Exception e) {
-
+e.printStackTrace();
             }
 
 

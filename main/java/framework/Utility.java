@@ -11,18 +11,14 @@ import java.io.IOException;
 public class Utility {
 
 
-    public static JSONObject loadJsonFile(String jsonFilePath) throws Exception {
+    public static JSONObject loadJsonFile(String jsonFilePath){
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = null;
         try {
             Object obj = parser.parse(new FileReader(jsonFilePath));
             jsonObject = (JSONObject) obj;
-        } catch (FileNotFoundException e) {
-            throw e;
-        } catch (IOException e) {
-            throw e;
-        } catch (ParseException e) {
-            throw e;
+        } catch (Exception e) {
+
         }
         return jsonObject;
     }

@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 //import NoSuiteNameFoundException;
 
 public class SuiteParser {
+
     Logger logger = new Logger();
 
     /**
@@ -120,7 +121,7 @@ public class SuiteParser {
 
 
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
+            if (allLines[i].contains("Test:")) {
 
                 String tagLine = allLines[i + 1].toLowerCase();
 
@@ -136,6 +137,11 @@ public class SuiteParser {
 
                 }
 
+            }
+            else {
+                if(allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")){
+                    throw new TesboException("Please write valid keyword for this \"" +allLines[i]+"\"");
+                }
             }
         }   // When No Test Available
         if (testName.size() == 0) {
@@ -179,20 +185,22 @@ public class SuiteParser {
 
     /**
      * Not completed need to work on this...
-     *
+     * @lastModifiedBy: Ankit Mistry
      * @param suiteName
      * @return
      */
+
     public JSONArray getTestStepBySuiteandTestCaseName(String suiteName, String testName) {
         StringBuffer suiteDetails = readSuiteFile(suiteName);
         String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
         JSONArray testSteps = new JSONArray();
+        Validation validation=new Validation();
         int testCount=0;
         int startPoint = 0;
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
+            if (allLines[i].contains("Test:")) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
@@ -204,7 +212,7 @@ public class SuiteParser {
             }
             if (testStarted) {
 
-                if (allLines[i].toLowerCase().contains("end")) {
+                if (allLines[i].contains("End")) {
                     endpoint = i;
                     break;
                 }
@@ -214,9 +222,13 @@ public class SuiteParser {
             throw new TesboException("End Step is not found for '"+testName+ "' test");
 
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step :") |
-                    allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify :") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection:") | allLines[j].toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection :")) {
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
+                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Close:") |
+                    ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]"))) {
                 testSteps.add(allLines[j]);
+            }
+            else{
+                validation.keyWordValidation(allLines[j]);
             }
         }
         if (testSteps.size() == 0) {
@@ -244,7 +256,7 @@ public class SuiteParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
+            if (allLines[i].contains("Test:")) {
                 String testNameArray[] = allLines[i].split(":");
                 if (testNameArray[1].trim().contains(testName)) {
                     startPoint = i;
@@ -252,15 +264,15 @@ public class SuiteParser {
                 }
             }
             if (testStarted) {
-                if (allLines[i].toLowerCase().contains("end")) {
+                if (allLines[i].contains("End")) {
                     endpoint = i;
                     break;
                 }
             }
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("dataset :") | allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("dataset:")) {
-                if (!(allLines[j].contains("DataSet :") | allLines[j].contains("DataSet:")))
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) {
+                if (!(allLines[j].contains("DataSet:")))
                     throw new TesboException("Write 'DataSet' keyword in test");
                 testDataSet=allLines[j];
                 break;
@@ -279,23 +291,32 @@ public class SuiteParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].toLowerCase().contains("collection name:") | allLines[i].toLowerCase().contains("collection name :")) {
+            if (allLines[i].contains("Collection Name:")) {
                 String testNameArray[] = allLines[i].split(":");
                 if (testNameArray[1].trim().toLowerCase().equalsIgnoreCase(groupName)) {
                     startPoint = i;
                     testStarted = true;
                 }
             }
+            else {
+                if (allLines[i].contains("collection Name:") | allLines[i].contains("collection name:") |  allLines[i].contains("Collection Name :") |
+                        allLines[i].contains("collection Name :") | allLines[i].contains("collection name :")){
+                    throw new TesboException("Please write valid keyword for this \"" +allLines[i]+"\"");
+                }
+            }
             if (testStarted) {
-                if (allLines[i].toLowerCase().contains("end")) {
+                if (allLines[i].contains("End")) {
                     endpoint = i;
                     testStarted = false;
                 }
             }
         }
+        if(startPoint==0)
+        {
+            throw new TesboException("Collection name not define properly.");
+        }
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].toLowerCase().contains("step:") | allLines[j].toLowerCase().contains("step :") |
-                    allLines[j].toLowerCase().contains("verify:") | allLines[j].toLowerCase().contains("verify :")) {
+            if (allLines[j].contains("Step:") | allLines[j].contains("Verify:")) {
                 testSteps.add(allLines[j]);
             }
         }
@@ -310,24 +331,16 @@ public class SuiteParser {
      * @return
      */
     public JSONArray getGroupName(StringBuffer suite) {
-
         String allLines[] = suite.toString().split("[\\r\\n]+");
         JSONArray testName = new JSONArray();
-
-
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].toLowerCase().contains("collection name:") | allLines[i].toLowerCase().contains("collection name :")) {
-                /* if (allLines[i + 1].toLowerCase().contains("#" + tagName.toLowerCase())) {*/
+            if (allLines[i].contains("Collection Name:")) {
                 String testNameArray[] = allLines[i].split(":");
                 testName.add(testNameArray[1].trim());
-                /* }*/
             }
         }   // When No Test Available
-        if (testName.size() == 0) {
+        if (testName.size() == 0) { return null; }
 
-            //throw new NoTestFoundException("No test found in suite file");
-            return null;
-        }
         return testName;
     }
 
@@ -414,9 +427,14 @@ public class SuiteParser {
 
 
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
+            if (allLines[i].contains("Test:")) {
                 String testNameArray[] = allLines[i].split(":");
                 testName.add(testNameArray[1].trim());
+            }
+            else {
+                if(allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")){
+                    throw new TesboException("Please write valid keyword for this \"" +allLines[i]+"\"");
+                }
             }
         }   // When No Test Available
         if (testName.size() == 0) {
@@ -425,6 +443,59 @@ public class SuiteParser {
             return null;
         }
         return testName;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param suiteName
+     * @param testName
+     * @return
+     */
+    public JSONArray getSessionListFromTest(String suiteName, String testName) {
+        StringBuffer suiteDetails = readSuiteFile(suiteName);
+        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        JSONArray testSteps = new JSONArray();
+        int testCount=0;
+        int startPoint = 0;
+        boolean testStarted = false;
+        int endpoint = 0;
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].contains("Test:")) {
+                String testNameArray[] = allLines[i].split(":");
+
+                if (testNameArray[1].trim().contains(testName)) {
+                    startPoint = i;
+                    testStarted = true;
+                }
+                if (testStarted)
+                    testCount++;
+            }
+            if (testStarted) {
+
+                if (allLines[i].contains("End")) {
+                    endpoint = i;
+                    break;
+                }
+            }
+        }
+
+        if(testCount>=2 || endpoint==0)
+            throw new TesboException("End Step is not found for '"+testName+ "' test");
+
+        for (int j = startPoint; j < endpoint; j++) {
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Session:") ) {
+                String[] SessionStep=allLines[j].split("[:|,]");
+                for (String session:SessionStep)
+                {
+                    if(!(session.equals("Session")))
+                    {
+                        testSteps.add(session.trim());
+                    }
+                }
+            }
+        }
+        return testSteps;
     }
 
 }

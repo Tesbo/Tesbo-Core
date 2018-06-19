@@ -1,45 +1,46 @@
 package framework;
 
+import DataCollector.BuildReportDataObject;
 import Execution.TestExecutionBuilder;
-
-import io.github.bonigarcia.wdm.ChromeDriverManager;
-import io.github.bonigarcia.wdm.FirefoxDriverManager;
-import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
-
+import Selenium.Commands;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import logger.Logger;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
+import Exception.TesboException;
 
 public class TestExecutor implements Runnable {
 
 
-    public JSONObject testResult = new JSONObject();
+
+   // public JSONObject testResult = new JSONObject();
     public WebDriver driver;
 
     JSONObject test;
 
+    public TestExecutor(JSONObject test) {
+        this.test = test;
+    }
+    public Map<String,WebDriver> sessionList=new HashMap<String, WebDriver>();
+    JSONArray listOfSession;
     static Logger logger = new Logger();
+    boolean isSession=false;
 
     public static void main(String[] args) throws Exception {
         TestExecutionBuilder builder = new TestExecutionBuilder();
@@ -47,310 +48,291 @@ public class TestExecutor implements Runnable {
         long startTimeSuite = System.currentTimeMillis();
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
-        builder.reportObj.put("startTime", dtf.format(LocalDateTime.now()));
 
         builder.buildExecution();
 
         long stopTimeSuite = System.currentTimeMillis();
-        builder.reportObj.put("endTime", dtf.format(LocalDateTime.now()));
         long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
 
-        builder.reportObj.put("totalTimeTaken", elapsedTimeSuite);
 
         DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
         report.generateReportDir();
         //report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
-        logger.stepLog("Report : "+builder.reportObj);
-    }
+      }
 
-    public TestExecutor(JSONObject test) {
-        this.test = test;
-    }
 
     /**
+     * @param browserName
      * @auther :
      * @lastModifiedBy: Ankit Mistry
      *
      * @param browserName
      */
     public void beforeTest(String browserName) {
-
-        GetConfiguration config = new GetConfiguration();
-        DesiredCapabilities capability = null;
-        String seleniumAddress=null;
-        ArrayList capabilities=null;
-        seleniumAddress=getSeleniumAddress();
-        if(IsCapabilities(browserName)) {
-            capabilities=getCapabilities(browserName);
-            if(capabilities!=null)
-                capability= setCapabilities(capabilities,capability);
-        }
-        try {
-                if (browserName.equalsIgnoreCase("firefox")) {
-                    capability = DesiredCapabilities.firefox();
-                    WebDriverManager.firefoxdriver().setup();
-                    System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE,"true");
-                    System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
-                    if(seleniumAddress==null) {
-                        driver = new FirefoxDriver();
-                    }
-                }
-                if (browserName.equalsIgnoreCase("chrome")) {
-                    capability = DesiredCapabilities.chrome();
-                    WebDriverManager.chromedriver().setup();
-
-                    if(seleniumAddress==null) {
-                        driver = new ChromeDriver();
-                    }
-                }
-                if (browserName.equalsIgnoreCase("ie")) {
-                    capability = DesiredCapabilities.internetExplorer();
-                    WebDriverManager.iedriver().setup();
-                    if(seleniumAddress==null) {
-                        driver = new InternetExplorerDriver();
-                    }
-                }
-
-
-
-            if(seleniumAddress !=null)
-            {
-                driver=openRemoteBrowser(driver,capability,seleniumAddress);
-            }
-
-
-            driver.manage().window().maximize();
-
-            try {
-                if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {
-                    driver.get(config.getBaseUrl());
-                }
-            }
-            catch (org.openqa.selenium.WebDriverException e) { }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        SuiteParser suiteParser=new SuiteParser();
+        listOfSession=suiteParser.getSessionListFromTest(test.get("suiteName").toString(),test.get("testName").toString());
+        if(listOfSession.size()>1){ isSession=true; }
+        else { initializeBrowser(null); }
     }
 
 
-    public void afterTest() {
-        driver.quit();
+    public void afterTest(String sessionName) {
+        if(sessionName!=null){
+            for (Map.Entry session : sessionList.entrySet()) {
+                if(sessionName.equals(session.getKey().toString())) {
+                    driver = (WebDriver) session.getValue();
+                    driver.quit();
+                    sessionList.remove(session.getKey());
+                    break;
+                }
+            }
+        }
+        else {
+            if (isSession) {
+                for (Map.Entry session : sessionList.entrySet()) {
+                    driver = (WebDriver) session.getValue();
+                    driver.quit();
+                }
+            } else {
+                driver.quit();
+            }
+        }
     }
 
 
     public JSONObject runTest() {
         SuiteParser parser = new SuiteParser();
         StepParser stepParser = new StepParser();
+        Commands selCmd = new Commands();
         VerifyParser verifyParser = new VerifyParser();
-        Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
         SuiteParser suiteParser = new SuiteParser();
+        BuildReportDataObject buildReport = new BuildReportDataObject();
+        String testResult = "";
         int stepNumber = 0;
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
-        long startTimeSuite = System.currentTimeMillis();
-        testResult.put("startTime", dtf.format(LocalDateTime.now()));
-        testResult.put("testName", test.get("testName").toString());
+        Validation validation = new Validation();
+        JSONObject testReportObject = new JSONObject();
 
-        logger.testLog("Test:" + test.get("testName").toString());
 
+        long startTime = System.currentTimeMillis();
+
+        /*Adding data into the report*/
+        testReportObject.put("startTime", startTime);
+        testReportObject.put("browserName", test.get("browser"));
+        testReportObject.put("testName", test.get("testName").toString());
+        testReportObject.put("suiteName", test.get("suiteName").toString());
+
+
+        /*Getting step using SuiteName and Testcase Name*/
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
+        System.out.println("Steps :" + steps);
         int J = 0;
         JSONArray stepsArray = new JSONArray();
         boolean failFlag = false;
 
         String exceptionAsString = null;
+        String screenShotPath = null;
 
+
+        JSONArray testStepArray = new JSONArray();
 
         for (int i = 0; i <= steps.size() - 1; i++) {
-            JSONObject stepResult = new JSONObject();
+            boolean stepPassed = true;
+
+            JSONObject stepReportObject = new JSONObject();
+
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
-            stepResult.put("steps", stepParser.stepModifierForReport(step.toString()));
 
+            stepReportObject.put("stepIndex", i + 1);
+            stepReportObject.put("startTime", startTimeStep);
+            stepReportObject.put("steps", step.toString());
+
+
+            if (isSession) {
+                validation.sessionNotDeclareOnTest(steps, listOfSession);
+                validation.sessionNotDefineOnTest(steps, listOfSession);
+                initializeSessionRunTime(step);
+            }
             if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("step :")) {
-                stepResult.put("startTime", dtf.format(LocalDateTime.now()));
-                stepResult.put("stepIndex", stepNumber + 1);
                 try {
                     stepParser.parseStep(driver, test, step.toString());
-                    stepResult.put("status", "pass");
+
                 } catch (Exception ae) {
-                    J++;
                     StringWriter sw = new StringWriter();
                     ae.printStackTrace(new PrintWriter(sw));
                     ae.printStackTrace();
                     exceptionAsString = sw.toString();
-                    stepResult.put("status", "fail");
-                    stepResult.put("fullStackTrace", exceptionAsString);
-                    stepResult.put("errorMsg", "Something Went Wrong");
-                    failFlag = true;
+                    stepPassed = false;
                 }
                 long stopTimeStep = System.currentTimeMillis();
-                stepResult.put("endTime", dtf.format(LocalDateTime.now()));
-                long elapsedTimeStep = stopTimeStep - startTimeStep;
-                stepResult.put("time", elapsedTimeStep);
-                //testResult.put(stepNumber + 1, stepResult);
-                stepsArray.add(stepResult);
                 stepNumber++;
-                if(failFlag==true){
+            } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify :")) {
+                if (failFlag == true) {
                     break;
                 }
-            } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("verify :")) {
-                stepResult.put("startTime", dtf.format(LocalDateTime.now()));
-                stepResult.put("stepIndex", stepNumber + 1);
+            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
                 try {
                     logger.stepLog(step.toString());
                     verifyParser.parseVerify(driver, test, step.toString());
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                    stepResult.put("status", "pass");
                 } catch (Exception NE) {
                     J++;
                     StringWriter sw = new StringWriter();
                     NE.printStackTrace(new PrintWriter(sw));
                     NE.printStackTrace();
                     exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                    stepResult.put("status", "fail");
-                    stepResult.put("errorMsg", "Locator not find. Please add new locator or update the locator.");
-                    stepResult.put("fullStackTrace", exceptionAsString);
-                    failFlag = true;
+                    stepPassed = false;
+
                 }
                 long stopTimeStep = System.currentTimeMillis();
-                stepResult.put("endTime", dtf.format(LocalDateTime.now()));
                 long elapsedTimeStep = stopTimeStep - startTimeStep;
-                stepResult.put("time", elapsedTimeStep);
                 // testResult.put(stepNumber + 1, stepResult);
-                stepsArray.add(stepResult);
                 stepNumber++;
-                if(failFlag==true){
+
+                stepNumber++;
+                if (failFlag == true) {
                     break;
                 }
+            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Close:")) {
+                try {
+                    logger.stepLog(step.toString());
+                    String sessionName = step.toString().split(":")[1].trim();
+                    boolean isSession = false;
+                    for (Map.Entry session : sessionList.entrySet()) {
+                        if (session.getKey().toString().equals(sessionName)) {
+                            isSession = true;
+                            break;
+                        }
+                    }
+                    if (isSession) {
+                        afterTest(sessionName);
+                    } else {
+                        throw new TesboException("Session '" + sessionName + "' is not available.");
+                    }
+                } catch (Exception e) {
+                    throw new TesboException("Session name is not found for close.");
+                }
+
+
             } else if (step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.toString().toLowerCase().replaceAll("\\s{2,}", " ").trim().contains("collection :")) {
                 JSONArray groupSteps = new JSONArray();
                 try {
-                    groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(test,step.toString()));
+                    groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(test, step.toString()));
                 } catch (Exception e) {
+                    if (groupSteps.size() == 0)
+                        throw e;
                     J++;
-                    stepResult.put("startTime", dtf.format(LocalDateTime.now()));
-                    stepResult.put("stepIndex", stepNumber + 1);
                     StringWriter sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
                     e.printStackTrace();
                     exceptionAsString = sw.toString();
-                    stepResult.put("steps", (((step.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                    stepResult.put("status", "fail");
-                    stepResult.put("errorMsg", "Something Went Wrong");
-                    stepResult.put("fullStackTrace", exceptionAsString);
-                    long stopTimeStep = System.currentTimeMillis();
-                    stepResult.put("endTime", dtf.format(LocalDateTime.now()));
-                    long elapsedTimeStep = stopTimeStep - startTimeStep;
-                    stepResult.put("time", elapsedTimeStep);
-                    //testResult.put(stepNumber + 1, stepResult);
-                    stepsArray.add(stepResult);
                     stepNumber++;
-                    failFlag = true;
+                    stepPassed = false;
                 }
 
                 stepsArray = new JSONArray();
 
                 for (int s = 0; s <= groupSteps.size() - 1; s++) {
-                    JSONObject groupResult = new JSONObject();
                     Object groupStep = groupSteps.get(s);
-                    groupResult.put("startTime", dtf.format(LocalDateTime.now()));
-                    groupResult.put("stepIndex", stepNumber + 1);
 
-                    if (groupStep.toString().toLowerCase().contains("step:") | groupStep.toString().toLowerCase().contains("step :")) {
+                    if (groupStep.toString().contains("Step:")) {
                         try {
                             stepParser.parseStep(driver, test, groupStep.toString());
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                            groupResult.put("status", "pass");
                         } catch (Exception ae) {
                             J++;
                             StringWriter sw = new StringWriter();
                             ae.printStackTrace(new PrintWriter(sw));
                             ae.printStackTrace();
                             exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                            groupResult.put("status", "fail");
-                            groupResult.put("errorMsg", "Something Went Wrong");
-                            groupResult.put("fullStackTrace", exceptionAsString);
                             break;
                         }
-                    } else if (groupStep.toString().toLowerCase().contains("verify:") | groupStep.toString().toLowerCase().contains("verify :")) {
+                    } else if (groupStep.toString().contains("Verify:")) {
                         try {
                             logger.stepLog(groupStep.toString());
                             verifyParser.parseVerify(driver, test, groupStep.toString());
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                            groupResult.put("status", "pass");
                         } catch (Exception NE) {
                             J++;
                             StringWriter sw = new StringWriter();
                             NE.printStackTrace(new PrintWriter(sw));
                             NE.printStackTrace();
                             exceptionAsString = sw.toString();
-                            groupResult.put("steps", (((groupStep.toString().split(":"))[1]).replace('@', ' ')).replace("  ", " "));
-                            groupResult.put("status", "fail");
-                            groupResult.put("errorMsg", "Something Went Wrong");
-                            groupResult.put("fullStackTrace", exceptionAsString);
                         }
                     }
                     long stopTimeStep = System.currentTimeMillis();
-                    groupResult.put("endTime", dtf.format(LocalDateTime.now()));
-                    long elapsedTimeStep = stopTimeStep - startTimeStep;
-                    groupResult.put("time", elapsedTimeStep);
-                    stepsArray.add(groupResult);
                     stepNumber++;
-                    if(failFlag==true){
-                        break;
-                    }
                 }
+
+                Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
+
+                testReportObject.put("browserVersion", caps.getVersion());
+                testReportObject.put("osName", caps.getPlatform().toString());
+
+
+                if (!stepPassed) {
+                    stepReportObject.put("status", "failed");
+                    testResult = "failed";
+                    screenShotPath = selCmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
+                } else {
+                    testResult = "passed";
+                    stepReportObject.put("status", "passed");
+                }
+
+                long stepEndTime = System.currentTimeMillis();
+
+                stepReportObject.put("endTime", stepEndTime);
+
+                testStepArray.add(stepReportObject);
+
+
+                if (!stepPassed) {
+                    break;
+                }
+
             }
-        }
 
-        long stopTimeSuite = System.currentTimeMillis();
 
-        testResult.put("endTime", dtf.format(LocalDateTime.now()));
-        testResult.put("testStep", stepsArray);
-        long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
-        testResult.put("totalTime", elapsedTimeSuite);
-        testResult.put("suiteName", test.get("suiteName").toString());
-        String browserName = caps.getBrowserName();
-        testResult.put("browserName", browserName);
-        String browserVersion = caps.getVersion();
-        testResult.put("browserVersion", browserVersion);
-        String os = System.getProperty("os.name");
-        testResult.put("osName", os);
-        testResult.put("tag", test.get("tag"));
-        if (J >= 1) {
-            testResult.put("status", "fail");
-            testResult.put("screenshot", stepParser.screenshot(driver,test.get("suiteName").toString(),test.get("testName").toString()));
-            testResult.put("fullStackTrace",exceptionAsString);
-        } else {
-            testResult.put("status", "pass");
+            long stopTimeTest = System.currentTimeMillis();
+
+
+            testReportObject.put("testStep", testStepArray);
+
+            if (testResult.equals("failed")) {
+                testReportObject.put("fullStackTrace", exceptionAsString);
+                testReportObject.put("screenShot", screenShotPath);
+            }
+
+            long stopTimeSuite = System.currentTimeMillis();
+
+            testReportObject.put("totalTime", stopTimeTest - startTime);
+            testReportObject.put("status", testResult);
+
+
         }
-        return testResult;
+        buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(), test.get("testName").toString(), testReportObject);
+        return testReportObject;
     }
 
     @Override
     public void run() {
-        JSONObject testData = new JSONObject();
-        beforeTest(test.get("browser").toString());
-        runTest();
-        afterTest();
+        try {
+            JSONObject testData = new JSONObject();
+            beforeTest(test.get("browser").toString());
+            runTest();
+            afterTest(null);
 
-        testData.put(testResult.get("testName").toString(), testResult);
 
-        //addDataIntoMainObject(test.get("browser").toString(), testData);
-        TestExecutionBuilder builder = new TestExecutionBuilder();
-        if ((builder.mainObj.get("testCase")) == null) {
-            JSONArray stepsArray = new JSONArray();
-            stepsArray.add(testResult);
-            builder.mainObj.put("testCase", stepsArray);
-        } else {
-            String Name = test.get("suiteName").toString();
-            JSONArray test = (JSONArray) builder.mainObj.get("testCase");
-            test.add(testResult);
+          //  testData.put(testResult.get("testName").toString(), testResult);
+            //testData.put(testResult.get("testName").toString(), testResult);
+
+            //addDataIntoMainObject(test.get("browser").toString(), testData);
+            TestExecutionBuilder builder = new TestExecutionBuilder();
+
+
+        }catch(Exception e)
+        {
+            e.printStackTrace();
         }
+
    }
 
     /**
@@ -358,6 +340,8 @@ public class TestExecutor implements Runnable {
      * @lastModifiedBy:
      * @param browserName
      * @return
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
      */
     public boolean IsCapabilities(String browserName) {
         GetConfiguration config = new GetConfiguration();
@@ -383,6 +367,7 @@ public class TestExecutor implements Runnable {
     }
 
     /**
+     * @return
      * @auther : Ankit Mistry
      * @lastModifiedBy:
      * @return
@@ -404,6 +389,8 @@ public class TestExecutor implements Runnable {
      * @lastModifiedBy:
      * @param browserName
      * @return
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
      */
     public ArrayList<String> getCapabilities(String browserName) {
         GetConfiguration config = new GetConfiguration();
@@ -425,6 +412,8 @@ public class TestExecutor implements Runnable {
      * @param Capabilities
      * @param capability
      * @return
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
      */
     public DesiredCapabilities setCapabilities(ArrayList<String> Capabilities,DesiredCapabilities capability) {
         for(Object cap:Capabilities) {
@@ -453,5 +442,113 @@ public class TestExecutor implements Runnable {
         return driver;
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param session
+     */
+    public WebDriver initializeBrowser(Object session) {
+        GetConfiguration config = new GetConfiguration();
+        String seleniumAddress=null;
+        seleniumAddress=getSeleniumAddress();
+        String browserName=test.get("browser").toString();
+        DesiredCapabilities capability = null;
+        ArrayList capabilities=null;
+        if (IsCapabilities(browserName)) {
+            capabilities = getCapabilities(browserName);
+            if (capabilities != null)
+                capability = setCapabilities(capabilities, capability);
+        }
+        try {
+            if (browserName.equalsIgnoreCase("firefox")) {
+                capability = DesiredCapabilities.firefox();
+                WebDriverManager.firefoxdriver().setup();
+                System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "true");
+                System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE, "/dev/null");
+                if (seleniumAddress == null) {
+                    driver = new FirefoxDriver();
+                }
+            }
+            if (browserName.equalsIgnoreCase("chrome")) {
+                capability = DesiredCapabilities.chrome();
+                WebDriverManager.chromedriver().setup();
+
+                if (seleniumAddress == null) {
+                    driver = new ChromeDriver();
+                }
+            }
+            if (browserName.equalsIgnoreCase("ie")) {
+                capability = DesiredCapabilities.internetExplorer();
+                WebDriverManager.iedriver().setup();
+                if (seleniumAddress == null) {
+                    driver = new InternetExplorerDriver();
+                }
+
+            }
+
+            if(session !=null)
+            {
+                sessionList.put(session.toString(), driver);
+            }
+
+            if (seleniumAddress != null) {
+                driver = openRemoteBrowser(driver, capability, seleniumAddress);
+                if(session !=null)
+                    sessionList.put(session.toString(), driver);
+            }
+
+
+            driver.manage().window().maximize();
+
+            try {
+                if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {
+                    driver.get(config.getBaseUrl());
+
+                }
+            } catch (org.openqa.selenium.WebDriverException e) {
+                //e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return driver;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param step
+     */
+    public void initializeSessionRunTime(Object step) {
+        if( step.toString().replaceAll("\\s{2,}", " ").trim().contains("[") && step.toString().replaceAll("\\s{2,}", " ").trim().contains("]")){
+            String testStep= step.toString().replace("[", "").replace("]","");
+            for(Object session:listOfSession)
+            {
+                if(testStep.toString().toLowerCase().equals(session.toString().toLowerCase()))
+                {
+                    boolean isInSessionList=false;
+                    for(Map.Entry map:sessionList.entrySet()){
+                        if(map.getKey().toString().toLowerCase().equals(testStep.toString().toLowerCase())) {
+                            isInSessionList = true;
+                            driver= (WebDriver) map.getValue();
+                        }
+                    }
+                    if(!isInSessionList)
+                    {
+                        driver=initializeBrowser(session);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+
+                }
+            }
+            logger.stepLog(step.toString());
+        }
+
+    }
 
 }

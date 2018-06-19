@@ -5,10 +5,12 @@ package framework;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import Exception.TesboException;
+import org.openqa.selenium.WebDriver;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Validation {
 
@@ -151,7 +153,7 @@ public class Validation {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -159,7 +161,6 @@ public class Validation {
         JSONObject parallelExecution = null;
         try {
              parallelExecution=  getCofig.getParallel();
-            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -175,15 +176,59 @@ public class Validation {
         SuiteParser suiteParser=new SuiteParser();
 
         //Validation for end step
-
         if(testExecutionQueue.size()>0){
             for (int i = 0; i < testExecutionQueue.size(); i++) {
                 JSONObject test= (JSONObject) testExecutionQueue.get(i);
-
                 suiteParser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(),test.get("testName").toString());
             }
         }
 
 
     }
+
+    public void sessionNotDeclareOnTest(JSONArray steps,JSONArray listOfSession) {
+        boolean isSessionInTest=false;
+        for(Object session:listOfSession)
+        {
+            for(Object step:steps){
+                if( step.toString().replaceAll("\\s{2,}", " ").trim().contains("[") && step.toString().replaceAll("\\s{2,}", " ").trim().contains("]")) {
+                    if(step.toString().replaceAll("\\[|\\]","").equals(session.toString())){
+                        isSessionInTest=true;
+                    }
+                }
+            }
+        }
+        if(!isSessionInTest){
+            throw new TesboException("Session is not found on test");
+        }
+    }
+
+    public void sessionNotDefineOnTest(JSONArray steps, JSONArray listOfSession) {
+
+        for (Object step : steps) {
+            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("[") && step.toString().replaceAll("\\s{2,}", " ").trim().contains("]")) {
+                boolean isSessionInTest = false;
+                for (Object session : listOfSession) {
+                    if (step.toString().replaceAll("\\[|\\]", "").equals(session.toString())) {
+                        isSessionInTest = true;
+                    }
+                }
+                if (!isSessionInTest) {
+                    throw new TesboException("Session '" + step.toString().replaceAll("\\[|\\]", "") + "' is not declare.");
+                }
+            }
+        }
+
+    }
+
+    public void keyWordValidation(String step) {
+
+        if(step.replaceAll("\\s{2,}", " ").trim().contains("Step :") | step.replaceAll("\\s{2,}", " ").trim().contains("step:") | step.replaceAll("\\s{2,}", " ").trim().contains("step :")
+           | step.replaceAll("\\s{2,}", " ").trim().contains("Verify :") | step.replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.replaceAll("\\s{2,}", " ").trim().contains("verify :")
+           | step.replaceAll("\\s{2,}", " ").trim().contains("Collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.replaceAll("\\s{2,}", " ").trim().contains("collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("close:") | step.replaceAll("\\s{2,}", " ").trim().contains("close :")){
+            throw new TesboException("Please write valid keyword for this \"" +step+"\"");
+        }
+
+    }
+
 }
