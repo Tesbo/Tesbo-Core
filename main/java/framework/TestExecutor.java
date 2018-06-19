@@ -306,10 +306,12 @@ public class TestExecutor implements Runnable {
             testReportObject.put("totalTime", stopTimeTest - startTime);
             testReportObject.put("status", testResult);
 
-            buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(), test.get("testName").toString(), testReportObject);
-            return testReportObject;
+
         }
+        buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(), test.get("testName").toString(), testReportObject);
+        return testReportObject;
     }
+
     @Override
     public void run() {
         try {
