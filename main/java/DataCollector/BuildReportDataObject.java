@@ -25,7 +25,7 @@ public class BuildReportDataObject implements Runnable {
 
     public void addDataInMainObject(String browser, String suite, String testName, JSONObject testResultObject) {
 
-
+        System.out.println("Data adding for the new test");
         checkForTheBrowser(browser);
         checkForTheSuite(browser, suite);
         checkForTheTest(browser, suite, testResultObject);
@@ -301,13 +301,11 @@ public class BuildReportDataObject implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("Inside Data generation");
+        System.out.println("Inside Data Generation");
         ReportParser pr = new ReportParser();
-        TestExecutionBuilder builder = new TestExecutionBuilder();
-        ReportBuilder reportBuilder = new ReportBuilder();
 
         try {
-            Thread.sleep(10000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -324,7 +322,10 @@ public class BuildReportDataObject implements Runnable {
               }
 
           }
-        System.out.println("---------------------------- thread running");
+
+        pr.writeJsonFile(mainReportObject,TestExecutionBuilder.buildReportName);
+
+        System.out.println("---------------------------- thread stopped");
 
 
     }

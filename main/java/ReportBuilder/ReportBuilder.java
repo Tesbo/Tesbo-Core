@@ -44,19 +44,28 @@ public class ReportBuilder implements Runnable {
         File currentBuildFile = new File("./htmlReport/currentBuildResult.html");
         StringBuffer currentBuildResult = null;
         try {
-            indexfile = builder.generateHeader(indexfile);
+
+         /*   indexfile = builder.generateHeader(indexfile);
+
             indexfile = builder.generateBody(indexfile);
+
             indexfile = builder.generateSideMenu(indexfile);
+
             indexfile = builder.generateTopHeader(indexfile);
+
             indexfile = builder.generateSummaryChart(indexfile);
+
             indexfile = builder.generateTimeSummaryChart(indexfile);
+
             indexfile = builder.generateFooter(indexfile);
+
             indexfile = builder.generateLatestBuildResultData(indexfile);
+
             indexfile = builder.generateTimeSummaryData(indexfile);
 
 
             builder.writeReportFile(file.getAbsolutePath(), indexfile);
-
+*/
             //currentbuildresultGenerator
             currentBuildResult = new StringBuffer();
             currentBuildResult = builder.generateHeader(currentBuildResult);
@@ -303,7 +312,7 @@ public class ReportBuilder implements Runnable {
                 sb.append(" {y: '" + obj.get("name") + "', a: " + obj.get("totalPassed") + ", b: " + obj.get("totalFailed") + "},\n ");
 
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
 
         }
@@ -335,7 +344,7 @@ public class ReportBuilder implements Runnable {
                 sb.append(" {y: '" + obj.get("buildRunDate") + "', a: " + obj.get("totalTimeTaken") + "},\n ");
 
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
 
         }
@@ -396,13 +405,13 @@ public class ReportBuilder implements Runnable {
                 "\n" +
                 "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
                 "<span class=\"count_top\"> Start Time</span>\n" +
-                "<div class=\"count \">" + data.getCurrentBuildStartTime(buildHistory) + "</div>\n" +
+                "<div class=\"count \">" + /*data.getCurrentBuildStartTime(buildHistory)*/"" + "</div>\n" +
                 "\n" +
                 "</div>\n" +
                 "\n" +
                 "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
                 "<span class=\"count_top\"> End Time</span>\n" +
-                "<div class=\"count \">" + data.getCurrentBuildEndTime(buildHistory) + "</div>\n" +
+                "<div class=\"count \">" + /*data.getCurrentBuildEndTime(buildHistory)*/"" + "</div>\n" +
                 "\n" +
                 "</div>\n" +
                 "\n" +
@@ -642,7 +651,7 @@ public class ReportBuilder implements Runnable {
                                 "<h2><i class=\"fa fa-align-left\"></i> " + ((JSONObject) suite).get("suiteName") + "\n" +
                                 "</h2>\n" +
                                 " <div class=\"nav navbar-right\" style=\"padding-top : 5px \">\n" +
-                                "<font>Total  : <b>" + (Integer.parseInt(((JSONObject) suite).get("totalPassed").toString()) + Integer.parseInt(((JSONObject) suite).get("totalFailed").toString())) + "</b> |</font>\n" +
+                                "<font>Total  : <b>" + (Double.parseDouble(((JSONObject) suite).get("totalPassed").toString()) + Double.parseDouble(((JSONObject) suite).get("totalFailed").toString())) + "</b> |</font>\n" +
                                 "<font>Passed : <b>" + ((JSONObject) suite).get("totalPassed") + "</b> |</font>\n" +
                                 "<font>Failed : <b>" + ((JSONObject) suite).get("totalFailed") + "</b>  |</font>\n" +
                                 " </div>\n" +

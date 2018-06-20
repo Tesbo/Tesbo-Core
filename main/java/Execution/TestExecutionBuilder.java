@@ -45,32 +45,17 @@ public class TestExecutionBuilder {
 
         TestExecutionBuilder.buildRunning = true;
         BuildReportDataObject brdo = new BuildReportDataObject();
-     /*  brdo.startThread();
-       reportBuilder.startThread();
-*/
+        brdo.startThread();
+      //  reportBuilder.startThread();
 
-        long startTimeSuite = System.currentTimeMillis();
-
-
-
-  /*      builder.reportObj.put("startTime", dtf.format(LocalDateTime.now()));
-*/
-        /*Build Running start*/
 
 
         builder.buildExecution();
 
-        long stopTimeSuite = System.currentTimeMillis();
-  /*      builder.reportObj.put("endTime", dtf.format(LocalDateTime.now()));
-*/
-
-        long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
-     /*   builder.reportObj.put("totalTimeTaken", elapsedTimeSuite);
-*/
-        /*Report Generation*/
 
         TestExecutionBuilder.buildRunning = false;
 
+        reportBuilder.generatReport();
     }
 
 
@@ -145,10 +130,10 @@ public class TestExecutionBuilder {
     }
 
     /**
-     * @auther :
-     * @lastModifiedBy: Ankit Mistry
      * @return
      * @throws Exception
+     * @auther :
+     * @lastModifiedBy: Ankit Mistry
      * @auther :
      * @lastModifiedBy: Ankit Mistry
      */
