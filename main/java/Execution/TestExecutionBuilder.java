@@ -24,10 +24,14 @@ public class TestExecutionBuilder {
 
     public static boolean buildRunning;
     public static String buildReportName;
+    public static long buildStartTime;
+    public static long buildEndTime;
     DataDrivenParser dataDrivenParser = new DataDrivenParser();
     Logger logger = new Logger();
 
     public void startExecution() throws Exception {
+
+        buildStartTime = System.currentTimeMillis();
 
         Logger logger = new Logger();
         logger.titleLog("-----------------------------------------------------------------------");
@@ -37,7 +41,6 @@ public class TestExecutionBuilder {
         TestExecutionBuilder builder = new TestExecutionBuilder();
         ReportBuilder reportBuilder = new ReportBuilder();
         ReportParser report = new ReportParser();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
         report.generateReportDir();
         buildReportName = builder.getbuildReportName();
         ReportLibraryFiles files = new ReportLibraryFiles();
@@ -49,11 +52,13 @@ public class TestExecutionBuilder {
       //  reportBuilder.startThread();
 
 
-
         builder.buildExecution();
 
 
         TestExecutionBuilder.buildRunning = false;
+        buildEndTime = System.currentTimeMillis();
+        BuildReportDataObject.mainReportObject.put("endTime", TestExecutionBuilder.buildEndTime);
+
 
         reportBuilder.generatReport();
     }
@@ -226,9 +231,11 @@ public class TestExecutionBuilder {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
+                                System.out.println("CompleteTestObject" + completestTestObject);
+
                                 completeTestObjectArray.add(completestTestObject);
                             }
-                        }
+                          }
                     }
                 }
             }

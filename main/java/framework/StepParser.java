@@ -436,6 +436,7 @@ public class StepParser {
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
             }
             try {
                 if (test.get("dataType").toString().equalsIgnoreCase("global")) {

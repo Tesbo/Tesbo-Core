@@ -2,7 +2,6 @@ package DataCollector;
 
 
 import Execution.TestExecutionBuilder;
-import ReportBuilder.ReportBuilder;
 import framework.ReportParser;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -11,26 +10,41 @@ public class BuildReportDataObject implements Runnable {
 
 
     static JSONArray browserArray = new JSONArray();
-  static  JSONObject mainReportObject = new JSONObject();
+    public static JSONObject mainReportObject = new JSONObject();
+    static int buildTotalPassed = 0;
+    static int buildTotalFailed = 0;
 
 
-    public void startThread()
-    {
-        System.out.println("insider Data Generation thread");
+    public void startThread() {
         BuildReportDataObject brdo = new BuildReportDataObject();
-        Thread t1 =new Thread(brdo);
+        Thread t1 = new Thread(brdo);
         t1.start();
     }
 
 
     public void addDataInMainObject(String browser, String suite, String testName, JSONObject testResultObject) {
 
-        System.out.println("Data adding for the new test");
+        if (testResultObject.get("status").equals("passed")) {
+            buildTotalPassed++;
+        }
+
+        if (testResultObject.get("status").equals("failed")) {
+            buildTotalFailed++;
+        }
+
         checkForTheBrowser(browser);
         checkForTheSuite(browser, suite);
         checkForTheTest(browser, suite, testResultObject);
 
         mainReportObject.put("browser", browserArray);
+        mainReportObject.put("totalTimeTaken", (TestExecutionBuilder.buildEndTime - TestExecutionBuilder.buildStartTime));
+        mainReportObject.put("startTime", TestExecutionBuilder.buildStartTime);
+
+
+        mainReportObject.put("totalPassed", buildTotalPassed);
+
+        mainReportObject.put("totalFailed", buildTotalFailed);
+
 
     }
 
@@ -197,7 +211,7 @@ public class BuildReportDataObject implements Runnable {
 
         int size = suitesArray.size();
 
-        double totalPassed = 0, totalFailed = 0;
+        int totalPassed = 0, totalFailed = 0;
         double totalTime = 0.0;
         JSONObject tempSuiteObject = null;
         int suiteCount = 0;
@@ -222,21 +236,19 @@ public class BuildReportDataObject implements Runnable {
                 testArray = (JSONArray) tempSuiteObject.get("tests");
 
 
-
                 int testArraySize = testArray.size();
-
 
 
                 if (testArraySize == 0) {
                     if (testResult.get("status").toString().equals("passed")) {
-                        totalPassed = Double.parseDouble(tempSuiteObject.get("totalPassed").toString()) + 1;
-                        totalFailed = Double.parseDouble(tempSuiteObject.get("totalFailed").toString());
+                        totalPassed = Integer.parseInt(tempSuiteObject.get("totalPassed").toString()) + 1;
+                        totalFailed = Integer.parseInt(tempSuiteObject.get("totalFailed").toString());
                     }
 
                     if (testResult.get("status").toString().equals("failed")) {
 
-                        totalPassed = Double.parseDouble(tempSuiteObject.get("totalPassed").toString());
-                        totalFailed = Double.parseDouble(tempSuiteObject.get("totalFailed").toString()) + 1;
+                        totalPassed = Integer.parseInt(tempSuiteObject.get("totalPassed").toString());
+                        totalFailed = Integer.parseInt(tempSuiteObject.get("totalFailed").toString()) + 1;
                     }
                     totalTime = Double.parseDouble(tempSuiteObject.get("totalTime").toString()) + Double.parseDouble(testResult.get("totalTime").toString());
 
@@ -247,12 +259,12 @@ public class BuildReportDataObject implements Runnable {
 
                     try {
                         if (testResult.get("status").toString().equals("passed")) {
-                            totalPassed = Double.parseDouble(tempSuiteObject.get("totalPassed").toString()) + 1;
-                            totalFailed = Double.parseDouble(tempSuiteObject.get("totalFailed").toString());
+                            totalPassed = Integer.parseInt(tempSuiteObject.get("totalPassed").toString()) + 1;
+                            totalFailed = Integer.parseInt(tempSuiteObject.get("totalFailed").toString());
                         }
                         if (testResult.get("status").toString().equals("failed")) {
-                            totalPassed = Double.parseDouble(tempSuiteObject.get("totalPassed").toString());
-                            totalFailed = Double.parseDouble(tempSuiteObject.get("totalFailed").toString()) + 1;
+                            totalPassed = Integer.parseInt(tempSuiteObject.get("totalPassed").toString());
+                            totalFailed = Integer.parseInt(tempSuiteObject.get("totalFailed").toString()) + 1;
                         }
                         totalTime = Double.parseDouble(tempSuiteObject.get("totalTime").toString()) + Double.parseDouble(testResult.get("totalTime").toString());
 
@@ -301,7 +313,6 @@ public class BuildReportDataObject implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("Inside Data Generation");
         ReportParser pr = new ReportParser();
 
         try {
@@ -309,21 +320,20 @@ public class BuildReportDataObject implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-          while (TestExecutionBuilder.buildRunning)
-          {
-              System.out.println("---------------------------- thread running");
-              System.out.println(mainReportObject);
-              pr.writeJsonFile(mainReportObject,TestExecutionBuilder.buildReportName);
+        while (TestExecutionBuilder.buildRunning) {
+            System.out.println("---------------------------- thread running");
+            System.out.println(mainReportObject);
+            pr.writeJsonFile(mainReportObject, TestExecutionBuilder.buildReportName);
 
-              try {
-                  Thread.sleep(10000);
-              } catch (InterruptedException e) {
-                  e.printStackTrace();
-              }
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-          }
+        }
 
-        pr.writeJsonFile(mainReportObject,TestExecutionBuilder.buildReportName);
+        pr.writeJsonFile(mainReportObject, TestExecutionBuilder.buildReportName);
 
         System.out.println("---------------------------- thread stopped");
 
