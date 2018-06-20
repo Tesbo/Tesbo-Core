@@ -37,7 +37,6 @@ public class BuildReportDataObject implements Runnable {
         checkForTheTest(browser, suite, testResultObject);
 
         mainReportObject.put("browser", browserArray);
-        mainReportObject.put("totalTimeTaken", (TestExecutionBuilder.buildEndTime - TestExecutionBuilder.buildStartTime));
         mainReportObject.put("startTime", TestExecutionBuilder.buildStartTime);
 
 

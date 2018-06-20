@@ -57,8 +57,10 @@ public class TestExecutionBuilder {
 
         TestExecutionBuilder.buildRunning = false;
         buildEndTime = System.currentTimeMillis();
-        BuildReportDataObject.mainReportObject.put("endTime", TestExecutionBuilder.buildEndTime);
 
+        BuildReportDataObject.mainReportObject.put("endTime", TestExecutionBuilder.buildEndTime);
+        BuildReportDataObject.mainReportObject.put("totalTimeTaken", (TestExecutionBuilder.buildEndTime - TestExecutionBuilder.buildStartTime));
+        Thread.sleep(5000);
 
         reportBuilder.generatReport();
     }

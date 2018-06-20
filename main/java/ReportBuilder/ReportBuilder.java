@@ -405,13 +405,13 @@ public class ReportBuilder implements Runnable {
                 "\n" +
                 "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
                 "<span class=\"count_top\"> Start Time</span>\n" +
-                "<div class=\"count \">" + /*data.getCurrentBuildStartTime(buildHistory)*/"" + "</div>\n" +
+                "<div class=\"count \">" + data.getCurrentBuildStartTime(buildHistory)+ "</div>\n" +
                 "\n" +
                 "</div>\n" +
                 "\n" +
                 "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
                 "<span class=\"count_top\"> End Time</span>\n" +
-                "<div class=\"count \">" + /*data.getCurrentBuildEndTime(buildHistory)*/"" + "</div>\n" +
+                "<div class=\"count \">" + data.getCurrentBuildEndTime(buildHistory) + "</div>\n" +
                 "\n" +
                 "</div>\n" +
                 "\n" +
