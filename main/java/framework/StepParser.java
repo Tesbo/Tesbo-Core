@@ -37,8 +37,13 @@ public class StepParser {
             logger.stepLog(step);
 
         //Clicks
-        if (step.toLowerCase().contains("click")) {
+        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("right"))) {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
+        }
+
+        //Right Click
+        if (step.toLowerCase().contains("right click")) {
+           cmd.rightClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
         }
 
         //Press Key
@@ -424,7 +429,7 @@ public class StepParser {
             endPoint = step.lastIndexOf("}");
             String headerName = step.substring(startPoint, endPoint);
             try {
-                if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
+                if (test.get("dataType").toString().equalsIgnoreCase("excelfile")) {
                     try {
 
                         textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"));
