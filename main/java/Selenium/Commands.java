@@ -1,10 +1,14 @@
 package Selenium;
 
+import framework.GetConfiguration;
 import framework.Utility;
 import logger.Logger;
 import org.apache.commons.io.FileUtils;
+import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
 import org.openqa.selenium.remote.Augmenter;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
@@ -12,8 +16,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -463,6 +471,109 @@ public class Commands {
         return path;
     }
 
+    /**
+     * @param browserName
+     * @return
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public boolean IsCapabilities(String browserName) {
+        GetConfiguration config = new GetConfiguration();
+        JSONObject capabilities = null;
+        boolean browser = false;
+        try {
+            capabilities = config.getCapabilities();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (capabilities != null) {
+            Set<String> browserCaps = (Set<String>) capabilities.keySet();
+            for (String browserCap : browserCaps) {
+                if (browserCap.equalsIgnoreCase(browserName)) {
+                    if (((ArrayList<String>) capabilities.get(browserCap)).size() == 0)
+                        browser = false;
+                    else
+                        browser = true;
+                }
+            }
+        }
+        return browser;
+    }
+
+    /**
+     * @return
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public String getSeleniumAddress() {
+        GetConfiguration config = new GetConfiguration();
+        String seleniumAddress = null;
+        try {
+            seleniumAddress = config.getSeleniumAddress();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return seleniumAddress;
+    }
+
+    /**
+     * @param browserName
+     * @return
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public ArrayList<String> getCapabilities(String browserName) {
+        GetConfiguration config = new GetConfiguration();
+        JSONObject capabilities = null;
+        try {
+            capabilities = config.getCapabilities();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ArrayList<String> capabilitieList = (ArrayList<String>) capabilities.get(browserName);
+
+        return capabilitieList;
+    }
+
+    /**
+     * @param Capabilities
+     * @param capability
+     * @return
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public DesiredCapabilities setCapabilities(ArrayList<String> Capabilities, DesiredCapabilities capability) {
+        for (Object cap : Capabilities) {
+            JSONObject objCap = (JSONObject) cap;
+            Set capKey = objCap.keySet();
+            Collection capValue = objCap.values();
+            capability.setCapability(capKey.iterator().next().toString(), capValue.iterator().next());
+        }
+        return capability;
+    }
+
+    /**
+     * @param seleniumAddress
+     * @param driver
+     * @param capability
+     * @return
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public WebDriver openRemoteBrowser(WebDriver driver, DesiredCapabilities capability, String seleniumAddress) {
+        try {
+            driver = new RemoteWebDriver(new URL(seleniumAddress), capability);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return driver;
+    }
 
 
 }
