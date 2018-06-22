@@ -6,6 +6,7 @@ import logger.Logger;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -575,5 +576,9 @@ public class Commands {
         return driver;
     }
 
+    public void rightClick(WebDriver driver,WebElement element) {
+        Actions action = new Actions(driver).contextClick(element);
+        action.build().perform();
+    }
 
 }
