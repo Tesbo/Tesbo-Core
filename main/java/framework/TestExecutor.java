@@ -239,36 +239,36 @@ public class TestExecutor implements Runnable {
                         }
                     }
                 }
-                    long stopTimeStep = System.currentTimeMillis();
-                    stepNumber++;
-                }
-
-
-
-
-                if (!stepPassed) {
-                    stepReportObject.put("status", "failed");
-                    testResult = "failed";
-                    screenShotPath = selCmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
-                } else {
-                    testResult = "passed";
-                    stepReportObject.put("status", "passed");
-                }
-
-                long stepEndTime = System.currentTimeMillis();
-
-                stepReportObject.put("endTime", stepEndTime);
-
-
-
-                testStepArray.add(stepReportObject);
-
-
-                if (!stepPassed) {
-                    break;
-                }
-
+                long stopTimeStep = System.currentTimeMillis();
+                stepNumber++;
             }
+
+
+
+
+            if (!stepPassed) {
+                stepReportObject.put("status", "failed");
+                testResult = "failed";
+                screenShotPath = selCmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
+            } else {
+                testResult = "passed";
+                stepReportObject.put("status", "passed");
+            }
+
+            long stepEndTime = System.currentTimeMillis();
+
+            stepReportObject.put("endTime", stepEndTime);
+
+
+
+            testStepArray.add(stepReportObject);
+
+
+            if (!stepPassed) {
+                break;
+            }
+
+        }
 
 
 
