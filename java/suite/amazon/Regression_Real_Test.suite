@@ -1,0 +1,197 @@
+DataSet :
+{
+     "Credentials": {
+     "username":  "viral103patel@gmail.com",
+     "password": "jsbot@2017",
+     }
+     "GmailUsers": {
+     "excelFile": "E:/GmailData.xlsx"
+     }
+}
+
+Test: T1 login on Linkedin Data Set Credentials
+#T1 #ExcelData #regression
+DataSet: Credentials
+Step: open URL 'https://www.linkedin.com/'
+Verify: @Email_Field is displayed
+Step: Enter {username} in @Email_Field
+
+Step: Enter {password} in @Password_Field
+Step: click on @Login_Button
+Verify: @homePage is displayed
+Step: Enter 'test automation' data in @SearchBox
+Step: Press Enter
+Step: Pause 2 sec
+End
+
+Test: T2 Gmail signUp Data Set excel file
+#T2 #Gmail_signUp #regression
+DataSet: GmailUsers
+Step: open url 'https://accounts.google.com/signup'
+Step: Click on @Next button
+Verify: @FirstNameError text is equal 'Enter first name'
+Verify: @LastNameError text is equal 'Enter last name'
+Verify: @UserNameError text is equal 'Choose a Gmail address'
+Verify: @PasswordError text is equal 'Enter a password'
+Step: Enter {firstName} on @FirstName
+Step: Enter {lastName} on @LastName
+Step: pause 2 sec
+Step: clear @UserName
+Step: pause 2 sec
+Step: Enter {username} on @UserName
+Step: Enter {password} on @Password
+End
+
+Test: T3 Verify Page Title is equal
+#T3 #regression
+Collection Name: amazon_open
+Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
+Step: Scroll to coordinate (300,250)
+Step: pause 2 sec
+Step: scroll to top
+Step: click on @sign_in button
+Verify: @Email is displayed
+End
+
+Test: T4 Verify Collection without Test
+#regression
+Collection: amazon_open
+End
+
+Test: T5 Verify Press Keys Functionality
+#T5 #regression
+Collection: 'amazon_open'
+Step: Enter 'krazzyvir@gmail.com' in @Email
+Step: pause 1 sec
+Step: Press 'CTRL' Plus 'A' in @Email
+Step: pause 1 sec
+Step: Press 'CTRL' Plus 'C' in @Email
+Step: pause 1 sec
+Step: Clear @Email
+Step: pause 1 sec
+Step: Press 'CTRL' Plus 'V' in @Email
+Step: pause 1 sec
+Step: Press tab
+Step: Click on @continue button
+Step: Enter 'gopi1010viral' in @Password1
+Step: Press tab
+Step: press enter on @Login Button
+Step: pause 4 sec
+End
+
+Test: T6 Verify multi Driver Functionality
+#T6 #Multi_browser #regression
+Session: Viral, Ankit,
+[Viral]
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter '9033660480' into @emailTextBox
+Step: pause for 1 sec
+Step: Enter 'tesbo@2018' into @passwordTextBox
+Step: Click on @signInTextBox
+Step: pause for 2sec
+Step: Click on @MyNetwork
+Step: pause for 2sec
+Step: Click on @SeeAll
+Step: pause for 2sec
+Step: Enter 'Viral' on @ConSearch
+Step: Press Enter
+Step: Click on @Message
+Step: Enter 'Tesbo' on @MessageBox
+Step: Click on @Send
+Step: pause for 5sec
+[Ankit]
+Step: pause for 5sec
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter 'viral103patel@gmail.com' into @emailTextBox
+Step: pause for 1 sec
+Step: Enter 'jsbot@2017' into @passwordTextBox
+Step: Click on @signInTextBox
+Step: Click on @MessageIcon
+Step: pause for 5sec
+Step: @MessageCon text is equal 'ZooMa'
+Step: Enter 'Ankit' on @MessageBox
+Step: Click on @Send
+Step: pause for 5se
+[Viral]
+Step: @MessageCon text is equal ignore case 'Ankit'
+Step: Enter 'I am Cool' on @MessageBox
+Step: Click on @Send
+Step: pause for 5sec
+[Ankit]
+Step: @MessageCon text is equal ignore case 'I am Cool'
+Step: Enter 'Rock' on @MessageBox
+Step: Click on @Send
+End
+
+
+Test: T7 amazon iphone search
+#iphone #T7 #regression
+Step: Open URL 'https://www.amazon.in/'
+Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
+Step: click on @sign_in button
+Verify: @Email is displayed
+Step: Enter 'krazzyvir@gmail.com' in @Email_Field
+Step: Click on @continue button
+Step: Enter 'gopi1010viral' in @Password_Field
+Step: click on @Login_Button
+Step: Enter 'iPhone 7' in @SearchBox
+Step: Press Enter
+Step: Scroll to Bottom
+Step: scroll to top
+Step: scroll to @iphone_image1
+Step: scroll to @iphone_image2
+Step: scroll to @iphone_image3
+Step: scroll to top
+Step: Click on @Today_deals
+Step: Navigate to back
+Step: Navigate refresh
+Step: Navigate to forward
+Step: scroll to Bottom
+Verify: @Australia text is equal ignore case 'Australia'
+Verify: @Australia text is equal 'Australia'
+Verify: @Australia text is contains 'Australia'
+Verify: @Australia text is contains ignore case 'Australia'
+Step: pause 1sec
+Step: Click on @Australia
+End
+
+Test: T8 Verify Iframes
+#T8 #regression
+Step: Open Url 'http://toolsqa.com/iframe-practice-page/'
+Step: scroll to @IFrame2
+Step: Switch to frame using id 'iframe2'
+Step: Scroll to @imgTitle
+Step: pause for 2sec
+Step: Open Url 'http://toolsqa.com/iframe-practice-page/'
+Step: click on @tab1InIFrame
+Step: click on @tab2InIFrame
+Step: switch to default content
+Step: Scroll to top
+Verify: @textOutOfIFrame text is equal 'Iframe 1 and 2'
+Step: pause for 2sec
+Step: Scroll to @IFrame2
+Step: Switch to frame using name 'IF2'
+Step: Scroll to @imgTitle
+Step: pause for 2sec
+Step: click on @tab1InIFrame
+Step: click on @tab2InIFrame
+Step: switch to default content
+Step: Scroll to top
+Verify: @textOutOfIFrame text is equal 'Iframe 1 and 2'
+Step: pause for 2sec
+End
+
+Test: T9 Switch window demo
+#T9 #window #regression
+Step: Open Url 'http://toolsqa.com/automation-practice-switch-windows/'
+Step: Click on @NewWindow
+Step: pause 4 sec
+Step: Switch to new window
+Step: pause 4 sec
+Step: close window
+Step: pause 4 sec
+Step: Switch to main window
+Step: pause 4 sec
+Step: Click on @NewWindow
+Step: pause 4 sec
+End
