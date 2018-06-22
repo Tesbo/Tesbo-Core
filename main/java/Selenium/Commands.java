@@ -576,9 +576,26 @@ public class Commands {
         return driver;
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     * @param element
+     */
     public void rightClick(WebDriver driver,WebElement element) {
         Actions action = new Actions(driver).contextClick(element);
         action.build().perform();
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     * @param element
+     */
+    public void doubleClick(WebDriver driver,WebElement element) {
+        Actions action = new Actions(driver);
+        action.doubleClick(element).perform();
     }
 
 }

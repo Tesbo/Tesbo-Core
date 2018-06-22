@@ -37,13 +37,18 @@ public class StepParser {
             logger.stepLog(step);
 
         //Clicks
-        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("right"))) {
+        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("right") | step.toLowerCase().contains("double"))) {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
         }
 
         //Right Click
         if (step.toLowerCase().contains("right click")) {
            cmd.rightClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+        }
+
+        //Double Click
+        if (step.toLowerCase().contains("double click")) {
+            cmd.doubleClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
         }
 
         //Press Key
