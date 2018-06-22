@@ -51,6 +51,11 @@ public class StepParser {
             cmd.doubleClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
         }
 
+        //clear cookies and cache
+        if (step.toLowerCase().contains("clear cookies") || step.toLowerCase().contains("clear cache")) {
+            cmd.deleteAllCookies(driver);
+        }
+
         //Press Key
         if (step.toLowerCase().contains("press")) {
             pressKey(driver, test, step);
@@ -92,7 +97,7 @@ public class StepParser {
         }
 
         //Clear
-        if (step.toLowerCase().contains("clear")) {
+        if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache"))) {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
         }
 

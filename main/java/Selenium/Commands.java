@@ -598,4 +598,16 @@ public class Commands {
         action.doubleClick(element).perform();
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     *
+     */
+    public void deleteAllCookies(WebDriver driver) {
+        driver.manage().deleteAllCookies();
+    }
+
+
+
 }
