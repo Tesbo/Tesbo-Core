@@ -1,0 +1,59 @@
+
+
+Test: V1 Verify Open Url without single quotes
+#V1 #Verify
+Step: Open URL https://www.amazon.in
+End
+
+Test: V2 Verify Locator @ Functionality
+#V2 #Verify
+Step: Open URL 'https://www.amazon.in'
+Step: click on sign_in button
+End
+
+Test: V3 Verify Enter Functionality without single quotes
+#V3 #Verify
+Step: Open URL 'https://www.amazon.in'
+Step: click on @sign_in button
+Step: Enter krazzyvirgmail.com in @Email
+End
+
+
+Test: V4 Verify Pause Functionality
+#V4 #Verify
+Step: Open URL 'https://www.amazon.in'
+Step: click on @sign_in button
+Step: pause sec
+End
+
+
+Test: V5 Verify Data Set Functionality without Curly Braces
+#V5 #Verify
+DataSet: Credentials
+Step: open URL 'https://www.linkedin.com/'
+Verify: @Email_Field is displayed
+Step: Enter username in @Email
+End
+
+Test: V6 Verify text is equal
+#V6 #Verify
+Step: Open URL 'https://www.amazon.in/'
+Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
+Step: click on @sign_in button
+Verify: @Email is displayed
+Step: Enter 'krazzyvir@gmail.com' in @Email
+Step: Click on @continue button
+Step: Enter 'gopi1010viral' in @Password1
+Step: click on @LoginAmazon
+Step: Enter 'iPhone 7' in @Searchbox
+Step: Press Enter
+Step: Pause 2 sec
+Step: scroll to Bottom
+Verify: @Australia text is equal 'australia'
+End
+
+Test: V7 Verify Page Title is equal to
+#V7 #Verify
+Step: Open URL 'https://www.amazon.in/'
+Verify: Page Title is equal to 'Tesbo'
+End

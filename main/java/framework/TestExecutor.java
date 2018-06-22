@@ -122,7 +122,6 @@ public class TestExecutor implements Runnable {
 
         /*Getting step using SuiteName and Testcase Name*/
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
-        System.out.println("Steps :" + steps);
         int J = 0;
         JSONArray stepsArray = new JSONArray();
         boolean failFlag = false;
@@ -260,7 +259,6 @@ public class TestExecutor implements Runnable {
 
                 stepReportObject.put("endTime", stepEndTime);
 
-                System.out.println("Step Report object"+stepReportObject);
 
 
                 testStepArray.add(stepReportObject);
@@ -294,7 +292,6 @@ public class TestExecutor implements Runnable {
         testReportObject.put("status", testResult);
 
 
-        System.out.println("Test Report Object" + testReportObject);
         buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(), test.get("testName").toString(), testReportObject);
         return testReportObject;
     }

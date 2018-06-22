@@ -14,8 +14,11 @@ import java.io.FileReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,15 +30,31 @@ public class GetJsonData {
 
     Logger logger = new Logger();
 
-    public static String parseTime(long milliseconds) {
-        return String.format(FORMAT,
+    public String parseTime(long milliseconds) {
+
+
+        Date date = new Date(milliseconds);
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        System.out.println(formatter.format(date));
+
+
+        return formatter.format(date)/*String.format(FORMAT,
                 TimeUnit.MILLISECONDS.toHours(milliseconds),
                 TimeUnit.MILLISECONDS.toMinutes(milliseconds) - TimeUnit.HOURS.toMinutes(
                         TimeUnit.MILLISECONDS.toHours(milliseconds)),
                 TimeUnit.MILLISECONDS.toSeconds(milliseconds) - TimeUnit.MINUTES.toSeconds(
-                        TimeUnit.MILLISECONDS.toMinutes(milliseconds)));
+                        TimeUnit.MILLISECONDS.toMinutes(milliseconds)))*/;
     }
 
+    public String parseTime(int milliseconds) {
+
+
+        return String.format(FORMAT,
+                TimeUnit.MILLISECONDS.toHours(milliseconds),
+                TimeUnit.MILLISECONDS.toMinutes(milliseconds) - TimeUnit.HOURS.toMinutes(
+                        TimeUnit.MILLISECONDS.toHours(milliseconds)), TimeUnit.MILLISECONDS.toSeconds(milliseconds) - TimeUnit.MINUTES.toSeconds(
+                        TimeUnit.MILLISECONDS.toMinutes(milliseconds)));
+    }
 
     public File getLastModifiedJsonFile(String dirPath) {
 
@@ -263,14 +282,14 @@ public class GetJsonData {
         File currentBuildReport = getLastModifiedJsonFile(dir);
         parser = readJsonFile(currentBuildReport.getAbsolutePath());
 
-        return parser.get("startTime").toString();
+        return parseTime(Long.parseLong(parser.get("startTime").toString()));
     }
 
 
     public String getCurrentBuildEndTime(String dir) {
         File currentBuildReport = getLastModifiedJsonFile(dir);
         JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
-        return parser.get("endTime").toString();
+        return parseTime(Long.parseLong(parser.get("endTime").toString()));
     }
 
 
@@ -301,13 +320,12 @@ public class GetJsonData {
                 for (Object suiteDetails : suiteList) {
                     JSONObject suite = (JSONObject) suiteDetails;
 
-                    totalPass = (int) (totalPass + Double.parseDouble(suite.get("totalPassed").toString()));
-                    totalFail = (int) (totalFail + Double.parseDouble(suite.get("totalFailed").toString()));
+                    totalPass = totalPass + Integer.parseInt(suite.get("totalPassed").toString());
+                    totalFail = totalFail + Integer.parseInt(suite.get("totalFailed").toString());
 
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
             }
 
 
