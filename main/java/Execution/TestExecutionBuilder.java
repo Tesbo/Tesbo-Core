@@ -26,6 +26,7 @@ public class TestExecutionBuilder {
     public static String buildReportName;
     public static long buildStartTime;
     public static long buildEndTime;
+    public static boolean repotFileGenerated = false;
     DataDrivenParser dataDrivenParser = new DataDrivenParser();
     Logger logger = new Logger();
 
@@ -60,9 +61,10 @@ public class TestExecutionBuilder {
 
         BuildReportDataObject.mainReportObject.put("endTime", TestExecutionBuilder.buildEndTime);
         BuildReportDataObject.mainReportObject.put("totalTimeTaken", (TestExecutionBuilder.buildEndTime - TestExecutionBuilder.buildStartTime));
-        Thread.sleep(5000);
 
-        reportBuilder.generatReport();
+        while(!repotFileGenerated) {
+            reportBuilder.generatReport();
+        }
     }
 
 
@@ -231,7 +233,6 @@ public class TestExecutionBuilder {
                                         completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
                                     }
                                 } catch (Exception e) {
-                                    e.printStackTrace();
                                 }
                                 System.out.println("CompleteTestObject" + completestTestObject);
 

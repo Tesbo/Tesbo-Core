@@ -334,6 +334,8 @@ public class BuildReportDataObject implements Runnable {
 
         pr.writeJsonFile(mainReportObject, TestExecutionBuilder.buildReportName);
 
+        TestExecutionBuilder.repotFileGenerated=true;
+
         System.out.println("---------------------------- thread stopped");
 
 

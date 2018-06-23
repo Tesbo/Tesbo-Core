@@ -79,7 +79,6 @@ public class ReportBuilder implements Runnable {
             builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
 
         } catch (Exception e) {
-            e.printStackTrace();
         }
 
         builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
