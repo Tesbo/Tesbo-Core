@@ -121,7 +121,7 @@ public class TestExecutionBuilder {
         Validation validation = new Validation();
         GetConfiguration config = new GetConfiguration();
         ReportParser report = new ReportParser();
-//        validation.beforeExecutionValidation();
+        validation.beforeExecutionValidation();
         int tagSuiteCount = 0;
 
         /**
