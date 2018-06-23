@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 public class ReportBuilder implements Runnable {
@@ -715,7 +716,7 @@ public class ReportBuilder implements Runnable {
 
                         }
                         try {
-                            screenShotpath = ((JSONObject) test).get("screenshot").toString();
+                            screenShotpath = ((JSONObject) test).get("screenShot").toString();
 
                         } catch (Exception e) {
                             logger.errorLog("Screenshot Not Found");
@@ -724,13 +725,15 @@ public class ReportBuilder implements Runnable {
                     }
 
 
+                    Random rand = new Random();
+                    int randomNumber = rand.nextInt();
                     sb.append("<!-- start accordion -->\n" +
-                            "<div class=\"accordion\" id=\"" + browser + testDetails.get("testName") + "\" role=\"tablist\"\n" +
+                            "<div class=\"accordion\" id=\"" + browser + testDetails.get("testName")+randomNumber + "\" role=\"tablist\"\n" +
                             "aria-multiselectable=\"true\">\n" +
                             "<div class=\"panel\">\n" +
                             "<a class=\"panel-heading\" role=\"tab\"\n" +
                             "data-toggle=\"collapse\"\n" +
-                            "data-parent=\"#accordion\" href=\"#" + browser + testDetails.get("testName").toString().replace(" ", "") + "\"\n" +
+                            "data-parent=\"#accordion\" href=\"#" + browser + testDetails.get("testName").toString().replace(" ", "")+randomNumber + "\"\n" +
                             "aria-expanded=\"true\"\n" +
                             "aria-controls=\"collapseOne\">\n" +
                             "<h4 class=\"panel-title\">\n" +
@@ -749,7 +752,7 @@ public class ReportBuilder implements Runnable {
                             "</h4>\n" +
 
                             "</a>\n" +
-                            "<div id=\"" + browser + testDetails.get("testName").toString().replace(" ", "") + "\" class=\"panel-collapse collapse\"\n" +
+                            "<div id=\"" + browser + testDetails.get("testName").toString().replace(" ", "")+randomNumber + "\" class=\"panel-collapse collapse\"\n" +
                             "role=\"tabpanel\"\n" +
                             "aria-labelledby=\"headingOne\">\n" +
                             "<div class=\"panel-body\">\n" +
