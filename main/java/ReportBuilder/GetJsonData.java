@@ -35,7 +35,6 @@ public class GetJsonData {
 
         Date date = new Date(milliseconds);
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-        System.out.println(formatter.format(date));
 
 
         return formatter.format(date)/*String.format(FORMAT,

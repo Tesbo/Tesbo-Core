@@ -167,7 +167,6 @@ public class TestExecutionBuilder {
             isSuite = true;
         }
 
-        System.out.println(suiteOrTaglist + "" + isTag);
 
         try {
             for (String suite : suiteOrTaglist) {

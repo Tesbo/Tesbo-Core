@@ -705,11 +705,6 @@ public class ReportBuilder implements Runnable {
                     String screenShotpath = "";
 
 
-                    //System.out.println("Test " + test);
-
-
-                    //System.out.println(((JSONObject) test).get("testName") + "" + isTestFailed);
-
 
                     if (isTestFailed) {
 
@@ -721,7 +716,6 @@ public class ReportBuilder implements Runnable {
                         }
                         try {
                             screenShotpath = ((JSONObject) test).get("screenshot").toString();
-                            //System.out.println("StackTrace " + stacktrace);
 
                         } catch (Exception e) {
                             logger.errorLog("Screenshot Not Found");
@@ -910,7 +904,6 @@ public class ReportBuilder implements Runnable {
 
 
     public void startThread() {
-        System.out.println("insider Start thread");
         ReportBuilder rb = new ReportBuilder();
 
         Thread t1 = new Thread(rb);
