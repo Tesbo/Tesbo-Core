@@ -197,7 +197,6 @@ public class GetJsonData {
 
                 last10BuildDataArray.add(individualBuildData);
             } catch (Exception e) {
-                logger.customeLog("Seems Like Report History File Correpted", Ansi.FColor.RED);
             }
         }
 
