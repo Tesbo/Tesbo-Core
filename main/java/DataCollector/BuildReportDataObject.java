@@ -9,8 +9,8 @@ import org.json.simple.JSONObject;
 public class BuildReportDataObject implements Runnable {
 
 
-    static JSONArray browserArray = new JSONArray();
     public static JSONObject mainReportObject = new JSONObject();
+    static JSONArray browserArray = new JSONArray();
     static int buildTotalPassed = 0;
     static int buildTotalFailed = 0;
 
@@ -271,15 +271,7 @@ public class BuildReportDataObject implements Runnable {
                     } catch (Exception e)
 
                     {
-                    /*    if (testResult.get("status").toString().equals("passed")) {
-                            totalPassed = Double.parseDouble(tempSuiteObject.get("totalPassed").toString()) + 1;
-                        }
 
-                        if (testResult.get("status").toString().equals("failed")) {
-                            totalFailed = Double.parseDouble(tempSuiteObject.get("totalFailed").toString()) + 1;
-                        }
-                        totalTime = Double.parseDouble(tempSuiteObject.get("totalTime").toString()) + Double.parseDouble(testResult.get("totalTime").toString());
-*/
                     }
 
 
@@ -309,6 +301,9 @@ public class BuildReportDataObject implements Runnable {
 
     }
 
+    /**
+     * @author Viral P.
+     */
 
     @Override
     public void run() {
@@ -320,8 +315,6 @@ public class BuildReportDataObject implements Runnable {
             e.printStackTrace();
         }
         while (TestExecutionBuilder.buildRunning) {
-            System.out.println("---------------------------- thread running");
-            System.out.println(mainReportObject);
             pr.writeJsonFile(mainReportObject, TestExecutionBuilder.buildReportName);
 
             try {
@@ -333,12 +326,7 @@ public class BuildReportDataObject implements Runnable {
         }
 
         pr.writeJsonFile(mainReportObject, TestExecutionBuilder.buildReportName);
-
-        TestExecutionBuilder.repotFileGenerated=true;
-
-        System.out.println("---------------------------- thread stopped");
-
-
+        TestExecutionBuilder.repotFileGenerated = true;
     }
 }
 

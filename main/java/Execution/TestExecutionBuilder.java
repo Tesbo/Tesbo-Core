@@ -234,7 +234,6 @@ public class TestExecutionBuilder {
                                     }
                                 } catch (Exception e) {
                                 }
-                                System.out.println("CompleteTestObject" + completestTestObject);
 
                                 completeTestObjectArray.add(completestTestObject);
                             }
