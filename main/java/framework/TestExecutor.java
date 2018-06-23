@@ -195,7 +195,7 @@ public class TestExecutor implements Runnable {
             } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
                 JSONArray groupSteps = new JSONArray();
                 try {
-                    groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.parseTextToEnter(test, step.toString()));
+                    groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.getCollectionName(step.toString()));
                 } catch (Exception e) {
                     if (groupSteps.size() == 0)
                         throw e;
