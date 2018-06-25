@@ -439,9 +439,8 @@ public class StepParser {
             endPoint = step.lastIndexOf("}");
             String headerName = step.substring(startPoint, endPoint);
             try {
-                if (test.get("dataType").toString().equalsIgnoreCase("excelfile")) {
+                if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
                     try {
-
                         textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"));
                         logger.stepLog(step.replace(headerName, textToEnter));
 
