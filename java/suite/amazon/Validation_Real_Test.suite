@@ -39,14 +39,6 @@ Test: V6 Verify text is equal
 #V6 #Verify
 Step: Open URL 'https://www.amazon.in/'
 Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
-Step: click on @sign_in button
-Verify: @Email is displayed
-Step: Enter 'krazzyvir@gmail.com' in @Email
-Step: Click on @continue button
-Step: Enter 'gopi1010viral' in @Password1
-Step: click on @LoginAmazon
-Step: Enter 'iPhone 7' in @Searchbox
-Step: Press Enter
 Step: Pause 2 sec
 Step: scroll to Bottom
 Verify: @Australia text is equal 'australia'
@@ -56,4 +48,10 @@ Test: V7 Verify Page Title is equal to
 #V7 #Verify
 Step: Open URL 'https://www.amazon.in/'
 Verify: Page Title is equal to 'Tesbo'
+End
+
+Test: V8 Verify collection name with single quarts
+#V8 #Verify
+Collection Name: 'amazon_open'
+Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
 End
