@@ -31,9 +31,6 @@ public class ReportBuilder implements Runnable {
 
 
     public void generatReport() {
-        logger.titleLog("-----------------------------------------------------------------------");
-        logger.titleLog("Build Execution Completed");
-        logger.titleLog("-----------------------------------------------------------------------\n");
 
 
         dataArray = data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath());
@@ -84,8 +81,6 @@ public class ReportBuilder implements Runnable {
 
         builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
 
-        logger.customeLog("\nReport Generated at :" + file.getAbsolutePath() + "\n", Ansi.FColor.NONE);
-        logger.titleLog("-----------------------------------------------------------------------");
 
 
     }
@@ -370,11 +365,6 @@ public class ReportBuilder implements Runnable {
 
     public StringBuffer generateCurrentBuildSummary(StringBuffer sb) {
 
-
-        logger.customeLog("| Total : " + data.getCurrentBuildTotal(new File(getBuildHistoryPath()).getAbsolutePath()), Ansi.FColor.NONE);
-        logger.customeLog(" | Passed : " + data.getCurrentBuildPassed(buildHistory), Ansi.FColor.NONE);
-        logger.customeLog(" | Failed : " + data.getCurrentBuildFailed(buildHistory), Ansi.FColor.NONE);
-        logger.customeLog(" | Time : " + data.getCurrentBuildTotalTime(buildHistory) + " |\n", Ansi.FColor.NONE);
 
 
         sb.append("<div class=\"right_col\" role=\"main\">\n" +

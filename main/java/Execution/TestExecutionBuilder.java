@@ -4,6 +4,7 @@ import DataCollector.BuildReportDataObject;
 import ReportBuilder.GetJsonData;
 import ReportBuilder.ReportBuilder;
 import ReportBuilder.ReportLibraryFiles;
+import com.diogonunes.jcdp.color.api.Ansi;
 import framework.*;
 import logger.Logger;
 import org.json.simple.JSONArray;
@@ -62,9 +63,26 @@ public class TestExecutionBuilder {
         BuildReportDataObject.mainReportObject.put("endTime", TestExecutionBuilder.buildEndTime);
         BuildReportDataObject.mainReportObject.put("totalTimeTaken", (TestExecutionBuilder.buildEndTime - TestExecutionBuilder.buildStartTime));
 
+        logger.titleLog("-----------------------------------------------------------------------");
+        logger.titleLog("Build Execution Completed");
+        logger.titleLog("-----------------------------------------------------------------------\n");
+
+
         while(!repotFileGenerated) {
             reportBuilder.generatReport();
         }
+
+
+
+        logger.customeLog("| Total : " + data.getCurrentBuildTotal(new File(getBuildHistoryPath()).getAbsolutePath()), Ansi.FColor.NONE);
+        logger.customeLog(" | Passed : " + data.getCurrentBuildPassed(buildHistory), Ansi.FColor.NONE);
+        logger.customeLog(" | Failed : " + data.getCurrentBuildFailed(buildHistory), Ansi.FColor.NONE);
+        logger.customeLog(" | Time : " + data.getCurrentBuildTotalTime(buildHistory) + " |\n", Ansi.FColor.NONE);
+
+
+        logger.customeLog("\nReport Generated at :" + file.getAbsolutePath() + "\n", Ansi.FColor.NONE);
+        logger.titleLog("-----------------------------------------------------------------------");
+
     }
 
 
