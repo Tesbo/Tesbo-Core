@@ -5,7 +5,7 @@ DataSet :
      "password": "jsbot@2017",
      }
      "GmailUsers": {
-     "excelFile": "/Volumes/Viral/Tesbo/tesbo-core/test/GmailData.xlsx"
+     "excelFile": "E:/Tesbo_JAR/tesbo-core/test/GmailData.xlsx"
      }
 }
 
@@ -15,7 +15,6 @@ DataSet: Credentials
 Step: open URL 'https://www.linkedin.com/'
 Verify: @Email_Field is displayed
 Step: Enter {username} in @Email_Field
-
 Step: Enter {password} in @Password_Field
 Step: click on @Login_Button
 Verify: @homePage is displayed
@@ -54,13 +53,13 @@ Verify: @Email is displayed
 End
 
 Test: T4 Verify Collection without Test
-#regression
+#T4 #regression
 Collection: amazon_open
 End
 
 Test: T5 Verify Press Keys Functionality
 #T5 #regression
-Collection: 'amazon_open'
+Collection: amazon_open
 Step: Enter 'krazzyvir@gmail.com' in @Email
 Step: pause 1 sec
 Step: Press 'CTRL' Plus 'A' in @Email
@@ -73,8 +72,10 @@ Step: Press 'CTRL' Plus 'V' in @Email
 Step: pause 1 sec
 Step: Press tab
 Step: Click on @continue button
+Step: pause 1 sec
 Step: Enter 'gopi1010viral' in @Password1
 Step: Press tab
+Step: pause 1 sec
 Step: press enter on @Login Button
 Step: pause 4 sec
 End
@@ -130,11 +131,11 @@ Step: Open URL 'https://www.amazon.in/'
 Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
 Step: click on @sign_in button
 Verify: @Email is displayed
-Step: Enter 'krazzyvir@gmail.com' in @Email_Field
+Step: Enter 'krazzyvir@gmail.com' in @Email
 Step: Click on @continue button
-Step: Enter 'gopi1010viral' in @Password_Field
-Step: click on @Login_Button
-Step: Enter 'iPhone 7' in @SearchBox
+Step: Enter 'gopi1010viral' in @Password1
+Step: click on @Login Button
+Step: Enter 'iPhone 7' in @Search1
 Step: Press Enter
 Step: Scroll to Bottom
 Step: scroll to top
@@ -158,11 +159,10 @@ End
 Test: T8 Verify Iframes
 #T8 #regression
 Step: Open Url 'http://toolsqa.com/iframe-practice-page/'
-Step: scroll to @IFrame2
+Step: Scroll to @IFrame2
 Step: Switch to frame using id 'iframe2'
 Step: Scroll to @imgTitle
 Step: pause for 2sec
-Step: Open Url 'http://toolsqa.com/iframe-practice-page/'
 Step: click on @tab1InIFrame
 Step: click on @tab2InIFrame
 Step: switch to default content
