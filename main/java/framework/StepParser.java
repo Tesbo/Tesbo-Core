@@ -510,14 +510,21 @@ public class StepParser {
             actions.sendKeys(Keys.TAB).build().perform();
         } else if (step.toLowerCase().contains("plus")) {
             String[] Steps = step.split(" ");
+            boolean flag=false;
             for (int i = 0; i < Steps.length; i++) {
-                if (Steps[i].equalsIgnoreCase("plus")) {
-                    try {
-                        actions.keyDown(Keys.CONTROL).sendKeys(Steps[i + 1].replaceAll("'", "").toLowerCase()).keyUp(Keys.CONTROL).perform();
-                    } catch (Exception e) {
-                        throw new TesboException("Please Enter key name.");
+                if (Steps[i].equalsIgnoreCase("'ctrl'")) {
+                    flag=true;
+                    if(!(Steps[i + 2].replaceAll("'", "").toLowerCase().equals("")) &  Steps[i + 2].contains("'")
+                            & ( Steps[i + 2].replaceAll("'", "").toLowerCase().equals("a") | Steps[i + 2].replaceAll("'", "").toLowerCase().equals("c") | Steps[i + 2].replaceAll("'", "").toLowerCase().equals("v"))) {
+                        actions.keyDown(Keys.CONTROL).sendKeys(Steps[i + 2].replaceAll("'", "").toLowerCase()).keyUp(Keys.CONTROL).perform();
+                    }
+                    else {
+                        throw new TesboException("Please enter valid key");
                     }
                 }
+            }
+            if(!flag){
+                throw new TesboException("Please enter valid step.");
             }
 
         } else {
