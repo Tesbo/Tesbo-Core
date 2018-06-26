@@ -457,7 +457,7 @@ public class SuiteParser {
     public JSONArray getSessionListFromTest(String suiteName, String testName) {
         StringBuffer suiteDetails = readSuiteFile(suiteName);
         String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        JSONArray testSteps = new JSONArray();
+        JSONArray sessionName = new JSONArray();
         int testCount=0;
         int startPoint = 0;
         boolean testStarted = false;
@@ -482,8 +482,9 @@ public class SuiteParser {
             }
         }
 
-        if(testCount>=2 || endpoint==0)
-            throw new TesboException("End Step is not found for '"+testName+ "' test");
+        if(testCount>=2 || endpoint==0) {
+            throw new TesboException("End Step is not found for '" + testName + "' test");
+        }
 
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Session:") ) {
@@ -492,12 +493,15 @@ public class SuiteParser {
                 {
                     if(!(session.equals("Session")))
                     {
-                        testSteps.add(session.trim());
+                        sessionName.add(session.trim());
                     }
                 }
             }
+            else if(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("session:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("session :") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Session :")){
+                throw new TesboException("Please write valid keyword for this step \"" +allLines[j]+"\"");
+            }
         }
-        return testSteps;
+        return sessionName;
     }
 
 }
