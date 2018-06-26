@@ -122,19 +122,16 @@ public class SuiteParser {
 
         for (int i = 0; i < allLines.length; i++) {
             if (allLines[i].contains("Test:")) {
-
                 String tagLine = allLines[i + 1].toLowerCase();
-
-                String[] tagArray = tagLine.split("#");
-
+                String[] tagArray = tagLine.replaceAll("\\s+","").split("#");
                 for(String  tag : tagArray)
                 {
-
-                    if (tag.toLowerCase().trim().equals(tagName.toLowerCase())) {
-                        String testNameArray[] = allLines[i].split(":");
-                        testName.add(testNameArray[1].trim());
+                    if(!tag.equals("")) {
+                        if (tag.toLowerCase().trim().equals(tagName.toLowerCase())) {
+                            String testNameArray[] = allLines[i].split(":");
+                            testName.add(testNameArray[1].trim());
+                        }
                     }
-
                 }
 
             }
@@ -158,7 +155,6 @@ public class SuiteParser {
      * @Discription : Get data as per the tag name
      */
     public JSONObject getTestNameByTag(String tag) throws Exception {
-
         GetConfiguration configuration = new GetConfiguration();
         String directoryPath = configuration.getSuitesDirectory();
 
