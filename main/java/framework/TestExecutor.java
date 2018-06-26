@@ -3,6 +3,7 @@ package framework;
 import DataCollector.BuildReportDataObject;
 import Exception.TesboException;
 import Execution.TestExecutionBuilder;
+import ExtCode.*;
 import Selenium.Commands;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import logger.Logger;
@@ -34,6 +35,7 @@ public class TestExecutor implements Runnable {
     JSONArray listOfSession;
     boolean isSession = false;
 
+    public TestExecutor() { }
     public TestExecutor(JSONObject test) {
         this.test = test;
     }
@@ -104,6 +106,7 @@ public class TestExecutor implements Runnable {
         Commands selCmd = new Commands();
         VerifyParser verifyParser = new VerifyParser();
         SuiteParser suiteParser = new SuiteParser();
+        ExternalCode externalCode=new ExternalCode();
         BuildReportDataObject buildReport = new BuildReportDataObject();
         String testResult = "";
         int stepNumber = 0;
@@ -191,6 +194,15 @@ public class TestExecutor implements Runnable {
                     throw new TesboException("Session name is not found for close.");
                 }
 
+
+            }else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
+                String extVal=null;
+                try {
+                    extVal=step.toString().split(":")[1].trim();
+                } catch (Exception e) {
+                    throw new TesboException("ExtCode step has no value");
+                }
+                externalCode.runAllAnnotatedWith(ExtCode.class,extVal,driver);
 
             } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
                 JSONArray groupSteps = new JSONArray();
