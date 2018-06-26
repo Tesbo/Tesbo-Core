@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import Exception.TesboException;
 import org.openqa.selenium.WebDriver;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -41,16 +42,20 @@ public class Validation {
 
     }
 
-    public void suiteDirectoryPathValidation() throws Exception {
+    public void suiteDirectoryPathValidation() {
 
         //Validation for SuiteDirectory Path is empty
         String suiteDirectoryPath=null;
         suiteDirectoryPath=getCofig.getSuitesDirectory();
+        File file = new File(suiteDirectoryPath);
         if(suiteDirectoryPath.equals("")) {
             throw new TesboException("Suite directory path is not define in config file.");
         }
         if(Files.notExists(Paths.get(suiteDirectoryPath))){
             throw new TesboException("Please enter valid suite directory path.");
+        }
+        if(file.list().length==0){
+            throw new TesboException("Suite directory is empty");
         }
 
     }
@@ -59,11 +64,17 @@ public class Validation {
 
         String locatorDirectory=null;
         locatorDirectory=getCofig.getLocatorDirectory();
+        File file = new File(locatorDirectory);
         if(locatorDirectory.equals("")) {
             throw new TesboException("Locator directory path is not define in config file.");
         }
+
         if(Files.notExists(Paths.get(locatorDirectory))){
             throw new TesboException("Please enter valid locator directory path.");
+        }
+        System.out.println("file :"+file.list().length);
+        if(file.list().length==0){
+            throw new TesboException("Locator directory is empty");
         }
     }
 
