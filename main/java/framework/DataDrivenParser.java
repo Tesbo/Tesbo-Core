@@ -271,9 +271,12 @@ public class DataDrivenParser {
                         Iterator<Cell> cellIterator = rows.cellIterator();
                         while (cellIterator.hasNext()) {
                             Cell cell = cellIterator.next();
-                            if(headerName.equalsIgnoreCase(formatter.formatCellValue(cell))){
+                            if(headerName.equals(formatter.formatCellValue(cell))){
                                 columnIndex= String.valueOf(cell.getColumnIndex());
                             }
+                        }
+                        if(columnIndex==null){
+                            throw new TesboException("Please enter valid headerName: "+headerName);
                         }
                     }
                 }
