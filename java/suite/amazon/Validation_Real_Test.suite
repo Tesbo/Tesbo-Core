@@ -1,4 +1,13 @@
-
+DataSet :
+{
+     "Credentials": {
+     "userName":  "viral103patel@gmail.com",
+     "password": "jsbot@2017",
+     }
+     "GmailUsers": {
+     "excelFile": "E:/Tesbo_JAR/tesbo-core/test/GmailData.xlsx"
+     }
+}
 
 Test: V1 Verify Open Url without single quotes
 #V1 #Verify
@@ -54,4 +63,13 @@ Test: V8 Verify collection name with single quarts
 #V8 #Verify
 Collection Name: 'amazon_open'
 Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
+End
+
+Test: V9 Gmail signUp Data Set excel file
+#V9 #Gmail_signUp #Verify
+DataSet: GmailUsers
+Step: open url 'https://accounts.google.com/signup'
+Step: Click on @Next button
+Verify: @FirstNameError text is equal 'Enter first name'
+Step: Enter {firstname} on @FirstName
 End
