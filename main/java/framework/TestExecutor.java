@@ -69,7 +69,7 @@ public class TestExecutor implements Runnable {
     public void beforeTest(String browserName) {
         SuiteParser suiteParser = new SuiteParser();
         listOfSession = suiteParser.getSessionListFromTest(test.get("suiteName").toString(), test.get("testName").toString());
-        if (listOfSession.size() > 1) {
+        if (listOfSession.size() > 0) {
             isSession = true;
         } else {
             initializeBrowser(null);
