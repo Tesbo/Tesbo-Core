@@ -207,8 +207,9 @@ public class SuiteParser {
                     startPoint = i;
                     testStarted = true;
                 }
-                if (testStarted)
+                if (testStarted) {
                     testCount++;
+                }
             }
             if (testStarted) {
 
@@ -218,9 +219,9 @@ public class SuiteParser {
                 }
             }
         }
-        if(testCount>=2 || endpoint==0)
-            throw new TesboException("End Step is not found for '"+testName+ "' test");
-
+        if(testCount>=2 || endpoint==0) {
+            throw new TesboException("End Step is not found for '" + testName + "' test");
+        }
         for (int j = startPoint; j < endpoint; j++) {
 
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
@@ -290,32 +291,38 @@ public class SuiteParser {
         String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
         JSONArray testSteps = new JSONArray();
         int startPoint = 0;
-        boolean testStarted = false;
+        int groupCount=0;
+        boolean groupStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
+            if(groupStarted){
+                if (allLines[i].contains("Test:")) {
+                    groupCount++;
+                }
+            }
             if (allLines[i].contains("Collection Name:")) {
                 String testNameArray[] = allLines[i].split(":");
                 if (testNameArray[1].trim().toLowerCase().equalsIgnoreCase(groupName)) {
                     startPoint = i;
-                    testStarted = true;
+                    groupStarted = true;
+                }
+                if (groupStarted) {
+                    groupCount++;
                 }
             }
-            else {
-                if (allLines[i].contains("collection Name:") | allLines[i].contains("collection name:") |  allLines[i].contains("Collection Name :") |
-                        allLines[i].contains("collection Name :") | allLines[i].contains("collection name :")){
-                    throw new TesboException("Please write valid keyword for this \"" +allLines[i]+"\"");
-                }
-            }
-            if (testStarted) {
+            if (groupStarted) {
                 if (allLines[i].contains("End")) {
                     endpoint = i;
-                    testStarted = false;
+                    groupStarted = false;
                 }
             }
         }
+        if(groupCount>=2 || endpoint==0) {
+            throw new TesboException("End Step is not found for '" + groupName + "' collection");
+        }
         if(startPoint==0)
         {
-            throw new TesboException("Collection name not define properly.");
+            throw new TesboException("Collection name "+ groupName +" is not found on suite");
         }
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].contains("Step:") | allLines[j].contains("Verify:")) {
@@ -323,7 +330,7 @@ public class SuiteParser {
             }
         }
         if (testSteps.size() == 0) {
-            throw new TesboException("Steps are not defined for test : " + groupName);
+            throw new TesboException("Steps are not defined for collection : " + groupName);
         }
         return testSteps;
     }

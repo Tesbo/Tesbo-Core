@@ -110,7 +110,6 @@ public class TestExecutor implements Runnable {
         BuildReportDataObject buildReport = new BuildReportDataObject();
         String testResult = "";
         int stepNumber = 0;
-        Validation validation = new Validation();
         JSONObject testReportObject = new JSONObject();
 
 
@@ -121,10 +120,6 @@ public class TestExecutor implements Runnable {
         testReportObject.put("browserName", test.get("browser"));
         testReportObject.put("testName", test.get("testName").toString());
         testReportObject.put("suiteName", test.get("suiteName").toString());
-
-        if (isSession) {
-            validation.sessionDefineValidation(test.get("suiteName").toString(), test.get("testName").toString(),listOfSession);
-        }
 
         /*Getting step using SuiteName and Testcase Name*/
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
@@ -150,16 +145,11 @@ public class TestExecutor implements Runnable {
             stepReportObject.put("startTime", startTimeStep);
             stepReportObject.put("steps", step.toString());
 
-
             if (isSession) {
-                validation.sessionNotDeclareOnTest(steps, listOfSession);
-                validation.sessionNotDefineOnTest(steps, listOfSession);
                 initializeSessionRunTime(step);
             }
 
-
             try {
-
                 if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
                     stepParser.parseStep(driver, test, step.toString());
                 }
@@ -178,7 +168,7 @@ public class TestExecutor implements Runnable {
 
 
             if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Close:")) {
-                try {
+
                     String sessionName = step.toString().split(":")[1].trim().replace("]","");
                     boolean isSession = false;
                     for (Map.Entry session : sessionList.entrySet()) {
@@ -189,13 +179,7 @@ public class TestExecutor implements Runnable {
                     }
                     if (isSession) {
                         afterTest(sessionName);
-                    } else {
-                        throw new TesboException("Session '" + sessionName + "' is not available.");
                     }
-                } catch (Exception e) {
-                    throw new TesboException("Session name is not found for close.");
-                }
-
 
             }else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
                 String extVal=null;

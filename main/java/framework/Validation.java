@@ -190,12 +190,19 @@ public class Validation {
     public void endStepValidation(JSONArray testExecutionQueue) {
 
         SuiteParser suiteParser=new SuiteParser();
-
+        JSONArray listOfSession;
         //Validation for end step
         if(testExecutionQueue.size()>0){
             for (int i = 0; i < testExecutionQueue.size(); i++) {
                 JSONObject test= (JSONObject) testExecutionQueue.get(i);
-                suiteParser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(),test.get("testName").toString());
+                JSONArray steps= suiteParser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(),test.get("testName").toString());
+                listOfSession = suiteParser.getSessionListFromTest(test.get("suiteName").toString(), test.get("testName").toString());
+                if (listOfSession.size() > 0) {
+                    sessionDefineValidation(test.get("suiteName").toString(), test.get("testName").toString(),listOfSession);
+                    sessionNotDeclareOnTest(steps, listOfSession);
+                    sessionNotDefineOnTest(steps, listOfSession);
+                }
+                collectionValidation(test.get("suiteName").toString(), test.get("testName").toString());
             }
         }
     }
@@ -235,10 +242,9 @@ public class Validation {
 
     }
 
-    public JSONArray sessionDefineValidation(String suiteName, String testName,JSONArray listOfSession) {
+    public void sessionDefineValidation(String suiteName, String testName,JSONArray listOfSession) {
         StringBuffer suiteDetails =suiteParser.readSuiteFile(suiteName);
         String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        JSONArray testSteps = new JSONArray();
         int testCount=0;
         int startPoint = 0;
         boolean testStarted = false;
@@ -273,9 +279,67 @@ public class Validation {
                         throw new TesboException("Session must be define in '[]' square bracket");
                     }
                 }
+
+            }
+            if(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:")){
+                String sessionClose=  allLines[j].replaceAll("\\s{2,}", " ").trim().toString().replaceAll("\\[|\\]", "").split(":")[1].trim();
+                boolean isSessionClose=false;
+                for (Object session : listOfSession) {
+                    if(sessionClose.equals(session)){
+                        isSessionClose=true;
+                    }
+                }
+                if(!isSessionClose){
+                    throw new TesboException("Session '" + sessionClose + "' is not available.");
+                }
+
             }
         }
-        return testSteps;
+
+    }
+
+    public void collectionValidation(String suiteName, String testName) {
+        StringBuffer suiteDetails =suiteParser.readSuiteFile(suiteName);
+        StepParser stepParser=new StepParser();
+        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        int testCount=0;
+        int startPoint = 0;
+        boolean testStarted = false;
+        int endpoint = 0;
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].contains("Test:")) {
+                String testNameArray[] = allLines[i].split(":");
+
+                if (testNameArray[1].trim().contains(testName)) {
+                    startPoint = i;
+                    testStarted = true;
+                }
+                if (testStarted)
+                    testCount++;
+            }
+            if (testStarted) {
+
+                if (allLines[i].contains("End")) {
+                    endpoint = i;
+                    break;
+                }
+            }
+        }
+        if(testCount>=2 || endpoint==0) {
+            throw new TesboException("End Step is not found for '" + testName + "' test");
+        }
+
+        for (int j = startPoint; j < endpoint; j++) {
+
+            if(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:")){
+                String collectionName=stepParser.getCollectionName(allLines[j].toString());
+                if(collectionName.contains("'") |collectionName.contains("\"")){
+                    throw new TesboException("Collection name not define properly on :"+allLines[j]);
+                }
+                suiteParser.getGroupTestStepBySuiteandTestCaseName(suiteName, collectionName);
+            }
+        }
+
     }
 
     public void keyWordValidation(String step) {
