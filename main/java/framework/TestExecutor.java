@@ -241,7 +241,6 @@ public class TestExecutor implements Runnable {
                         }
                     } else if (groupStep.toString().contains("Verify:")) {
                         try {
-                            logger.stepLog(groupStep.toString());
                             verifyParser.parseVerify(driver, test, groupStep.toString());
                         } catch (Exception NE) {
                             J++;

@@ -16,6 +16,7 @@ public class VerifyParser {
         StepParser stepParser = new StepParser();
         Logger logger = new Logger();
         boolean flag=false;
+        logger.stepLog(verify);
 
         //Text verification.
         if (verify.toLowerCase().contains("text")) {
