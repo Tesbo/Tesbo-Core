@@ -46,7 +46,12 @@ public class Validation {
 
         //Validation for SuiteDirectory Path is empty
         String suiteDirectoryPath=null;
-        suiteDirectoryPath=getCofig.getSuitesDirectory();
+        try {
+            suiteDirectoryPath=getCofig.getSuitesDirectory();
+
+        }catch (Exception e){
+            throw new TesboException("'config.json' file not found in project");
+        }
         File file = new File(suiteDirectoryPath);
         if(suiteDirectoryPath.equals("")) {
             throw new TesboException("Suite directory path is not define in config file.");
