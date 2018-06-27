@@ -179,8 +179,7 @@ public class TestExecutor implements Runnable {
 
             if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Close:")) {
                 try {
-                    logger.stepLog(step.toString());
-                    String sessionName = step.toString().split(":")[1].trim();
+                    String sessionName = step.toString().split(":")[1].trim().replace("]","");
                     boolean isSession = false;
                     for (Map.Entry session : sessionList.entrySet()) {
                         if (session.getKey().toString().equals(sessionName)) {
