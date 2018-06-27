@@ -52,16 +52,16 @@ Verify: @Email is displayed
 End
 
 Test: T4 Verify Collection without Test
-#regression
+#T4 #regression
 Collection: amazon_open
 End
 
-Test: T5 Verify Press Keys Functionality
+test: T5 Verify Press Keys Functionality
 #T5 #regression
-Collection: amazon_open
-Step: Enter 'krazzyvir@gmail.com' in @Email
+collection: 'amazon_open'
+step: Enter 'krazzyvir@gmail.com' in @Email
 Step: pause 1 sec
-Step: Press 'CTRL' Plus 'A' in @Email
+Step: Press 'ctrl' Plus 'A' in @Email
 Step: pause 1 sec
 Step: Press 'CTRL' Plus 'C' in @Email
 Step: pause 1 sec
@@ -75,11 +75,11 @@ Step: Enter 'gopi1010viral' in @Password1
 Step: Press tab
 Step: press enter on @Login Button
 Step: pause 4 sec
-End
+end
 
 Test: T6 Verify multi Driver Functionality
 #T6 #Multi_browser #regression
-Session: Viral, Ankit,
+Session: Viral, Ankit, mahesh, ap
 [Viral]
 Step: Open URL 'https://www.linkedin.com'
 Step: Enter '9033660480' into @emailTextBox
@@ -194,13 +194,13 @@ Step: Click on @NewWindow
 Step: pause 4 sec
 End
 
-Test: T10 Verify Dabble click
+Test: T10 Verify Doable click
 #T10 #regression
 Step: Open URL 'https://www.amazon.in'
 Step: pause 2 sec
 Step: Scroll to coordinate (300,250)
 Step: pause 2 sec
-Step: Dabble click on @TextPath
+Step: Double click on @TextPath
 Step: pause 2 sec
 Step: click on @sign_in button
 Verify: @Email is displayed
@@ -214,4 +214,23 @@ Step: Right click on @sign_in button
 Step: pause 2 sec
 Step: click on @sign_in button
 Verify: @Email is displayed
+End
+
+Test: T12 Verify External Code
+#T12 #regression
+Step: Open URL 'https://www.amazon.in'
+ExtCode: Window Resize
+Step: pause 2 sec
+ExtCode: Random
+Step: pause 2 sec
+Step: Clear @Search1
+Step: pause 2 sec
+ExtCode: Random
+Step: pause 2 sec
+Step: Clear @Search1
+Step: pause 2 sec
+ExtCode: Random
+Step: pause 2 sec
+Step: Clear @Search1
+Step: pause 2 sec
 End
