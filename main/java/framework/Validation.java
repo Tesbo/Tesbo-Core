@@ -72,7 +72,6 @@ public class Validation {
         if(Files.notExists(Paths.get(locatorDirectory))){
             throw new TesboException("Please enter valid locator directory path.");
         }
-        System.out.println("file :"+file.list().length);
         if(file.list().length==0){
             throw new TesboException("Locator directory is empty");
         }
@@ -192,8 +191,6 @@ public class Validation {
                 suiteParser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(),test.get("testName").toString());
             }
         }
-
-
     }
 
     public void sessionNotDeclareOnTest(JSONArray steps,JSONArray listOfSession) {
@@ -214,7 +211,6 @@ public class Validation {
     }
 
     public void sessionNotDefineOnTest(JSONArray steps, JSONArray listOfSession) {
-
         for (Object step : steps) {
             if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("[") && step.toString().replaceAll("\\s{2,}", " ").trim().contains("]") &&
                     !(step.toString().replaceAll("\\s{2,}", " ").trim().contains("[Close")) ) {
@@ -230,6 +226,49 @@ public class Validation {
             }
         }
 
+    }
+
+    public JSONArray sessionDefineValidation(String suiteName, String testName,JSONArray listOfSession) {
+        StringBuffer suiteDetails =suiteParser.readSuiteFile(suiteName);
+        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        JSONArray testSteps = new JSONArray();
+        int testCount=0;
+        int startPoint = 0;
+        boolean testStarted = false;
+        int endpoint = 0;
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].contains("Test:")) {
+                String testNameArray[] = allLines[i].split(":");
+
+                if (testNameArray[1].trim().contains(testName)) {
+                    startPoint = i;
+                    testStarted = true;
+                }
+                if (testStarted)
+                    testCount++;
+            }
+            if (testStarted) {
+
+                if (allLines[i].contains("End")) {
+                    endpoint = i;
+                    break;
+                }
+            }
+        }
+        if(testCount>=2 || endpoint==0)
+            throw new TesboException("End Step is not found for '"+testName+ "' test");
+
+        for (int j = startPoint; j < endpoint; j++) {
+
+            for (Object session : listOfSession) {
+                if (allLines[j].replaceAll("\\s{2,}", " ").trim().toString().replaceAll("\\[|\\]", "").equals(session.toString())) {
+                    if (!allLines[j].replaceAll("\\s{2,}", " ").trim().toString().equals("[" + session.toString() + "]")) {
+                        throw new TesboException("Session must be define in '[]' square bracket");
+                    }
+                }
+            }
+        }
+        return testSteps;
     }
 
     public void keyWordValidation(String step) {

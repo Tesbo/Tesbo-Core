@@ -119,6 +119,9 @@ public class TestExecutor implements Runnable {
         testReportObject.put("testName", test.get("testName").toString());
         testReportObject.put("suiteName", test.get("suiteName").toString());
 
+        if (isSession) {
+            validation.sessionDefineValidation(test.get("suiteName").toString(), test.get("testName").toString(),listOfSession);
+        }
 
         /*Getting step using SuiteName and Testcase Name*/
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
