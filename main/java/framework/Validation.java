@@ -134,7 +134,7 @@ public class Validation {
     }
 
     public void tagNameAndSuiteNameValidation() {
-        try {
+
             JSONArray tagName= (JSONArray) getCofig.getTags();
             JSONArray suiteName= (JSONArray) getCofig.getSuite();
 
@@ -164,9 +164,7 @@ public class Validation {
                 } else { throw new TesboException("Please enter 'Tag name' or 'Suite name' to run test."); }
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 
     public void parallelExecutionValidation() {

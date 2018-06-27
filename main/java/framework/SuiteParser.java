@@ -27,7 +27,7 @@ public class SuiteParser {
      * @param directory
      * @return give all the file inside a directory
      */
-    public JSONArray getSuites(String directory) throws IOException {
+    public JSONArray getSuites(String directory)  {
 
         JSONArray suiteFileList = new JSONArray();
         boolean flag=false;
@@ -61,7 +61,11 @@ public class SuiteParser {
                 logger.testFailed("'" + directory + "' no files found on your location.");
                 e.printStackTrace();
             }
-            throw e;
+            try {
+                throw e;
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
 
         return suiteFileList;
@@ -121,13 +125,16 @@ public class SuiteParser {
 
 
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:")) {
+            if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
                 String tagLine = allLines[i + 1].toLowerCase();
                 String[] tagArray = tagLine.replaceAll("\\s+","").split("#");
                 for(String  tag : tagArray)
                 {
                     if(!tag.equals("")) {
                         if (tag.toLowerCase().trim().equals(tagName.toLowerCase())) {
+                            if (allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")) {
+                                throw new TesboException("Please write valid keyword for this \"" + allLines[i] + "\"");
+                            }
                             String testNameArray[] = allLines[i].split(":");
                             testName.add(testNameArray[1].trim());
                         }
@@ -135,12 +142,9 @@ public class SuiteParser {
                 }
 
             }
-            else {
-                if(allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")){
-                    throw new TesboException("Please write valid keyword for this \"" +allLines[i]+"\"");
-                }
-            }
-        }   // When No Test Available
+
+        }
+        // When No Test Available
         if (testName.size() == 0) {
 
             //throw new NoTestFoundException("No test found in suite file");
@@ -154,7 +158,7 @@ public class SuiteParser {
      * @return
      * @Discription : Get data as per the tag name
      */
-    public JSONObject getTestNameByTag(String tag) throws Exception {
+    public JSONObject getTestNameByTag(String tag)  {
         GetConfiguration configuration = new GetConfiguration();
         String directoryPath = configuration.getSuitesDirectory();
 
@@ -386,7 +390,7 @@ public class SuiteParser {
      * @param suitename
      * @return
      */
-    public JSONObject getTestNameBySuite(String suitename) throws Exception {
+    public JSONObject getTestNameBySuite(String suitename)  {
         GetConfiguration configuration = new GetConfiguration();
         String directoryPath = configuration.getSuitesDirectory();
 
