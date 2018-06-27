@@ -58,7 +58,8 @@
   "MessageBox":"//textarea[@name='message']",
   "Send":"//button[@type='submit']",
   "MessageCon":"//div/p[@class='msg-s-event-listitem__body Sans-15px-black-70%']",
-  "MessageIcon":"//span[@id='messaging-tab-icon']"
+  "MessageIcon":"//span[@id='messaging-tab-icon']",
+  "TextPath":"(//SPAN[@class='a-color-base'])[2]"
 
 
 

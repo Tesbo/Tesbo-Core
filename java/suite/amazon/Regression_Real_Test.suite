@@ -1,7 +1,7 @@
 DataSet :
 {
      "Credentials": {
-     "username":  "viral103patel@gmail.com",
+     "userName":  "viral103patel@gmail.com",
      "password": "jsbot@2017",
      }
      "GmailUsers": {
@@ -9,12 +9,12 @@ DataSet :
      }
 }
 
-Test: T1 login on Linkedin Data Set Credentials
+Test: T1 login on Linkedin DataSet (globule) Credentials
 #T1 #ExcelData #regression
 DataSet: Credentials
 Step: open URL 'https://www.linkedin.com/'
 Verify: @Email_Field is displayed
-Step: Enter {username} in @Email_Field
+Step: Enter {userName} in @Email_Field
 Step: Enter {password} in @Password_Field
 Step: click on @Login_Button
 Verify: @homePage is displayed
@@ -34,16 +34,15 @@ Verify: @UserNameError text is equal 'Choose a Gmail address'
 Verify: @PasswordError text is equal 'Enter a password'
 Step: Enter {firstName} on @FirstName
 Step: Enter {lastName} on @LastName
-Step: pause 2 sec
 Step: clear @UserName
-Step: pause 2 sec
-Step: Enter {username} on @UserName
+Step: Enter {userName} on @UserName
 Step: Enter {password} on @Password
 End
 
 Test: T3 Verify Page Title is equal
 #T3 #regression
 Collection Name: amazon_open
+Step: Open URL 'https://www.amazon.in'
 Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
 Step: Scroll to coordinate (300,250)
 Step: pause 2 sec
@@ -53,7 +52,7 @@ Verify: @Email is displayed
 End
 
 Test: T4 Verify Collection without Test
-#T4 #regression
+#regression
 Collection: amazon_open
 End
 
@@ -72,10 +71,8 @@ Step: Press 'CTRL' Plus 'V' in @Email
 Step: pause 1 sec
 Step: Press tab
 Step: Click on @continue button
-Step: pause 1 sec
 Step: Enter 'gopi1010viral' in @Password1
 Step: Press tab
-Step: pause 1 sec
 Step: press enter on @Login Button
 Step: pause 4 sec
 End
@@ -100,6 +97,7 @@ Step: Click on @Message
 Step: Enter 'Tesbo' on @MessageBox
 Step: Click on @Send
 Step: pause for 5sec
+
 [Ankit]
 Step: pause for 5sec
 Step: Open URL 'https://www.linkedin.com'
@@ -159,7 +157,7 @@ End
 Test: T8 Verify Iframes
 #T8 #regression
 Step: Open Url 'http://toolsqa.com/iframe-practice-page/'
-Step: Scroll to @IFrame2
+Step: scroll to @IFrame2
 Step: Switch to frame using id 'iframe2'
 Step: Scroll to @imgTitle
 Step: pause for 2sec
@@ -194,4 +192,26 @@ Step: Switch to main window
 Step: pause 4 sec
 Step: Click on @NewWindow
 Step: pause 4 sec
+End
+
+Test: T10 Verify Dabble click
+#T10 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: Scroll to coordinate (300,250)
+Step: pause 2 sec
+Step: Dabble click on @TextPath
+Step: pause 2 sec
+Step: click on @sign_in button
+Verify: @Email is displayed
+End
+
+Test: T11 Verify Right click
+#T11 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: Right click on @sign_in button
+Step: pause 2 sec
+Step: click on @sign_in button
+Verify: @Email is displayed
 End
