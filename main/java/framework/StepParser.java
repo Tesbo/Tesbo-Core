@@ -481,8 +481,11 @@ public class StepParser {
 
         //extracting string
         numbers = step.replaceAll("[^-?0-9]+", " ");
-
-        return Arrays.asList(numbers.trim().split(" ")).get(index);
+        try {
+            return Arrays.asList(numbers.trim().split(" ")).get(index);
+        }catch (Exception e){
+            throw new TesboException("Please add coordinate value (X, Y) in step '"+step+"'");
+        }
     }
 
     public void generateReportDir() {
