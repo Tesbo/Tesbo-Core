@@ -135,15 +135,18 @@ public class Validation {
 
     public void tagNameAndSuiteNameValidation() {
         try {
-            JSONArray tegName= (JSONArray) getCofig.getTags();
+            JSONArray tagName= (JSONArray) getCofig.getTags();
             JSONArray suiteName= (JSONArray) getCofig.getSuite();
-            if(tegName!=null) {
-                if (tegName.size() > 0) {
-                    for (Object tag : tegName) {
+
+            if(tagName!=null) {
+                if (tagName.size() > 0) {
+                    for (Object tag : tagName) {
                         JSONObject testName = suiteParser.getTestNameByTag(tag.toString());
                         if (testName.size() == 0) { throw new TesboException("Test not found for '" + tag.toString() + "' tag."); }
                     }
-                } else { throw new TesboException("Tag name is not found in config file."); }
+                } else {
+                    throw new TesboException("Tag name is not found in config file.");
+                }
             }
             else if(suiteName!=null) {
                 if (suiteName.size() > 0) {
@@ -162,7 +165,7 @@ public class Validation {
             }
 
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -175,8 +178,9 @@ public class Validation {
         }
         if(parallelExecution.get("status").toString().equalsIgnoreCase("true"))
         {
-            if(parallelExecution.get("count").toString().equalsIgnoreCase("0"))
+            if(parallelExecution.get("count").toString().equalsIgnoreCase("0")) {
                 throw new TesboException("Enter count greater than zero in parallel execution.");
+            }
         }
     }
 
