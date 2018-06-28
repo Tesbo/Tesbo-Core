@@ -1,5 +1,6 @@
 package ExtCode;
 
+import framework.GetConfiguration;
 import org.openqa.selenium.WebDriver;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
@@ -23,8 +24,9 @@ public class ExternalCode  {
      */
     public void runAllAnnotatedWith(Class<? extends Annotation> annotation, String tagVal, WebDriver driver){
         boolean flag=false;
+        GetConfiguration getConfiguration=new GetConfiguration();
         Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage("ExtTestCode"))
+                .setUrls(ClasspathHelper.forPackage(getConfiguration.getExtCodeDirectory()))
                 .setScanners(new MethodAnnotationsScanner()));
         Set<Method> methods = reflections.getMethodsAnnotatedWith(annotation);
         for (Method m : methods) {
