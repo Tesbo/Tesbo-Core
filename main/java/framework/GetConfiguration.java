@@ -77,6 +77,20 @@ public class GetConfiguration {
         else
             return seleniumAddress;
     }
+
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public String getExtCodeDirectory()  {
+        Utility parser = new Utility();
+        File jsonFile = new File("config.json");
+        String[] directoryArray= parser.loadJsonFile(jsonFile.getAbsolutePath()).get("ExtCodeDirectory").toString().split("/");
+        return directoryArray[directoryArray.length-1];
+    }
+
     public ArrayList<String> getSuiteName() {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
