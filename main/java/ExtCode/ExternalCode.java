@@ -7,6 +7,8 @@ import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import Exception.*;
+
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -25,8 +27,9 @@ public class ExternalCode  {
     public void runAllAnnotatedWith(Class<? extends Annotation> annotation, String tagVal, WebDriver driver){
         boolean flag=false;
         GetConfiguration getConfiguration=new GetConfiguration();
+        File file=new File(getConfiguration.getExtCodeDirectory());
         Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(getConfiguration.getExtCodeDirectory()))
+                .setUrls(ClasspathHelper.forPackage(file.getName()))
                 .setScanners(new MethodAnnotationsScanner()));
         Set<Method> methods = reflections.getMethodsAnnotatedWith(annotation);
         for (Method m : methods) {
