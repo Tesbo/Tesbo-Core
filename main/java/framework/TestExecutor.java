@@ -34,6 +34,7 @@ public class TestExecutor implements Runnable {
     JSONObject test;
     JSONArray listOfSession;
     boolean isSession = false;
+    TestExecutionBuilder testExecutionBuilder=new TestExecutionBuilder();
 
     public TestExecutor() { }
     public TestExecutor(JSONObject test) {
@@ -288,8 +289,24 @@ public class TestExecutor implements Runnable {
         testReportObject.put("totalTime", stopTimeTest - startTime);
         testReportObject.put("status", testResult);
 
-
         buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(), test.get("testName").toString(), testReportObject);
+        if(testResult.toLowerCase().equals("failed")){
+
+           testExecutionBuilder.failTestExecutionQueue(test);
+        }
+        else {
+            Object removeTest=null;
+            if(TestExecutionBuilder.failTestQueue.size()>0){
+                for(Object test:TestExecutionBuilder.failTestQueue){
+                    if(test.equals(this.test)){
+                        removeTest=test;
+                    }
+                }
+                if(removeTest!=null){
+                    TestExecutionBuilder.failTestQueue.remove(test);
+                }
+            }
+        }
         return testReportObject;
     }
 
