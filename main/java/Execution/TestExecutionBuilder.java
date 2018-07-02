@@ -30,6 +30,7 @@ public class TestExecutionBuilder {
     public static boolean repotFileGenerated = false;
     DataDrivenParser dataDrivenParser = new DataDrivenParser();
     Logger logger = new Logger();
+    public static JSONArray failTestQueue=new JSONArray();
 
     public void startExecution() throws Exception {
 
@@ -74,7 +75,7 @@ public class TestExecutionBuilder {
 
 
 
-        logger.customeLog("| Total : " + data.getCurrentBuildTotal(new File(getBuildHistoryPath()).getAbsolutePath()), Ansi.FColor.NONE);
+        /*logger.customeLog("| Total : " + data.getCurrentBuildTotal(new File(getBuildHistoryPath()).getAbsolutePath()), Ansi.FColor.NONE);
         logger.customeLog(" | Passed : " + data.getCurrentBuildPassed(buildHistory), Ansi.FColor.NONE);
         logger.customeLog(" | Failed : " + data.getCurrentBuildFailed(buildHistory), Ansi.FColor.NONE);
         logger.customeLog(" | Time : " + data.getCurrentBuildTotalTime(buildHistory) + " |\n", Ansi.FColor.NONE);
@@ -82,7 +83,7 @@ public class TestExecutionBuilder {
 
         logger.customeLog("\nReport Generated at :" + file.getAbsolutePath() + "\n", Ansi.FColor.NONE);
         logger.titleLog("-----------------------------------------------------------------------");
-
+*/
     }
 
 
@@ -112,7 +113,7 @@ public class TestExecutionBuilder {
         return newName;
     }
 
-    public void parallelBuilder(JSONArray testExecutionQueue) throws Exception {
+    public void parallelBuilder(JSONArray testExecutionQueue) {
         Validation validation = new Validation();
         GetConfiguration config = new GetConfiguration();
         JSONObject parallelConfig = config.getParallel();
@@ -127,6 +128,7 @@ public class TestExecutionBuilder {
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
         for (int i = 0; i < testExecutionQueue.size(); i++) {
+
             Runnable worker = new TestExecutor((JSONObject) testExecutionQueue.get(i));
             executor.execute(worker);
         }
@@ -146,8 +148,22 @@ public class TestExecutionBuilder {
          * @Discription : Run by tag method.
          */
         try {
-
             parallelBuilder(buildExecutionQueue());
+            int failTestQueuesize= failTestQueue.size();
+            if(failTestQueuesize>0){
+                int retryAnalyserCount=Integer.parseInt(config.getRetryAnalyser());
+                if(retryAnalyserCount>0){
+
+                    JSONArray TestQueue=failTestQueue;
+                    for(int i=1;i<=retryAnalyserCount;i++) {
+                        parallelBuilder(TestQueue);
+                        if(failTestQueuesize!=failTestQueue.size()){
+                            TestQueue=failTestQueue;
+                            failTestQueuesize=failTestQueue.size();
+                        }
+                    }
+                }
+            }
 
         } catch (Exception ne) {
             ne.printStackTrace();
@@ -264,6 +280,28 @@ public class TestExecutionBuilder {
 
 
         return completeTestObjectArray;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param testQueue
+     */
+    public void failTestExecutionQueue(JSONObject testQueue) {
+        if(failTestQueue.size()==0) {
+            failTestQueue.add(testQueue);
+        }
+        else{
+            boolean flag=false;
+            for(Object test:failTestQueue){
+                if(test.equals(testQueue)){
+                    flag=true;
+                }
+            }
+            if(!flag){
+                failTestQueue.add(testQueue);
+            }
+        }
     }
 
 

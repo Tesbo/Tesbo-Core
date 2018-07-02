@@ -182,4 +182,17 @@ public class GetConfiguration {
         return (JSONArray) by.get("suite");
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public String getRetryAnalyser()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        JSONObject retryAnalyser = (JSONObject) run.get("retryAnalyser");
+        return (String) retryAnalyser.get("count");
+    }
+
 }
