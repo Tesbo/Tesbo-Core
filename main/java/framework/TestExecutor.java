@@ -143,7 +143,14 @@ public class TestExecutor implements Runnable {
 
             stepReportObject.put("stepIndex", i + 1);
             stepReportObject.put("startTime", startTimeStep);
+
+            if (step.toString().contains("{") && step.toString().contains("}")) {
+                ReportParser reportParser=new ReportParser();
+                stepReportObject.put("steps",reportParser.detaSetStepReplaceValue(test,step.toString()));
+            }
+            else {
             stepReportObject.put("steps", step.toString());
+            }
 
             if (isSession) {
                 initializeSessionRunTime(step);
@@ -260,7 +267,6 @@ public class TestExecutor implements Runnable {
 
             testStepArray.add(stepReportObject);
 
-
             if (!stepPassed) {
                 break;
             }
@@ -287,7 +293,6 @@ public class TestExecutor implements Runnable {
 
         testReportObject.put("totalTime", stopTimeTest - startTime);
         testReportObject.put("status", testResult);
-
 
         buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(), test.get("testName").toString(), testReportObject);
         return testReportObject;
