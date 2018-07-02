@@ -87,8 +87,7 @@ public class GetConfiguration {
     public String getExtCodeDirectory()  {
         Utility parser = new Utility();
         File jsonFile = new File("config.json");
-        String[] directoryArray= parser.loadJsonFile(jsonFile.getAbsolutePath()).get("ExtCodeDirectory").toString().split("/");
-        return directoryArray[directoryArray.length-1];
+        return parser.loadJsonFile(jsonFile.getAbsolutePath()).get("ExtCodeDirectory").toString();
     }
 
     public ArrayList<String> getSuiteName() {
