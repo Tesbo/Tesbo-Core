@@ -107,7 +107,7 @@ public class Validation {
         if(browserList.size()>0){
             boolean flag=false;
             for (String browser:browserList){
-                if(browser.equalsIgnoreCase("firefox") || browser.equalsIgnoreCase("chrome") ||browser.equalsIgnoreCase("ie") ){
+                if(browser.equalsIgnoreCase("opera") || browser.equalsIgnoreCase("firefox") || browser.equalsIgnoreCase("chrome") ||browser.equalsIgnoreCase("ie") ){
                     flag=true;
                 }
                 if(browser.equalsIgnoreCase("Internet Explorer") || browser.equalsIgnoreCase("InternetExplorer")){
@@ -159,8 +159,8 @@ public class Validation {
                         boolean isSuite=false;
                         JSONArray SuiteList= suiteParser.getSuites(getCofig.getSuitesDirectory());
                         for(Object suitePath : SuiteList){
-                            String[] suites=suitePath.toString().split("\\\\");
-                            if(suite.toString().equalsIgnoreCase(suites[suites.length-1].split("\\.")[0])){ isSuite=true; }
+                            File file=new File(suitePath.toString());
+                            if(suite.toString().equalsIgnoreCase(file.getName().split("\\.")[0])){ isSuite=true; }
                         }
                         if (!isSuite) { throw new TesboException("'"+suite+ "' suite is not found in suite directory"); }
                         JSONObject testNameBySuite = suiteParser.getTestNameBySuite(suite.toString());

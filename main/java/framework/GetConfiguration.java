@@ -192,7 +192,29 @@ public class GetConfiguration {
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         JSONObject retryAnalyser = (JSONObject) run.get("retryAnalyser");
-        return (String) retryAnalyser.get("count");
+        try {
+            return (String) retryAnalyser.get("count");
+        }catch (Exception e)
+        {
+            return "0";
+        }
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public String getBinaryPath(String browser)  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        JSONObject browsersPath = (JSONObject) run.get("binaries");
+        try {
+            return (String) browsersPath.get(browser);
+        }catch (Exception e){
+            return null;
+        }
     }
 
 }
