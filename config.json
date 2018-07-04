@@ -1,21 +1,25 @@
 {
-  "SuiteDirectory": "/Volumes/Viral/Tesbo/tesbo-core/test/java/Suites",
-  "locatorDirectory": "/Volumes/Viral/Tesbo/tesbo-core/test/java/Locator",
+  "SuiteDirectory": "E:/Tesbo_JAR/tesbo-core/test/suite",
+  "locatorDirectory": "E:/Tesbo_JAR/tesbo-core/test/locator",
+  "ExtCodeDirectory": "E:/Tesbo_JAR/tesbo-core/test/ExtTestCode",
   "run": {
-    "baseUrl": "https://vigoreport.io",
+    "baseUrl": "https://amazon.in",
     "by": {
-      "suite": [
-        "login"
+      "tag": [
+        "regression"
       ]
     },
     "browser": {
       "name": [
-        "chrome"
+        "Firefox"
       ]
     },
     "parallel": {
       "status": true,
-      "count": "1"
+      "count": "5"
+    },
+    "retryAnalyser":{
+      "count":"1"
     }
   }
 }
