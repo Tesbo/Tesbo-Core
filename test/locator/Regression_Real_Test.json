@@ -22,7 +22,7 @@
   "Password1":"//input[@type='password']",
   "Login":"//*[@id='signInSubmit']",
   "Logged_Page":"//*[contains(text(),'Hello, viral')]",
-  "Search1":"//input[@id='twotabsearchtextbox']",
+  "Search_box":"//input[@id='twotabsearchtextbox']",
   "Search":"(//input[@type='submit'][@value='Go'])[1]",
   "Available_now":"//div[contains(text(),'Available now')]",
   "Next_page":"//span[@id='pagnNextString']",
@@ -60,8 +60,13 @@
   "MessageCon":"//div/p[@class='msg-s-event-listitem__body Sans-15px-black-70%']",
   "MessageIcon":"//span[@id='messaging-tab-icon']",
   "TextPath":"(//SPAN[@class='a-color-base'])[2]",
-  "GoogleSearch":"//INPUT[@id='lst-ib']"
-
+  "GoogleSearch":"//INPUT[@id='lst-ib']",
+  "sortBy":"//SELECT[@id='sort']",
+  "priceLowToHigh":"//*[@id='sort']/option[3]",
+  "FirstResult":"(//*[@class='a-link-normal s-access-detail-page  s-color-twister-title-link a-text-normal'])[1]",
+  "paytm_search":"//INPUT[@type='search']",
+  "paytmResult":"(//*[@class='_2i1r'])[1]",
+  "BuyMobile":"//BUTTON[@class='_2CNI']"
 
 
 

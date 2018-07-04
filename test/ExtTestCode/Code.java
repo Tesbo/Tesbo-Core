@@ -5,7 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import ExtCode.*;
-
+import org.openqa.selenium.WebElement;
 import java.util.Random;
 
 
@@ -14,6 +14,7 @@ public class Code extends ExtendTesboDriver {
         super(driver);
     }
 
+    static String LowestPriceMobile;
 
     @ExtCode("url")
     public void ExternalCode() {
@@ -23,7 +24,7 @@ public class Code extends ExtendTesboDriver {
 
 
   /*  public static void main(String[] args) {
-        Random();
+
     }*/
 
     @ExtCode("Random")
@@ -48,6 +49,29 @@ public class Code extends ExtendTesboDriver {
         Dimension dimension = new Dimension(900, 750);
         driver.manage().window().setSize(dimension);
 
+    }
+
+    @ExtCode("me")
+    public void me() throws InterruptedException {
+        driver.findElement(By.xpath("//*[@class='nav-item__profile-member-photo nav-item__icon']")).click();
+        Thread.sleep(2000);
+        driver.findElement(By.xpath("//*[@data-control-name='nav.settings_signout']")).click();
+    }
+
+    @ExtCode("Get Data")
+    public void getName() throws InterruptedException {
+        driver.findElement(By.xpath("//SELECT[@id='sort']")).click();
+        Thread.sleep(1000);
+        driver.findElement(By.xpath("//*[@id='sort']/option[3]")).click();
+        Thread.sleep(4000);
+        WebElement name = driver.findElement(By.xpath("(//*[@class='a-link-normal s-access-detail-page  s-color-twister-title-link a-text-normal'])[2]"));
+        LowestPriceMobile = name.getText();
+    }
+
+    @ExtCode("Send Data")
+    public void sendName() throws InterruptedException {
+        Thread.sleep(1000);
+        driver.findElement(By.xpath("//INPUT[@type='search']")).sendKeys(LowestPriceMobile);
     }
 
 }
