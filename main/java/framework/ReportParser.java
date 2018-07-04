@@ -1,13 +1,14 @@
 package framework;
 
 import Execution.TestExecutionBuilder;
+import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
-import java.util.ArrayList;
+import Exception.TesboException;
 
 public class ReportParser {
 
@@ -95,5 +96,59 @@ file.close();
         }
     }
 
+    /**
+     * @param test
+     * @param step
+     * @return
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public String detaSetStepReplaceValue(JSONObject test, String step) {
+
+        DataDrivenParser dataDrivenParser=new DataDrivenParser();
+        Logger logger = new Logger();
+        String textToEnter = "";
+        int startPoint = 0;
+        int endPoint = 0;
+        String headerName="";
+        if (step.contains("{") && step.contains("}")) {
+            startPoint = step.indexOf("{") + 1;
+            endPoint = step.lastIndexOf("}");
+            headerName = step.substring(startPoint, endPoint);
+            try {
+                if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
+                    try {
+                        textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"));
+
+                    } catch (StringIndexOutOfBoundsException e) {
+                        logger.stepLog(step);
+                        logger.testFailed("no string to enter. Create a separate exeception here");
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                if (test.get("dataType").toString().equalsIgnoreCase("global")) {
+                    textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
+                    logger.stepLog(step.replace(headerName, textToEnter));
+
+                }
+            } catch (Exception e) {
+                throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
+            }
+        } else {
+            startPoint = step.indexOf("'") + 1;
+            endPoint = step.lastIndexOf("'");
+            try {
+
+                textToEnter = step.substring(startPoint, endPoint);
+
+            } catch (StringIndexOutOfBoundsException e) {
+                throw new TesboException("No string found to enter.");
+            }
+        }
+        return step.replace(headerName, textToEnter);
+    }
 
     }
