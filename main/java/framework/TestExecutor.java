@@ -248,7 +248,12 @@ public class TestExecutor implements Runnable {
             }
 
 
-
+            if (step.toString().toLowerCase().contains("capture screenshot")) {
+                if(stepParser.screenShotURL !=null){
+                    stepReportObject.remove("steps");
+                    stepReportObject.put("steps", "Screenshot: "+stepParser.screenShotURL);
+                }
+            }
 
             if (!stepPassed) {
                 stepReportObject.put("status", "failed");
