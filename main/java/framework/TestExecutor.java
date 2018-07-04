@@ -349,22 +349,23 @@ public class TestExecutor implements Runnable {
         Commands cmd = new Commands();
         seleniumAddress = cmd.getSeleniumAddress();
         String browserName = test.get("browser").toString();
-        DesiredCapabilities capability = null;
-        ArrayList capabilities = null;
+        DesiredCapabilities capability = new DesiredCapabilities();
+        JSONObject capabilities = null;
         try {
 
             if(config.getBinaryPath(browserName+"Path")!=null){
                 initializeBrowserFromBinaryPath(browserName);
             }
             else {
-                if (cmd.IsCapabilities(browserName)) {
+                if (cmd.IsCapabilities(browserName) && seleniumAddress != null) {
                     capabilities = cmd.getCapabilities(browserName);
-                    if (capabilities != null)
-                    capability = cmd.setCapabilities(capabilities, capability);
+                    if (capabilities != null){
+                        capability = cmd.setCapabilities(capabilities,capability);
+                    }
                 }
 
                 if (browserName.equalsIgnoreCase("firefox")) {
-                    capability = DesiredCapabilities.firefox();
+                    capability.setCapability("browserName","firefox");
                     WebDriverManager.firefoxdriver().setup();
                     System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "true");
                     System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE, "/dev/null");
@@ -373,7 +374,7 @@ public class TestExecutor implements Runnable {
                     }
                 }
                 if (browserName.equalsIgnoreCase("chrome")) {
-                    capability = DesiredCapabilities.chrome();
+                    capability.setCapability("browserName","chrome");
                     WebDriverManager.chromedriver().setup();
 
                     if (seleniumAddress == null) {
@@ -381,7 +382,7 @@ public class TestExecutor implements Runnable {
                     }
                 }
                 if (browserName.equalsIgnoreCase("ie")) {
-                    capability = DesiredCapabilities.internetExplorer();
+                    capability.setCapability("browserName","internetExplorer");
                     WebDriverManager.iedriver().setup();
                     if (seleniumAddress == null) {
                         driver = new InternetExplorerDriver();
@@ -395,8 +396,7 @@ public class TestExecutor implements Runnable {
 
             if (seleniumAddress != null) {
                 driver = cmd.openRemoteBrowser(driver, capability, seleniumAddress);
-                if (session != null)
-                    sessionList.put(session.toString(), driver);
+                if (session != null){ sessionList.put(session.toString(), driver);}
             }
 
 
