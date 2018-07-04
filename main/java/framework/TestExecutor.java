@@ -14,13 +14,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
+
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -352,38 +351,44 @@ public class TestExecutor implements Runnable {
         String browserName = test.get("browser").toString();
         DesiredCapabilities capability = null;
         ArrayList capabilities = null;
-        if (cmd.IsCapabilities(browserName)) {
-            capabilities = cmd.getCapabilities(browserName);
-            if (capabilities != null)
-                capability = cmd.setCapabilities(capabilities, capability);
-        }
         try {
-            if (browserName.equalsIgnoreCase("firefox")) {
-                capability = DesiredCapabilities.firefox();
-                WebDriverManager.firefoxdriver().setup();
-                System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "true");
-                System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE, "/dev/null");
-                if (seleniumAddress == null) {
-                    driver = new FirefoxDriver();
-                }
-            }
-            if (browserName.equalsIgnoreCase("chrome")) {
-                capability = DesiredCapabilities.chrome();
-                WebDriverManager.chromedriver().setup();
 
-                if (seleniumAddress == null) {
-                    driver = new ChromeDriver();
-                }
+            if(config.getBinaryPath(browserName+"Path")!=null){
+                initializeBrowserFromBinaryPath(browserName);
             }
-            if (browserName.equalsIgnoreCase("ie")) {
-                capability = DesiredCapabilities.internetExplorer();
-                WebDriverManager.iedriver().setup();
-                if (seleniumAddress == null) {
-                    driver = new InternetExplorerDriver();
+            else {
+                if (cmd.IsCapabilities(browserName)) {
+                    capabilities = cmd.getCapabilities(browserName);
+                    if (capabilities != null)
+                    capability = cmd.setCapabilities(capabilities, capability);
                 }
 
-            }
+                if (browserName.equalsIgnoreCase("firefox")) {
+                    capability = DesiredCapabilities.firefox();
+                    WebDriverManager.firefoxdriver().setup();
+                    System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "true");
+                    System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE, "/dev/null");
+                    if (seleniumAddress == null) {
+                        driver = new FirefoxDriver();
+                    }
+                }
+                if (browserName.equalsIgnoreCase("chrome")) {
+                    capability = DesiredCapabilities.chrome();
+                    WebDriverManager.chromedriver().setup();
 
+                    if (seleniumAddress == null) {
+                        driver = new ChromeDriver();
+                    }
+                }
+                if (browserName.equalsIgnoreCase("ie")) {
+                    capability = DesiredCapabilities.internetExplorer();
+                    WebDriverManager.iedriver().setup();
+                    if (seleniumAddress == null) {
+                        driver = new InternetExplorerDriver();
+                    }
+
+                }
+            }
             if (session != null) {
                 sessionList.put(session.toString(), driver);
             }
@@ -444,5 +449,37 @@ public class TestExecutor implements Runnable {
         }
 
     }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param browserName
+     * @return
+     */
+    public WebDriver initializeBrowserFromBinaryPath(String browserName) {
+        GetConfiguration config = new GetConfiguration();
+        if(config.getBinaryPath(browserName+"Path")!=null){
+            if (browserName.equalsIgnoreCase("firefox")) {
+                System.setProperty("webdriver.gecko.driver", config.getBinaryPath(browserName+"Path"));
+                driver = new FirefoxDriver();
+            }
+            if (browserName.equalsIgnoreCase("chrome")) {
+                System.setProperty("webdriver.chrome.driver", config.getBinaryPath(browserName+"Path"));
+                driver = new ChromeDriver();
+            }
+            if (browserName.equalsIgnoreCase("ie")) {
+                System.setProperty("webdriver.ie.driver", config.getBinaryPath(browserName+"Path"));
+                driver = new InternetExplorerDriver();
+            }
+            if (browserName.equalsIgnoreCase("opera")) {
+                System.setProperty("webdriver.opera.driver", config.getBinaryPath(browserName+"Path"));
+                driver = new OperaDriver();
+            }
+        }
+
+
+        return driver;
+    }
+
 
 }
