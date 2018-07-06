@@ -6,12 +6,12 @@
     "baseUrl": "https://amazon.in",
     "by": {
       "tag": [
-        "regression"
+        "T14"
       ]
     },
     "browser": {
       "name": [
-        "Firefox"
+        "chrome"
       ]
     },
     "parallel": {
@@ -19,7 +19,7 @@
       "count": "5"
     },
     "retryAnalyser":{
-      "count":"1"
+      "count":"0"
     }
   }
 }
