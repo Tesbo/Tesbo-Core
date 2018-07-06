@@ -521,11 +521,13 @@ public class StepParser {
             String[] Steps = step.split(" ");
             boolean flag=false;
             for (int i = 0; i < Steps.length; i++) {
+
                 if (Steps[i].equalsIgnoreCase("'ctrl'")) {
                     flag=true;
                     if(!(Steps[i + 2].replaceAll("'", "").toLowerCase().equals("")) &  Steps[i + 2].contains("'")
                             & ( Steps[i + 2].replaceAll("'", "").toLowerCase().equals("a") | Steps[i + 2].replaceAll("'", "").toLowerCase().equals("c") | Steps[i + 2].replaceAll("'", "").toLowerCase().equals("v"))) {
-                        actions.keyDown(Keys.CONTROL).sendKeys(Steps[i + 2].replaceAll("'", "").toLowerCase()).keyUp(Keys.CONTROL).perform();
+                        //actions.keyDown(Keys.COMMAND).sendKeys(Steps[i + 2].replaceAll("'", "").toLowerCase()).keyUp(Keys.COMMAND).perform();
+                        cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(Keys.chord(Keys.CONTROL, Steps[i + 2].replaceAll("'", "").toLowerCase()));
                     }
                     else {
                         throw new TesboException("Please enter valid key");

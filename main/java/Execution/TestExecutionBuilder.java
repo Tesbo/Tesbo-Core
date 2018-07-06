@@ -141,13 +141,14 @@ public class TestExecutionBuilder {
         Validation validation = new Validation();
         GetConfiguration config = new GetConfiguration();
         ReportParser report = new ReportParser();
-        validation.beforeExecutionValidation();
+
         int tagSuiteCount = 0;
 
         /**
          * @Discription : Run by tag method.
          */
         try {
+            validation.beforeExecutionValidation();
             parallelBuilder(buildExecutionQueue());
             int failTestQueuesize= failTestQueue.size();
             if(failTestQueuesize>0){
@@ -202,7 +203,7 @@ public class TestExecutionBuilder {
         }
 
 
-        try {
+
             for (String suite : suiteOrTaglist) {
 
                 JSONObject testNameWithSuites = null;
@@ -274,9 +275,7 @@ public class TestExecutionBuilder {
                     }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
 
 
         return completeTestObjectArray;

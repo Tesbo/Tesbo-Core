@@ -2,7 +2,7 @@ package framework;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
+import Exception.*;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ public class GetConfiguration {
         return file.getAbsolutePath();
     }
 
-    public ArrayList<String> getBrowsers() throws Exception {
+    public ArrayList<String> getBrowsers() {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
@@ -87,7 +87,11 @@ public class GetConfiguration {
     public String getExtCodeDirectory()  {
         Utility parser = new Utility();
         File jsonFile = new File("config.json");
-        return parser.loadJsonFile(jsonFile.getAbsolutePath()).get("ExtCodeDirectory").toString();
+        try {
+            return parser.loadJsonFile(jsonFile.getAbsolutePath()).get("ExtCodeDirectory").toString();
+        }catch (Exception e){
+            throw new TesboException("ExtCodeDirectory is not define on config");
+        }
     }
 
     public ArrayList<String> getSuiteName() {

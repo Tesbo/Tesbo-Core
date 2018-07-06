@@ -217,6 +217,9 @@ public class SuiteParser {
                     endpoint = i;
                     break;
                 }
+                if(allLines[i].replaceAll("\\s{2,}", " ").trim().equals("end")){
+                    throw new TesboException("Please define end step in a correct way: End");
+                }
             }
         }
         if(testCount>=2 || endpoint==0) {
