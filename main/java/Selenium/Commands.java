@@ -4,6 +4,7 @@ import framework.GetConfiguration;
 import framework.Utility;
 import logger.Logger;
 import org.apache.commons.io.FileUtils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -485,19 +486,16 @@ public class Commands {
         JSONObject capabilities = null;
         boolean browser = false;
         try {
-            capabilities = config.getCapabilities();
+            capabilities = config.getCapabilities(browserName);
         } catch (Exception e) {
             e.printStackTrace();
         }
         if (capabilities != null) {
-            Set<String> browserCaps = (Set<String>) capabilities.keySet();
-            for (String browserCap : browserCaps) {
-                if (browserCap.equalsIgnoreCase(browserName)) {
-                    if (((ArrayList<String>) capabilities.get(browserCap)).size() == 0)
-                        browser = false;
-                    else
-                        browser = true;
-                }
+            if(capabilities.size()>0){
+                browser = true;
+            }
+            else {
+                browser = false;
             }
         }
         return browser;
@@ -527,17 +525,17 @@ public class Commands {
      * @auther : Ankit Mistry
      * @lastModifiedBy:
      */
-    public ArrayList<String> getCapabilities(String browserName) {
+    public JSONObject getCapabilities(String browserName) {
         GetConfiguration config = new GetConfiguration();
         JSONObject capabilities = null;
         try {
-            capabilities = config.getCapabilities();
+            capabilities = config.getCapabilities(browserName);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ArrayList<String> capabilitieList = (ArrayList<String>) capabilities.get(browserName);
+        //ArrayList<String> capabilitieList = (ArrayList<String>) capabilities.get(browserName);
 
-        return capabilitieList;
+        return capabilities;
     }
 
     /**
@@ -549,12 +547,10 @@ public class Commands {
      * @auther : Ankit Mistry
      * @lastModifiedBy:
      */
-    public DesiredCapabilities setCapabilities(ArrayList<String> Capabilities, DesiredCapabilities capability) {
-        for (Object cap : Capabilities) {
-            JSONObject objCap = (JSONObject) cap;
-            Set capKey = objCap.keySet();
-            Collection capValue = objCap.values();
-            capability.setCapability(capKey.iterator().next().toString(), capValue.iterator().next());
+    public DesiredCapabilities setCapabilities(JSONObject Capabilities, DesiredCapabilities capability) {
+        //DesiredCapabilities capability1=new DesiredCapabilities();
+        for (Object cap : Capabilities.keySet()) {
+            capability.setCapability(cap.toString(), Capabilities.get(cap.toString()));
         }
         return capability;
     }

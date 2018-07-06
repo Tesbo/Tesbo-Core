@@ -25,18 +25,18 @@ public class GetConfiguration {
         return (JSONArray) browser.get("name");
     }
 
-    public JSONObject getCapabilities()  {
+    public JSONObject getCapabilities(String browserName)  {
         Utility parser = new Utility();
         JSONObject capabilities =null;
-        JSONObject main = parser.loadJsonFile(getConfigFilePath());
-        JSONObject run = (JSONObject) main.get("run");
-        JSONObject browser = (JSONObject) run.get("browser");
-        capabilities = (JSONObject) browser.get("capabilities");
-
-        if(capabilities==null||capabilities.equals(""))
-            return  null;
-        else
-            return (JSONObject) browser.get("capabilities");
+        try {
+            JSONObject main = parser.loadJsonFile(getConfigFilePath());
+            JSONObject run = (JSONObject) main.get("run");
+            JSONObject browser = (JSONObject) run.get("capabilities");
+            capabilities = (JSONObject) browser.get(browserName);
+            return capabilities;
+        }catch (Exception e) {
+            return null;
+        }
 
     }
     public ArrayList<String> getTags() {
