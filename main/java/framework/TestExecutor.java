@@ -27,6 +27,7 @@ public class TestExecutor implements Runnable {
 
 
     static Logger logger = new Logger();
+    ReportParser reportParser=new ReportParser();
     // public JSONObject testResult = new JSONObject();
     public WebDriver driver;
     public Map<String, WebDriver> sessionList = new HashMap<String, WebDriver>();
@@ -247,8 +248,7 @@ public class TestExecutor implements Runnable {
                 stepNumber++;
             }
 
-
-
+            reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
 
             if (!stepPassed) {
                 stepReportObject.put("status", "failed");

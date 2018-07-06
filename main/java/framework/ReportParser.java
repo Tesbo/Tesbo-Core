@@ -151,4 +151,21 @@ file.close();
         return step.replace(headerName, textToEnter);
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @param stepReportObject
+     * @param step
+     * @return
+     */
+    public JSONObject addScreenshotUrlInReport(JSONObject stepReportObject, String step)  {
+        StepParser stepParser=new StepParser();
+        if (step.toString().toLowerCase().contains("capture screenshot")) {
+            if(stepParser.screenShotURL !=null){
+                stepReportObject.remove("steps");
+                stepReportObject.put("steps", "Screenshot: "+stepParser.screenShotURL);
+            }
+        }
+        return stepReportObject;
     }
+
+}

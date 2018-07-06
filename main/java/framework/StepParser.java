@@ -27,7 +27,7 @@ public class StepParser {
 
     Logger logger = new Logger();
     DataDrivenParser dataDrivenParser = new DataDrivenParser();
-
+    public static String screenShotURL=null;
 
     public void parseStep(WebDriver driver, JSONObject test, String step) throws Exception {
         Commands cmd = new Commands();
@@ -49,6 +49,12 @@ public class StepParser {
         //Double Click
         if (step.toLowerCase().contains("double click")) {
             cmd.doubleClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+        }
+
+        //Capture Screenshot
+        if (step.toLowerCase().contains("capture screenshot")) {
+            screenShotURL=cmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
+            logger.stepLog("Screenshot: "+screenShotURL);
         }
 
         //clear cookies and cache
