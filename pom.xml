@@ -145,6 +145,12 @@
             <version>0.9.9-RC1</version>
         </dependency>
 
+        <dependency>
+            <groupId>me.xdrop</groupId>
+            <artifactId>jrand</artifactId>
+            <version>0.2.5-alpha</version>
+        </dependency>
+
 
     </dependencies>
 </project>

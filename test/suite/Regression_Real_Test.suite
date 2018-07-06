@@ -270,3 +270,71 @@ Step: Click on @BuyMobile
 Step: pause 5 sec
 End
 
+Test: T16 Verify External Code
+#T16 #regression
+Step: Open URL 'https://www.google.in/'
+Step: pause 2 sec
+Step: Enter 'random.firstname' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.email' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.username' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.mobilenumber' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.lastname' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.age' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.gender' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.birthday' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.debitcard' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.expirydate' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.cvv' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.Country' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.postcode' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.street' on @GoogleSearch
+Step: pause 2 sec
+Step: Clear @GoogleSearch
+Step: Enter 'random.city' on @GoogleSearch
+Step: pause 2 sec
+End
+
+Test: Verify clear cookies
+#T17
+Step: Open URL 'https://www.linkedin.com'
+Step: pause for 3 sec
+Step: Enter 'viral103patel@gmail.com' into @emailTextBox
+Step: pause for 3 sec
+Step: Enter 'jsbot@2017' into @passwordTextBox
+Step: pause for 3 sec
+Step: Click on @signInTextBox
+ExtCode: signOut
+Step: Pause 3 sec
+Step: Click on @emailTextBox
+Step: Pause 5 sec
+Step: Clear Cookies
+Step: Pause 5 sec
+Step: Click on @emailTextBox
+Step: Pause 5 sec
+End
