@@ -51,7 +51,7 @@ public class Code extends ExtendTesboDriver {
 
     }
 
-    @ExtCode("me")
+    @ExtCode("signOut")
     public void me() throws InterruptedException {
         driver.findElement(By.xpath("//*[@class='nav-item__profile-member-photo nav-item__icon']")).click();
         Thread.sleep(2000);
@@ -72,6 +72,46 @@ public class Code extends ExtendTesboDriver {
     public void sendName() throws InterruptedException {
         Thread.sleep(1000);
         driver.findElement(By.xpath("//INPUT[@type='search']")).sendKeys(LowestPriceMobile);
+    }
+    public void RandomNo(int length) {
+
+        String SALTCHARS = "1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < length) {
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        System.out.println("Random no : "+saltStr);
+
+    }
+
+    public static void RandomNoAlpha(int length) {
+        length = 20;
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < length) {
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        System.out.println("Random no Alpha : "+saltStr);
+    }
+
+    public static void RandomAlpha(int length) {
+        length = 20;
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < length) {
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        System.out.println("Random alpha : "+saltStr);
+
     }
 
 }

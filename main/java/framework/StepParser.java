@@ -1,5 +1,6 @@
 package framework;
 
+import RandomLibrary.RandLibrary;
 import Selenium.Commands;
 import logger.Logger;
 import org.apache.commons.io.FileUtils;
@@ -69,7 +70,12 @@ public class StepParser {
 
         //Sendkeys
         if (step.toLowerCase().contains("enter") && (!step.toLowerCase().contains("press"))) {
-            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
+            if (step.toLowerCase().contains("random"))
+
+            { randomStepParse(driver,test,step); }
+            else
+
+            { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step)); }
         }
 
         // Get URL
@@ -119,7 +125,60 @@ public class StepParser {
 
 
     }
+    public void randomStepParse(WebDriver driver, JSONObject test, String step) throws Exception {
+        Commands cmd = new Commands();
+        GetLocator locator = new GetLocator();
+        RandLibrary randLibrary = new RandLibrary();
+        if (step.toLowerCase().contains("firstname"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.firstName()); }
 
+        if (step.toLowerCase().contains("email"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.eMail()); }
+
+        if (step.toLowerCase().contains("username"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.userName()); }
+
+        if (step.toLowerCase().contains("mobilenumber"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.number()); }
+
+        if (step.toLowerCase().contains("lastname"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.LastName()); }
+
+        if (step.toLowerCase().contains("age"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.AgeAdult()); }
+
+        if (step.toLowerCase().contains("gender"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.Gender()); }
+
+        if (step.toLowerCase().contains("birthday"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.Birthday()); }
+
+        if (step.toLowerCase().contains("debitcard"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.DebitCardNo()); }
+
+        if (step.toLowerCase().contains("expirydate"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.ExpiryDate()); }
+
+        if (step.toLowerCase().contains("cvv"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.cvvNo()); }
+
+        if (step.toLowerCase().contains("country"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.CountryName()); }
+
+        if (step.toLowerCase().contains("city"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.cityName()); }
+
+        if (step.toLowerCase().contains("postcode"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.postcode()); }
+
+        if (step.toLowerCase().contains("street"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.street()); }
+
+        if(step.toLowerCase().contains("number")){
+            cmd.findElement(driver,locator.getLocatorValue(test.get("suiteName").toString(),  parseElementName(step))).sendKeys(randLibrary.number());
+        }
+
+    }
 
     public void switchFunction(WebDriver driver, JSONObject test, String step) throws Exception {
 
