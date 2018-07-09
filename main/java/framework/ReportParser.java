@@ -103,7 +103,7 @@ file.close();
      * @auther : Ankit Mistry
      * @lastModifiedBy:
      */
-    public String detaSetStepReplaceValue(JSONObject test, String step) {
+    public String dataSetStepReplaceValue(JSONObject test, String step) {
 
         DataDrivenParser dataDrivenParser=new DataDrivenParser();
         Logger logger = new Logger();
@@ -131,8 +131,6 @@ file.close();
             try {
                 if (test.get("dataType").toString().equalsIgnoreCase("global")) {
                     textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
-                    logger.stepLog(step.replace(headerName, textToEnter));
-
                 }
             } catch (Exception e) {
                 throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
