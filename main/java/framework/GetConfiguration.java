@@ -215,7 +215,12 @@ public class GetConfiguration {
         JSONObject run = (JSONObject) main.get("run");
         JSONObject browsersPath = (JSONObject) run.get("binaries");
         try {
-            return (String) browsersPath.get(browser);
+            if(browsersPath.get(browser).toString()==null | browsersPath.get(browser).toString().trim().equals("")){
+                return null;
+            }
+            else {
+                return (String) browsersPath.get(browser);
+            }
         }catch (Exception e){
             return null;
         }
