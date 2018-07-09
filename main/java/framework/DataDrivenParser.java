@@ -17,7 +17,7 @@ import Exception.TesboException;
 
 public class DataDrivenParser {
 
-    public boolean isExcel(String suiteName) throws FileNotFoundException {
+    public boolean isExcel(String suiteName) {
         SuiteParser suiteParser=new SuiteParser();
         StringBuffer suite= suiteParser.readSuiteFile(suiteName);
         String allLines[] = suite.toString().split("[\\r\\n]+");
@@ -39,7 +39,7 @@ public class DataDrivenParser {
                     if(file.exists()) {
                         flag = true;
                     }else {
-                        throw new FileNotFoundException("Excel file Not Found On " + filePath);
+                        throw new TesboException("Excel file Not Found On " + filePath);
                     }
                     if(!ext.equalsIgnoreCase("xlsx"))
                         throw new TesboException("Required only '.xlsx' file : "+filePath);
@@ -52,7 +52,7 @@ public class DataDrivenParser {
         return flag;
     }
 
-    public boolean isDataSet(String suiteName) throws Exception {
+    public boolean isDataSet(String suiteName) {
         SuiteParser suiteParser=new SuiteParser();
         StringBuffer suite= suiteParser.readSuiteFile(suiteName);
         String allLines[] = suite.toString().split("[\\r\\n]+");
