@@ -147,7 +147,7 @@ public class TestExecutor implements Runnable {
 
             if (step.toString().contains("{") && step.toString().contains("}")) {
                 ReportParser reportParser=new ReportParser();
-                stepReportObject.put("steps",reportParser.detaSetStepReplaceValue(test,step.toString()));
+                stepReportObject.put("steps",reportParser.dataSetStepReplaceValue(test,step.toString()));
             }
             else {
             stepReportObject.put("steps", step.toString());
