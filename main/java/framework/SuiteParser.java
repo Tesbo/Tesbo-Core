@@ -320,12 +320,12 @@ public class SuiteParser {
                 }
             }
         }
-        if(groupCount>=2 || endpoint==0) {
-            throw new TesboException("End Step is not found for '" + groupName + "' collection");
-        }
         if(startPoint==0)
         {
             throw new TesboException("Collection name "+ groupName +" is not found on suite");
+        }
+        if(groupCount>=2 || endpoint==0) {
+            throw new TesboException("End Step is not found for '" + groupName + "' collection");
         }
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].contains("Step:") | allLines[j].contains("Verify:")) {
