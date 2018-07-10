@@ -35,6 +35,9 @@ public class TestExecutor implements Runnable {
     JSONArray listOfSession;
     boolean isSession = false;
     TestExecutionBuilder testExecutionBuilder=new TestExecutionBuilder();
+    String screenShotPath = null;
+    String testResult = "";
+    Commands cmd=new Commands();
 
     public TestExecutor() { }
     public TestExecutor(JSONObject test) {
@@ -109,7 +112,7 @@ public class TestExecutor implements Runnable {
         SuiteParser suiteParser = new SuiteParser();
         ExternalCode externalCode=new ExternalCode();
         BuildReportDataObject buildReport = new BuildReportDataObject();
-        String testResult = "";
+        testResult = "";
         int stepNumber = 0;
         JSONObject testReportObject = new JSONObject();
 
@@ -125,15 +128,15 @@ public class TestExecutor implements Runnable {
         /*Getting step using SuiteName and Testcase Name*/
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
         int J = 0;
-        JSONArray stepsArray = new JSONArray();
-        boolean failFlag = false;
+        //JSONArray stepsArray = new JSONArray();
+        //boolean failFlag = false;
 
         String exceptionAsString = null;
-        String screenShotPath = null;
+        screenShotPath = null;
 
 
         JSONArray testStepArray = new JSONArray();
-
+        int stepIndex=0;
         for (int i = 0; i < steps.size(); i++) {
             boolean stepPassed = true;
 
@@ -141,16 +144,16 @@ public class TestExecutor implements Runnable {
 
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
+            if(!step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
+                stepReportObject.put("stepIndex", ++stepIndex);
+                stepReportObject.put("startTime", startTimeStep);
 
-            stepReportObject.put("stepIndex", i + 1);
-            stepReportObject.put("startTime", startTimeStep);
-
-            if (step.toString().contains("{") && step.toString().contains("}")) {
-                ReportParser reportParser=new ReportParser();
-                stepReportObject.put("steps",reportParser.dataSetStepReplaceValue(test,step.toString()));
-            }
-            else {
-            stepReportObject.put("steps", step.toString());
+                if (step.toString().contains("{") && step.toString().contains("}")) {
+                    ReportParser reportParser = new ReportParser();
+                    stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
+                } else {
+                    stepReportObject.put("steps", step.toString());
+                }
             }
 
             if (isSession) {
@@ -173,7 +176,6 @@ public class TestExecutor implements Runnable {
                 exceptionAsString = sw.toString();
                 stepPassed = false;
             }
-
 
             if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Close:")) {
 
@@ -218,6 +220,13 @@ public class TestExecutor implements Runnable {
                 for (int s = 0; s <= groupSteps.size() - 1; s++) {
                     Object groupStep = groupSteps.get(s);
 
+                    startTimeStep = System.currentTimeMillis();
+                    step = steps.get(i);
+
+                    stepReportObject.put("stepIndex", ++stepIndex);
+                    stepReportObject.put("startTime", startTimeStep);
+                    stepReportObject.put("steps", groupStep.toString());
+
                     if (groupStep.toString().contains("Step:")) {
                         try {
                             stepParser.parseStep(driver, test, groupStep.toString());
@@ -243,38 +252,23 @@ public class TestExecutor implements Runnable {
                             stepPassed = false;
                         }
                     }
+                    reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
+                    stepReportObject=addStepResultInReport(driver, stepReportObject,test,stepPassed);
+                    testStepArray.add(stepReportObject);
+                    stepReportObject = new JSONObject();
                 }
-                long stopTimeStep = System.currentTimeMillis();
                 stepNumber++;
             }
 
             reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
-
-            if (!stepPassed) {
-                stepReportObject.put("status", "failed");
-                testResult = "failed";
-                screenShotPath = selCmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
-            } else {
-                testResult = "passed";
-                stepReportObject.put("status", "passed");
+            if(stepReportObject.size()!=0) {
+                stepReportObject = addStepResultInReport(driver, stepReportObject, test, stepPassed);
+                testStepArray.add(stepReportObject);
             }
-
-            long stepEndTime = System.currentTimeMillis();
-
-            stepReportObject.put("endTime", stepEndTime);
-
-
-
-            testStepArray.add(stepReportObject);
-
             if (!stepPassed) {
                 break;
             }
-
         }
-
-
-
 
         Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
 
@@ -288,9 +282,7 @@ public class TestExecutor implements Runnable {
             testReportObject.put("fullStackTrace", exceptionAsString);
             testReportObject.put("screenShot", screenShotPath);
         }
-
         long stopTimeSuite = System.currentTimeMillis();
-
         testReportObject.put("totalTime", stopTimeTest - startTime);
         testReportObject.put("status", testResult);
 
@@ -481,5 +473,29 @@ public class TestExecutor implements Runnable {
         return driver;
     }
 
+
+    /**
+     * @auther : Ankit Mistry
+     * @param driver
+     * @param stepReportObject
+     * @param test
+     * @param stepPassed
+     * @return
+     */
+    public JSONObject addStepResultInReport(WebDriver driver, JSONObject stepReportObject,JSONObject test, boolean stepPassed)  {
+        if(stepReportObject.size()!=0) {
+            if (!stepPassed) {
+                stepReportObject.put("status", "failed");
+                testResult = "failed";
+                screenShotPath = cmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
+            } else {
+                testResult = "passed";
+                stepReportObject.put("status", "passed");
+            }
+            long stepEndTime = System.currentTimeMillis();
+            stepReportObject.put("endTime", stepEndTime);
+        }
+        return stepReportObject;
+    }
 
 }
