@@ -43,6 +43,22 @@ public class Code extends ExtendTesboDriver {
 
 
     }
+    @ExtCode("RandomError")
+    public void RandomError() {
+        //driver.get("https://www.amazon.in");
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < 18) {
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        System.out.println(saltStr);
+        driver.findElement(By.xpath("//input[@id='twotabsearchtext'")).sendKeys(saltStr);
+
+
+    }
 
     @ExtCode("Window Resize")
     public void WindowResize() {

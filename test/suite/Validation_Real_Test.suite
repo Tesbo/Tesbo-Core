@@ -73,3 +73,12 @@ Step: Click on @Next button
 Verify: @FirstNameError text is equal 'Enter first name'
 Step: Enter {firstname} on @FirstName
 End
+
+Test: T10 Verify External Code failed take screenshot
+#T10 #Verify
+Step: Open URL 'https://www.amazon.in'
+ExtCode: Window Resize
+Step: pause 2 sec
+ExtCode: RandomError
+Step: pause 2 sec
+End

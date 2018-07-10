@@ -1,8 +1,10 @@
 DataSet :
 {
      "Credentials": {
-     "userName":  "viral103patel@gmail.com",
-     "password": "jsbot@2017",
+          "userName1": "viral103patel@gmail.com",
+          "password1": "jsbot@2017",
+          "userName2": "9033660480",
+          "password2": "tesbo@2018",
      }
      "GmailUsers": {
      "excelFile": "E:/Tesbo_JAR/tesbo-core/test/GmailData.xlsx"
@@ -83,20 +85,20 @@ Session: Viral, Ankit, mahesh, ap
 [Viral]
 Step: Open URL 'https://www.linkedin.com'
 Step: Enter '9033660480' into @emailTextBox
-Step: pause for 1 sec
+Step: pause 1 sec
 Step: Enter 'tesbo@2018' into @passwordTextBox
 Step: Click on @signInTextBox
-Step: pause for 2sec
+Step: pause 2 sec
 Step: Click on @MyNetwork
-Step: pause for 2sec
+Step: pause 2 sec
 Step: Click on @SeeAll
-Step: pause for 2sec
+Step: pause 2 sec
 Step: Enter 'Viral' on @ConSearch
 Step: Press Enter
 Step: Click on @Message
 Step: Enter 'Tesbo' on @MessageBox
 Step: Click on @Send
-Step: pause for 5sec
+Step: pause 5 sec
 
 [Ankit]
 Step: pause for 5sec
@@ -235,15 +237,17 @@ Step: Clear @Search_box
 Step: pause 2 sec
 End
 
-Test: T13
+Test: Verify clear cookies
 #T13
 Step: Open URL 'https://www.linkedin.com'
+Step: pause for 3 sec
 Step: Enter 'viral103patel@gmail.com' into @emailTextBox
-Step: pause for 1 sec
+Step: pause for 3 sec
 Step: Enter 'jsbot@2017' into @passwordTextBox
+Step: pause for 3 sec
 Step: Click on @signInTextBox
-ExtCode: me
-Step: Pause 2 sec
+ExtCode: signOut
+Step: Pause 3 sec
 Step: Click on @emailTextBox
 Step: Pause 5 sec
 Step: Clear Cookies
@@ -270,71 +274,144 @@ Step: Click on @BuyMobile
 Step: pause 5 sec
 End
 
-Test: T16 Verify External Code
-#T16 #regression
+Test: T15 Verify Random keys
+#T15 #regression
 Step: Open URL 'https://www.google.in/'
 Step: pause 2 sec
 Step: Enter 'random.firstname' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.email' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.username' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.mobilenumber' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.lastname' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.age' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.gender' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.birthday' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.debitcard' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.expirydate' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.cvv' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.Country' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.postcode' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.street' on @GoogleSearch
-Step: pause 2 sec
 Step: Clear @GoogleSearch
 Step: Enter 'random.city' on @GoogleSearch
-Step: pause 2 sec
 End
 
-Test: Verify clear cookies
-#T17
+Test: T16 Capture Screenshot
+#T16 #regression
+Step: Open URL 'https://www.google.in/'
+Steps: pause 2 sec
+Step: Capture Screenshot
+Step: pause 2 sec
+Step: Enter 'random.firstname' on @GoogleSearch
+End
+
+Test: T17 Linkedin DataSet (global) + Multi Driver + collection + ExtCode
+#T17  #regression1
+DataSet: Credentials
+Session: Viral, Ankit,
+[Viral]
 Step: Open URL 'https://www.linkedin.com'
-Step: pause for 3 sec
-Step: Enter 'viral103patel@gmail.com' into @emailTextBox
-Step: pause for 3 sec
-Step: Enter 'jsbot@2017' into @passwordTextBox
-Step: pause for 3 sec
-Step: Click on @signInTextBox
+Step: Enter {userName2} into @Email_Field
+Step: pause for 1 sec
+Step: Enter {password2} into @Password_Field
+Step: Click on @Login_Button
+Step: pause for 2sec
+Step: Click on @MyNetwork
+Step: pause for 2sec
+Step: Click on @SeeAll
+Step: pause for 2sec
+Step: Enter 'Viral' on @ConSearch
+Step: Press Enter
+Step: Click on @Message
+Step: Enter 'Tesbo' on @MessageBox
+Step: Click on @Send
+Step: pause for 5sec
+[Ankit]
+Collection: linkedin
+Step: Click on @Login_Button
+Step: Click on @MessageIcon
+Step: pause for 5sec
+Step: @MessageCon text is equal 'ZooMa'
+Step: Enter 'Ankit' on @MessageBox
+Step: Click on @Send
+Step: pause for 5se
+[Viral]
+Step: @MessageCon text is equal ignore case 'Ankit'
+Step: Enter 'I am Cool' on @MessageBox
+Step: Click on @Send
+Step: pause for 5sec
+[Ankit]
+Step: @MessageCon text is equal ignore case 'I am Cool'
+Step: Enter 'Rock' on @MessageBox
+Step: Click on @Send
 ExtCode: signOut
-Step: Pause 3 sec
-Step: Click on @emailTextBox
-Step: Pause 5 sec
-Step: Clear Cookies
-Step: Pause 5 sec
-Step: Click on @emailTextBox
-Step: Pause 5 sec
+Step: pause for 5sec
+End
+
+
+Test: Collection linkedin
+#linkedin
+DataSet: Credentials
+Collection Name: linkedin
+Step: pause for 5sec
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter {userName1} in @Email_Field
+Step: Enter {password1} in @Password_Field
+End
+
+
+Test: T18 Linkedin DataSet (Excel) + Multi Driver + collection + ExtCode
+#T18  #regression1
+DataSet: GmailUsers
+Session: Viral, Ankit,
+[Viral]
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter {ankitUser} into @Email_Field
+Step: pause for 1 sec
+Step: Enter {ankitPass} into @Password_Field
+Step: Click on @Login_Button
+Step: pause for 2sec
+Step: Click on @MyNetwork
+Step: pause for 2sec
+Step: Click on @SeeAll
+Step: pause for 2sec
+Step: Enter 'Viral' on @ConSearch
+Step: Press Enter
+Step: Click on @Message
+Step: Enter 'Tesbo' on @MessageBox
+Step: Click on @Send
+Step: pause for 5sec
+[Ankit]
+Collection: linkedin
+Step: Click on @Login_Button
+Step: Click on @MessageIcon
+Step: pause for 5sec
+Step: @MessageCon text is equal 'ZooMa'
+Step: Enter 'Ankit' on @MessageBox
+Step: Click on @Send
+Step: pause for 5se
+[Viral]
+Step: @MessageCon text is equal ignore case 'Ankit'
+Step: Enter 'I am Cool' on @MessageBox
+Step: Click on @Send
+Step: pause for 5sec
+[Ankit]
+Step: @MessageCon text is equal ignore case 'I am Cool'
+Step: Enter 'Rock' on @MessageBox
+Step: Click on @Send
+ExtCode: signOut
+Step: pause for 5sec
 End
