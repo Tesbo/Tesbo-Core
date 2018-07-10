@@ -790,7 +790,7 @@ public class ReportBuilder implements Runnable {
                                         "<p><strong>ScreenShot</strong>\n" +
                                         "</p>\n" +
                                         "\n" +
-                                        "<img src=\" " + screenShotpath + " \" \n" +
+                                        "<img src=\"../"+ screenShotpath + "\" \n" +
                                         "style=\"max-width: 100%;height: auto;\">\n" +
 
                                         " </div>\n" +

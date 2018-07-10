@@ -465,7 +465,7 @@ public class Commands {
             WebDriver augmentedDriver = new Augmenter().augment(driver);
             File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-            path = filePath.getAbsolutePath() + "/" + (suitName.split(".s"))[0] + "_" + testName.replaceAll("\\s", "") + "_" + dtf.format(LocalDateTime.now()) + ".png";
+            path = filePath + "/" + (suitName.split(".s"))[0] + "_" + testName.replaceAll("\\s", "") + "_" + dtf.format(LocalDateTime.now()) + ".png";
             FileUtils.copyFile(scrFile, new File(path));
         } catch (IOException e) {
             path = "Failed to capture screenshot: " + e.getMessage();
