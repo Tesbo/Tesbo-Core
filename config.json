@@ -1,12 +1,12 @@
 {
-  "SuiteDirectory": "E:/Tesbo_JAR/tesbo-core/test/suite",
-  "locatorDirectory": "E:/Tesbo_JAR/tesbo-core/test/locator",
-  "ExtCodeDirectory": "E:/Tesbo_JAR/tesbo-core/test/ExtTestCode",
+  "SuiteDirectory": "E:/tesbo/tesbo-core/test/suite",
+  "locatorDirectory": "E:/tesbo/tesbo-core/test/locator",
+  "ExtCodeDirectory": "E:/tesbo/tesbo-core/test/ExtTestCode",
   "run": {
     "baseUrl": "https://amazon.in",
     "by": {
       "tag": [
-        "T14"
+       "V9"
       ]
     },
     "browser": {
@@ -16,10 +16,14 @@
     },
     "parallel": {
       "status": true,
-      "count": "5"
+      "count": "4"
     },
     "retryAnalyser":{
       "count":"0"
+    },
+    "binaries" : {
+      "chromePath" : ""
+
     }
   }
 }

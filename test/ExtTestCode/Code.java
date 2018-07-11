@@ -55,7 +55,7 @@ public class Code extends ExtendTesboDriver {
         }
         String saltStr = salt.toString();
         System.out.println(saltStr);
-        driver.findElement(By.xpath("//input[@id='twotabsearchtext'")).sendKeys(saltStr);
+        driver.findElement(By.xpath("//input[='twotabsearchtext'")).sendKeys(saltStr);
 
 
     }

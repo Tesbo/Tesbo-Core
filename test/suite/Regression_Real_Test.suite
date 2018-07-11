@@ -11,13 +11,13 @@ DataSet :
      }
 }
 
-Test: T1 login on Linkedin DataSet (global) Credentials
+Test: T1 login on Linkedin DataSet global Credentials
 #T1 #ExcelData #regression
 DataSet: Credentials
 Step: open URL 'https://www.linkedin.com/'
 Verify: @Email_Field is displayed
-Step: Enter {userName} in @Email_Field
-Step: Enter {password} in @Password_Field
+Step: Enter {userName1} in @Email_Field
+Step: Enter {password1} in @Password_Field
 Step: click on @Login_Button
 Verify: @homePage is displayed
 Step: Enter 'test automation' data in @SearchBox
@@ -81,7 +81,7 @@ End
 
 Test: T6 Verify multi Driver Functionality
 #T6 #Multi_browser #regression
-Session: Viral, Ankit, mahesh, ap
+Session: Viral, Ankit,
 [Viral]
 Step: Open URL 'https://www.linkedin.com'
 Step: Enter '9033660480' into @emailTextBox
@@ -238,7 +238,7 @@ Step: pause 2 sec
 End
 
 Test: Verify clear cookies
-#T13
+#T13 #regression
 Step: Open URL 'https://www.linkedin.com'
 Step: pause for 3 sec
 Step: Enter 'viral103patel@gmail.com' into @emailTextBox
@@ -257,7 +257,7 @@ Step: Pause 5 sec
 End
 
 Test: Nokia mobile search on amazon
-#T14
+#T14 #regression
 Step: pause 1 sec
 Step: Enter 'nokia mobile' in @Search_box
 Step: Press Enter
@@ -318,47 +318,47 @@ Step: pause 2 sec
 Step: Enter 'random.firstname' on @GoogleSearch
 End
 
-Test: T17 Linkedin DataSet (global) + Multi Driver + collection + ExtCode
-#T17  #regression1
+Test: T17 Linkedin DataSet global  Multi Driver  collection  ExtCode
+#T17 #regression
 DataSet: Credentials
 Session: Viral, Ankit,
 [Viral]
 Step: Open URL 'https://www.linkedin.com'
 Step: Enter {userName2} into @Email_Field
-Step: pause for 1 sec
+Step: pause 1 sec
 Step: Enter {password2} into @Password_Field
 Step: Click on @Login_Button
-Step: pause for 2sec
+Step: pause 2 sec
 Step: Click on @MyNetwork
-Step: pause for 2sec
+Step: pause 2 sec
 Step: Click on @SeeAll
-Step: pause for 2sec
+Step: pause 2 sec
 Step: Enter 'Viral' on @ConSearch
 Step: Press Enter
 Step: Click on @Message
 Step: Enter 'Tesbo' on @MessageBox
 Step: Click on @Send
-Step: pause for 5sec
+Step: pause 5 sec
 [Ankit]
 Collection: linkedin
 Step: Click on @Login_Button
 Step: Click on @MessageIcon
-Step: pause for 5sec
+Step: pause 5 sec
 Step: @MessageCon text is equal 'ZooMa'
 Step: Enter 'Ankit' on @MessageBox
 Step: Click on @Send
-Step: pause for 5se
+Step: pause 5 sec
 [Viral]
 Step: @MessageCon text is equal ignore case 'Ankit'
 Step: Enter 'I am Cool' on @MessageBox
 Step: Click on @Send
-Step: pause for 5sec
+Step: pause 5 sec
 [Ankit]
 Step: @MessageCon text is equal ignore case 'I am Cool'
 Step: Enter 'Rock' on @MessageBox
 Step: Click on @Send
 ExtCode: signOut
-Step: pause for 5sec
+Step: pause 5 sec
 End
 
 
@@ -373,45 +373,45 @@ Step: Enter {password1} in @Password_Field
 End
 
 
-Test: T18 Linkedin DataSet (Excel) + Multi Driver + collection + ExtCode
-#T18  #regression1
+Test: T18 Linkedin DataSet Excel  Multi Driver  collection  ExtCode
+#T18
 DataSet: GmailUsers
 Session: Viral, Ankit,
 [Viral]
 Step: Open URL 'https://www.linkedin.com'
 Step: Enter {ankitUser} into @Email_Field
-Step: pause for 1 sec
+Step: pause 1 sec
 Step: Enter {ankitPass} into @Password_Field
 Step: Click on @Login_Button
-Step: pause for 2sec
+Step: pause 2 sec
 Step: Click on @MyNetwork
-Step: pause for 2sec
+Step: pause 2 sec
 Step: Click on @SeeAll
-Step: pause for 2sec
+Step: pause 2 sec
 Step: Enter 'Viral' on @ConSearch
 Step: Press Enter
 Step: Click on @Message
 Step: Enter 'Tesbo' on @MessageBox
 Step: Click on @Send
-Step: pause for 5sec
+Step: pause 5 sec
 [Ankit]
 Collection: linkedin
 Step: Click on @Login_Button
 Step: Click on @MessageIcon
-Step: pause for 5sec
+Step: pause 5 sec
 Step: @MessageCon text is equal 'ZooMa'
 Step: Enter 'Ankit' on @MessageBox
 Step: Click on @Send
-Step: pause for 5se
+Step: pause 5 sec
 [Viral]
 Step: @MessageCon text is equal ignore case 'Ankit'
 Step: Enter 'I am Cool' on @MessageBox
 Step: Click on @Send
-Step: pause for 5sec
+Step: pause 5 sec
 [Ankit]
 Step: @MessageCon text is equal ignore case 'I am Cool'
 Step: Enter 'Rock' on @MessageBox
 Step: Click on @Send
 ExtCode: signOut
-Step: pause for 5sec
+Step: pause 5 sec
 End
