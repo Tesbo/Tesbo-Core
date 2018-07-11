@@ -160,7 +160,7 @@ file.close();
         if (step.toString().toLowerCase().contains("capture screenshot")) {
             if(stepParser.screenShotURL !=null){
                 stepReportObject.remove("steps");
-                stepReportObject.put("steps", "Screenshot: "+stepParser.screenShotURL);
+                stepReportObject.put("steps", "Screenshot: <a href=\"../"+stepParser.screenShotURL+"\" target=\"_blank\">/"+stepParser.screenShotURL+"</a>");
             }
         }
         return stepReportObject;
