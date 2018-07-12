@@ -36,14 +36,6 @@ Step: pause sec
 End
 
 
-Test: V5 Verify Data Set Functionality without Curly Braces
-#V5 #Verify
-DataSet: Credentials
-Step: open URL 'https://www.linkedin.com/'
-Verify: @Email_Field is displayed
-Step: Enter username in @Email
-End
-
 Test: V6 Verify text is equal
 #V6 #Verify
 Step: Open URL 'https://www.amazon.in/'
@@ -65,7 +57,7 @@ Collection Name: 'amazon_open'
 Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
 End
 
-Test: V9 Gmail signUp Data Set excel file
+Test: V9 Verify excel file
 #V9 #Gmail_signUp #Verify
 DataSet: GmailUsers
 Step: open url 'https://accounts.google.com/signup'
@@ -74,8 +66,8 @@ Verify: @FirstNameError text is equal 'Enter first name'
 Step: Enter {firstname} on @FirstName
 End
 
-Test: T10 Verify External Code failed take screenshot
-#T10 #Verify
+Test: V10 Verify External Code failed take screenshot
+#V10 #Verify
 Step: Open URL 'https://www.amazon.in'
 ExtCode: Window Resize
 Step: pause 2 sec
