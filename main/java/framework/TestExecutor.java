@@ -273,7 +273,9 @@ public class TestExecutor implements Runnable {
         Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
 
         testReportObject.put("browserVersion", caps.getVersion());
-        testReportObject.put("osName", caps.getPlatform().toString());
+        String osName= caps.getPlatform().toString();
+        if(osName.toLowerCase().equals("xp")) { osName = "windows"; }
+        testReportObject.put("osName", osName);
 
         long stopTimeTest = System.currentTimeMillis();
         testReportObject.put("testStep", testStepArray);
