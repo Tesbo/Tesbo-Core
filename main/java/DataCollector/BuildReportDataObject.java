@@ -23,25 +23,35 @@ public class BuildReportDataObject implements Runnable {
 
 
     public void addDataInMainObject(String browser, String suite, String testName, JSONObject testResultObject) {
+        JSONObject suiteObject = getBrowserObject(browser);
+        Boolean flag = false;
+        if(suiteObject!=null) {
+            JSONArray suitesArray = (JSONArray) suiteObject.get("suits");
+            JSONObject tempSuiteObject = null;
+            int size = suitesArray.size();
+            JSONArray testArray = null;
 
-        if (testResultObject.get("status").equals("passed")) {
-            buildTotalPassed++;
+            for (int i = 0; i < size; i++) {
+                tempSuiteObject = (JSONObject) suitesArray.get(i);
+                String suiteName = tempSuiteObject.get("suiteName").toString();
+                if (suiteName.equals(suite)) { testArray = (JSONArray) tempSuiteObject.get("tests"); }
+            }
+            for (int t = 0; t < testArray.size(); t++) {
+                if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) & testResultObject.get("status").equals("failed")) { flag = true; }
+                if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) & testResultObject.get("status").equals("passed")) { buildTotalFailed--; }
+            }
         }
-
-        if (testResultObject.get("status").equals("failed")) {
-            buildTotalFailed++;
+        if(!flag) {
+            if (testResultObject.get("status").equals("passed")) { buildTotalPassed++; }
+            if (testResultObject.get("status").equals("failed")) { buildTotalFailed++; }
         }
-
         checkForTheBrowser(browser);
         checkForTheSuite(browser, suite);
         checkForTheTest(browser, suite, testResultObject);
 
         mainReportObject.put("browser", browserArray);
         mainReportObject.put("startTime", TestExecutionBuilder.buildStartTime);
-
-
         mainReportObject.put("totalPassed", buildTotalPassed);
-
         mainReportObject.put("totalFailed", buildTotalFailed);
 
 
@@ -150,6 +160,8 @@ public class BuildReportDataObject implements Runnable {
         JSONObject suiteObject = getBrowserObject(browserName);
 
         JSONArray suitesArray = (JSONArray) suiteObject.get("suits");
+
+
         JSONArray testArray = new JSONArray();
         JSONObject individualSuiteObject = new JSONObject();
 
@@ -218,10 +230,7 @@ public class BuildReportDataObject implements Runnable {
         /*test objects*/
         JSONArray testArray = null;
 
-
-
         /*test step objects*/
-
 
         //lopping for finding suite
         for (int i = 0; i < size; i++) {
@@ -237,15 +246,12 @@ public class BuildReportDataObject implements Runnable {
 
                 int testArraySize = testArray.size();
 
-
                 if (testArraySize == 0) {
                     if (testResult.get("status").toString().equals("passed")) {
                         totalPassed = Integer.parseInt(tempSuiteObject.get("totalPassed").toString()) + 1;
                         totalFailed = Integer.parseInt(tempSuiteObject.get("totalFailed").toString());
                     }
-
                     if (testResult.get("status").toString().equals("failed")) {
-
                         totalPassed = Integer.parseInt(tempSuiteObject.get("totalPassed").toString());
                         totalFailed = Integer.parseInt(tempSuiteObject.get("totalFailed").toString()) + 1;
                     }
@@ -253,36 +259,40 @@ public class BuildReportDataObject implements Runnable {
 
                 }
 
-
-                for (int t = 0; t <= testArraySize; t++) {
-
-                    try {
+                boolean flag=false;
+                for (int t = 0; t < testArray.size(); t++) {
+                    if (testResult.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) & ((JSONObject) testArray.get(t)).get("status").equals("failed")) {
+                        testArray.set(t, testResult);
+                        flag = true;
+                    }
+                    if(testResult.get("testName").equals(((JSONObject)testArray.get(t)).get("testName"))){
                         if (testResult.get("status").toString().equals("passed")) {
                             totalPassed = Integer.parseInt(tempSuiteObject.get("totalPassed").toString()) + 1;
+                            totalFailed = Integer.parseInt(tempSuiteObject.get("totalFailed").toString())-1;
+                        }
+                        else{
+                            totalPassed = Integer.parseInt(tempSuiteObject.get("totalPassed").toString());
                             totalFailed = Integer.parseInt(tempSuiteObject.get("totalFailed").toString());
                         }
-                        if (testResult.get("status").toString().equals("failed")) {
-                            totalPassed = Integer.parseInt(tempSuiteObject.get("totalPassed").toString());
-                            totalFailed = Integer.parseInt(tempSuiteObject.get("totalFailed").toString()) + 1;
-                        }
                         totalTime = Double.parseDouble(tempSuiteObject.get("totalTime").toString()) + Double.parseDouble(testResult.get("totalTime").toString());
-
-
-                    } catch (Exception e)
-
-                    {
-
                     }
-
-
                 }
 
-                testArray.add(testResult);
+                if(!flag) {
+
+                    if (testResult.get("status").toString().equals("passed")) {
+                        totalPassed = Integer.parseInt(tempSuiteObject.get("totalPassed").toString()) + 1;
+                        totalFailed = Integer.parseInt(tempSuiteObject.get("totalFailed").toString());
+                    }
+                    if (testResult.get("status").toString().equals("failed")) {
+                        totalPassed = Integer.parseInt(tempSuiteObject.get("totalPassed").toString());
+                        totalFailed = Integer.parseInt(tempSuiteObject.get("totalFailed").toString()) + 1;
+                    }
+                    totalTime = Double.parseDouble(tempSuiteObject.get("totalTime").toString()) + Double.parseDouble(testResult.get("totalTime").toString());
+                    testArray.add(testResult);
+                }
                 suiteCount = i;
-
             }
-
-
         }
 
         try {
@@ -293,11 +303,8 @@ public class BuildReportDataObject implements Runnable {
             newSuiteArray.set(suiteCount, tempSuiteObject);
         } catch (Exception e) {
             newSuiteArray.add(tempSuiteObject);
-
         }
-
         setBrowserObject(browserName, newSuiteArray);
-
 
     }
 
