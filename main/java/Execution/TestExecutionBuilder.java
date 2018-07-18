@@ -4,6 +4,7 @@ import DataCollector.BuildReportDataObject;
 import ReportBuilder.GetJsonData;
 import ReportBuilder.ReportBuilder;
 import ReportBuilder.ReportLibraryFiles;
+import Selenium.Commands;
 import com.diogonunes.jcdp.color.api.Ansi;
 import framework.*;
 import logger.Logger;
@@ -33,7 +34,7 @@ public class TestExecutionBuilder {
     public static JSONArray failTestQueue=new JSONArray();
 
     public void startExecution() throws Exception {
-
+        Commands cmd=new Commands();
         buildStartTime = System.currentTimeMillis();
 
         Logger logger = new Logger();
@@ -70,6 +71,7 @@ public class TestExecutionBuilder {
 
 
         while(!repotFileGenerated) {
+            cmd.pause(3);
             reportBuilder.generatReport();
         }
 
