@@ -546,6 +546,9 @@ public class StepParser {
 
         //extracting string
         numbers = step.replaceAll("[^-?0-9]+", " ");
+        if(numbers.trim().equals("")){
+            throw new TesboException("Seconds to pause is not found in '"+step+"'");
+        }
         try {
             return Arrays.asList(numbers.trim().split(" ")).get(index);
         }catch (Exception e){
