@@ -3,20 +3,10 @@ package framework;
 import RandomLibrary.RandLibrary;
 import Selenium.Commands;
 import logger.Logger;
-import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONObject;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.Augmenter;
-
 import java.io.File;
-import java.io.IOException;
-import java.security.Key;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 import Exception.TesboException;
@@ -106,6 +96,20 @@ public class StepParser {
         if (step.toLowerCase().contains("select")) {
             selectFunction(driver, test, step);
         }
+
+        //Window Minimize, maximize and resize
+        if (step.toLowerCase().contains("window") && !(step.toLowerCase().contains("close"))) {
+            if (step.toLowerCase().contains("resize")) {
+                windowResize(step,driver);
+            }
+            if (step.toLowerCase().contains("minimize")) {
+                windowMinimize(driver);
+            }
+            if (step.toLowerCase().contains("maximize")) {
+                windowMaximize(driver);
+            }
+        }
+
 
         //Clear
         if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache"))) {
@@ -668,5 +672,38 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param step
+     * @param driver
+     */
+    public void windowResize(String step,WebDriver driver) {
+        String size[] = null;
+        try {
+            size = step.split("\\(")[1].trim().replaceAll("\\)","").split(",");
+            Dimension dimension = new Dimension(Integer.parseInt(size[0]), Integer.parseInt(size[1]));
+            driver.manage().window().setSize(dimension);
+        } catch (Exception e) {
+            throw new TesboException("Pleas enter 'X' and 'Y' dimension for window resize");
+        }
+    }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     */
+    public void windowMinimize(WebDriver driver) {
+        driver.manage().window().setPosition(new Point(0, -1000));
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     */
+    public void windowMaximize(WebDriver driver) {
+        driver.manage().window().maximize();
+    }
 }
