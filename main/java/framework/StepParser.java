@@ -71,11 +71,10 @@ public class StepParser {
         //Sendkeys
         if (step.toLowerCase().contains("enter") && (!step.toLowerCase().contains("press"))) {
             if (step.toLowerCase().contains("random"))
-
             { randomStepParse(driver,test,step); }
-            else
-
-            { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step)); }
+            else {
+                cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
+            }
         }
 
         // Get URL
@@ -507,7 +506,9 @@ public class StepParser {
                 if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
                     try {
                         textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"));
-                        logger.stepLog(step.replace(headerName, textToEnter));
+                        if(textToEnter!=null) {
+                            logger.stepLog(step.replace(headerName, textToEnter));
+                        }
 
                     } catch (StringIndexOutOfBoundsException e) {
                         logger.stepLog(step);
@@ -537,6 +538,7 @@ public class StepParser {
                 throw new TesboException("No string found to enter.");
             }
         }
+
         return textToEnter;
     }
 

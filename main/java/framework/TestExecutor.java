@@ -105,10 +105,11 @@ public class TestExecutor implements Runnable {
     public JSONObject runTest() {
         SuiteParser parser = new SuiteParser();
         StepParser stepParser = new StepParser();
-        Commands selCmd = new Commands();
+        DataDrivenParser dataDrivenParser=new DataDrivenParser();
         VerifyParser verifyParser = new VerifyParser();
         SuiteParser suiteParser = new SuiteParser();
         ExternalCode externalCode=new ExternalCode();
+        ReportParser reportParser = new ReportParser();
         BuildReportDataObject buildReport = new BuildReportDataObject();
         testResult = "";
         int stepNumber = 0;
@@ -146,10 +147,7 @@ public class TestExecutor implements Runnable {
                 stepReportObject.put("stepIndex", ++stepIndex);
                 stepReportObject.put("startTime", startTimeStep);
 
-                if (step.toString().contains("{") && step.toString().contains("}")) {
-                    ReportParser reportParser = new ReportParser();
-                    stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
-                } else {
+                if (!(step.toString().contains("{") && step.toString().contains("}")))  {
                     stepReportObject.put("steps", step.toString());
                 }
             }
@@ -160,6 +158,12 @@ public class TestExecutor implements Runnable {
 
             try {
                 if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
+                    if (step.toString().contains("{") && step.toString().contains("}")) {
+                        if(test.get("dataType").equals("excel")){
+                            dataDrivenParser.isHeader(test, step.toString());
+                        }
+                        stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
+                    }
                     stepParser.parseStep(driver, test, step.toString());
                 }
 
@@ -168,6 +172,9 @@ public class TestExecutor implements Runnable {
 
                 }
             } catch (Exception ae) {
+                if (step.toString().contains("{") && step.toString().contains("}")) {
+                    stepReportObject.put("steps", step.toString());
+                }
                 StringWriter sw = new StringWriter();
                 ae.printStackTrace(new PrintWriter(sw));
                 ae.printStackTrace();
