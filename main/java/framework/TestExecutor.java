@@ -1,7 +1,6 @@
 package framework;
 
 import DataCollector.BuildReportDataObject;
-import Exception.TesboException;
 import Execution.TestExecutionBuilder;
 import ExtCode.*;
 import Selenium.Commands;
@@ -19,7 +18,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -192,13 +190,18 @@ public class TestExecutor implements Runnable {
                     }
 
             }else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
-                String extVal=null;
+
                 try {
-                    extVal=step.toString().split(":")[1].trim();
-                } catch (Exception e) {
-                    throw new TesboException("ExtCode step has no value");
+                    externalCode.runAllAnnotatedWith(ExtCode.class, step.toString(), driver);
+                }catch (Exception e){
+                    StringWriter sw = new StringWriter();
+                    e.printStackTrace(new PrintWriter(sw));
+                    e.printStackTrace();
+                    exceptionAsString = sw.toString();
+                    stepPassed = false;
+
                 }
-                externalCode.runAllAnnotatedWith(ExtCode.class,extVal,driver);
+
 
             } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
                 JSONArray groupSteps = new JSONArray();

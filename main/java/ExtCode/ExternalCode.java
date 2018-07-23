@@ -9,6 +9,7 @@ import org.reflections.util.ConfigurationBuilder;
 import Exception.*;
 
 import java.io.File;
+import java.lang.Exception;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -21,13 +22,21 @@ public class ExternalCode  {
      * @auther : Ankit Mistry
      * @lastModifiedBy:
      * @param annotation
-     * @param tagVal
+     * @param step
      * @throws Exception
      */
-    public void runAllAnnotatedWith(Class<? extends Annotation> annotation, String tagVal, WebDriver driver){
+    public void runAllAnnotatedWith(Class<? extends Annotation> annotation, String step, WebDriver driver) throws Exception {
         boolean flag=false;
         GetConfiguration getConfiguration=new GetConfiguration();
         File file=new File(getConfiguration.getExtCodeDirectory());
+
+        String tagVal=null;
+        try {
+            tagVal=step.toString().split(":")[1].trim();
+        } catch (Exception e) {
+            throw new TesboException("ExtCode step has no value");
+        }
+
         Reflections reflections = new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(file.getName()))
                 .setScanners(new MethodAnnotationsScanner()));
@@ -43,9 +52,8 @@ public class ExternalCode  {
                         flag = true;
                         m.invoke(myTestCode);
                         break;
-                    }catch (Exception e)
-                    {
-                        e.printStackTrace();
+                    }catch (Exception e) {
+                        throw e;
                     }
                 }
             }
