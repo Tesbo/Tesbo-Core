@@ -323,10 +323,25 @@ public class TestExecutor implements Runnable {
     public void run() {
         try {
             JSONObject testData = new JSONObject();
-            beforeTest(test.get("browser").toString());
-            runTest();
-            afterTest(null);
+            TestExecutionBuilder testExecutionBuilder=new TestExecutionBuilder();
+            if(testExecutionBuilder.isSingleWindow) {
+                testExecutionBuilder.isSingleWindow=false;
+                beforeTest(test.get("browser").toString());
+                testExecutionBuilder.driver=driver;
+            }
+            if(! testExecutionBuilder.isSingleWindow && testExecutionBuilder.singleWindowRun) {
+                driver=testExecutionBuilder.driver;
+            }
 
+            if(! testExecutionBuilder.isSingleWindow && !testExecutionBuilder.singleWindowRun) {
+                beforeTest(test.get("browser").toString());
+            }
+
+            runTest();
+
+            if(! testExecutionBuilder.isSingleWindow && !testExecutionBuilder.singleWindowRun) {
+                afterTest(null);
+            }
 
             //  testData.put(testResult.get("testName").toString(), testResult);
             //testData.put(testResult.get("testName").toString(), testResult);
