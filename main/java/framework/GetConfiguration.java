@@ -207,6 +207,7 @@ public class GetConfiguration {
     /**
      * @auther : Ankit Mistry
      * @lastModifiedBy:
+     * @param browser
      * @return
      */
     public String getBinaryPath(String browser)  {
@@ -223,6 +224,24 @@ public class GetConfiguration {
             }
         }catch (Exception e){
             return null;
+        }
+    }
+
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public boolean getSingleWindowRun()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        try {
+            return (boolean) run.get("SingleWindowRun");
+        }catch (Exception e)
+        {
+            return false;
         }
     }
 

@@ -10,6 +10,7 @@ import framework.*;
 import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.openqa.selenium.WebDriver;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -31,6 +32,12 @@ public class TestExecutionBuilder {
     public static boolean repotFileGenerated = false;
     DataDrivenParser dataDrivenParser = new DataDrivenParser();
     Logger logger = new Logger();
+
+    static GetConfiguration config=new GetConfiguration();
+    public static boolean singleWindowRun= config.getSingleWindowRun();
+    public static boolean isSingleWindow= config.getSingleWindowRun();
+    public static WebDriver driver;
+
     public static JSONArray failTestQueue=new JSONArray();
 
     public void startExecution() throws Exception {
@@ -58,6 +65,9 @@ public class TestExecutionBuilder {
 
         builder.buildExecution();
 
+        if(! isSingleWindow && singleWindowRun) {
+            driver.quit();
+        }
 
         TestExecutionBuilder.buildRunning = false;
         buildEndTime = System.currentTimeMillis();
@@ -166,6 +176,7 @@ public class TestExecutionBuilder {
                         }
                     }
                 }
+
             }
 
         } catch (Exception ne) {
