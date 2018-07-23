@@ -338,5 +338,31 @@ public class DataDrivenParser {
 
     }
 
+    public void isHeader(JSONObject test,String step){
+        SuiteParser suiteParser=new SuiteParser();
+        String dataSetName = suiteParser.getTestDataSetBySuiteAndTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
+
+        ArrayList<String> columnNameList = new ArrayList<String>();
+        columnNameList = getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString()));
+
+
+        JSONArray  listOfHeader=getHeaderValuefromExcel(getExcelUrl(test.get("suiteName").toString(), dataSetName.replace(" ", "").split(":")[1]), columnNameList);
+
+        for(Object h:listOfHeader){
+
+            String[] splitStep=step.split("\\s");
+            String HeaderName = null;
+            for(String calName:splitStep)
+            {
+                if(calName.contains("{")&& calName.contains("}"))
+                    HeaderName=calName.replaceAll("[{}]", "");
+            }
+
+            if(((JSONObject) h).get(HeaderName)==null) {
+               throw new TesboException("Please enter valid headerName: "+HeaderName);
+            }
+        }
+
+    }
 
 }
