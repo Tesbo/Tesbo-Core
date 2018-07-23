@@ -604,6 +604,15 @@ public class Commands {
         driver.manage().deleteAllCookies();
     }
 
-
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     * @param element
+     */
+    public void mouseHover(WebDriver driver, WebElement element)  {
+        Actions action = new Actions(driver);
+        action.moveToElement(element).build().perform();
+    }
 
 }
