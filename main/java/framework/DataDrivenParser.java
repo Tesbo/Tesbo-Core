@@ -64,7 +64,11 @@ public class DataDrivenParser {
                     throw new TesboException("Write 'DataSet' keyword in suite");
                 flag = true;
                 break;
-
+            }
+            else{
+                if(allLines[i].toLowerCase().contains("dataset:") || allLines[i].toLowerCase().contains("dataset :")){
+                    throw new TesboException("Please add valid key word for: '"+allLines[i]+"'");
+                }
             }
         }
         return flag;

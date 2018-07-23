@@ -283,6 +283,11 @@ public class SuiteParser {
                 testDataSet=allLines[j];
                 break;
             }
+            else{
+                if(allLines[j].toLowerCase().contains("dataset:") || allLines[j].toLowerCase().contains("dataset :")){
+                    throw new TesboException("Please add valid key word for: '"+allLines[j]+"'");
+                }
+            }
         }
 
         return testDataSet;
