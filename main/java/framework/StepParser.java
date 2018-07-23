@@ -110,6 +110,13 @@ public class StepParser {
             }
         }
 
+        //Mouse Hover
+        if (step.toLowerCase().contains("mouse hover")) {
+            /**
+             * Step: Mouse Hover @element
+             */
+            cmd.mouseHover(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+        }
 
         //Clear
         if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache"))) {
