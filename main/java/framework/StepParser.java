@@ -28,8 +28,18 @@ public class StepParser {
             logger.stepLog(step);
 
         //Clicks
-        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("right") | step.toLowerCase().contains("double"))) {
+        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("right") | step.toLowerCase().contains("double") | step.toLowerCase().contains("and hold"))) {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
+        }
+
+        // Click And Hold
+        if (step.toLowerCase().contains("click") && step.toLowerCase().contains("and hold")) {
+            /**
+             * Step: click and hold @element1
+             * And
+             * Step: click @element1 and hold
+             */
+            cmd.clickAndHold(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
         }
 
         //Right Click
@@ -117,6 +127,18 @@ public class StepParser {
              */
             cmd.mouseHover(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
         }
+
+        //Drag and Drop
+        if (step.toLowerCase().contains("drag") && step.toLowerCase().contains("and drop")) {
+            /**
+             * Step: Drag and Drop @Element_1 to @element_2 ,
+             * Step: Drag and Drop @ele1 to ele2
+             * and
+             * Step: Drag @Element_1 to @Element2 and drop
+             */
+            // Not working
+            //dragAndDropElement(driver,test,step);
+           }
 
         //Clear
         if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache"))) {
@@ -712,5 +734,32 @@ public class StepParser {
      */
     public void windowMaximize(WebDriver driver) {
         driver.manage().window().maximize();
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param step
+     */
+    public void dragAndDropElement(WebDriver driver,JSONObject test,String step)throws Exception {
+        Commands cmd = new Commands();
+        GetLocator locator = new GetLocator();
+        String[] stepWordList = step.split(":|\\s+");
+        String elementTo = "";
+        String elementFrom = "";
+
+        for (int i=0;i<stepWordList.length;i++) {
+            if (stepWordList[i].equalsIgnoreCase("to")) {
+                elementTo = stepWordList[i+1].replace("@","");
+                break;
+            }
+            if (stepWordList[i].contains("@")) { elementFrom = stepWordList[i].substring(1); }
+        }
+        if(!(elementTo.equals("") && elementFrom.equals(""))){
+            // Not working
+           // cmd.dragAndDrop(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), elementFrom)), cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), elementTo)));
+        }
+        else{ throw new TesboException("Pleas enter valid step: '"+step+"'"); }
+
     }
 }

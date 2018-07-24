@@ -4,7 +4,6 @@ import framework.GetConfiguration;
 import framework.Utility;
 import logger.Logger;
 import org.apache.commons.io.FileUtils;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -22,8 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -613,6 +610,56 @@ public class Commands {
     public void mouseHover(WebDriver driver, WebElement element)  {
         Actions action = new Actions(driver);
         action.moveToElement(element).build().perform();
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     *
+     * @param driver
+     * @param elementTo
+     * @param elementFrom
+     */
+    public void dragAndDrop(WebDriver driver, WebElement elementFrom,WebElement elementTo)  {
+        Actions action = new Actions(driver);
+        //action.dragAndDrop(elementFrom, elementTo).build().perform();
+
+        /*Action dragAndDrop = action.clickAndHold(elementFrom)
+                .moveToElement(elementTo)
+                .release(elementTo)
+                .build();
+
+        dragAndDrop.perform();*/
+
+       /*action.keyDown(Keys.CONTROL)
+                .click(elementFrom)
+                .dragAndDrop(elementFrom, elementTo)
+                .keyUp(Keys.CONTROL);
+        Action selected = action.build();
+        selected.perform();*/
+
+        //action.clickAndHold(elementFrom).moveToElement(elementTo).release(elementFrom).build().perform()
+
+        //Action dragAndDrop = action.clickAndHold(elementFrom).moveToElement(elementTo).release().build();
+        //dragAndDrop.perform();
+
+       /* WebDriver _driver=driver;
+        WebElement _sourceElement = elementFrom;
+        WebElement _targetElement = elementTo;
+        JavascriptExecutor _js = (JavascriptExecutor) _driver;
+        _js.executeScript("$(arguments[0]).simulate('drag-n-drop',{dragTarget:arguments[1],interpolation:{stepWidth:100,stepDelay:50}});",( _sourceElement), (_targetElement));*/
+    }
+
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     * @param element
+     */
+    public void clickAndHold(WebDriver driver, WebElement element)  {
+        Actions action = new Actions(driver);
+        action.clickAndHold(element).build().perform();
     }
 
 }
