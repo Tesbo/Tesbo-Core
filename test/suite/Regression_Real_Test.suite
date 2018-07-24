@@ -1,4 +1,4 @@
-DataSet :
+DataSet:
 {
      "Credentials": {
           "userName1": "viral103patel@gmail.com",
@@ -29,7 +29,7 @@ Test: T2 Gmail signUp Data Set excel file
 #T2 #Gmail_signUp #regression
 DataSet: GmailUsers
 Step: open url 'https://accounts.google.com/signup'
-Step: Click on @Next button
+Step: Click on @Next
 Verify: @FirstNameError text is equal 'Enter first name'
 Verify: @LastNameError text is equal 'Enter last name'
 Verify: @UserNameError text is equal 'Choose a Gmail address'
@@ -45,6 +45,9 @@ Test: T3 Verify Page Title is equal
 #T3 #regression
 Collection Name: amazon_open
 Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: Mouse Hover @sign_in
+Step: pause 2 sec
 Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
 Step: Scroll to coordinate (300,250)
 Step: pause 2 sec
@@ -414,4 +417,54 @@ Step: Enter 'Rock' on @MessageBox
 Step: Click on @Send
 ExtCode: signOut
 Step: pause 5 sec
+End
+Test: Clear cache
+#T19
+Step: Pause 2 sec
+Step: Click on @amazonCat
+Step: Pause 2 sec
+Step: Click on @AmazonTelevisions
+Step: Pause 2 sec
+Step: Scroll to coordinate (300,300)
+Step: Pause 2 sec
+Step: Scroll to coordinate (600,600)
+Step: Scroll ot top
+Step: Click on @amazonCat
+Step: Pause 2 sec
+Step: Click on @AmazonBooks
+Step: Pause 20 sec
+Step: Clear Cache
+Step: Pause 20 sec
+End
+
+
+Test: Window Resize and Maximize and Minimize
+#T20
+Step: Open URL 'https://login.yahoo.com/account/create'
+Step: Pause 2 sec
+Step: Window Resize (600,600)
+Step: Pause 2 sec
+Step: Window Maximize
+Step: Select using value 'AF' from @SelectDropDown
+Step: Pause 5 sec
+ExtCode: WindowMinimize
+Step: Pause 5 sec
+End
+
+Test: select demo
+#T21
+Step: Open Url 'http://demo.guru99.com/selenium/newtours/register.php'
+Step: pause for 5sec
+Step: Select using text 'ANDORRA' from @DropDown
+Step: pause for 1sec
+Step: Select using index 7 from @DropDown
+Step: pause for 1sec
+Step: Select using value 'BAHAMAS' form @DropDown
+Step: pause for 2sec
+End
+
+Test: JavascriptExecutor
+#T22
+sendKey/Click/scroll
+ExtCode: JavascriptExecutor
 End

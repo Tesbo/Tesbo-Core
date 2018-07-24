@@ -1,12 +1,12 @@
 {
-  "SuiteDirectory": "E:/tesbo/tesbo-core/test/suite",
-  "locatorDirectory": "E:/tesbo/tesbo-core/test/locator",
-  "ExtCodeDirectory": "E:/tesbo/tesbo-core/test/ExtTestCode",
+  "SuiteDirectory": "E:/Tesbo_JAR/tesbo-core/test/suite",
+  "locatorDirectory": "E:/Tesbo_JAR/tesbo-core/test/locator",
+  "ExtCodeDirectory": "E:/Tesbo_JAR/tesbo-core/test/ExtTestCode",
   "run": {
-    "baseUrl": "https://amazon.in",
+    "baseUrl": "https://google.in",
     "by": {
       "tag": [
-       "V9"
+       "T22"
       ]
     },
     "browser": {
@@ -16,14 +16,15 @@
     },
     "parallel": {
       "status": true,
-      "count": "4"
+      "count": "1"
     },
     "retryAnalyser":{
-      "count":"0"
+      "count":"2"
     },
     "binaries" : {
       "chromePath" : ""
 
-    }
+    },
+    "SingleWindowRun": false
   }
 }
