@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -47,7 +48,6 @@ public class Commands {
      * @param elementvalue element loactor valuse
      * @return webelement
      */
-
 
     public WebElement findElement(WebDriver driver, String elementvalue) {
         WebElement element = null;
@@ -102,6 +102,58 @@ public class Commands {
 
 
         return element;
+    }
+
+    public List<WebElement> findElements(WebDriver driver, String elementvalue) {
+
+        List<WebElement> listOfElements =null;
+        int webdriverTime = 600;
+
+        WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
+        pause(3);
+        try {
+
+            listOfElements = driver.findElements(By.cssSelector(elementvalue));
+
+        } catch (NoSuchElementException css) {
+
+            try {
+                listOfElements = driver.findElements(By.xpath(elementvalue));
+            } catch (Exception xpath) {
+                try {
+                    listOfElements = driver.findElements(By.id(elementvalue));
+
+                } catch (NoSuchElementException id) {
+                    try {
+                        listOfElements = driver.findElements(By.className(elementvalue));
+                    } catch (Exception className) {
+                        try {
+                            listOfElements = driver.findElements(By.name(elementvalue));
+                        } catch (Exception name) {
+                            try {
+                                listOfElements = driver.findElements(By.tagName(elementvalue));
+                            } catch (Exception tagName) {
+                                try {
+                                    listOfElements = driver.findElements(By.linkText(elementvalue));
+                                } catch (Exception linkText) {
+                                    try {
+                                        listOfElements = driver.findElements(By.partialLinkText(elementvalue));
+                                    } catch (NoSuchElementException e) {
+                                        logger.testFailed("Please enter valid locator value");
+                                        throw  e;
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+        return listOfElements;
     }
 
     /**

@@ -8,6 +8,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 import Exception.TesboException;
 
@@ -27,8 +28,13 @@ public class StepParser {
         if (!step.toLowerCase().contains("{") && !step.toLowerCase().contains("}"))
             logger.stepLog(step);
 
+        //Click from List
+        if (step.toLowerCase().contains("click") && step.toLowerCase().contains("from list")) {
+            clickOnElementFromList(driver,test,step);
+        }
+
         //Clicks
-        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("right") | step.toLowerCase().contains("double") | step.toLowerCase().contains("and hold"))) {
+        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("right") || step.toLowerCase().contains("double") || step.toLowerCase().contains("and hold") || step.toLowerCase().contains("from list")) ) {
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
         }
 
@@ -739,7 +745,10 @@ public class StepParser {
     /**
      * @auther : Ankit Mistry
      * @lastModifiedBy:
+     * @param driver
+     * @param test
      * @param step
+     * @throws Exception
      */
     public void dragAndDropElement(WebDriver driver,JSONObject test,String step)throws Exception {
         Commands cmd = new Commands();
@@ -762,4 +771,73 @@ public class StepParser {
         else{ throw new TesboException("Pleas enter valid step: '"+step+"'"); }
 
     }
+
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     * @param test
+     * @param step
+     * @throws Exception
+     */
+    public void clickOnElementFromList(WebDriver driver,JSONObject test,String step)throws Exception {
+        Commands cmd = new Commands();
+        GetLocator locator = new GetLocator();
+
+        List<WebElement> listOfElements =cmd.findElements(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step)));
+
+        //Click on first element from list
+        if (step.toLowerCase().contains("first element")) {
+         /*
+            Step: Click on first element from List @elementName
+          */
+            listOfElements.get(0).click();
+        }
+
+        if (step.toLowerCase().contains("last element")) {
+            /*
+            Step: Click on last element from List @elementName
+            */
+            listOfElements.get(listOfElements.size()-1).click();
+        }
+        if (step.toLowerCase().contains("<") && step.toLowerCase().contains(">")) {
+            /*
+            Step: click on <any number> from List @elementName
+            */
+            String clickOnIndex="";
+            int startPoint = step.indexOf("<") + 1;
+            int endPoint = step.lastIndexOf(">");
+            try {
+                clickOnIndex = step.substring(startPoint, endPoint).trim();
+            } catch (StringIndexOutOfBoundsException e) {
+                throw new TesboException("No string found for click");
+            }
+            listOfElements.get(Integer.parseInt(clickOnIndex)).click();
+        }
+
+        if (step.toLowerCase().contains("\"")) {
+            /*
+            Step: click on "AnyTextHere" from List @elementName
+            */
+
+            String clickOnText="";
+            int startPoint = step.indexOf("\"") + 1;
+            int endPoint = step.lastIndexOf("\"");
+            try {
+                clickOnText = step.substring(startPoint, endPoint);
+
+            } catch (StringIndexOutOfBoundsException e) {
+                throw new TesboException("No string found for click");
+            }
+            for(WebElement element:listOfElements){
+                if(element.getText().equals(clickOnText)) {
+                    element.click();
+                }
+
+            }
+        }
+
+    }
+
 }
