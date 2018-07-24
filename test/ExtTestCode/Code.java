@@ -1,11 +1,10 @@
 package ExtTestCode;
 
 import Selenium.ExtendTesboDriver;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import ExtCode.*;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
 import java.util.Random;
 
 
@@ -23,10 +22,11 @@ public class Code extends ExtendTesboDriver {
     }
 
 
-  /*  public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
-    }*/
 
+
+    }
     @ExtCode("Random")
     public void Random() {
         //driver.get("https://www.amazon.in");
@@ -129,6 +129,23 @@ public class Code extends ExtendTesboDriver {
         System.out.println("Random alpha : "+saltStr);
 
     }
+    @ExtCode("JavascriptExecutor")
+    public void jsSendKey() throws InterruptedException {
+        JavascriptExecutor myExecutor = ((JavascriptExecutor) driver);
+        driver.get("http://demo.guru99.com/V4/");
+        WebElement button =driver.findElement(By.name("btnLogin"));
+        Thread.sleep(  2000);
+        myExecutor.executeScript("window.scrollBy(600,500)");
+        //Login to Guru99
+        driver.findElement(By.name("uid")).sendKeys("mngr34926");
+        driver.findElement(By.name("password")).sendKeys("amUpenu");
+        Thread.sleep(2000);
+        //Perform Click on LOGIN button using JavascriptExecutor
+        myExecutor.executeScript("arguments[0].click();", button);
+        Thread.sleep(10000);
+
+    }
+
 
 }
 

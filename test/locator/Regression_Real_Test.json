@@ -15,6 +15,11 @@
   "LastNameError":"(//div[@jsname='B34EJ'])[2]",
   "UserNameError":"(//div[@jsname='B34EJ'])[3]",
   "PasswordError":"(//div[@jsname='B34EJ'])[4]",
+  "amazonCat":"//*[@id='nav-link-shopall']",
+  "AmazonTelevisions":"//A[@href='/TVs/b/ref=sd_allcat_sbc_tvelec_television?ie=UTF8&node=1389396031'][text()='Televisions']",
+  "AmazonBooks":"//A[@href='/Books/b/ref=sd_allcat_sbc_books_all?ie=UTF8&node=976389031'][text()='All Books']",
+  "SelectDropDown":"(//select)[1]",
+  "AreaSelect":"//*[@class='autoCompleteItem__label'][contains(text(),'')]",
 
   "sign_in":"//*[contains(text(),'Hello. Sign in')]",
   "Email":"//input[@type='email']",
