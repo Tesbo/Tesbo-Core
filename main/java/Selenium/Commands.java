@@ -50,7 +50,7 @@ public class Commands {
 
     public WebElement findElement(WebDriver driver, String elementvalue) {
         WebElement element = null;
-
+        GetConfiguration config = new GetConfiguration();
         int webdriverTime = 600;
 
         WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
@@ -86,7 +86,7 @@ public class Commands {
                                         element = driver.findElement(By.partialLinkText(elementvalue));
                                     } catch (NoSuchElementException e) {
                                         logger.testFailed("Please enter valid locator value");
-                                        throw  e;
+                                        throw e;
                                     }
                                 }
 
@@ -99,7 +99,10 @@ public class Commands {
             }
         }
 
-
+        if (config.getHighlightElement()) {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", element);
+        }
         return element;
     }
 
