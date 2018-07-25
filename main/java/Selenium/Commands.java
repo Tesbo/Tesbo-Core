@@ -14,7 +14,6 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -51,7 +50,7 @@ public class Commands {
 
     public WebElement findElement(WebDriver driver, String elementvalue) {
         WebElement element = null;
-
+        GetConfiguration config = new GetConfiguration();
         int webdriverTime = 600;
 
         WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
@@ -87,7 +86,7 @@ public class Commands {
                                         element = driver.findElement(By.partialLinkText(elementvalue));
                                     } catch (NoSuchElementException e) {
                                         logger.testFailed("Please enter valid locator value");
-                                        throw  e;
+                                        throw e;
                                     }
                                 }
 
@@ -100,7 +99,10 @@ public class Commands {
             }
         }
 
-
+        if (config.getHighlightElement()) {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", element);
+        }
         return element;
     }
 
@@ -713,5 +715,16 @@ public class Commands {
         Actions action = new Actions(driver);
         action.clickAndHold(element).build().perform();
     }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     *
+     */
+    public void getPageSource(WebDriver driver)  {
+        logger.stepLog(driver.getPageSource());
+    }
+
 
 }

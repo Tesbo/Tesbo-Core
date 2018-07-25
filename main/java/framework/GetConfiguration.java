@@ -245,4 +245,21 @@ public class GetConfiguration {
         }
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public boolean getHighlightElement()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        try {
+            return (boolean) run.get("highlightElement");
+        }catch (Exception e)
+        {
+            return false;
+        }
+    }
+
 }

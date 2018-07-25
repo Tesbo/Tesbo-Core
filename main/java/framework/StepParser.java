@@ -35,6 +35,7 @@ public class StepParser {
 
         //Clicks
         if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("right") || step.toLowerCase().contains("double") || step.toLowerCase().contains("and hold") || step.toLowerCase().contains("from list")) ) {
+
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
         }
 
@@ -90,6 +91,14 @@ public class StepParser {
             Step: Upload File 'filePath' @element
             */
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
+        }
+
+        //Get Page Source
+        if (step.toLowerCase().contains("get page") && step.toLowerCase().contains("source")) {
+            /*
+            Step: Get Page Source
+            */
+            cmd.getPageSource(driver);
         }
 
         // Get URL
