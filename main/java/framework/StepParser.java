@@ -55,6 +55,7 @@ public class StepParser {
 
         //Double Click
         if (step.toLowerCase().contains("double click")) {
+
             cmd.doubleClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
         }
 
@@ -81,6 +82,14 @@ public class StepParser {
             else {
                 cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
             }
+        }
+
+        //Upload File
+        if (step.toLowerCase().contains("upload") && step.toLowerCase().contains("file")) {
+            /*
+            Step: Upload File 'filePath' @element
+            */
+            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
         }
 
         // Get URL
