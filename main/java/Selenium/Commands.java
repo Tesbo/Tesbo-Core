@@ -14,7 +14,6 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -713,5 +712,16 @@ public class Commands {
         Actions action = new Actions(driver);
         action.clickAndHold(element).build().perform();
     }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     *
+     */
+    public void getPageSource(WebDriver driver)  {
+        logger.stepLog(driver.getPageSource());
+    }
+
 
 }
