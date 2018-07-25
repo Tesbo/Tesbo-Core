@@ -15,10 +15,13 @@
   "LastNameError":"(//div[@jsname='B34EJ'])[2]",
   "UserNameError":"(//div[@jsname='B34EJ'])[3]",
   "PasswordError":"(//div[@jsname='B34EJ'])[4]",
+  "GoogleSignIn":"//*[contains(text(),'Sign in')]",
   "amazonCat":"//*[@id='nav-link-shopall']",
   "AmazonTelevisions":"//A[@href='/TVs/b/ref=sd_allcat_sbc_tvelec_television?ie=UTF8&node=1389396031'][text()='Televisions']",
   "AmazonBooks":"//A[@href='/Books/b/ref=sd_allcat_sbc_books_all?ie=UTF8&node=976389031'][text()='All Books']",
   "SelectDropDown":"(//select)[1]",
+  "SelectDropDown2":"(//select)[2]",
+  "checkbox":"select[multiple='multiple']",
   "AreaSelect":"//*[@class='autoCompleteItem__label'][contains(text(),'')]",
 
   "sign_in":"//*[contains(text(),'Hello. Sign in')]",
@@ -71,7 +74,9 @@
   "FirstResult":"(//*[@class='a-link-normal s-access-detail-page  s-color-twister-title-link a-text-normal'])[1]",
   "paytm_search":"//INPUT[@type='search']",
   "paytmResult":"(//*[@class='_2i1r'])[1]",
-  "BuyMobile":"//BUTTON[@class='_2CNI']"
+  "BuyMobile":"//BUTTON[@class='_2CNI']",
+  "bootstrapElementList":"(//ul[@class='list-group'])[1]/li",
+  "bootstrapElementListSecond":"(//ul[@class='list-group'])[2]/li"
 
 
 

@@ -316,9 +316,18 @@ Test: T16 Capture Screenshot
 #T16 #regression
 Step: Open URL 'https://www.google.in/'
 Steps: pause 2 sec
+Step: Enter 'random.firstname' on @GoogleSearch
+Step: pause 2 sec
 Step: Capture Screenshot
 Step: pause 2 sec
-Step: Enter 'random.firstname' on @GoogleSearch
+Step: Press Enter
+Step: pause 2 sec
+Step: click and hold @GoogleSignIn
+Step: pause 2 sec
+Step: Navigate to Refresh
+Step: pause 2 sec
+Step: click @GoogleSignIn and hold
+Step: pause 5 sec
 End
 
 Test: T17 Linkedin DataSet global  Multi Driver  collection  ExtCode
@@ -438,16 +447,24 @@ Step: Pause 20 sec
 End
 
 
-Test: Window Resize and Maximize and Minimize
+Test: Window Resize and Maximize and Minimize and deselect
 #T20
-Step: Open URL 'https://login.yahoo.com/account/create'
+Step: Open URL 'http://compendiumdev.co.uk/selenium/basic_html_form.html'
 Step: Pause 2 sec
 Step: Window Resize (600,600)
 Step: Pause 2 sec
 Step: Window Maximize
-Step: Select using value 'AF' from @SelectDropDown
+Step: Deselect using value 'ms4' from @checkbox
+Step: Pause 2 sec
+Step: Select using value 'ms2' from @checkbox
+Step: Pause 2 sec
+Step: Deselect using value 'ms2' from @checkbox
 Step: Pause 5 sec
-ExtCode: WindowMinimize
+Step: Select using text 'Selection Item 3' from @checkbox
+Step: Pause 2 sec
+Step: Deselect using text 'Selection Item 3' from @checkbox
+Step: Pause 5 sec
+Step: Window Minimize
 Step: Pause 5 sec
 End
 
@@ -467,4 +484,19 @@ Test: JavascriptExecutor
 #T22
 sendKey/Click/scroll
 ExtCode: JavascriptExecutor
+End
+
+Test: click from list of element
+#T23 #clickFromList #regression
+Step: Open URL 'http://www.seleniumeasy.com/test/bootstrap-dual-list-box-demo.html'
+Verify: Page Title is equal to 'Selenium Easy - Dual List box demo to practice Selenium Webdriver'
+Step: pause 2 sec
+Step: Click on first element from List @bootstrapElementList
+Step: pause 2 sec
+Step: Click on last element from List @bootstrapElementList
+Step: pause 2 sec
+Step: Click on "Morbi leo risus" element from List @bootstrapElementListSecond
+Step: pause 2 sec
+Step: click on <0> from List @bootstrapElementListSecond
+Step: pause 5 sec
 End
