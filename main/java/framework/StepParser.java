@@ -83,6 +83,14 @@ public class StepParser {
             }
         }
 
+        //Upload File
+        if (step.toLowerCase().contains("upload file")) {
+            /*
+            Step: Upload File 'filePath' @element
+            */
+            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
+        }
+
         // Get URL
         if (step.toLowerCase().contains("url")) {
             driver.get(parseTextToEnter(test, step));
