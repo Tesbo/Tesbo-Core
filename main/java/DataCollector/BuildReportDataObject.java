@@ -37,8 +37,9 @@ public class BuildReportDataObject implements Runnable {
                 if (suiteName.equals(suite)) { testArray = (JSONArray) tempSuiteObject.get("tests"); }
             }
             for (int t = 0; t < testArray.size(); t++) {
-                if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) & testResultObject.get("status").equals("failed")) { flag = true; }
-                if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) & testResultObject.get("status").equals("passed")) { buildTotalFailed--; }
+                if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) && testResultObject.get("status").equals("failed")) { flag = true; }
+                if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) && testResultObject.get("status").equals("passed") && testResultObject.get("status").equals("failed")) { buildTotalFailed--; }
+
             }
         }
         if(!flag) {
@@ -261,11 +262,14 @@ public class BuildReportDataObject implements Runnable {
 
                 boolean flag=false;
                 for (int t = 0; t < testArray.size(); t++) {
-                    if (testResult.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) & ((JSONObject) testArray.get(t)).get("status").equals("failed")) {
+
+
+                    if (testResult.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) && ((JSONObject) testArray.get(t)).get("status").equals("failed")) {
                         testArray.set(t, testResult);
                         flag = true;
                     }
-                    if(testResult.get("testName").equals(((JSONObject)testArray.get(t)).get("testName"))){
+                    if(testResult.get("testName").equals(((JSONObject)testArray.get(t)).get("testName")))
+                    {
                         if (testResult.get("status").toString().equals("passed")) {
                             totalPassed = Integer.parseInt(tempSuiteObject.get("totalPassed").toString()) + 1;
                             totalFailed = Integer.parseInt(tempSuiteObject.get("totalFailed").toString())-1;
