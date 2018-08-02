@@ -7,7 +7,7 @@ DataSet:
           "password2": "tesbo@2018",
      }
      "GmailUsers": {
-     "excelFile": "E:/Tesbo_JAR/tesbo-core/test/GmailData.xlsx"
+     "excelFile": "E:/TesBo/tesbo-core/src/test/Resources/GmailData.xlsx"
      }
 }
 
