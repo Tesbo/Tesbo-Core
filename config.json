@@ -4,9 +4,10 @@
   "ExtCodeDirectory": "E:/Tesbo_JAR/tesbo-core/test/ExtTestCode",
   "run": {
     "baseUrl": "https://google.in",
+    "seleniumAddress": "",
     "by": {
       "tag": [
-       "T22"
+       "T6"
       ]
     },
     "browser": {
@@ -19,12 +20,18 @@
       "count": "1"
     },
     "retryAnalyser":{
-      "count":"2"
+      "count":"0"
     },
     "binaries" : {
-      "chromePath" : ""
-
+      "chromePath": ""
     },
-    "SingleWindowRun": false
+    "capabilities": {
+      "chrome": {
+        "version" : "",
+        "platform" : ""
+      }
+    },
+    "SingleWindowRun": false,
+    "highlightElement": true
   }
 }
