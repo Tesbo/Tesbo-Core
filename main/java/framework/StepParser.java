@@ -203,11 +203,8 @@ public class StepParser {
         if (step.toLowerCase().contains("age"))
         { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.AgeAdult()); }
 
-        if (step.toLowerCase().contains("gender"))
-        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.Gender()); }
-
         if (step.toLowerCase().contains("birthday"))
-        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.Birthday()); }
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys((CharSequence) randLibrary.Birthday()); }
 
         if (step.toLowerCase().contains("debitcard"))
         { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.DebitCardNo()); }
@@ -219,10 +216,10 @@ public class StepParser {
         { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.cvvNo()); }
 
         if (step.toLowerCase().contains("country"))
-        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.CountryName()); }
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.Country()); }
 
         if (step.toLowerCase().contains("city"))
-        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.cityName()); }
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.city()); }
 
         if (step.toLowerCase().contains("postcode"))
         { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.postcode()); }
@@ -230,10 +227,33 @@ public class StepParser {
         if (step.toLowerCase().contains("street"))
         { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.street()); }
 
-        if(step.toLowerCase().contains("number")){
-            cmd.findElement(driver,locator.getLocatorValue(test.get("suiteName").toString(),  parseElementName(step))).sendKeys(randLibrary.number());
-        }
+        if (step.toLowerCase().contains("emoji"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.emoji()); }
 
+        if (step.toLowerCase().contains("lorem"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.lorem()); }
+
+        if (step.toLowerCase().contains("maritalStatus"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.maritalStatus()); }
+
+        if (step.toLowerCase().contains("gender"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.gender()); }
+
+        if (step.toLowerCase().contains("state"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.state()); }
+
+        if (step.toLowerCase().contains("fullAddress"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.fullAddress()); }
+
+       /* if (step.toLowerCase().contains("number"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomNo()); }
+
+        if (step.toLowerCase().contains("alpha"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomAlpha()); }
+
+        if (step.toLowerCase().contains("numAlpha"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomNoAlpha()); }
+*/
     }
 
     public void switchFunction(WebDriver driver, JSONObject test, String step) throws Exception {
