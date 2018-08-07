@@ -62,8 +62,20 @@ public class StepParser {
 
         //Capture Screenshot
         if (step.toLowerCase().contains("capture screenshot")) {
-            screenShotURL=cmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
-            logger.stepLog("Screenshot: "+screenShotURL);
+            /**
+             * Step: Capture Screenshot of @elementName
+             */
+            if(step.toLowerCase().contains("screenshot of") && step.toLowerCase().contains("@")) {
+                cmd.screenshotElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))),test.get("suiteName").toString(), test.get("testName").toString());
+                logger.stepLog(step);
+            }
+            /**
+             * Step: capture screenshot
+             */
+            else if(step.toLowerCase().contains("screenshot")) {
+                screenShotURL = cmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
+                logger.stepLog("Screenshot: " + screenShotURL);
+            }
         }
 
         //clear cookies and cache
