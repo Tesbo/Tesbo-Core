@@ -385,21 +385,28 @@ public class StepParser {
 
         /**
          * 'Bottom' identify.
-         * Step :Scroll to bottom.
+         * Step: Scroll to bottom.
          */
         if (step.toLowerCase().contains("bottom")) {
             cmd.scrollBottom(driver);
         }
         /**
          * 'top' identify.
-         * step : Scroll to top.
+         * Step: Scroll to top.
          */
         else if (step.toLowerCase().contains("top")) {
             cmd.scrollTop(driver);
         }
         /**
+         * 'top' identify.
+         * Step: Scroll to Horizontal
+         */
+        else if (step.toLowerCase().contains("horizontal")) {
+            cmd.scrollHorizontal(driver);
+        }
+        /**
          * number identify.
-         * Step : Scroll to coordinate (50,100)
+         * Step: Scroll to coordinate (50,100)
          */
         else if (step.toLowerCase().contains("coordinate")) {
             try {
@@ -412,7 +419,7 @@ public class StepParser {
         }
         /**
          * element identify.
-         * Step : Scroll to @element
+         * Step: Scroll to @element
          */
         else if (parseElementName(step) != "") {
             try {

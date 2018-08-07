@@ -330,6 +330,16 @@ public class Commands {
     }
 
     /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     */
+    public void scrollHorizontal(WebDriver driver) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollBy(1000,0)", "");
+    }
+
+    /**
      * @param driver
      * @Description : Scrolling to top.
      */
