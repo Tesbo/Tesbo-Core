@@ -1,4 +1,4 @@
-DataSet :
+DataSet:
 {
      "Credentials": {
      "userName":  "viral103patel@gmail.com",
@@ -14,7 +14,7 @@ Test: V1 Verify Open Url without single quotes
 Step: Open URL https://www.amazon.in
 End
 
-Test: V2 Verify Locator @ Functionality
+Test: V2 Verify without sign Locator  Functionality
 #V2 #Verify
 Step: Open URL 'https://www.amazon.in'
 Step: click on sign_in button
@@ -73,4 +73,213 @@ ExtCode: Window Resize
 Step: pause 2 sec
 ExtCode: RandomError
 Step: pause 2 sec
+End
+
+Test: V11 is equal ignore case without text
+#V11 #Verify
+Step: Open URL 'https://www.amazon.in/'
+Step: scroll to Bottom
+Verify: @Australia is equal ignore case 'australia'
+Step: pause 1sec
+Step: Click on @Australia
+End
+
+Test: V12 Verify is equal without text
+#V12 #Verify
+Step: Open URL 'https://www.amazon.in/'
+Step: scroll to Bottom
+Verify: @Australia is equal 'Australia'
+Step: pause 1sec
+Step: Click on @Australia
+End
+
+Test: V13 Verify is contains without text
+#V13 #Verify
+Step: Open URL 'https://www.amazon.in/'
+Step: scroll to Bottom
+Verify: @Australia is contains 'Australia'
+Step: pause 1sec
+Step: Click on @Australia
+End
+
+Test: V14 Verify is contains ignore case without text
+#V14 #Verify
+Step: Open URL 'https://www.amazon.in/'
+Step: scroll to Bottom
+Verify: @Australia is contains ignore case 'Australia'
+Step: pause 1sec
+Step: Click on @Australia
+End
+
+Test: V15 Verify is equal ignore case without text
+#V15 #Verify
+Step: Open URL 'https://www.amazon.in/'
+Step: scroll to Bottom
+Verify: @Australia text is ignore case 'australia'
+Step: pause 1sec
+Step: Click on @Australia
+End
+
+Test: V16 Verify Press Keys Functionality
+#V16 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: @sign_in click
+Steps: Enter 'krazzyvir@gmail.com' in @Email
+Step: pause 1 sec
+Step: Press 'ctrl' Plus '' in @Email
+Step: pause 1 sec
+End
+
+Test: V17 Verify Press Keys Functionality
+#V17 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: @sign_in click
+Steps: Enter 'krazzyvir@gmail.com' in @Email
+Step: pause 1 sec
+Step: Press 'ctrl' 'A' in @Email
+Step: pause 1 sec
+End
+
+Test: V18 Verify Press Keys Functionality
+#V18 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: @sign_in click
+Steps: Enter 'krazzyvir@gmail.com' in @Email
+Step: pause 1 sec
+Step: Press '' Plus 'A' in @Email
+Step: pause 1 sec
+End
+
+Test: V19 Verify Press Keys Functionality
+#V19 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: @sign_in click
+Steps: Enter 'krazzyvir@gmail.com' in @Email
+Step: pause 1 sec
+Step: 'ctrl' Plus 'A' in @Email
+Step: pause 1 sec
+End
+
+Test: V20 Verify Press Keys Functionality
+#V20 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: @sign_in click
+Steps: Enter 'krazzyvir@gmail.com' in @Email
+Step: pause 1 sec
+Step: 'ctrl' Plus 'C' in @Email
+Step: pause 1 sec
+End
+
+Test: V21 Verify Press Keys Functionality
+#V21 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: @sign_in click
+Steps: Enter 'krazzyvir@gmail.com' in @Email
+Step: pause 1 sec
+Step: Press 'ctrl' 'C' in @Email
+Step: pause 1 sec
+End
+
+Test: V22 Verify Press Keys Functionality
+#V22 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: @sign_in click
+Steps: Enter 'krazzyvir@gmail.com' in @Email
+Step: pause 1 sec
+Step: Press '' Plus 'C' in @Email
+Step: pause 1 sec
+End
+
+
+Test: V23 Verify Press Keys Functionality
+#V23 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: @sign_in click
+Steps: Enter 'krazzyvir@gmail.com' in @Email
+Step: pause 1 sec
+Step: 'ctrl' Plus 'V' in @Email
+Step: pause 1 sec
+End
+
+Test: V24 Verify Press Keys Functionality
+#V24 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: @sign_in click
+Steps: Enter 'krazzyvir@gmail.com' in @Email
+Step: pause 1 sec
+Step: Press 'ctrl' 'V' in @Email
+Step: pause 1 sec
+End
+
+Test: V25 Verify Press Keys Functionality
+#V25 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: @sign_in click
+Steps: Enter 'krazzyvir@gmail.com' in @Email
+Step: pause 1 sec
+Step: Press '' Plus 'V' in @Email
+Step: pause 1 sec
+End
+
+Test: V26 Verify collection name with Double quarts
+#V26 #Verify
+Collection Name: "amazon_open"
+Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
+End
+
+Test: V27 Verify tw0 locator
+#V27 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: @@sign_in click
+End
+
+Test: V28 To verify date with double quotes
+#V28 #regression
+Step: Open URL 'https://www.amazon.in'
+Step: pause 2 sec
+Step: @sign_in click
+Steps: Enter "krazzyvir@gmail.com" in @Email
+End
+
+Test: V29 To verify session name without comma
+#V29 #regression
+DataSet: GmailUsers
+Session: Viral Ankit,
+[Viral]
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter {ankitUser} into @Email_Field
+Step: pause 1 sec
+Step: Enter {ankitPass} into @Password_Field
+Step: Click on @Login_Button
+Step: pause 2 sec
+Step: Click on @MyNetwork
+Step: pause 2 sec
+Step: Click on @SeeAll
+Step: pause 2 sec
+Step: Enter 'Viral' on @ConSearch
+Step: Press Enter
+Step: Click on @Message
+Step: Enter 'Tesbo' on @MessageBox
+Step: Click on @Send
+Step: pause 5 sec
+[Ankit]
+Collection: linkedin
+Step: Click on @Login_Button
+Step: Click on @MessageIcon
+Step: pause 5 sec
+Step: @MessageCon text is equal 'ZooMa'
+Step: Enter 'Ankit' on @MessageBox
+Step: Click on @Send
+Step: pause 5 sec
 End

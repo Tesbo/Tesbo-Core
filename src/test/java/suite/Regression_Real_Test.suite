@@ -102,7 +102,7 @@ Step: Click on @Message
 Step: Enter 'Tesbo' on @MessageBox
 Step: Click on @Send
 Step: pause 5 sec
-
+[Close: Viral]
 [Ankit]
 Step: pause for 5sec
 Step: Open URL 'https://www.linkedin.com'
@@ -499,4 +499,17 @@ Step: Click on "Morbi leo risus" element from List @bootstrapElementListSecond
 Step: pause 2 sec
 Step: click on <0> from List @bootstrapElementListSecond
 Step: pause 5 sec
+End
+
+Test: File upload
+#T24 #regression
+Step: Open URL 'http://demo.guru99.com/test/upload/'
+Step: Get Page Source
+Step: pause for 2sec
+Step: Upload File 'C:\Users\jsbot\Desktop\New.html' @UploadText
+Step: pause for 2sec
+Step: Click on @terms
+Step: pause 2 sec
+Step: Click on @send
+Step: pause 2 sec
 End

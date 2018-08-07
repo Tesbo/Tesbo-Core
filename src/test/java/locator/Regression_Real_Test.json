@@ -5,6 +5,10 @@
   "homePage":"//a[@data-control-name='identity_welcome_message']",
   "SearchBox":"//*[@role='combobox']",
 
+  "UploadText":"//*[@id='uploadfile_0']",
+  "terms":"//*[@id='terms']",
+  "send":"//*[@name='send']",
+
   "FirstName":"/html//input[@id='firstName']",
   "LastName":"/html//input[@id='lastName']",
   "UserName":"/html//input[@id='username']",
