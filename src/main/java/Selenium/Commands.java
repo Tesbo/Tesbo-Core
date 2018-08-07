@@ -726,5 +726,22 @@ public class Commands {
         logger.stepLog(driver.getPageSource());
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     * @param cookieName
+     */
+    public boolean isCookieAvailable(WebDriver driver, String cookieName)  {
 
+        boolean isCookie=false;
+
+        System.out.println("getCookies :"+driver.manage().getCookies());
+        for(Cookie ck : driver.manage().getCookies())
+        {
+            if(cookieName.equalsIgnoreCase(ck.getName())){ isCookie=true; }
+        }
+        return isCookie;
+
+    }
 }

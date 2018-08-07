@@ -123,8 +123,23 @@ public class VerifyParser {
                 throw e;
             }
         }
-        if(!flag)
+        if (verify.toLowerCase().contains("get cookies")) {
+
+            if(verify.toLowerCase().contains("check") && verify.toLowerCase().contains("is available")) {
+
+                /**
+                 * Step: Get cookies and check 'any cookie name' is available
+                 */
+                if (!cmd.isCookieAvailable(driver, stepParser.parseTextToEnter(test, verify))) {
+
+                    throw new AssertException("'" + stepParser.parseTextToEnter(test, verify) + "' cookie is not found");
+                }
+                flag = true;
+            }
+        }
+        if(!flag) {
             throw new TesboException("Step is not define properly.");
+        }
     }
 
 }
