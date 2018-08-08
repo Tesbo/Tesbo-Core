@@ -1,22 +1,13 @@
 package RandomLibrary;
 
-import ExtCode.ExtCode;
-import me.xdrop.jrand.JRand;
-import me.xdrop.jrand.generators.basics.NaturalGenerator;
-import me.xdrop.jrand.generators.basics.StringGenerator;
-import me.xdrop.jrand.generators.location.CityGenerator;
-import me.xdrop.jrand.generators.location.CountryGenerator;
-import me.xdrop.jrand.generators.location.PostcodeGenerator;
-import me.xdrop.jrand.generators.location.StreetGenerator;
-import me.xdrop.jrand.generators.money.CVVGenerator;
-import me.xdrop.jrand.generators.money.CardNumberGenerator;
-import me.xdrop.jrand.generators.person.*;
+import com.github.javafaker.Faker;
 
 
-
+import java.util.Locale;
 import java.util.Random;
 
 public class RandLibrary {
+    Faker faker = new Faker();
     /**
      * +     * @param
      * +     * @auther : Ankit Patel
@@ -25,139 +16,184 @@ public class RandLibrary {
      */
     // Random First Name
     public String firstName() {
-        FirstnameGenerator firstName = JRand.firstname();
-        String fName = firstName.gen();
-        System.out.println("First Name: " + fName);
-        return fName;
+        Faker faker = new Faker(new Locale("en-IND"));
+        String fname = faker.name().firstName();
+        System.out.println("First Name: " + fname);
+        return fname;
 
     }
 
     // Random Last Name
     public String LastName() {
-        LastnameGenerator lastName = JRand.lastname();
-        String name = lastName.gen();
-        System.out.println("Last Name: " + name);
-        return name;
+        Faker faker = new Faker(new Locale("en-IND"));
+        String lname = faker.name().lastName();
+        System.out.println("Last Name: " + lname);
+        return lname;
     }
 
     // Random Email
     public String eMail() {
-        FirstnameGenerator firstName = JRand.firstname();
-        String fName = firstName.gen();
-        LastnameGenerator lastname = JRand.lastname();
-        String lMame = lastname.gen();
-        String email = fName + lMame + "@testdata.com";
+        Faker faker = new Faker(new Locale("en-IND"));
+        String email = faker.internet().emailAddress();
         System.out.println("Email: " + email);
         return email;
 
     }
 
-    // Random User Name
+    // Random Full Name
     public String userName() {
-        NameGenerator name = JRand.name();
-        String userName = name.gen();
-        System.out.println("User Name: " + userName);
-        return userName;
+        Faker faker = new Faker(new Locale("en-IND"));
+        String fullName = faker.name().fullName();
+        System.out.println("User Name: " + fullName);
+        return fullName;
     }
 
-    // Random Indian Mobile Number
+    // Random Mobile Number
     public String number() {
-        StringGenerator string = JRand.string();
-        String qa = string.range(8, 8).digits().gen();
-        NaturalGenerator nat = JRand.natural();
-        int as = nat.range(90, 99).gen();
-        String to = Integer.toString(as);
-        String number = to + qa;
-        System.out.println("Mobile number: " + number);
-        return number;
+        int number =  faker.number().numberBetween(75,98);
+        String mobileNumber = faker.number().digits(8);
+        String phoneNumber = number + mobileNumber;
+        System.out.println("Mobile number: " + phoneNumber);
+        return phoneNumber;
 
     }
 
 
-    // Random Age Adult
+    // Random Age
     public String AgeAdult() {
-        AgeGenerator age = JRand.age();
-        int AgeAdult = age.adult().gen();
-        String ageAdultString = Integer.toString(AgeAdult);
-        System.out.println("Age Adult: " + ageAdultString);
-        return ageAdultString;
+        int age = faker.number().numberBetween(22,40);
+        Integer intInstance = new Integer(age);
+        String numberAsString = intInstance.toString();
+        System.out.println("Age: " + numberAsString);
+        return numberAsString;
     }
 
 
-    //Random Gender
-    public String Gender() {
-        GenderGenerator gender = new GenderGenerator();
-        String Gender = gender.full().gen();
-        System.out.println("Gender: " + Gender);
-        return Gender;
-    }
+
     //Random Birthday
     public String Birthday() {
-        NaturalGenerator nat = JRand.natural();
-        int date = nat.range(01,31).gen();
-        int month = nat.range(1,12).gen();
-        String Month = Integer.toString(month);
-        int year = nat.range(1983,1999).gen();
-        String Year = Integer.toString(year);
-        String number = ("Birth Date: " + date+"/"+Month+"/"+Year);
-        System.out.println(number);
-        return number;
+        int day = faker.number().numberBetween(01,28);
+        int month = faker.number().numberBetween(01,12);
+        int year = faker.number().numberBetween(1960,1990);
+        String birth = day+"/"+month+"/"+year;
+        System.out.println("Birthday : "+ birth);
+        return birth;
     }
     //Random DebitCardNo
     public String DebitCardNo() {
-        CardNumberGenerator cardNo = JRand.cardNo();
-        String card = cardNo.format("XXXX XXXX XXXX XXXX").gen();
+        String card = faker.business().creditCardNumber();
         System.out.println("Card No: "+card);
         return card;
     }
 
     public String ExpiryDate() {
-        NaturalGenerator nat = JRand.natural();
-        int date = nat.range(01,12).gen();
-        int year = nat.range(20,26).gen();
-        String D1 = Integer.toString(date);
-        String Y1 = Integer.toString(year);
-        String expiryDate = (D1+"/"+Y1);
+        String expiryDate = faker.business().creditCardExpiry();
         System.out.println("Expiry Date: "+expiryDate);
         return expiryDate;
     }
 
     public String cvvNo() {
-        CVVGenerator cvv = JRand.cvv();
-        String cvvNo = cvv.gen();
+        String cvvNo = faker.number().digits(3);
         System.out.println("CVV No: "+cvvNo);
         return cvvNo;
     }
 
-    public String CountryName() {
-        CountryGenerator country = JRand.country();
-        String countryName = country.gen();
-        System.out.println("Country Name: "+countryName);
-        return countryName;
+    public String Country() {
+        String country = faker.address().country();
+        System.out.println("Country Name: "+country);
+        return country;
+    }
+    public String state() {
+        Faker faker = new Faker(new Locale("en-IND"));
+        String state = faker.address().state();
+        System.out.println("Country Name: "+state);
+        return state;
     }
 
-    public String cityName() {
-        CityGenerator city = JRand.city();
-        String cityName = city.gen();
-        System.out.println("Country Name: "+cityName);
-        return cityName;
+    public String city() {
+        Faker faker = new Faker(new Locale("en-IND"));
+        String city = faker.address().cityName();
+        System.out.println("Country Name: "+city);
+        return city;
     }
 
     public String postcode() {
-        NaturalGenerator nat = JRand.natural();
-        int Pincode = nat.range(300000,399999).gen();
-        String pin = Integer.toString(Pincode);
-        System.out.println("Pincode: "+pin);
-        return pin;
+        Faker faker = new Faker(new Locale("en-IND"));
+        String zipcode = faker.address().zipCode();
+        System.out.println("Pincode: "+zipcode);
+        return zipcode;
     }
     public String street() {
-        StreetGenerator street = new StreetGenerator();
-        String Street = street.us().gen();
+        Faker faker = new Faker(new Locale("en-IND"));
+        String Street = faker.address().streetName();
         System.out.println("Street: "+Street);
         return Street;
     }
+    public String emoji() {
+        String emoji = faker.slackEmoji().emoji();
+        System.out.println("emoji: "+emoji);
+        return emoji;
+    }
+    public String lorem() {
+        String lorem = faker.lorem().sentence();
+        System.out.println("lorem: "+lorem);
+        return lorem;
+    }
+    public String maritalStatus() {
+        String status = faker.demographic().maritalStatus();
+        System.out.println("maritalStatus: "+status);
+        return status;
+    }
+    public String gender() {
+        String sex = faker.demographic().sex();
+        System.out.println("gender: "+sex);
+        return sex;
+    }
+    public String fullAddress() {
+        Faker faker = new Faker(new Locale("en-IND"));
+        String fullAddress = faker.address().fullAddress();
+        System.out.println("fullAddress: "+fullAddress);
+        return fullAddress;
+    }
+    public String RandomNo(int length) {
+        String SALTCHARS = "1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < length) {
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        System.out.println("Random no : "+saltStr);
+        return saltStr;
 
+    }
 
+    public String RandomNoAlpha(int length) {
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < length) {
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        System.out.println("Random no Alpha : "+saltStr);
+        return saltStr;
+    }
+
+    public String RandomAlpha(int length) {
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < length) {
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        System.out.println("Random alpha : "+saltStr);
+return saltStr;
+    }
 
 
 }

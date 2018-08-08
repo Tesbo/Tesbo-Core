@@ -293,8 +293,6 @@ Step: Enter 'random.lastname' on @GoogleSearch
 Step: Clear @GoogleSearch
 Step: Enter 'random.age' on @GoogleSearch
 Step: Clear @GoogleSearch
-Step: Enter 'random.gender' on @GoogleSearch
-Step: Clear @GoogleSearch
 Step: Enter 'random.birthday' on @GoogleSearch
 Step: Clear @GoogleSearch
 Step: Enter 'random.debitcard' on @GoogleSearch
@@ -310,6 +308,17 @@ Step: Clear @GoogleSearch
 Step: Enter 'random.street' on @GoogleSearch
 Step: Clear @GoogleSearch
 Step: Enter 'random.city' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.emoji' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.lorem' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.maritalStatus' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.gender' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.fullAddress' on @GoogleSearch
+Step: pause 5 sec
 End
 
 Test: T16 Capture Screenshot
