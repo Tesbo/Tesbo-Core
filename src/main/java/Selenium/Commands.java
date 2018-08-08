@@ -14,6 +14,9 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -327,6 +330,16 @@ public class Commands {
     public void scrollBottom(WebDriver driver) {
         JavascriptExecutor js = ((JavascriptExecutor) driver);
         js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     */
+    public void scrollHorizontal(WebDriver driver) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollBy(1000,0)", "");
     }
 
     /**
@@ -733,10 +746,7 @@ public class Commands {
      * @param cookieName
      */
     public boolean isCookieAvailable(WebDriver driver, String cookieName)  {
-
         boolean isCookie=false;
-
-        System.out.println("getCookies :"+driver.manage().getCookies());
         for(Cookie ck : driver.manage().getCookies())
         {
             if(cookieName.equalsIgnoreCase(ck.getName())){ isCookie=true; }
@@ -744,4 +754,40 @@ public class Commands {
         return isCookie;
 
     }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     * @param element
+     * @param suitName
+     * @param testName
+     * @throws IOException
+     */
+    public String screenshotElement(WebDriver driver, WebElement element, String suitName, String testName) throws IOException {
+
+        // Get entire page screenshot
+        String path;
+        File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        BufferedImage fullImg = null;
+        try {
+            fullImg = ImageIO.read(screenshot);
+            // Get the location of element on the page
+            Point point = element.getLocation();
+            // Get width and height of the element
+            int eleWidth = element.getSize().getWidth();
+            int eleHeight = element.getSize().getHeight();
+            // Crop the entire page screenshot to get only element screenshot
+            BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(), eleWidth, eleHeight);
+            ImageIO.write(eleScreenshot, "png", screenshot);
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            path ="ElementScreenshots/"+(suitName.split(".s"))[0] + "_" + testName.replaceAll("\\s", "") + "_" + dtf.format(LocalDateTime.now()) + ".png";
+            File screenshotLocation = new File(path);
+            FileUtils.copyFile(screenshot, screenshotLocation);
+        } catch (IOException e) {
+            throw e;
+        }
+        return path;
+    }
+
 }

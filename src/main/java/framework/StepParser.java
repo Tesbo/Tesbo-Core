@@ -62,8 +62,20 @@ public class StepParser {
 
         //Capture Screenshot
         if (step.toLowerCase().contains("capture screenshot")) {
-            screenShotURL=cmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
-            logger.stepLog("Screenshot: "+screenShotURL);
+            /**
+             * Step: Capture Screenshot of @elementName
+             */
+            if(step.toLowerCase().contains("screenshot of") && step.toLowerCase().contains("@")) {
+                screenShotURL = cmd.screenshotElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))),test.get("suiteName").toString(), test.get("testName").toString());
+                logger.stepLog("Screenshot: " + screenShotURL);
+            }
+            /**
+             * Step: capture screenshot
+             */
+            else if(step.toLowerCase().contains("screenshot")) {
+                screenShotURL = cmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
+                logger.stepLog("Screenshot: " + screenShotURL);
+            }
         }
 
         //clear cookies and cache
@@ -405,21 +417,28 @@ public class StepParser {
 
         /**
          * 'Bottom' identify.
-         * Step :Scroll to bottom.
+         * Step: Scroll to bottom.
          */
         if (step.toLowerCase().contains("bottom")) {
             cmd.scrollBottom(driver);
         }
         /**
          * 'top' identify.
-         * step : Scroll to top.
+         * Step: Scroll to top.
          */
         else if (step.toLowerCase().contains("top")) {
             cmd.scrollTop(driver);
         }
         /**
+         * 'top' identify.
+         * Step: Scroll to Horizontal
+         */
+        else if (step.toLowerCase().contains("horizontal")) {
+            cmd.scrollHorizontal(driver);
+        }
+        /**
          * number identify.
-         * Step : Scroll to coordinate (50,100)
+         * Step: Scroll to coordinate (50,100)
          */
         else if (step.toLowerCase().contains("coordinate")) {
             try {
@@ -432,7 +451,7 @@ public class StepParser {
         }
         /**
          * element identify.
-         * Step : Scroll to @element
+         * Step: Scroll to @element
          */
         else if (parseElementName(step) != "") {
             try {
