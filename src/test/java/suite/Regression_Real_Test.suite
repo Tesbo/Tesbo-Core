@@ -7,7 +7,7 @@ DataSet:
           "password2": "tesbo@2018",
      }
      "GmailUsers": {
-     "excelFile": "E:/TesBo/tesbo-core/src/test/Resources/GmailData.xlsx"
+     "excelFile": "E:/Tesbo_JAR/tesbo-core/src/test/Resources/GmailData.xlsx"
      }
 }
 
@@ -318,8 +318,31 @@ Step: Clear @GoogleSearch
 Step: Enter 'random.gender' on @GoogleSearch
 Step: Clear @GoogleSearch
 Step: Enter 'random.fullAddress' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.domain' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.gstno' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.panno' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.companyName' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.fullname' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.password' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.idno' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.passport' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.houseno' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.bankacno' on @GoogleSearch
+Step: Clear @GoogleSearch
+Step: Enter 'random.cardname' on @GoogleSearch
 Step: pause 5 sec
 End
+
 
 Test: T16 Capture Screenshot
 #T16 #regression

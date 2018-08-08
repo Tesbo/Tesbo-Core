@@ -1,13 +1,13 @@
 {
-  "SuiteDirectory": "E:/Tesbo_JAR/tesbo-core/test/suite",
-  "locatorDirectory": "E:/Tesbo_JAR/tesbo-core/test/locator",
-  "ExtCodeDirectory": "E:/Tesbo_JAR/tesbo-core/test/ExtTestCode",
+  "SuiteDirectory": "E:/Tesbo_JAR/tesbo-core/src/test/java/suite",
+  "locatorDirectory": "E:/Tesbo_JAR/tesbo-core/src/test/java/locator",
+  "ExtCodeDirectory": "E:/Tesbo_JAR/tesbo-core/src/test/java/ExtTestCode",
   "run": {
     "baseUrl": "https://google.in",
     "seleniumAddress": "",
     "by": {
       "tag": [
-       "T6"
+       "T15"
       ]
     },
     "browser": {
