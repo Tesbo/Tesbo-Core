@@ -250,7 +250,7 @@ public class TestExecutionBuilder {
 
                                 if (dataType.equalsIgnoreCase("excel")) {
 
-                                    dataSize = dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1]), columnNameList).size();
+                                    dataSize = dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1]), columnNameList,Integer.parseInt(dataDrivenParser.SheetNumber(suiteName.toString(), testName.toString()))).size();
 
                                 }
                             }
