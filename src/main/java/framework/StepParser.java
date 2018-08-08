@@ -233,7 +233,7 @@ public class StepParser {
         if (step.toLowerCase().contains("lorem"))
         { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.lorem()); }
 
-        if (step.toLowerCase().contains("maritalStatus"))
+        if (step.toLowerCase().contains("maritalstatus"))
         { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.maritalStatus()); }
 
         if (step.toLowerCase().contains("gender"))
@@ -242,8 +242,41 @@ public class StepParser {
         if (step.toLowerCase().contains("state"))
         { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.state()); }
 
-        if (step.toLowerCase().contains("fullAddress"))
+        if (step.toLowerCase().contains("fulladdress"))
         { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.fullAddress()); }
+
+        if (step.toLowerCase().contains("domain"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.internetDomain()); }
+
+        if (step.toLowerCase().contains("gstno"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.GSTNo()); }
+
+        if (step.toLowerCase().contains("panno"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.PANNo()); }
+
+        if (step.toLowerCase().contains("companyname"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.companyName()); }
+
+        if (step.toLowerCase().contains("fullname"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.fullName()); }
+
+        if (step.toLowerCase().contains("password"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.password()); }
+
+        if (step.toLowerCase().contains("idno"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.IDNo()); }
+
+        if (step.toLowerCase().contains("passport"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.passport()); }
+
+        if (step.toLowerCase().contains("houseno"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.houseNo()); }
+
+        if (step.toLowerCase().contains("bankacno"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.bankACNo()); }
+
+        if (step.toLowerCase().contains("cardtype"))
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.cardname()); }
 
        /* if (step.toLowerCase().contains("number"))
         { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomNo()); }
