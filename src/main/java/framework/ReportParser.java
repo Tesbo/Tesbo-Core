@@ -118,7 +118,7 @@ file.close();
             try {
                 if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
                     try {
-                        textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"));
+                        textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"),Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
 
                     } catch (StringIndexOutOfBoundsException e) {
                         logger.stepLog(step);

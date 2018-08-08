@@ -173,7 +173,7 @@ public class StepParser {
              * Step: Drag @Element_1 to @Element2 and drop
              */
             // Not working
-            //dragAndDropElement(driver,test,step);
+            dragAndDropElement(driver,test,step);
            }
 
         //Clear
@@ -601,7 +601,7 @@ public class StepParser {
             try {
                 if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
                     try {
-                        textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"));
+                        textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
                         if(textToEnter!=null) {
                             logger.stepLog(step.replace(headerName, textToEnter));
                         }
@@ -823,7 +823,7 @@ public class StepParser {
         }
         if(!(elementTo.equals("") && elementFrom.equals(""))){
             // Not working
-           // cmd.dragAndDrop(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), elementFrom)), cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), elementTo)));
+            cmd.dragAndDrop(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), elementFrom)), cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), elementTo)));
         }
         else{ throw new TesboException("Pleas enter valid step: '"+step+"'"); }
 

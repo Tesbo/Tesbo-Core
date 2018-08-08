@@ -689,7 +689,7 @@ public class Commands {
      */
     public void dragAndDrop(WebDriver driver, WebElement elementFrom,WebElement elementTo)  {
         Actions action = new Actions(driver);
-        //action.dragAndDrop(elementFrom, elementTo).build().perform();
+        action.dragAndDrop(elementFrom, elementTo).build().perform();
 
         /*Action dragAndDrop = action.clickAndHold(elementFrom)
                 .moveToElement(elementTo)

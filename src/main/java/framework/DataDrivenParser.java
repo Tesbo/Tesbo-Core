@@ -203,7 +203,7 @@ public class DataDrivenParser {
             throw new TesboException("Excel data is not used in suite file.");
     }
 
-    public JSONArray getHeaderValuefromExcel(String url,ArrayList<String> dataSetValues)
+    public JSONArray getHeaderValuefromExcel(String url,ArrayList<String> dataSetValues,int sheetNo)
     {
         String filePath=url;
         JSONArray excelData=new JSONArray();
@@ -212,7 +212,7 @@ public class DataDrivenParser {
             file = new FileInputStream(new File(filePath));
 
         XSSFWorkbook workbook = new XSSFWorkbook(file);
-            XSSFSheet sheet = workbook.getSheetAt(0);
+            XSSFSheet sheet = workbook.getSheetAt(sheetNo);
             Iterator<Row> rowIterator = sheet.iterator();
             ArrayList<String> CellNums=new ArrayList<String>();
             while (rowIterator.hasNext()) {
@@ -251,12 +251,12 @@ public class DataDrivenParser {
             }
             file.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new TesboException(e.getMessage());
         }
         return excelData;
     }
 
-    public String getcellValuefromExcel(String url,String headerName,int rowNum)
+    public String getcellValuefromExcel(String url,String headerName,int rowNum,int sheetNo)
     {
         String filePath=url;
         String CellData=null;
@@ -265,7 +265,7 @@ public class DataDrivenParser {
             file = new FileInputStream(new File(filePath));
             String columnIndex=null;
             XSSFWorkbook workbook = new XSSFWorkbook(file);
-            XSSFSheet sheet = workbook.getSheetAt(0);
+            XSSFSheet sheet = workbook.getSheetAt(sheetNo);
             Iterator<Row> rowIterator = sheet.iterator();
             while (rowIterator.hasNext()) {
                 Row rows = rowIterator.next();
@@ -301,7 +301,7 @@ public class DataDrivenParser {
 
             file.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new TesboException(e.getMessage());
         }
         return CellData;
     }
@@ -350,7 +350,7 @@ public class DataDrivenParser {
         columnNameList = getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString()));
 
 
-        JSONArray  listOfHeader=getHeaderValuefromExcel(getExcelUrl(test.get("suiteName").toString(), dataSetName.replace(" ", "").split(":")[1]), columnNameList);
+        JSONArray  listOfHeader=getHeaderValuefromExcel(getExcelUrl(test.get("suiteName").toString(), dataSetName.replace(" ", "").split(":")[1]), columnNameList,Integer.parseInt(SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
 
         for(Object h:listOfHeader){
 
@@ -367,6 +367,21 @@ public class DataDrivenParser {
             }
         }
 
+    }
+
+    public String SheetNumber(String suiteName,String testName){
+        SuiteParser suiteParser=new SuiteParser();
+        String dataSetName = suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName, testName).split(":")[1];
+        int startPoint = dataSetName.indexOf("[") + 1;
+        int endPoint = dataSetName.lastIndexOf("]");
+        String sheetNo = null;
+        if(startPoint!=0 && endPoint!=-1) {
+            sheetNo = dataSetName.substring(startPoint, endPoint);
+        }
+        else{
+            sheetNo="0";
+        }
+        return sheetNo;
     }
 
 }
