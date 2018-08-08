@@ -66,8 +66,8 @@ public class StepParser {
              * Step: Capture Screenshot of @elementName
              */
             if(step.toLowerCase().contains("screenshot of") && step.toLowerCase().contains("@")) {
-                cmd.screenshotElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))),test.get("suiteName").toString(), test.get("testName").toString());
-                logger.stepLog(step);
+                screenShotURL = cmd.screenshotElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))),test.get("suiteName").toString(), test.get("testName").toString());
+                logger.stepLog("Screenshot: " + screenShotURL);
             }
             /**
              * Step: capture screenshot

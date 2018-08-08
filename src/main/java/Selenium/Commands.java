@@ -764,9 +764,10 @@ public class Commands {
      * @param testName
      * @throws IOException
      */
-    public void screenshotElement(WebDriver driver, WebElement element, String suitName, String testName) throws IOException {
+    public String screenshotElement(WebDriver driver, WebElement element, String suitName, String testName) throws IOException {
 
         // Get entire page screenshot
+        String path;
         File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
         BufferedImage fullImg = null;
         try {
@@ -780,11 +781,13 @@ public class Commands {
             BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(), eleWidth, eleHeight);
             ImageIO.write(eleScreenshot, "png", screenshot);
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-            File screenshotLocation = new File("ElementScreenshots/"+(suitName.split(".s"))[0] + "_" + testName.replaceAll("\\s", "") + "_" + dtf.format(LocalDateTime.now()) + ".png" );
+            path ="ElementScreenshots/"+(suitName.split(".s"))[0] + "_" + testName.replaceAll("\\s", "") + "_" + dtf.format(LocalDateTime.now()) + ".png";
+            File screenshotLocation = new File(path);
             FileUtils.copyFile(screenshot, screenshotLocation);
         } catch (IOException e) {
             throw e;
         }
+        return path;
     }
 
 }
