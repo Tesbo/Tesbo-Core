@@ -294,6 +294,21 @@ public class Validation {
                 }
 
             }
+
+            if(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:")){
+                String closedSession=  allLines[j].replaceAll("\\s{2,}", " ").trim().toString().replaceAll("\\[|\\]", "").split(":")[1].trim();
+
+                for (int i = j+1; i < endpoint; i++) {
+                    for (Object session : listOfSession) {
+                        if (allLines[i].replaceAll("\\s{2,}", " ").trim().toString().replaceAll("\\[|\\]", "").equals(session.toString())) {
+
+                            if (allLines[i].replaceAll("\\s{2,}", " ").trim().toString().equals("[" + closedSession + "]")) {
+                                throw new TesboException("Closed session '"+closedSession+"' not define in test");
+                            }
+                        }
+                    }
+                }
+            }
         }
 
     }
