@@ -723,7 +723,7 @@ public class ReportBuilder implements Runnable {
                             "<div class=\"panel\">\n" +
                             "<a class=\"panel-heading\" role=\"tab\"\n" +
                             "data-toggle=\"collapse\"\n" +
-                            "data-parent=\"#accordion\" href=\"#" + browser + testDetails.get("testName").toString().replace(" ", "")+randomNumber + "\"\n" +
+                            "data-parent=\"#accordion\" href=\"#" + browser +randomNumber + "\"\n" +
                             "aria-expanded=\"true\"\n" +
                             "aria-controls=\"collapseOne\">\n" +
                             "<h4 class=\"panel-title\">\n" +
@@ -742,7 +742,7 @@ public class ReportBuilder implements Runnable {
                             "</h4>\n" +
 
                             "</a>\n" +
-                            "<div id=\"" + browser + testDetails.get("testName").toString().replace(" ", "")+randomNumber + "\" class=\"panel-collapse collapse\"\n" +
+                            "<div id=\"" + browser +randomNumber + "\" class=\"panel-collapse collapse\"\n" +
                             "role=\"tabpanel\"\n" +
                             "aria-labelledby=\"headingOne\">\n" +
                             "<div class=\"panel-body\">\n" +
