@@ -3,6 +3,7 @@ package framework;
 import DataCollector.BuildReportDataObject;
 import Execution.TestExecutionBuilder;
 import ExtCode.*;
+import Exception.TesboException;
 import Selenium.Commands;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import logger.Logger;
@@ -140,9 +141,13 @@ public class TestExecutor implements Runnable {
             boolean stepPassed = true;
 
             JSONObject stepReportObject = new JSONObject();
-
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
+
+            if(step.toString().replaceAll("\\s{2,}", " ").split(":").length<2){
+                throw new TesboException("Step is blank '"+step+"'");
+            }
+
             if(!step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
                 stepReportObject.put("stepIndex", ++stepIndex);
                 stepReportObject.put("startTime", startTimeStep);

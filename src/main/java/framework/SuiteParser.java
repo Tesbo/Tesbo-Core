@@ -264,7 +264,10 @@ public class SuiteParser {
         for (int i = 0; i < allLines.length; i++) {
             if (allLines[i].contains("Test:")) {
                 String testNameArray[] = allLines[i].split(":");
-                if (testNameArray[1].trim().contains(testName)) {
+                if(testNameArray.length<2){
+                    throw new TesboException("Test name is blank '"+allLines[i]+"'");
+                }
+                if(testNameArray[1].trim().contains(testName)) {
                     startPoint = i;
                     testStarted = true;
                 }
