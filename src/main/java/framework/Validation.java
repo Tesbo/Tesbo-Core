@@ -227,7 +227,7 @@ public class Validation {
     public void sessionNotDefineOnTest(JSONArray steps, JSONArray listOfSession) {
         for (Object step : steps) {
             if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("[") && step.toString().replaceAll("\\s{2,}", " ").trim().contains("]") &&
-                    !(step.toString().replaceAll("\\s{2,}", " ").trim().contains("[Close")) ) {
+                    !(step.toString().replaceAll("\\s{2,}", " ").trim().contains("[Close") || step.toString().replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) ) {
                 boolean isSessionInTest = false;
                 for (Object session : listOfSession) {
                     if (step.toString().replaceAll("\\[|\\]", "").equals(session.toString())) {

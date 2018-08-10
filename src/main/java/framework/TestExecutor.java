@@ -144,7 +144,7 @@ public class TestExecutor implements Runnable {
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
 
-            if(step.toString().replaceAll("\\s{2,}", " ").split(":").length<2){
+            if(step.toString().replaceAll("\\s{2,}", " ").split(":").length<2 && step.toString().replaceAll("\\s{2,}", " ").contains("Step:")){
                 throw new TesboException("Step is blank '"+step+"'");
             }
 
