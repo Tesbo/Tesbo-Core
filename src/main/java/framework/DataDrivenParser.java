@@ -114,17 +114,22 @@ public class DataDrivenParser {
 
         }
 
-        if(!isDataSetName )
-            throw new TesboException("'"+dataSetName + "' is not found in Data Set");
+        if(!isDataSetName ) {
+            throw new TesboException("'" + dataSetName + "' is not found in Data Set");
+        }
+        try {
+            if(type.equalsIgnoreCase("excel")) {
+                if (!flag){ throw new TesboException("Excel File url is not found in " + dataSetName + " Data Set");}
+            }
+        }
+        catch (Exception e){
+            throw new TesboException("Enter valid key word for DataSet 'excelFile'");
+        }
 
-        if(type.equalsIgnoreCase("excel"))
-            if(!flag)
-                throw new TesboException("Excel File url is not found in " + dataSetName + " Data Set");
 
-        if(type.equalsIgnoreCase("global"))
-            if(!flag)
-                throw new TesboException("Data is not found in " + dataSetName + " Data Set");
-
+        if(type.equalsIgnoreCase("global")) {
+            if (!flag){ throw new TesboException("Data is not found in " + dataSetName + " Data Set");}
+        }
         return type;
 
     }
