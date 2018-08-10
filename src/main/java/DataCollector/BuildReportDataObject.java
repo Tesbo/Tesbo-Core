@@ -38,7 +38,7 @@ public class BuildReportDataObject implements Runnable {
             }
             for (int t = 0; t < testArray.size(); t++) {
                 if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) && testResultObject.get("status").equals("failed")) { flag = true; }
-                if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) && testResultObject.get("status").equals("passed") && testResultObject.get("status").equals("failed")) { buildTotalFailed--; }
+                if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) && testResultObject.get("status").equals("passed") && ((JSONObject) testArray.get(t)).get("status").equals("failed")) { buildTotalFailed--; }
 
             }
         }
