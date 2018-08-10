@@ -287,6 +287,19 @@ public class TestExecutor implements Runnable {
 
         Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
 
+        if(stepParser.isSeverityOrPriority(test)){
+            JSONArray severityAndPrioritySteps=suiteParser.getSeverityAndPriority(test);
+            for (int i = 0; i < severityAndPrioritySteps.size(); i++) {
+                Object step = severityAndPrioritySteps.get(i);
+                if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority:")) {
+                    testReportObject.put("Priority", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
+                }
+                if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+                    testReportObject.put("Severity", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
+                }
+            }
+        }
+
         testReportObject.put("browserVersion", caps.getVersion());
         String osName= caps.getPlatform().toString();
         if(osName.toLowerCase().equals("xp")) { osName = "windows"; }

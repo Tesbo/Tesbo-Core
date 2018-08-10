@@ -522,4 +522,55 @@ public class SuiteParser {
         return sessionName;
     }
 
+    /**
+     * @auther: Ankit Mistry
+     * @lastModifiedBy:
+     * @param test
+     *
+     */
+    public JSONArray getSeverityAndPriority(JSONObject test) {
+        SuiteParser suiteParser=new SuiteParser();
+
+        StringBuffer suiteDetails = suiteParser.readSuiteFile(test.get("suiteName").toString());
+        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        JSONArray severityAndPriority = new JSONArray();
+        int testCount=0;
+        int startPoint = 0;
+        boolean testStarted = false;
+        int endpoint = 0;
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].contains("Test:")) {
+                String testNameArray[] = allLines[i].split(":");
+
+                if (testNameArray[1].trim().contains(test.get("testName").toString())) {
+                    startPoint = i;
+                    testStarted = true;
+                }
+                if (testStarted) {
+                    testCount++;
+                }
+            }
+            if (testStarted) {
+
+                if (allLines[i].contains("Step:")) {
+                    endpoint = i;
+                    break;
+                }
+            }
+        }
+        if(testCount>=2 || endpoint==0) {
+            throw new TesboException("Step is not found for '" + test.get("testName").toString() + "' test");
+        }
+
+        for (int j = startPoint; j < endpoint; j++) {
+
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Priority:")
+                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+                severityAndPriority.add(allLines[j]);
+            }
+        }
+
+        return severityAndPriority;
+    }
+
 }

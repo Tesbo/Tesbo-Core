@@ -203,6 +203,7 @@ public class Validation {
                     sessionNotDefineOnTest(steps, listOfSession);
                 }
                 collectionValidation(test.get("suiteName").toString(), test.get("testName").toString());
+                severityAndPriorityValidation(test);
             }
         }
     }
@@ -371,6 +372,87 @@ public class Validation {
             throw new TesboException("Please write valid keyword for this step \"" +step+"\"");
         }
 
+    }
+
+    public boolean severityAndPriorityValidation(JSONObject test) {
+
+        SuiteParser suiteParser=new SuiteParser();
+        JSONArray steps= suiteParser.getSeverityAndPriority(test);
+        if(steps.size()>0){
+            for (int i = 0; i < steps.size(); i++) {
+                Object step = steps.get(i);
+
+                try{
+                    if(step.toString().replaceAll("\\s{2,}", " ").trim().split(":").length==2) {
+
+                        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority:")) {
+                            String priority=step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1];
+                            if (!(priority.trim().equalsIgnoreCase("high")
+                                    || priority.trim().equalsIgnoreCase("medium")
+                                    || priority.trim().equalsIgnoreCase("low"))) {
+                                throw new TesboException("Enter valid priority name: '"+step+"'");
+                            }
+                        }
+                        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+                            String severity=step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1];
+                            if (!(severity.trim().equalsIgnoreCase("critical") || severity.trim().equalsIgnoreCase("major")
+                                    || severity.trim().equalsIgnoreCase("medium") || severity.trim().equalsIgnoreCase("minor"))) {
+                                throw new TesboException("Enter valid severity name: '"+step+"'");
+                            }
+                        }
+                    }
+                }catch (Exception e){
+                    throw new TesboException("Write step properly: '"+step+"'");
+                }
+
+            }
+        }
+
+
+
+
+
+        StringBuffer suiteDetails = suiteParser.readSuiteFile(test.get("suiteName").toString());
+        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        boolean isSeverityOrPriority=false;
+        int testCount=0;
+        int startPoint = 0;
+        boolean testStarted = false;
+        int endpoint = 0;
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].contains("Test:")) {
+                String testNameArray[] = allLines[i].split(":");
+
+                if (testNameArray[1].trim().contains(test.get("testName").toString())) {
+                    startPoint = i;
+                    testStarted = true;
+                }
+                if (testStarted) {
+                    testCount++;
+                }
+            }
+            if (testStarted) {
+
+                if (allLines[i].contains("Step:")) {
+                    endpoint = i;
+                    break;
+                }
+            }
+        }
+        if(testCount>=2 || endpoint==0) {
+            throw new TesboException("Step is not found for '" + test.get("testName").toString() + "' test");
+        }
+
+        for (int j = startPoint; j < endpoint; j++) {
+
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Priority:")
+                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+                isSeverityOrPriority=true;
+                break;
+            }
+        }
+
+        return isSeverityOrPriority;
     }
 
 }
