@@ -26,7 +26,7 @@ public class StepParser {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
-        if (!step.toLowerCase().contains("{") && !step.toLowerCase().contains("}"))
+        if (!step.toLowerCase().contains("{") && !step.toLowerCase().contains("}") && !step.toLowerCase().contains("print"))
             logger.stepLog(step);
 
         //Click from List
@@ -59,6 +59,15 @@ public class StepParser {
         if (step.toLowerCase().contains("double click")) {
 
             cmd.doubleClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+        }
+
+        //Print
+        if (step.toLowerCase().contains("print")) {
+            /**
+             * Step: print "User should redirect into the login page "
+             * Step: print @elementName
+             */
+            logger.stepLog(printStep(driver,step,test));
         }
 
         //Capture Screenshot
@@ -892,5 +901,33 @@ public class StepParser {
             isSeverityOrPriority=true;
         }
         return isSeverityOrPriority;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param step
+     * @param driver
+     * @param test
+     * @return
+     * @throws Exception
+     */
+    public String printStep(WebDriver driver,String step, JSONObject test) throws Exception {
+        Commands cmd = new Commands();
+        GetLocator locator = new GetLocator();
+        String printStep;
+        if(step.toLowerCase().contains("@")){
+            printStep="Step: "+ cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).getText();
+        }
+        else{
+            int startPoint = 0;
+            int endPoint = 0;
+            startPoint = step.indexOf("\"") + 1;
+            endPoint = step.lastIndexOf("\"");
+            String printText = step.substring(startPoint, endPoint);
+
+            printStep="Step: "+printText;
+        }
+        return printStep;
     }
 }
