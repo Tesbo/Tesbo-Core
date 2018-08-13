@@ -3,6 +3,7 @@ package framework;
 import RandomLibrary.RandLibrary;
 import Selenium.Commands;
 import logger.Logger;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -930,4 +931,19 @@ public class StepParser {
 
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param test
+     * @throws Exception
+     */
+    public boolean isSeverityOrPriority(JSONObject test) {
+        SuiteParser suiteParser=new SuiteParser();
+        boolean isSeverityOrPriority=false;
+        JSONArray steps= suiteParser.getSeverityAndPriority(test);
+        if(steps.size()>0){
+            isSeverityOrPriority=true;
+        }
+        return isSeverityOrPriority;
+    }
 }

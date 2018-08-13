@@ -136,6 +136,9 @@ public class SuiteParser {
                                 throw new TesboException("Please write valid keyword for this \"" + allLines[i] + "\"");
                             }
                             String testNameArray[] = allLines[i].split(":");
+                            if(testNameArray.length<2){
+                                throw new TesboException("Test name is blank '"+allLines[i]+"'");
+                            }
                             testName.add(testNameArray[1].trim());
                         }
                     }
@@ -189,7 +192,6 @@ public class SuiteParser {
      * @param suiteName
      * @return
      */
-
     public JSONArray getTestStepBySuiteandTestCaseName(String suiteName, String testName) {
         StringBuffer suiteDetails = readSuiteFile(suiteName);
         String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
@@ -226,11 +228,14 @@ public class SuiteParser {
             throw new TesboException("End Step is not found for '" + testName + "' test");
         }
         for (int j = startPoint; j < endpoint; j++) {
-
+            if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].toString().replaceAll("\\s{2,}", " ").contains("Step:")){
+                throw new TesboException("Step is blank '"+allLines[j]+"'");
+            }
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
                     allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
                     allLines[j].replaceAll("\\s{2,}", " ").trim().contains("ExtCode:") |
                     ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
+
                 testSteps.add(allLines[j]);
             }
             else{
@@ -264,9 +269,6 @@ public class SuiteParser {
         for (int i = 0; i < allLines.length; i++) {
             if (allLines[i].contains("Test:")) {
                 String testNameArray[] = allLines[i].split(":");
-                if(testNameArray.length<2){
-                    throw new TesboException("Test name is blank '"+allLines[i]+"'");
-                }
                 if(testNameArray[1].trim().contains(testName)) {
                     startPoint = i;
                     testStarted = true;
@@ -448,7 +450,11 @@ public class SuiteParser {
 
         for (int i = 0; i < allLines.length; i++) {
             if (allLines[i].contains("Test:")) {
+
                 String testNameArray[] = allLines[i].split(":");
+                if(testNameArray.length<2){
+                    throw new TesboException("Test name is blank '"+allLines[i]+"'");
+                }
                 testName.add(testNameArray[1].trim());
             }
             else {
@@ -520,6 +526,57 @@ public class SuiteParser {
             }
         }
         return sessionName;
+    }
+
+    /**
+     * @auther: Ankit Mistry
+     * @lastModifiedBy:
+     * @param test
+     *
+     */
+    public JSONArray getSeverityAndPriority(JSONObject test) {
+        SuiteParser suiteParser=new SuiteParser();
+
+        StringBuffer suiteDetails = suiteParser.readSuiteFile(test.get("suiteName").toString());
+        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        JSONArray severityAndPriority = new JSONArray();
+        int testCount=0;
+        int startPoint = 0;
+        boolean testStarted = false;
+        int endpoint = 0;
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].contains("Test:")) {
+                String testNameArray[] = allLines[i].split(":");
+
+                if (testNameArray[1].trim().contains(test.get("testName").toString())) {
+                    startPoint = i;
+                    testStarted = true;
+                }
+                if (testStarted) {
+                    testCount++;
+                }
+            }
+            if (testStarted) {
+
+                if (allLines[i].contains("Step:")) {
+                    endpoint = i;
+                    break;
+                }
+            }
+        }
+        if(testCount>=2 || endpoint==0) {
+            throw new TesboException("Step is not found for '" + test.get("testName").toString() + "' test");
+        }
+
+        for (int j = startPoint; j < endpoint; j++) {
+
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Priority:")
+                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+                severityAndPriority.add(allLines[j]);
+            }
+        }
+
+        return severityAndPriority;
     }
 
 }
