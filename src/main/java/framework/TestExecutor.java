@@ -149,8 +149,15 @@ public class TestExecutor implements Runnable {
                 stepReportObject.put("stepIndex", ++stepIndex);
                 stepReportObject.put("startTime", startTimeStep);
 
-                if (!(step.toString().contains("{") && step.toString().contains("}")))  {
+                if (!(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("print")))  {
                     stepReportObject.put("steps", step.toString());
+                }
+                if (step.toString().contains("print"))  {
+                    try {
+                        stepReportObject.put("steps",stepParser.printStep(driver,step.toString(),test));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
