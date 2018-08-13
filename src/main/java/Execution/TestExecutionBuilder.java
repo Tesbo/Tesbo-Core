@@ -13,6 +13,8 @@ import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -108,8 +110,9 @@ public class TestExecutionBuilder {
             suiteFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
-
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
         }
 
         if (suiteFileList.size() > 0) {
@@ -180,7 +183,9 @@ public class TestExecutionBuilder {
             }
 
         } catch (Exception ne) {
-            ne.printStackTrace();
+            StringWriter sw = new StringWriter();
+            ne.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
 
         }
 

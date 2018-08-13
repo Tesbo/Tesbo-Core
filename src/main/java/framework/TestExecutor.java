@@ -112,6 +112,8 @@ public class TestExecutor implements Runnable {
         ExternalCode externalCode=new ExternalCode();
         ReportParser reportParser = new ReportParser();
         BuildReportDataObject buildReport = new BuildReportDataObject();
+        Logger logger=new Logger();
+        StringWriter sw = new StringWriter();
         testResult = "";
         int stepNumber = 0;
         JSONObject testReportObject = new JSONObject();
@@ -124,6 +126,7 @@ public class TestExecutor implements Runnable {
         testReportObject.put("browserName", test.get("browser"));
         testReportObject.put("testName", test.get("testName").toString());
         testReportObject.put("suiteName", test.get("suiteName").toString());
+        logger.testLog("Test: "+test.get("testName").toString());
 
         /*Getting step using SuiteName and Testcase Name*/
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
@@ -156,7 +159,8 @@ public class TestExecutor implements Runnable {
                     try {
                         stepReportObject.put("steps",stepParser.printStep(driver,step.toString(),test));
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        e.printStackTrace(new PrintWriter(sw));
+                        logger.testFailed(sw.toString());
                     }
                 }
             }
@@ -189,10 +193,10 @@ public class TestExecutor implements Runnable {
                 if (step.toString().contains("{") && step.toString().contains("}")) {
                     stepReportObject.put("steps", step.toString());
                 }
-                StringWriter sw = new StringWriter();
                 ae.printStackTrace(new PrintWriter(sw));
-                ae.printStackTrace();
                 exceptionAsString = sw.toString();
+                logger.testFailed("Failed");
+                logger.testFailed(exceptionAsString);
                 stepPassed = false;
             }
 
@@ -215,10 +219,10 @@ public class TestExecutor implements Runnable {
                 try {
                     externalCode.runAllAnnotatedWith(ExtCode.class, step.toString(), driver);
                 }catch (Exception e){
-                    StringWriter sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
-                    e.printStackTrace();
                     exceptionAsString = sw.toString();
+                    logger.testFailed("Failed");
+                    logger.testFailed(sw.toString());
                     stepPassed = false;
 
                 }
@@ -232,10 +236,11 @@ public class TestExecutor implements Runnable {
                     if (groupSteps.size() == 0)
                         throw e;
                     J++;
-                    StringWriter sw = new StringWriter();
+
                     e.printStackTrace(new PrintWriter(sw));
-                    e.printStackTrace();
                     exceptionAsString = sw.toString();
+                    logger.testFailed("Failed");
+                    logger.testFailed(sw.toString());
                     stepNumber++;
                     stepPassed = false;
                 }
@@ -256,10 +261,10 @@ public class TestExecutor implements Runnable {
                             stepParser.parseStep(driver, test, groupStep.toString());
                         } catch (Exception ae) {
                             J++;
-                            StringWriter sw = new StringWriter();
                             ae.printStackTrace(new PrintWriter(sw));
-                            ae.printStackTrace();
                             exceptionAsString = sw.toString();
+                            logger.testFailed("Failed");
+                            logger.testFailed(sw.toString());
                             stepPassed = false;
 
 
@@ -269,10 +274,10 @@ public class TestExecutor implements Runnable {
                             verifyParser.parseVerify(driver, test, groupStep.toString());
                         } catch (Exception NE) {
                             J++;
-                            StringWriter sw = new StringWriter();
                             NE.printStackTrace(new PrintWriter(sw));
-                            NE.printStackTrace();
                             exceptionAsString = sw.toString();
+                            logger.testFailed("Failed");
+                            logger.testFailed(sw.toString());
                             stepPassed = false;
                         }
                     }
@@ -378,7 +383,9 @@ public class TestExecutor implements Runnable {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
         }
 
     }
@@ -457,7 +464,9 @@ public class TestExecutor implements Runnable {
                 //e.printStackTrace();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
         }
         return driver;
     }
@@ -484,7 +493,9 @@ public class TestExecutor implements Runnable {
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            StringWriter sw = new StringWriter();
+                            e.printStackTrace(new PrintWriter(sw));
+                            logger.testFailed(sw.toString());
                         }
                     }
 

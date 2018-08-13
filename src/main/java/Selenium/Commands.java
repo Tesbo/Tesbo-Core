@@ -19,6 +19,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -193,7 +195,9 @@ public class Commands {
         try {
             Thread.sleep(sec * 1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
         }
     }
 
@@ -552,7 +556,9 @@ public class Commands {
         try {
             capabilities = config.getCapabilities(browserName);
         } catch (Exception e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
         }
         if (capabilities != null) {
             if(capabilities.size()>0){
@@ -576,7 +582,9 @@ public class Commands {
         try {
             seleniumAddress = config.getSeleniumAddress();
         } catch (Exception e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
         }
         return seleniumAddress;
     }
@@ -595,7 +603,9 @@ public class Commands {
         try {
             capabilities = config.getCapabilities(browserName);
         } catch (Exception e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
         }
         //ArrayList<String> capabilitieList = (ArrayList<String>) capabilities.get(browserName);
 
@@ -631,7 +641,9 @@ public class Commands {
         try {
             driver = new RemoteWebDriver(new URL(seleniumAddress), capability);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
         }
         return driver;
     }

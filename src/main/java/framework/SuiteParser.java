@@ -5,10 +5,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import Exception.TesboException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -59,12 +56,16 @@ public class SuiteParser {
             else {
                 logger.testFailed("Message : Please Enter valid directory path.");
                 logger.testFailed("'" + directory + "' no files found on your location.");
-                e.printStackTrace();
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                logger.testFailed(sw.toString());
             }
             try {
                 throw e;
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            } catch (IOException ie) {
+                StringWriter sw = new StringWriter();
+                ie.printStackTrace(new PrintWriter(sw));
+                logger.testFailed(sw.toString());
             }
         }
 
@@ -92,7 +93,9 @@ public class SuiteParser {
                 suites.append(sCurrentLine + "\n");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
         } finally {
 
             try {
@@ -101,7 +104,9 @@ public class SuiteParser {
                 if (fr != null)
                     fr.close();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                StringWriter sw = new StringWriter();
+                ex.printStackTrace(new PrintWriter(sw));
+                logger.testFailed(sw.toString());
             }
 
         }

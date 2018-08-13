@@ -86,7 +86,6 @@ public class VerifyParser {
                 }
                 flag=true;
             } catch (Exception e) {
-                logger.testFailed("Step Failed");
                 throw e;
             }
 
@@ -119,7 +118,6 @@ public class VerifyParser {
                     }
                 }
             } catch (Exception e) {
-                logger.testFailed("Step Failed");
                 throw e;
             }
         }
@@ -140,6 +138,7 @@ public class VerifyParser {
         if(!flag) {
             throw new TesboException("Step is not define properly.");
         }
+        logger.testPassed("Passed");
     }
 
 }

@@ -8,6 +8,8 @@ import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -655,7 +657,9 @@ public class StepParser {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                logger.testFailed(sw.toString());
             }
             try {
                 if (test.get("dataType").toString().equalsIgnoreCase("global")) {

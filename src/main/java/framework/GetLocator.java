@@ -4,6 +4,9 @@ import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import Exception.TesboException;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,7 +52,9 @@ public class GetLocator {
             }
             else {
                 logger.errorLog("Message : Please Enter valid directory path for locators.");
-                e.printStackTrace();
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                logger.testFailed(sw.toString());
             }
             throw e;
         }

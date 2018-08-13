@@ -28,7 +28,6 @@ public class GetJsonData {
 
     private static final String FORMAT = "%02d H %02d M %02d S";
 
-    Logger logger = new Logger();
 
     public String parseTime(long milliseconds) {
 
