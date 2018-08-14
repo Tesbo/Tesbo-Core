@@ -27,9 +27,6 @@ public class DataDrivenParser {
                 break;
 
             if(allLines[i].contains("\"excelFile\":")){
-                if (!(allLines[i].contains("\"excelFile\":")))
-                    throw new TesboException("Write 'excelFile' keyword in Data Set");
-
                 String[] excelUrl= allLines[i].replaceAll("[\"| |,]","").split(":",2);
                 if(excelUrl.length==2)
                 {
@@ -261,8 +258,7 @@ public class DataDrivenParser {
         return excelData;
     }
 
-    public String getcellValuefromExcel(String url,String headerName,int rowNum,int sheetNo)
-    {
+    public String getcellValuefromExcel(String url,String headerName,int rowNum,int sheetNo) {
         String filePath=url;
         String CellData=null;
         FileInputStream file = null;
@@ -311,8 +307,6 @@ public class DataDrivenParser {
         return CellData;
     }
 
-
-
     public String getGlobalDataValue(String suiteName, String dataSetName,String keyName) {
         SuiteParser suiteParser=new SuiteParser();
         StringBuffer suite= suiteParser.readSuiteFile(suiteName);
@@ -333,15 +327,14 @@ public class DataDrivenParser {
                     }catch (Exception E){
                         throw new TesboException("Key value is not found in dataSet");
                     }
-
                 }
-
                 if(allLines[i].contains("}"))
                     break;
             }
-
         }
-
+        if(KeyValue.equals(null)){
+            throw new TesboException("Key name " + keyName + " is not found in " + dataSetName + " data set");
+        }
 
         return KeyValue;
 

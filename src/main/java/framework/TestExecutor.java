@@ -168,13 +168,6 @@ public class TestExecutor implements Runnable {
             try {
                 if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
                     if (step.toString().contains("{") && step.toString().contains("}")) {
-                        try{
-                            if(test.get("dataType").equals("excel")){
-                                dataDrivenParser.isHeader(test, step.toString());
-                            }
-                        }catch (Exception e){
-                            throw new TesboException("Enter valid key word for DataSet 'excelFile'");
-                        }
 
                         stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
                     }
