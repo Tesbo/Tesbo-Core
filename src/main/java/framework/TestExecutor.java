@@ -152,7 +152,7 @@ public class TestExecutor implements Runnable {
                 stepReportObject.put("stepIndex", ++stepIndex);
                 stepReportObject.put("startTime", startTimeStep);
 
-                if (!(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("print")))  {
+                if (!(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("print") && step.toString().contains("random")))  {
                     stepReportObject.put("steps", step.toString());
                 }
                 if (step.toString().contains("print"))  {
@@ -175,7 +175,11 @@ public class TestExecutor implements Runnable {
 
                         stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
                     }
-                    stepParser.parseStep(driver, test, step.toString());
+                       String Step=stepParser.parseStep(driver, test, step.toString());
+
+                    if (step.toString().toLowerCase().contains("random")) {
+                        stepReportObject.put("steps",Step);
+                    }
                 }
 
                 if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
