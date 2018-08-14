@@ -1,6 +1,7 @@
 package RandomLibrary;
 
 import com.github.javafaker.Faker;
+import logger.Logger;
 
 
 import java.util.Locale;
@@ -8,7 +9,7 @@ import java.util.Random;
 
 public class RandLibrary {
     Faker faker = new Faker();
-
+    Logger logger=new Logger();
     /**
      * +     * @param
      * +     * @auther : Ankit Patel
@@ -19,7 +20,7 @@ public class RandLibrary {
     public String firstName() {
         Faker faker = new Faker(new Locale("en-IND"));
         String fname = faker.name().firstName();
-        System.out.println("First Name: " + fname);
+        logger.stepLog("First Name: " + fname);
         return fname;
 
     }
@@ -28,7 +29,7 @@ public class RandLibrary {
     public String LastName() {
         Faker faker = new Faker(new Locale("en-IND"));
         String lname = faker.name().lastName();
-        System.out.println("Last Name: " + lname);
+        logger.stepLog("Last Name: " + lname);
         return lname;
     }
 
@@ -36,7 +37,7 @@ public class RandLibrary {
     public String fullName() {
         Faker faker = new Faker(new Locale("en-IND"));
         String fullName = faker.name().fullName();
-        System.out.println("Full Name: " + fullName);
+        logger.stepLog("Full Name: " + fullName);
         return fullName;
     }
 
@@ -44,7 +45,7 @@ public class RandLibrary {
     public String eMail() {
         Faker faker = new Faker(new Locale("en-IND"));
         String email = faker.internet().emailAddress();
-        System.out.println("Email: " + email);
+        logger.stepLog("Email: " + email);
         return email;
 
     }
@@ -53,7 +54,7 @@ public class RandLibrary {
     public String userName() {
         Faker faker = new Faker(new Locale("en-IND"));
         String fullName = faker.name().username();
-        System.out.println("User Name: " + fullName);
+        logger.stepLog("User Name: " + fullName);
         return fullName;
     }
 
@@ -62,7 +63,7 @@ public class RandLibrary {
         int number = faker.number().numberBetween(75, 98);
         String mobileNumber = faker.number().digits(8);
         String phoneNumber = number + mobileNumber;
-        System.out.println("Mobile number: " + phoneNumber);
+        logger.stepLog("Mobile number: " + phoneNumber);
         return phoneNumber;
 
     }
@@ -73,7 +74,7 @@ public class RandLibrary {
         int age = faker.number().numberBetween(22, 40);
         Integer intInstance = new Integer(age);
         String numberAsString = intInstance.toString();
-        System.out.println("Age: " + numberAsString);
+        logger.stepLog("Age: " + numberAsString);
         return numberAsString;
     }
 
@@ -84,14 +85,14 @@ public class RandLibrary {
         int month = faker.number().numberBetween(01, 12);
         int year = faker.number().numberBetween(1960, 1990);
         String birth = day + "/" + month + "/" + year;
-        System.out.println("Birthday : " + birth);
+        logger.stepLog("Birthday : " + birth);
         return birth;
     }
 
     //Random DebitCardNo
     public String DebitCardNo() {
         String card = faker.business().creditCardNumber();
-        System.out.println("Card Number: " + card);
+        logger.stepLog("Card Number: " + card);
         return card;
     }
 
@@ -99,85 +100,85 @@ public class RandLibrary {
         int expiryDay = faker.number().numberBetween(01,12);
         int expiryMonth = faker.number().numberBetween(25,30);
         String ExpiryDate = expiryDay+"/"+expiryMonth;
-        System.out.println("Expiry Date: " + ExpiryDate);
+        logger.stepLog("Expiry Date: " + ExpiryDate);
         return ExpiryDate;
     }
 
     public String cvvNo() {
         String cvvNo = faker.number().digits(3);
-        System.out.println("CVV Number: " + cvvNo);
+        logger.stepLog("CVV Number: " + cvvNo);
         return cvvNo;
     }
 
     public String Country() {
         String country = faker.address().country();
-        System.out.println("Country Name: " + country);
+        logger.stepLog("Country Name: " + country);
         return country;
     }
 
     public String state() {
         Faker faker = new Faker(new Locale("en-IND"));
         String state = faker.address().state();
-        System.out.println("State Name: " + state);
+        logger.stepLog("State Name: " + state);
         return state;
     }
 
     public String city() {
         Faker faker = new Faker(new Locale("en-IND"));
         String city = faker.address().cityName();
-        System.out.println("City Name: " + city);
+        logger.stepLog("City Name: " + city);
         return city;
     }
 
     public String postcode() {
         Faker faker = new Faker(new Locale("en-IND"));
         String zipcode = faker.address().zipCode();
-        System.out.println("Pincode Number: " + zipcode);
+        logger.stepLog("Pincode Number: " + zipcode);
         return zipcode;
     }
 
     public String street() {
         Faker faker = new Faker(new Locale("en-IND"));
         String Street = faker.address().streetName();
-        System.out.println("Street: " + Street);
+        logger.stepLog("Street: " + Street);
         return Street;
     }
 
     public String emoji() {
         String emoji = faker.slackEmoji().emoji();
-        System.out.println("emoji: " + emoji);
+        logger.stepLog("emoji: " + emoji);
         return emoji;
     }
 
     public String lorem() {
         String lorem = faker.lorem().sentence();
-        System.out.println("lorem: " + lorem);
+        logger.stepLog("lorem: " + lorem);
         return lorem;
     }
 
     public String maritalStatus() {
         String status = faker.demographic().maritalStatus();
-        System.out.println("Marital Status: " + status);
+        logger.stepLog("Marital Status: " + status);
         return status;
     }
 
     public String gender() {
         String sex = faker.demographic().sex();
-        System.out.println("Gender: " + sex);
+        logger.stepLog("Gender: " + sex);
         return sex;
     }
 
     public String fullAddress() {
         Faker faker = new Faker(new Locale("en-IND"));
         String fullAddress = faker.address().fullAddress();
-        System.out.println("full Address: " + fullAddress);
+        logger.stepLog("full Address: " + fullAddress);
         return fullAddress;
     }
 
     public String internetDomain() {
         Faker faker = new Faker(new Locale("en-IND"));
         String domainName = faker.internet().domainName();
-        System.out.println("Domain Name: " + domainName);
+        logger.stepLog("Domain Name: " + domainName);
         return domainName;
     }
 
@@ -185,7 +186,7 @@ public class RandLibrary {
         int state = faker.number().numberBetween(01,35);
         String PAN = faker.number().digits(4);
         String gst = state+"AQWCV"+PAN+"A"+"1Z2";
-        System.out.println("GST Number: "+gst);
+        logger.stepLog("GST Number: "+gst);
         return gst;
     }
 
@@ -193,49 +194,49 @@ public class RandLibrary {
         int state = faker.number().numberBetween(01,35);
         String PAN = faker.number().digits(4);
         String panNo = "AQWCV"+PAN+"A";
-        System.out.println("PAN Number: "+panNo);
+        logger.stepLog("PAN Number: "+panNo);
         return panNo;
     }
 
     public String companyName() {
         String companyName = faker.company().name();
-        System.out.println("Company Name: "+companyName);
+        logger.stepLog("Company Name: "+companyName);
         return companyName;
     }
 
     public String password() {
         String password = faker.internet().password();
-        System.out.println("Password: "+password);
+        logger.stepLog("Password: "+password);
         return password;
     }
 
     public String IDNo() {
         String idNo = faker.idNumber().valid();
-        System.out.println("ID Number: "+idNo);
+        logger.stepLog("ID Number: "+idNo);
         return idNo;
     }
 
     public String passport() {
        String passport = faker.number().digits(7);
-        System.out.println("Passport Number: "+"A"+passport);
+        logger.stepLog("Passport Number: "+"A"+passport);
         return passport;
     }
 
     public String houseNo() {
         String streetNo = faker.number().digits(3);
-        System.out.println("House Number: "+streetNo);
+        logger.stepLog("House Number: "+streetNo);
         return streetNo;
     }
 
     public String bankACNo() {
         String bankACNo = faker.number().digits(13);
-        System.out.println("Bank Account Number: "+bankACNo);
+        logger.stepLog("Bank Account Number: "+bankACNo);
         return bankACNo;
     }
 
     public String cardname() {
         String cardname = faker.business().creditCardType();
-        System.out.println("Credit Card Type: "+cardname);
+        logger.stepLog("Credit Card Type: "+cardname);
         return cardname;
     }
     public String RandomNo(int length) {
@@ -247,7 +248,7 @@ public class RandLibrary {
             salt.append(SALTCHARS.charAt(index));
         }
         String saltStr = salt.toString();
-        System.out.println("Random no : " + saltStr);
+        logger.stepLog("Random no : " + saltStr);
         return saltStr;
 
     }
@@ -261,7 +262,7 @@ public class RandLibrary {
             salt.append(SALTCHARS.charAt(index));
         }
         String saltStr = salt.toString();
-        System.out.println("Random no Alpha : " + saltStr);
+        logger.stepLog("Random no Alpha : " + saltStr);
         return saltStr;
     }
 
@@ -274,7 +275,7 @@ public class RandLibrary {
             salt.append(SALTCHARS.charAt(index));
         }
         String saltStr = salt.toString();
-        System.out.println("Random alpha : " + saltStr);
+        logger.stepLog("Random alpha : " + saltStr);
         return saltStr;
     }
 
