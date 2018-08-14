@@ -1,8 +1,8 @@
 DataSet:
 {
      "Credentials": {
-     "userName":  "viral103patel@gmail.com",
-     "password": "jsbot@2017",
+     "userName":  "9033660480",
+     "password": "tesbo@2018",
      }
      "GmailUsers": {
      "excelFile": "E:/TesBo/tesbo-core/src/test/Resources/GmailData.xlsx"
@@ -24,7 +24,7 @@ Test: V3 Verify Enter Functionality without single quotes
 #V3 #Verify
 Step: Open URL 'https://www.amazon.in'
 Step: click on @sign_in button
-Step: Enter krazzyvirgmail.com in @Email
+Step: Enter 9033660480 in @Email
 End
 
 
@@ -125,7 +125,7 @@ Test: V16 Verify Press Keys Functionality
 Step: Open URL 'https://www.amazon.in'
 Step: pause 2 sec
 Step: @sign_in click
-Steps: Enter 'krazzyvir@gmail.com' in @Email
+Steps: Enter '9033660480' in @Email
 Step: pause 1 sec
 Step: Press 'ctrl' Plus '' in @Email
 Step: pause 1 sec
@@ -136,7 +136,7 @@ Test: V17 Verify Press Keys Functionality
 Step: Open URL 'https://www.amazon.in'
 Step: pause 2 sec
 Step: @sign_in click
-Steps: Enter 'krazzyvir@gmail.com' in @Email
+Steps: Enter '9033660480' in @Email
 Step: pause 1 sec
 Step: Press 'ctrl' 'A' in @Email
 Step: pause 1 sec
@@ -147,7 +147,7 @@ Test: V18 Verify Press Keys Functionality
 Step: Open URL 'https://www.amazon.in'
 Step: pause 2 sec
 Step: @sign_in click
-Steps: Enter 'krazzyvir@gmail.com' in @Email
+Steps: Enter '9033660480' in @Email
 Step: pause 1 sec
 Step: Press '' Plus 'A' in @Email
 Step: pause 1 sec
@@ -158,7 +158,7 @@ Test: V19 Verify Press Keys Functionality
 Step: Open URL 'https://www.amazon.in'
 Step: pause 2 sec
 Step: @sign_in click
-Steps: Enter 'krazzyvir@gmail.com' in @Email
+Steps: Enter '9033660480' in @Email
 Step: pause 1 sec
 Step: 'ctrl' Plus 'A' in @Email
 Step: pause 1 sec
@@ -169,7 +169,7 @@ Test: V20 Verify Press Keys Functionality
 Step: Open URL 'https://www.amazon.in'
 Step: pause 2 sec
 Step: @sign_in click
-Steps: Enter 'krazzyvir@gmail.com' in @Email
+Steps: Enter '9033660480' in @Email
 Step: pause 1 sec
 Step: 'ctrl' Plus 'C' in @Email
 Step: pause 1 sec
@@ -180,7 +180,7 @@ Test: V21 Verify Press Keys Functionality
 Step: Open URL 'https://www.amazon.in'
 Step: pause 2 sec
 Step: @sign_in click
-Steps: Enter 'krazzyvir@gmail.com' in @Email
+Steps: Enter '9033660480' in @Email
 Step: pause 1 sec
 Step: Press 'ctrl' 'C' in @Email
 Step: pause 1 sec
@@ -191,7 +191,7 @@ Test: V22 Verify Press Keys Functionality
 Step: Open URL 'https://www.amazon.in'
 Step: pause 2 sec
 Step: @sign_in click
-Steps: Enter 'krazzyvir@gmail.com' in @Email
+Steps: Enter '9033660480' in @Email
 Step: pause 1 sec
 Step: Press '' Plus 'C' in @Email
 Step: pause 1 sec
@@ -203,7 +203,7 @@ Test: V23 Verify Press Keys Functionality
 Step: Open URL 'https://www.amazon.in'
 Step: pause 2 sec
 Step: @sign_in click
-Steps: Enter 'krazzyvir@gmail.com' in @Email
+Steps: Enter '9033660480' in @Email
 Step: pause 1 sec
 Step: 'ctrl' Plus 'V' in @Email
 Step: pause 1 sec
@@ -214,7 +214,7 @@ Test: V24 Verify Press Keys Functionality
 Step: Open URL 'https://www.amazon.in'
 Step: pause 2 sec
 Step: @sign_in click
-Steps: Enter 'krazzyvir@gmail.com' in @Email
+Steps: Enter '9033660480' in @Email
 Step: pause 1 sec
 Step: Press 'ctrl' 'V' in @Email
 Step: pause 1 sec
@@ -225,7 +225,7 @@ Test: V25 Verify Press Keys Functionality
 Step: Open URL 'https://www.amazon.in'
 Step: pause 2 sec
 Step: @sign_in click
-Steps: Enter 'krazzyvir@gmail.com' in @Email
+Steps: Enter '9033660480' in @Email
 Step: pause 1 sec
 Step: Press '' Plus 'V' in @Email
 Step: pause 1 sec
@@ -249,7 +249,7 @@ Test: V28 To verify date with double quotes
 Step: Open URL 'https://www.amazon.in'
 Step: pause 2 sec
 Step: @sign_in click
-Steps: Enter "krazzyvir@gmail.com" in @Email
+Steps: Enter "9033660480" in @Email
 End
 
 Test: V29 To verify session name without comma
@@ -267,7 +267,7 @@ Step: Click on @MyNetwork
 Step: pause 2 sec
 Step: Click on @SeeAll
 Step: pause 2 sec
-Step: Enter 'Viral' on @ConSearch
+Step: Enter '' on @ConSearch
 Step: Press Enter
 Step: Click on @Message
 Step: Enter 'Tesbo' on @MessageBox
