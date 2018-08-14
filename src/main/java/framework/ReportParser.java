@@ -123,10 +123,11 @@ file.close();
                     } catch (StringIndexOutOfBoundsException e) {
                         logger.stepLog(step);
                         logger.testFailed("no string to enter. Create a separate exeception here");
+                        throw e;
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                throw e;
             }
             try {
                 if (test.get("dataType").toString().equalsIgnoreCase("global")) {

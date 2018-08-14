@@ -215,8 +215,6 @@ public class TestExecutionBuilder {
             isSuite = true;
         }
 
-
-
             for (String suite : suiteOrTaglist) {
 
                 JSONObject testNameWithSuites = null;
@@ -237,7 +235,6 @@ public class TestExecutionBuilder {
                         String dataSetName = null;
                         int dataSize = 0;
                         String dataType = null;
-                        if (isDataSetInSuite) {
                             dataSetName = suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(), testName.toString());
                             if (dataSetName != null) {
                                 ArrayList<String> columnNameList = new ArrayList<String>();
@@ -254,7 +251,6 @@ public class TestExecutionBuilder {
 
                                 }
                             }
-                        }
                         if (dataSize != 0) {
                             for (int i = 1; i <= dataSize; i++) {
                                 for (String browser : config.getBrowsers()) {
