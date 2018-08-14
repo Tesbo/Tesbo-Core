@@ -2,12 +2,15 @@ package framework;
 
 
 
+import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import Exception.TesboException;
 import org.openqa.selenium.WebDriver;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ public class Validation {
 
     SuiteParser suiteParser=new SuiteParser();
     GetConfiguration getCofig=new GetConfiguration();
+    Logger logger=new Logger();
 
     public void beforeExecutionValidation() throws Exception {
 
@@ -98,7 +102,9 @@ public class Validation {
             browserList=getCofig.getBrowsers();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
         }
 
         if(browserList.size()==0) {
@@ -134,7 +140,9 @@ public class Validation {
                 throw new TesboException("'by.tag' or 'by.suite' is incorrect.");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
         }
     }
 
@@ -177,7 +185,9 @@ public class Validation {
         try {
              parallelExecution=  getCofig.getParallel();
         } catch (Exception e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.testFailed(sw.toString());
         }
         if(parallelExecution.get("status").toString().equalsIgnoreCase("true"))
         {
