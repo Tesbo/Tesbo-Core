@@ -522,20 +522,14 @@ Verify: Get cookies and check 'csm-hit' is available
 Step: pause 5 sec
 End
 
-Test: T27 Priority severity and Print
+Test: T27 Priority severity and Print and Capture Screenshot of element
 #T27
 Priority: high
 Severity: critical
-Step: Window Minimize
+Step: Enter 'random.firstname' on @GoogleSearch
+Step: pause 2 sec
+Step: Capture Screenshot of @GoogleSearch
 Step: Print @GoogleLocation
 Step: Print "All step going pass"
 End
 
-Test: T28 Capture Screenshot of element
-#T28 #regression
-Step: Open URL 'https://www.google.in/'
-Step: pause 2 sec
-Step: Enter 'random.firstname' on @GoogleSearch
-Step: pause 2 sec
-Step: Capture Screenshot of @GoogleSearch
-End
