@@ -223,7 +223,7 @@ End
 
 
 Test: T12 Verify clear cookies
-#T13 #regression
+#T12 #regression
 Step: Open URL 'https://www.linkedin.com'
 Step: pause for 3 sec
 Step: Enter '9033660480' into @emailTextBox
@@ -242,7 +242,7 @@ Step: Pause 5 sec
 End
 
 Test: T13 Nokia mobile search on amazon with External code
-#T14 #regression
+#T13 #regression
 Step: Open URL 'http://amazon.in'
 Step: pause 1 sec
 Step: Enter 'nokia mobile' in @Search_box
@@ -262,7 +262,7 @@ Step: pause 5 sec
 End
 
 Test: T14 Verify Random keys
-#T15 #regression
+#T14 #regression
 Step: Open URL 'https://www.google.in/'
 Step: pause 2 sec
 Step: Enter 'random.firstname' on @GoogleSearch
@@ -329,7 +329,7 @@ End
 
 
 Test: T15 Capture Screenshot
-#T16 #regression
+#T15 #regression
 Step: Open URL 'https://www.google.in/'
 Step: pause 2 sec
 Step: Enter 'random.firstname' on @GoogleSearch
@@ -347,7 +347,7 @@ Step: pause 5 sec
 End
 
 Test: T16 Linkedin DataSet global  Multi Driver  collection  ExtCode
-#T17 #regression
+#T16 #regression
 DataSet: Credentials
 Session: patel, ankit,
 [ankit]
@@ -529,4 +529,13 @@ Severity: critical
 Step: Window Minimize
 Step: Print @GoogleLocation
 Step: Print "All step going pass"
+End
+
+Test: T28 Capture Screenshot of element
+#T28 #regression
+Step: Open URL 'https://www.google.in/'
+Step: pause 2 sec
+Step: Enter 'random.firstname' on @GoogleSearch
+Step: pause 2 sec
+Step: Capture Screenshot of @GoogleSearch
 End
