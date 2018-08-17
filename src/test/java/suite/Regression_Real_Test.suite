@@ -60,6 +60,7 @@ End
 Test: T4 Verify Collection without Test
 #T4 #regression
 Collection: amazon_open
+Step: Print "Coll amazon_open"
 End
 
 Test: T5 Verify Press Keys Functionality
@@ -103,7 +104,6 @@ Step: Click on @Message
 Step: Enter 'Hi' on @MessageBox
 Step: Click on @Send
 Step: pause 5 sec
-
 [patel]
 Step: pause for 5sec
 Step: Open URL 'https://www.linkedin.com'
@@ -221,27 +221,9 @@ Step: click on @sign_in button
 Verify: @Email is displayed
 End
 
-Test: T12 Verify External Code
-#T12 #regression
-Step: Open URL 'https://www.amazon.in'
-ExtCode: Window Resize
-Step: pause 2 sec
-ExtCode: Random
-Step: pause 2 sec
-Step: Clear @Search_box
-Step: pause 2 sec
-ExtCode: Random
-Step: pause 2 sec
-Step: Clear @Search_box
-Step: pause 2 sec
-ExtCode: Random
-Step: pause 2 sec
-Step: Clear @Search_box
-Step: pause 2 sec
-End
 
-Test: Verify clear cookies
-#T13 #regression
+Test: T12 Verify clear cookies
+#T12 #regression
 Step: Open URL 'https://www.linkedin.com'
 Step: pause for 3 sec
 Step: Enter '9033660480' into @emailTextBox
@@ -259,28 +241,28 @@ Step: Click on @emailTextBox
 Step: Pause 5 sec
 End
 
-Test: Nokia mobile search on amazon
-#T14 #regression
+Test: T13 Nokia mobile search on amazon with External code
+#T13 #regression
 Step: Open URL 'http://amazon.in'
 Step: pause 1 sec
 Step: Enter 'nokia mobile' in @Search_box
 Step: Press Enter
 ExtCode: Get Data
-Step: Print 'External code is working fine'
+Step: Print "External code is working fine"
 Step: pause 1 sec
 Step: Open URL 'https://paytmmall.com'
 Step: pause 1 sec
 ExtCode: Send Data
 Step: Press Enter @paytm_search
-Step: pause 1 sec
+Step: pause 3 sec
 Step: Click on @paytmResult
 Step: pause 2 sec
 Step: Click on @BuyMobile
 Step: pause 5 sec
 End
 
-Test: T15 Verify Random keys
-#T15 #regression
+Test: T14 Verify Random keys
+#T14 #regression
 Step: Open URL 'https://www.google.in/'
 Step: pause 2 sec
 Step: Enter 'random.firstname' on @GoogleSearch
@@ -341,13 +323,13 @@ Step: Enter 'random.houseno' on @GoogleSearch
 Step: Clear @GoogleSearch
 Step: Enter 'random.bankacno' on @GoogleSearch
 Step: Clear @GoogleSearch
-Step: Enter 'random.cardname' on @GoogleSearch
+Step: Enter 'random.cardtype' on @GoogleSearch
 Step: pause 5 sec
 End
 
 
-Test: T16 Capture Screenshot
-#T16 #regression
+Test: T15 Capture Screenshot
+#T15 #regression
 Step: Open URL 'https://www.google.in/'
 Step: pause 2 sec
 Step: Enter 'random.firstname' on @GoogleSearch
@@ -364,8 +346,8 @@ Step: click @GoogleSignIn and hold
 Step: pause 5 sec
 End
 
-Test: T17 Linkedin DataSet global  Multi Driver  collection  ExtCode
-#T17 #regression
+Test: T16 Linkedin DataSet global  Multi Driver  collection  ExtCode
+#T16 #regression
 DataSet: Credentials
 Session: patel, ankit,
 [ankit]
@@ -376,7 +358,7 @@ Step: Enter {password2} into @Password_Field
 Step: Click on @Login_Button
 Step: pause 2 sec
 Step: Click on @MyNetwork
-Step: pause 2 sec
+Step: pause 5 sec
 Step: Click on @SeeAll
 Step: pause 2 sec
 Step: Enter 'ankit patel' on @ConSearch
@@ -403,8 +385,8 @@ Step: Click on @Send
 End
 
 
-Test: Collection linkedin
-#linkedin
+Test: T17 Collection linkedin
+#T17 #linkedin
 DataSet: Credentials
 Collection Name: linkedin
 Step: pause for 5sec
@@ -415,8 +397,9 @@ End
 
 
 
-Test: Clear cache
-#T19
+Test: T18 Clear cache
+#T18
+Step: Open URL 'http://amazon.in'
 Step: Pause 2 sec
 Step: Click on @amazonCat
 Step: Pause 2 sec
@@ -435,8 +418,8 @@ Step: Pause 20 sec
 End
 
 
-Test: Window Resize and Maximize and Minimize and deselect
-#T20
+Test: T19 Window Resize and Maximize and Minimize and deselect
+#T19
 Step: Open URL 'http://compendiumdev.co.uk/selenium/basic_html_form.html'
 Step: Pause 2 sec
 Step: Window Resize (600,600)
@@ -456,8 +439,8 @@ Step: Window Minimize
 Step: Pause 5 sec
 End
 
-Test: select demo
-#T21
+Test: T20 select demo
+#T20
 Step: Open Url 'http://demo.guru99.com/selenium/newtours/register.php'
 Step: pause for 5sec
 Step: Select using text 'ANDORRA' from @DropDown
@@ -468,15 +451,15 @@ Step: Select using value 'BAHAMAS' form @DropDown
 Step: pause for 2sec
 End
 
-Test: JavascriptExecutor
-#T22
+Test: T21 JavascriptExecutor
+#T21
 sendKey/Click/scroll
 ExtCode: JavascriptExecutor
 Step: print "Code is working fine"
 End
 
-Test: click from list of element
-#T23 #clickFromList #regression
+Test: T22 click from list of element
+#T22 #clickFromList #regression
 Step: Open URL 'http://www.seleniumeasy.com/test/bootstrap-dual-list-box-demo.html'
 Verify: Page Title is equal to 'Selenium Easy - Dual List box demo to practice Selenium Webdriver'
 Step: pause 2 sec
@@ -490,8 +473,8 @@ Step: click on <0> from List @bootstrapElementListSecond
 Step: pause 5 sec
 End
 
-Test: File upload
-#T24 #regression
+Test: T23 File upload
+#T23 #regression
 Step: Open URL 'http://demo.guru99.com/test/upload/'
 Step: Get Page Source
 Step: pause for 2sec
@@ -503,20 +486,20 @@ Step: Click on @send
 Step: pause 2 sec
 End
 
-Test: T25 Drag and Drop Demo
-#T25
+Test: T24 Drag and Drop Demo
+#T24
 Step: Open URL 'http://jqueryui.com/resources/demos/droppable/default.html'
 Step: Window Maximize
 Step: pause 2 sec
-Step: Drag and Drop @Drag1 to @Drop
+Step: Drag and Drop @Drag to @Drop
 Step: pause 2 sec
 Step: Navigate to Refresh
-Step: Drag @Drag1 to @Drop and drop
+Step: Drag @Drag to @Drop and drop
 Step: pause 5 sec
 End
 
-Test: T26 Scroll to Horizontal
-#T26
+Test: T25 Scroll to Horizontal
+#T25
 Step: Open URL 'http://google.com'
 Step: Window Maximize
 Step: Window Resize (600,600)
@@ -524,8 +507,8 @@ Step: Scroll to Horizontal
 Step: pause 5 sec
 End
 
-Test: T27 Get cookies
-#T27 #regression
+Test: T26 Get cookies
+#T26 #regression
 Step: Open URL 'https://www.amazon.in/'
 Step: Window Minimize
 Step: click on @sign_in button
@@ -539,12 +522,14 @@ Verify: Get cookies and check 'csm-hit' is available
 Step: pause 5 sec
 End
 
-Test: T28 Priority severity and Print
-#T28
+Test: T27 Priority severity and Print and Capture Screenshot of element
+#T27
 Priority: high
 Severity: critical
-Step: Open URL 'https://www.amazon.in/'
-Step: Window Minimize
-Step: Print @sign_in
+Step: Enter 'random.firstname' on @GoogleSearch
+Step: pause 2 sec
+Step: Capture Screenshot of @GoogleSearch
+Step: Print @GoogleLocation
 Step: Print "All step going pass"
 End
+

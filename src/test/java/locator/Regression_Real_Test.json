@@ -73,6 +73,7 @@
   "MessageIcon":"//span[@id='messaging-tab-icon']",
   "TextPath":"(//SPAN[@class='a-color-base'])[2]",
   "GoogleSearch":"//INPUT[@id='lst-ib']",
+  "GoogleLocation":"//SPAN[@class='Q8LRLc'][text()='India']",
   "sortBy":"//SELECT[@id='sort']",
   "priceLowToHigh":"//*[@id='sort']/option[3]",
   "FirstResult":"(//*[@class='a-link-normal s-access-detail-page  s-color-twister-title-link a-text-normal'])[1]",
@@ -80,7 +81,9 @@
   "paytmResult":"(//*[@class='_2i1r'])[1]",
   "BuyMobile":"//BUTTON[@class='_2CNI']",
   "bootstrapElementList":"(//ul[@class='list-group'])[1]/li",
-  "bootstrapElementListSecond":"(//ul[@class='list-group'])[2]/li"
+  "bootstrapElementListSecond":"(//ul[@class='list-group'])[2]/li",
+  "Drag":"//P[text()='Drag me to my target']",
+  "Drop":"//DIV[@id='droppable']"
 
 
 
