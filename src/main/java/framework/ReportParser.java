@@ -147,7 +147,7 @@ file.close();
                 throw new TesboException("No string found to enter.");
             }
         }
-        return step.replace(headerName, textToEnter).replace("@","").replaceAll("[{,}]","'");
+        return step.replace(headerName, textToEnter);
     }
 
     /**

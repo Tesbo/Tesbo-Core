@@ -153,7 +153,7 @@ public class TestExecutor implements Runnable {
                 stepReportObject.put("startTime", startTimeStep);
 
                 if (!(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("print") && step.toString().contains("random")))  {
-                    stepReportObject.put("steps", step.toString().replace("@",""));
+                    stepReportObject.put("steps", step.toString());
                 }
                 if (step.toString().contains("print"))  {
                     try {
@@ -178,7 +178,7 @@ public class TestExecutor implements Runnable {
                        String Step=stepParser.parseStep(driver, test, step.toString());
 
                     if (step.toString().toLowerCase().contains("random")) {
-                        stepReportObject.put("steps",Step.replace("@",""));
+                        stepReportObject.put("steps",Step);
                     }
                 }
 
@@ -188,7 +188,7 @@ public class TestExecutor implements Runnable {
                 }
             } catch (Exception ae) {
                 if (step.toString().contains("{") && step.toString().contains("}")) {
-                    stepReportObject.put("steps", step.toString().replaceAll("[{,}]","'").replace("@",""));
+                    stepReportObject.put("steps", step.toString());
                 }
                 ae.printStackTrace(new PrintWriter(sw));
                 exceptionAsString = sw.toString();
@@ -251,7 +251,7 @@ public class TestExecutor implements Runnable {
 
                     stepReportObject.put("stepIndex", ++stepIndex);
                     stepReportObject.put("startTime", startTimeStep);
-                    stepReportObject.put("steps", groupStep.toString().replace("@",""));
+                    stepReportObject.put("steps", groupStep.toString());
 
                     if (groupStep.toString().contains("Step:")) {
                         try {
