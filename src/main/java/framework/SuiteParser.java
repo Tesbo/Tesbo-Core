@@ -207,7 +207,7 @@ public class SuiteParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].contains("Test:")) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
@@ -272,7 +272,7 @@ public class SuiteParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].contains("Test:")) {
                 String testNameArray[] = allLines[i].split(":");
                 if(testNameArray[1].trim().contains(testName)) {
                     startPoint = i;
@@ -454,7 +454,7 @@ public class SuiteParser {
 
 
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].contains("Test:")) {
 
                 String testNameArray[] = allLines[i].split(":");
                 if(testNameArray.length<2){
@@ -492,7 +492,7 @@ public class SuiteParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].contains("Test:")) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
@@ -550,7 +550,7 @@ public class SuiteParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].contains("Test:")) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(test.get("testName").toString())) {
@@ -584,179 +584,4 @@ public class SuiteParser {
         return severityAndPriority;
     }
 
-    /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param suiteName
-     * @return
-     */
-    public boolean isBeforeTestInSuite(String suiteName) {
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        boolean isBeforeTest=false;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].trim().equals("BeforeTest:")) {
-                isBeforeTest=true;
-            }
-            if(isBeforeTest) {
-                if (allLines[i].trim().equals("End")) {
-                    break;
-                }
-                if (allLines[i].contains("Test:") && allLines[i].contains("Collection Name:")) {
-                    throw new TesboException("End Step is not found for BeforeTest");
-                }
-
-            }
-
-            if (allLines[i].trim().equals("BeforeTest :") || allLines[i].trim().equals("beforeTest:") || allLines[i].trim().equals("beforeTest :")
-                    || allLines[i].trim().equals("beforetest:") || allLines[i].trim().equals("beforetest :")
-                    || allLines[i].trim().equals("Beforetest:") || allLines[i].trim().equals("Beforetest :")) {
-                throw new TesboException("Please write valid keyword for this step \"" +allLines[i]+"\"");
-
-            }
-        }
-
-        return isBeforeTest;
-    }
-
-    /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param suiteName
-     * @return
-     */
-    public boolean isAfterTestInSuite(String suiteName) {
-
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        boolean isAfterTest=false;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].trim().equals("AfterTest:")) {
-                isAfterTest=true;
-            }
-            if(isAfterTest) {
-                if (allLines[i].trim().equals("End")) {
-                    break;
-                }
-                if (allLines[i].contains("Test:") && allLines[i].contains("Collection Name:")) {
-                    throw new TesboException("End Step is not found for BeforeTest");
-                }
-            }
-            if (allLines[i].trim().equals("AfterTest :") || allLines[i].trim().equals("afterTest:") || allLines[i].trim().equals("afterTest :")
-                    || allLines[i].trim().equals("aftertest:") || allLines[i].trim().equals("aftertest :")
-                    || allLines[i].trim().equals("Aftertest:") || allLines[i].trim().equals("Aftertest :")) {
-                throw new TesboException("Please write valid keyword for this step \"" +allLines[i]+"\"");
-
-            }
-        }
-
-        return isAfterTest;
-    }
-
-    /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param suiteName
-     * @return
-     */
-    public JSONArray getBeforeAndAfterTestStepBySuite(String suiteName, String annotationName) {
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        JSONArray annotationSteps = new JSONArray();
-        Validation validation=new Validation();
-        int testCount=0;
-        int startPoint = 0;
-        boolean testStarted = false;
-        int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].equals(annotationName+":")) {
-
-                startPoint = i;
-                testStarted = true;
-
-                if (testStarted) {
-                    testCount++;
-                }
-            }
-            if (testStarted) {
-
-                if (allLines[i].contains("End")) {
-                    endpoint = i;
-                    break;
-                }
-                if(allLines[i].replaceAll("\\s{2,}", " ").trim().equals("end")){
-                    throw new TesboException("Please define end step in a correct way: End");
-                }
-            }
-        }
-        if(testCount>=2 || endpoint==0) {
-            throw new TesboException("End Step is not found for '" + annotationName + "' test");
-        }
-        for (int j = startPoint; j < endpoint; j++) {
-            if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].toString().replaceAll("\\s{2,}", " ").contains("Step:")){
-                throw new TesboException("Step is blank '"+allLines[j]+"'");
-            }
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("ExtCode:") |
-                    ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
-
-                annotationSteps.add(allLines[j]);
-            }
-            else{
-                validation.keyWordValidation(allLines[j]);
-            }
-        }
-        if (annotationSteps.size() == 0) {
-            throw new TesboException("Steps are not defined for annotation : " + annotationName);
-        }
-
-
-        return annotationSteps;
-    }
-
-    /**
-     *
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     *
-     * @param suiteName
-     * @return
-     */
-    public String getAnnotationDataSetBySuite(String suiteName) {
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        String annotationDataSet = null;
-        int startPoint = 0;
-        boolean testStarted = false;
-        int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:")) {
-                startPoint = i;
-                testStarted = true;
-            }
-            if (testStarted) {
-                if (allLines[i].contains("End")) {
-                    endpoint = i;
-                    break;
-                }
-            }
-        }
-        for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) {
-                if (!(allLines[j].contains("DataSet:"))) {
-                    throw new TesboException("Write 'DataSet' keyword in test");
-                }
-                annotationDataSet=allLines[j];
-                break;
-            }
-            else{
-                if(allLines[j].toLowerCase().contains("dataset:") || allLines[j].toLowerCase().contains("dataset :")){
-                    throw new TesboException("Please add valid key word for: '"+allLines[j]+"'");
-                }
-            }
-        }
-
-        return annotationDataSet;
-    }
 }
