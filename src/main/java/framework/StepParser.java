@@ -29,7 +29,7 @@ public class StepParser {
         GetLocator locator = new GetLocator();
 
         if (!step.toLowerCase().contains("{") && !step.toLowerCase().contains("}") && !step.toLowerCase().contains("print") && !step.toString().contains("random"))
-            logger.stepLog(step.replace("@",""));
+            logger.stepLog(step);
 
         //Click from List
         if (step.toLowerCase().contains("click") && step.toLowerCase().contains("from list")) {
@@ -287,7 +287,7 @@ public class StepParser {
            startPoint = step.indexOf("'") + 1;
            endPoint = step.lastIndexOf("'");
            stepText = step.substring(startPoint, endPoint);
-           logger.stepLog(step.replace(stepText, textToEnter).replace("@",""));
+           logger.stepLog(step.replace(stepText, textToEnter));
            if (step.toLowerCase().contains("birthday")){
                cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys((CharSequence) textToEnter);
 
@@ -639,11 +639,11 @@ public class StepParser {
                     try {
                         textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
                         if(textToEnter!=null) {
-                            logger.stepLog(step.replace(headerName, textToEnter).replaceAll("[{,}]","'").replace("@",""));
+                            logger.stepLog(step.replace(headerName, textToEnter));
                         }
 
                     } catch (StringIndexOutOfBoundsException e) {
-                        logger.stepLog(step.replaceAll("[{,}]","'").replace("@",""));
+                        logger.stepLog(step);
                         logger.testFailed("no string to enter. Create a separate exeception here");
                     }
                 }
@@ -655,7 +655,7 @@ public class StepParser {
             try {
                 if (test.get("dataType").toString().equalsIgnoreCase("global")) {
                     textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
-                    logger.stepLog(step.replace(headerName, textToEnter).replaceAll("[{,}]","'").replace("@",""));
+                    logger.stepLog(step.replace(headerName, textToEnter));
 
                 }
             } catch (Exception e) {
@@ -976,6 +976,6 @@ public class StepParser {
 
             printStep="Step: "+printText;
         }
-        return printStep.replace("@","");
+        return printStep;
     }
 }
