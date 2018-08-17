@@ -231,48 +231,31 @@ public class TestExecutionBuilder {
                 }
 
                 for (Object suiteName : testNameWithSuites.keySet()) {
-                    boolean isBeforeTest = false;
-                    boolean isAfterTest = false;
-                    if(suiteParser.isBeforeTestInSuite(suiteName.toString())){
-                        isBeforeTest=true;
-                    }
-                    if(suiteParser.isAfterTestInSuite(suiteName.toString())){
-                        isAfterTest=true;
+                    boolean isDataSetInSuite = false;
+                    if (dataDrivenParser.isDataSet(suiteName.toString())) {
+                        isDataSetInSuite = dataDrivenParser.isExcel(suiteName.toString());
                     }
 
                     for (Object testName : ((JSONArray) testNameWithSuites.get(suiteName))) {
                         String dataSetName = null;
                         int dataSize = 0;
                         String dataType = null;
-                        if(isBeforeTest || isAfterTest){
-                            dataSetName = suiteParser.getAnnotationDataSetBySuite(suiteName.toString());
-                        }
-                        if(dataSetName==null) {
                             dataSetName = suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(), testName.toString());
-                        }
-                        if (dataSetName != null) {
-                            ArrayList<String> columnNameList = new ArrayList<String>();
-                            if(isBeforeTest){
-                                columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepBySuite(suiteName.toString(),"BeforeTest"));
-                            }
-                            if(isAfterTest && columnNameList.size() == 0){
-                                columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepBySuite(suiteName.toString(),"AfterTest"));
-                            }
-                            if(columnNameList.size() == 0) {
+                            if (dataSetName != null) {
+                                ArrayList<String> columnNameList = new ArrayList<String>();
                                 columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(), testName.toString()));
+                                if (columnNameList.size() == 0) {
+                                    throw new NullPointerException("Data set value is not use on 'Test: " + testName + "' steps");
+                                }
+
+                                dataType = dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1], columnNameList);
+
+                                if (dataType.equalsIgnoreCase("excel")) {
+
+                                    dataSize = dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1]), columnNameList,Integer.parseInt(dataDrivenParser.SheetNumber(suiteName.toString(), testName.toString()))).size();
+
+                                }
                             }
-                            if (columnNameList.size() == 0) {
-                                throw new NullPointerException("Data set value is not use on 'Test: " + testName + "' steps");
-                            }
-
-                            dataType = dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1], columnNameList);
-
-                            if (dataType.equalsIgnoreCase("excel")) {
-
-                                dataSize = dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1]), columnNameList,Integer.parseInt(dataDrivenParser.SheetNumber(suiteName.toString(), testName.toString()))).size();
-
-                            }
-                        }
                         if (dataSize != 0) {
                             for (int i = 1; i <= dataSize; i++) {
                                 for (String browser : config.getBrowsers()) {
@@ -283,8 +266,6 @@ public class TestExecutionBuilder {
                                     completestTestObject.put("dataType", dataType);
                                     completestTestObject.put("row", i);
                                     completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
-                                    if(isBeforeTest){completestTestObject.put("BeforeTest", true);}
-                                    if(isAfterTest){completestTestObject.put("afterTest", true);}
                                     completeTestObjectArray.add(completestTestObject);
                                 }
                             }
@@ -294,8 +275,6 @@ public class TestExecutionBuilder {
                                 completestTestObject.put("testName", testName);
                                 completestTestObject.put("suiteName", suiteName);
                                 completestTestObject.put("browser", browser);
-                                if(isBeforeTest){completestTestObject.put("BeforeTest", true);}
-                                if(isAfterTest){completestTestObject.put("afterTest", true);}
                                 try {
                                     if (dataType.equalsIgnoreCase("global")) {
                                         completestTestObject.put("dataType", dataType);
