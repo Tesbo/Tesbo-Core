@@ -148,34 +148,34 @@ public class Validation {
 
     public void tagNameAndSuiteNameValidation() {
 
-            JSONArray tagName= (JSONArray) getCofig.getTags();
-            JSONArray suiteName= (JSONArray) getCofig.getSuite();
+        JSONArray tagName= (JSONArray) getCofig.getTags();
+        JSONArray suiteName= (JSONArray) getCofig.getSuite();
 
-            if(tagName!=null) {
-                if (tagName.size() > 0) {
-                    for (Object tag : tagName) {
-                        JSONObject testName = suiteParser.getTestNameByTag(tag.toString());
-                        if (testName.size() == 0) { throw new TesboException("Test not found for '" + tag.toString() + "' tag."); }
-                    }
-                } else {
-                    throw new TesboException("Tag name is not found in config file.");
+        if(tagName!=null) {
+            if (tagName.size() > 0) {
+                for (Object tag : tagName) {
+                    JSONObject testName = suiteParser.getTestNameByTag(tag.toString());
+                    if (testName.size() == 0) { throw new TesboException("Test not found for '" + tag.toString() + "' tag."); }
                 }
+            } else {
+                throw new TesboException("Tag name is not found in config file.");
             }
-            else if(suiteName!=null) {
-                if (suiteName.size() > 0) {
-                    for (Object suite : suiteName) {
-                        boolean isSuite=false;
-                        JSONArray SuiteList= suiteParser.getSuites(getCofig.getSuitesDirectory());
-                        for(Object suitePath : SuiteList){
-                            File file=new File(suitePath.toString());
-                            if(suite.toString().equalsIgnoreCase(file.getName().split("\\.")[0])){ isSuite=true; }
-                        }
-                        if (!isSuite) { throw new TesboException("'"+suite+ "' suite is not found in suite directory"); }
-                        JSONObject testNameBySuite = suiteParser.getTestNameBySuite(suite.toString());
-                        if (testNameBySuite.size() == 0) { throw new TesboException("Test is not found in '" + suite.toString() + "' suite."); }
+        }
+        else if(suiteName!=null) {
+            if (suiteName.size() > 0) {
+                for (Object suite : suiteName) {
+                    boolean isSuite=false;
+                    JSONArray SuiteList= suiteParser.getSuites(getCofig.getSuitesDirectory());
+                    for(Object suitePath : SuiteList){
+                        File file=new File(suitePath.toString());
+                        if(suite.toString().equalsIgnoreCase(file.getName().split("\\.")[0])){ isSuite=true; }
                     }
-                } else { throw new TesboException("Please enter 'Tag name' or 'Suite name' to run test."); }
-            }
+                    if (!isSuite) { throw new TesboException("'"+suite+ "' suite is not found in suite directory"); }
+                    JSONObject testNameBySuite = suiteParser.getTestNameBySuite(suite.toString());
+                    if (testNameBySuite.size() == 0) { throw new TesboException("Test is not found in '" + suite.toString() + "' suite."); }
+                }
+            } else { throw new TesboException("Please enter 'Tag name' or 'Suite name' to run test."); }
+        }
 
 
     }
@@ -183,7 +183,7 @@ public class Validation {
     public void parallelExecutionValidation() {
         JSONObject parallelExecution = null;
         try {
-             parallelExecution=  getCofig.getParallel();
+            parallelExecution=  getCofig.getParallel();
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
@@ -333,7 +333,7 @@ public class Validation {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:")) {
+            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
@@ -371,13 +371,13 @@ public class Validation {
     public void keyWordValidation(String step) {
 
         if(step.replaceAll("\\s{2,}", " ").trim().contains("Step :") | step.replaceAll("\\s{2,}", " ").trim().contains("step:") | step.replaceAll("\\s{2,}", " ").trim().contains("step :")
-           | step.replaceAll("\\s{2,}", " ").trim().contains("Verify :") | step.replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.replaceAll("\\s{2,}", " ").trim().contains("verify :")
-           | step.replaceAll("\\s{2,}", " ").trim().contains("Collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.replaceAll("\\s{2,}", " ").trim().contains("collection :")
-           | step.replaceAll("\\s{2,}", " ").trim().contains("ExtCode :") | step.replaceAll("\\s{2,}", " ").trim().contains("extCode:") | step.replaceAll("\\s{2,}", " ").trim().contains("extCode :")
-           | step.replaceAll("\\s{2,}", " ").trim().contains("extcode :") | step.replaceAll("\\s{2,}", " ").trim().contains("extcode:") | step.replaceAll("\\s{2,}", " ").trim().contains("Extcode :") | step.replaceAll("\\s{2,}", " ").trim().contains("Extcode:")
-           | step.replaceAll("\\s{2,}", " ").trim().contains("[Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("[close:") | step.replaceAll("\\s{2,}", " ").trim().contains("[close :")
-           | step.replaceAll("\\s{2,}", " ").trim().contains("Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("close:") | step.replaceAll("\\s{2,}", " ").trim().contains("close :")
-           | step.replaceAll("\\s{2,}", " ").trim().contains("Close:")|
+                | step.replaceAll("\\s{2,}", " ").trim().contains("Verify :") | step.replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.replaceAll("\\s{2,}", " ").trim().contains("verify :")
+                | step.replaceAll("\\s{2,}", " ").trim().contains("Collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.replaceAll("\\s{2,}", " ").trim().contains("collection :")
+                | step.replaceAll("\\s{2,}", " ").trim().contains("ExtCode :") | step.replaceAll("\\s{2,}", " ").trim().contains("extCode:") | step.replaceAll("\\s{2,}", " ").trim().contains("extCode :")
+                | step.replaceAll("\\s{2,}", " ").trim().contains("extcode :") | step.replaceAll("\\s{2,}", " ").trim().contains("extcode:") | step.replaceAll("\\s{2,}", " ").trim().contains("Extcode :") | step.replaceAll("\\s{2,}", " ").trim().contains("Extcode:")
+                | step.replaceAll("\\s{2,}", " ").trim().contains("[Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("[close:") | step.replaceAll("\\s{2,}", " ").trim().contains("[close :")
+                | step.replaceAll("\\s{2,}", " ").trim().contains("Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("close:") | step.replaceAll("\\s{2,}", " ").trim().contains("close :")
+                | step.replaceAll("\\s{2,}", " ").trim().contains("Close:")|
                 ( step.replaceAll("\\s{2,}", " ").trim().contains("[Close:") && !(step.replaceAll("\\s{2,}", " ").trim().contains("]"))) ){
             throw new TesboException("Please write valid keyword for this step \"" +step+"\"");
         }
@@ -430,7 +430,7 @@ public class Validation {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:")) {
+            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(test.get("testName").toString())) {
