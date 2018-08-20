@@ -62,7 +62,7 @@ public class TestExecutionBuilder {
         TestExecutionBuilder.buildRunning = true;
         BuildReportDataObject brdo = new BuildReportDataObject();
         brdo.startThread();
-      //  reportBuilder.startThread();
+        //  reportBuilder.startThread();
 
 
         builder.buildExecution();
@@ -220,75 +220,96 @@ public class TestExecutionBuilder {
             isSuite = true;
         }
 
-            for (String suite : suiteOrTaglist) {
+        for (String suite : suiteOrTaglist) {
 
-                JSONObject testNameWithSuites = null;
-                if (isSuite) {
-                    testNameWithSuites = suiteParser.getTestNameBySuite(suite);
+            JSONObject testNameWithSuites = null;
+            if (isSuite) {
+                testNameWithSuites = suiteParser.getTestNameBySuite(suite);
+            }
+            if (isTag) {
+                testNameWithSuites = suiteParser.getTestNameByTag(suite);
+            }
+
+            for (Object suiteName : testNameWithSuites.keySet()) {
+                boolean isBeforeTest = false;
+                boolean isAfterTest = false;
+                if(suiteParser.isBeforeTestInSuite(suiteName.toString())){
+                    isBeforeTest=true;
                 }
-                if (isTag) {
-                    testNameWithSuites = suiteParser.getTestNameByTag(suite);
+                if(suiteParser.isAfterTestInSuite(suiteName.toString())){
+                    isAfterTest=true;
                 }
 
-                for (Object suiteName : testNameWithSuites.keySet()) {
-                    boolean isDataSetInSuite = false;
-                    if (dataDrivenParser.isDataSet(suiteName.toString())) {
-                        isDataSetInSuite = dataDrivenParser.isExcel(suiteName.toString());
+                for (Object testName : ((JSONArray) testNameWithSuites.get(suiteName))) {
+                    String dataSetName = null;
+                    int dataSize = 0;
+                    String dataType = null;
+                    if(isBeforeTest || isAfterTest){
+                        dataSetName = suiteParser.getAnnotationDataSetBySuite(suiteName.toString());
                     }
+                    if(dataSetName==null) {
+                        dataSetName = suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(), testName.toString());
+                    }
+                    if (dataSetName != null) {
+                        ArrayList<String> columnNameList = new ArrayList<String>();
+                        if(isBeforeTest){
+                            columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepBySuite(suiteName.toString(),"BeforeTest"));
+                        }
+                        if(isAfterTest && columnNameList.size() == 0){
+                            columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepBySuite(suiteName.toString(),"AfterTest"));
+                        }
+                        if(columnNameList.size() == 0) {
+                            columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(), testName.toString()));
+                        }
+                        if (columnNameList.size() == 0) {
+                            throw new NullPointerException("Data set value is not use on 'Test: " + testName + "' steps");
+                        }
 
-                    for (Object testName : ((JSONArray) testNameWithSuites.get(suiteName))) {
-                        String dataSetName = null;
-                        int dataSize = 0;
-                        String dataType = null;
-                            dataSetName = suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(), testName.toString());
-                            if (dataSetName != null) {
-                                ArrayList<String> columnNameList = new ArrayList<String>();
-                                columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(), testName.toString()));
-                                if (columnNameList.size() == 0) {
-                                    throw new NullPointerException("Data set value is not use on 'Test: " + testName + "' steps");
-                                }
+                        dataType = dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1], columnNameList);
 
-                                dataType = dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1], columnNameList);
+                        if (dataType.equalsIgnoreCase("excel")) {
 
-                                if (dataType.equalsIgnoreCase("excel")) {
+                            dataSize = dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1]), columnNameList,Integer.parseInt(dataDrivenParser.SheetNumber(suiteName.toString(), testName.toString()))).size();
 
-                                    dataSize = dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1]), columnNameList,Integer.parseInt(dataDrivenParser.SheetNumber(suiteName.toString(), testName.toString()))).size();
-
-                                }
-                            }
-                        if (dataSize != 0) {
-                            for (int i = 1; i <= dataSize; i++) {
-                                for (String browser : config.getBrowsers()) {
-                                    JSONObject completestTestObject = new JSONObject();
-                                    completestTestObject.put("testName", testName);
-                                    completestTestObject.put("suiteName", suiteName);
-                                    completestTestObject.put("browser", browser);
-                                    completestTestObject.put("dataType", dataType);
-                                    completestTestObject.put("row", i);
-                                    completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
-                                    completeTestObjectArray.add(completestTestObject);
-                                }
-                            }
-                        } else {
+                        }
+                    }
+                    if (dataSize != 0) {
+                        for (int i = 1; i <= dataSize; i++) {
                             for (String browser : config.getBrowsers()) {
                                 JSONObject completestTestObject = new JSONObject();
                                 completestTestObject.put("testName", testName);
                                 completestTestObject.put("suiteName", suiteName);
                                 completestTestObject.put("browser", browser);
-                                try {
-                                    if (dataType.equalsIgnoreCase("global")) {
-                                        completestTestObject.put("dataType", dataType);
-                                        completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
-                                    }
-                                } catch (Exception e) {
-                                }
-
+                                completestTestObject.put("dataType", dataType);
+                                completestTestObject.put("row", i);
+                                completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
+                                if(isBeforeTest){completestTestObject.put("BeforeTest", true);}
+                                if(isAfterTest){completestTestObject.put("afterTest", true);}
                                 completeTestObjectArray.add(completestTestObject);
                             }
-                          }
+                        }
+                    } else {
+                        for (String browser : config.getBrowsers()) {
+                            JSONObject completestTestObject = new JSONObject();
+                            completestTestObject.put("testName", testName);
+                            completestTestObject.put("suiteName", suiteName);
+                            completestTestObject.put("browser", browser);
+                            if(isBeforeTest){completestTestObject.put("BeforeTest", true);}
+                            if(isAfterTest){completestTestObject.put("afterTest", true);}
+                            try {
+                                if (dataType.equalsIgnoreCase("global")) {
+                                    completestTestObject.put("dataType", dataType);
+                                    completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
+                                }
+                            } catch (Exception e) {
+                            }
+
+                            completeTestObjectArray.add(completestTestObject);
+                        }
                     }
                 }
             }
+        }
 
 
 
