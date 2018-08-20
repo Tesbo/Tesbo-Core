@@ -802,4 +802,17 @@ public class Commands {
         return path;
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     * @param offset
+     * @param element
+     */
+    public void clickOnOffset(WebDriver driver,WebElement element, String[] offset)  {
+        Actions builder = new Actions(driver);
+        builder.moveToElement(element, Integer.parseInt(offset[0].trim()), Integer.parseInt(offset[1].trim())).click().build().perform();
+
+    }
+
 }
