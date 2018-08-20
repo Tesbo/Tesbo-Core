@@ -54,7 +54,7 @@ public class StepParser {
 
         //Right Click
         if (step.toLowerCase().contains("right click")) {
-           cmd.rightClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+            cmd.rightClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
         }
 
         //Double Click
@@ -185,7 +185,7 @@ public class StepParser {
              */
             // Not working
             dragAndDropElement(driver,test,step);
-           }
+        }
 
         //Clear
         if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache"))) {
@@ -281,21 +281,21 @@ public class StepParser {
         { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomNoAlpha()); }
 */
         String stepText="";
-       if(!textToEnter.equals("")){
-           int startPoint = 0;
-           int endPoint = 0;
-           startPoint = step.indexOf("'") + 1;
-           endPoint = step.lastIndexOf("'");
-           stepText = step.substring(startPoint, endPoint);
-           logger.stepLog(step.replace(stepText, textToEnter));
-           if (step.toLowerCase().contains("birthday")){
-               cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys((CharSequence) textToEnter);
+        if(!textToEnter.equals("")){
+            int startPoint = 0;
+            int endPoint = 0;
+            startPoint = step.indexOf("'") + 1;
+            endPoint = step.lastIndexOf("'");
+            stepText = step.substring(startPoint, endPoint);
+            logger.stepLog(step.replace(stepText, textToEnter));
+            if (step.toLowerCase().contains("birthday")){
+                cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys((CharSequence) textToEnter);
 
-           }
-           else {
-               cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(textToEnter);
-           }
-       }
+            }
+            else {
+                cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(textToEnter);
+            }
+        }
         if(!stepText.equals("")) {
             return step.replace(stepText, textToEnter);
         }
@@ -634,32 +634,62 @@ public class StepParser {
             startPoint = step.indexOf("{") + 1;
             endPoint = step.lastIndexOf("}");
             String headerName = step.substring(startPoint, endPoint);
+            boolean isDetaSet=false;
             try {
-                if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
+                if (headerName.contains("DataSet.")) {
+                    isDetaSet=true;
                     try {
-                        textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
-                        if(textToEnter!=null) {
+                        String dataSet[]=headerName.split("\\.");
+                        if(dataSet.length==3) {
+                            textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), dataSet[1], dataSet[2]);
                             logger.stepLog(step.replace(headerName, textToEnter));
+                        }
+                        else{
+                            throw new TesboException("Please enter DataSet in: '"+step+"'");
                         }
 
                     } catch (StringIndexOutOfBoundsException e) {
-                        logger.stepLog(step);
-                        logger.testFailed("no string to enter. Create a separate exeception here");
+                        throw e;
                     }
+                }
+                else if(headerName.contains("Dataset.") || headerName.contains("dataSet.") || headerName.contains("dataset.")){
+                    throw new TesboException("Please enter valid DataSet in: '"+step+"'");
                 }
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
                 e.printStackTrace(new PrintWriter(sw));
                 logger.testFailed(sw.toString());
+                throw e;
             }
-            try {
-                if (test.get("dataType").toString().equalsIgnoreCase("global")) {
-                    textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
-                    logger.stepLog(step.replace(headerName, textToEnter));
 
+            if(!isDetaSet) {
+                try {
+                    if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
+                        try {
+                            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
+                            if (textToEnter != null) {
+                                logger.stepLog(step.replace(headerName, textToEnter));
+                            }
+
+                        } catch (StringIndexOutOfBoundsException e) {
+                            logger.stepLog(step);
+                            logger.testFailed("no string to enter. Create a separate exeception here");
+                        }
+                    }
+                } catch (Exception e) {
+                    StringWriter sw = new StringWriter();
+                    e.printStackTrace(new PrintWriter(sw));
+                    logger.testFailed(sw.toString());
                 }
-            } catch (Exception e) {
-                throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
+                try {
+                    if (test.get("dataType").toString().equalsIgnoreCase("global")) {
+                        textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
+                        logger.stepLog(step.replace(headerName, textToEnter));
+
+                    }
+                } catch (Exception e) {
+                    throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
+                }
             }
         } else {
             startPoint = step.indexOf("'") + 1;
@@ -978,4 +1008,5 @@ public class StepParser {
         }
         return printStep;
     }
+
 }
