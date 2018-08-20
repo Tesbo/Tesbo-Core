@@ -261,7 +261,7 @@ public class Validation {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:")) {
+            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {

@@ -253,10 +253,10 @@ public class TestExecutionBuilder {
                     if (dataSetName != null) {
                         ArrayList<String> columnNameList = new ArrayList<String>();
                         if(isBeforeTest){
-                            columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepBySuite(suiteName.toString(),"BeforeTest"));
+                           // columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepBySuite(suiteName.toString(),"BeforeTest"));
                         }
                         if(isAfterTest && columnNameList.size() == 0){
-                            columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepBySuite(suiteName.toString(),"AfterTest"));
+                            //columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepBySuite(suiteName.toString(),"AfterTest"));
                         }
                         if(columnNameList.size() == 0) {
                             columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(), testName.toString()));
