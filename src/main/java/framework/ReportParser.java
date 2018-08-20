@@ -49,9 +49,9 @@ public class ReportParser {
             FileWriter file = new FileWriter("./htmlReport/Build History/" + fileName + ".json");
 
             file.write(obj.toJSONString());
-          //  file.flush();
+            //  file.flush();
 
-file.close();
+            file.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -115,26 +115,54 @@ file.close();
             startPoint = step.indexOf("{") + 1;
             endPoint = step.lastIndexOf("}");
             headerName = step.substring(startPoint, endPoint);
+
+            boolean isDetaSet=false;
             try {
-                if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
+                if (headerName.contains("DataSet.")) {
+                    isDetaSet=true;
                     try {
-                        textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"),Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
+                        String dataSet[]=headerName.split("\\.");
+                        if(dataSet.length==3) {
+                            textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), dataSet[1], dataSet[2]);
+                        }
+                        else{
+                            throw new TesboException("Please enter DataSet in: '"+step+"'");
+                        }
 
                     } catch (StringIndexOutOfBoundsException e) {
-                        logger.stepLog(step);
-                        logger.testFailed("no string to enter. Create a separate exeception here");
                         throw e;
+
                     }
+                }
+                else if(headerName.contains("Dataset.") || headerName.contains("dataSet.") || headerName.contains("dataset.")){
+                    throw new TesboException("Please enter valid DataSet in: '"+step+"'");
                 }
             } catch (Exception e) {
                 throw e;
             }
-            try {
-                if (test.get("dataType").toString().equalsIgnoreCase("global")) {
-                    textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
+
+            if(!isDetaSet) {
+                try {
+                    if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
+                        try {
+                            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
+
+                        } catch (StringIndexOutOfBoundsException e) {
+                            logger.stepLog(step);
+                            logger.testFailed("no string to enter. Create a separate exeception here");
+                            throw e;
+                        }
+                    }
+                } catch (Exception e) {
+                    throw e;
                 }
-            } catch (Exception e) {
-                throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
+                try {
+                    if (test.get("dataType").toString().equalsIgnoreCase("global")) {
+                        textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
+                    }
+                } catch (Exception e) {
+                    throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
+                }
             }
         } else {
             startPoint = step.indexOf("'") + 1;
