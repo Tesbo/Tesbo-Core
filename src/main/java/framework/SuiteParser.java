@@ -723,10 +723,9 @@ public class SuiteParser {
      * @param suiteName
      * @return
      */
-    public String getAnnotationDataSetBySuite(String suiteName) {
+    public void getAnnotationDataSetBySuite(String suiteName) {
         StringBuffer suiteDetails = readSuiteFile(suiteName);
         String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        String annotationDataSet = null;
         int startPoint = 0;
         boolean testStarted = false;
         int endpoint = 0;
@@ -744,19 +743,13 @@ public class SuiteParser {
         }
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) {
-                if (!(allLines[j].contains("DataSet:"))) {
-                    throw new TesboException("Write 'DataSet' keyword in test");
-                }
-                annotationDataSet=allLines[j];
-                break;
+                throw new TesboException("DataSet is not use in BeforeTest and AfterTest annotation");
             }
-            else{
-                if(allLines[j].toLowerCase().contains("dataset:") || allLines[j].toLowerCase().contains("dataset :")){
-                    throw new TesboException("Please add valid key word for: '"+allLines[j]+"'");
-                }
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("{") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("{DataSet."))) {
+                throw new TesboException("DataSet value not use directly in BeforeTest and AfterTest annotation");
             }
+
         }
 
-        return annotationDataSet;
     }
 }

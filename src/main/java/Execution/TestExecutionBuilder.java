@@ -245,7 +245,7 @@ public class TestExecutionBuilder {
                     int dataSize = 0;
                     String dataType = null;
                     if(isBeforeTest || isAfterTest){
-                        dataSetName = suiteParser.getAnnotationDataSetBySuite(suiteName.toString());
+                        suiteParser.getAnnotationDataSetBySuite(suiteName.toString());
                     }
                     if(dataSetName==null) {
                         dataSetName = suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(), testName.toString());
