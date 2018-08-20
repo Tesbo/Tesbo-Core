@@ -16,7 +16,7 @@ public class VerifyParser {
         StepParser stepParser = new StepParser();
         Logger logger = new Logger();
         boolean flag=false;
-        logger.stepLog(verify);
+        logger.stepLog(verify.replace("@",""));
 
         //Text verification.
         if (verify.toLowerCase().contains("text")) {

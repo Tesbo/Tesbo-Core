@@ -175,7 +175,7 @@ public class ReportParser {
                 throw new TesboException("No string found to enter.");
             }
         }
-        return step.replace(headerName, textToEnter);
+        return step.replace(headerName, textToEnter).replace("@","").replaceAll("[{,}]","'");
     }
 
     /**
