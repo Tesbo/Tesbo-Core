@@ -31,15 +31,19 @@ public class StepParser {
         if (!step.toLowerCase().contains("{") && !step.toLowerCase().contains("}") && !step.toLowerCase().contains("print") && !step.toString().contains("random"))
             logger.stepLog(step.replace("@",""));
 
-        //Click from List
-        if (step.toLowerCase().contains("click") && step.toLowerCase().contains("from list")) {
-            clickOnElementFromList(driver,test,step);
-        }
 
         //Clicks
         if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("right") || step.toLowerCase().contains("double") || step.toLowerCase().contains("and hold") || step.toLowerCase().contains("from list")) ) {
 
-            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
+            if (step.toLowerCase().contains("from list")) {
+                clickOnElementFromList(driver,test,step);
+            }
+            else if(step.toLowerCase().contains("offset")){
+                clickOnOffset(driver,test,step);
+            }
+            else {
+                cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
+            }
         }
 
         // Click And Hold
@@ -1007,6 +1011,33 @@ public class StepParser {
             printStep="Step: "+printText;
         }
         return printStep.replace("@","");
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     * @param test
+     * @param step
+     * @throws Exception
+     */
+    public void clickOnOffset(WebDriver driver,JSONObject test,String step)throws Exception {
+        Commands cmd = new Commands();
+        GetLocator locator = new GetLocator();
+
+        WebElement element =cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step)));
+        int startPoint = 0;
+        int endPoint = 0;
+        startPoint = step.indexOf("(") + 1;
+        endPoint = step.lastIndexOf(")");
+        String offsetString = step.substring(startPoint, endPoint);
+        String offsets[]=offsetString.trim().split(",");
+        if(offsets.length!=2){
+            throw new TesboException("Enter X and Y offset");
+        }
+        cmd.clickOnOffset(driver,element,offsets);
+
+
     }
 
 }
