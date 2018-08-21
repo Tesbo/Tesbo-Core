@@ -20,7 +20,7 @@ Test: T1 login on amazon DataSet global Credentials
 #T1 #regression
 DataSet: Credentials
 Step: Open URL 'https://www.amazon.in'
-Step: click on @sign_in button
+Step: Click on @sign_in offset (10 , 10)
 Step: Enter {amazonUser} in @Email
 Step: Click on @continue button
 Step: Enter {DataSet.Credentials.amazonPass} in @Password1

@@ -2,10 +2,12 @@
 DataSet:
 {
      "Credentials": {
-          "userName1": "ankit@tesbo.io",
+          "linkedin1": "ankit@tesbo.io",
           "password1": "tesbo@2018",
-          "userName2": "9033660480",
+          "linkedin2": "9033660480",
           "password2": "tesbo@2018",
+           "amazonUser": "9033660480",
+           "amazonPass": "Ankit216",
      }
      "GmailUsers": {
      "excelFile": "E:/Tesbo_JAR/tesbo-core/src/test/Resources/GmailData.xlsx"
@@ -14,15 +16,18 @@ DataSet:
           "excelFile": "E:/Tesbo_JAR/tesbo-core/src/test/Resources/GmailData.xlsx"
           }
 }
-
+Test: AF1 Collection linkedin
+#AF1 #linkedin
+DataSet: Credentials
+Collection Name: linkedin
+Step: pause for 5sec
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter {linkedin1} in @Email_Field
+Step: Enter {password1} in @Password_Field
+End
 BeforeTest:
-Step: open URL 'https://www.linkedin.com/'
-Step: Print "Before Test"
-Verify: @Email_Field is displayed
-Step: Pause 2 sec
-Step: Enter {DataSet.Credentials.userName2} in @Email_Field
-Step: Enter {DataSet.Credentials.password2} in @Password_Field
-Step: Print "Before Test Finish"
+Step: open URL 'https://www.Google.com/'
+ExtCode: url
 End
 
 AfterTest:
@@ -33,8 +38,8 @@ Step: Pause 2 sec
 Step: Print "After Test Finish"
 End
 
-Test: AF26 Get cookies
-#AF26 #regression
+Test: AF2 Get cookies
+#AF2 #regression
 Step: Open URL 'https://www.amazon.in/'
 Step: click on @sign_in button
 Verify: @Email is displayed
@@ -47,8 +52,8 @@ Verify: Get cookies and check 'csm-hit' is available
 Step: pause 5 sec
 End
 
-Test: AF29 Verify multi Driver Functionality
-#AF29 #regression
+Test: AF3 Verify multi Driver Functionality
+#AF3 #regression
 Session: patel, ankit,
 DataSet: LinkedinUsers[2]
 [ankit]
