@@ -1,0 +1,91 @@
+
+DataSet:
+{
+     "Credentials": {
+          "userName1": "ankit@tesbo.io",
+          "password1": "tesbo@2018",
+          "userName2": "9033660480",
+          "password2": "tesbo@2018",
+     }
+     "GmailUsers": {
+     "excelFile": "E:/Tesbo_JAR/tesbo-core/src/test/Resources/GmailData.xlsx"
+     }
+      "LinkedinUsers[2]": {
+          "excelFile": "E:/Tesbo_JAR/tesbo-core/src/test/Resources/GmailData.xlsx"
+          }
+}
+
+BeforeTest:
+Step: open URL 'https://www.linkedin.com/'
+Step: Print "Before Test"
+Verify: @Email_Field is displayed
+Step: Pause 2 sec
+Step: Enter {DataSet.Credentials.userName2} in @Email_Field
+Step: Enter {DataSet.Credentials.password2} in @Password_Field
+Step: Print "Before Test Finish"
+End
+
+AfterTest:
+Step: Open URL 'https://www.google.in/'
+Step: Print "After Test"
+Step: Window Minimize
+Step: Pause 2 sec
+Step: Print "After Test Finish"
+End
+
+Test: AF26 Get cookies
+#AF26 #regression
+Step: Open URL 'https://www.amazon.in/'
+Step: click on @sign_in button
+Verify: @Email is displayed
+Step: Enter '9033660480' in @Email
+Step: Click on @continue button
+Step: Enter 'Ankit216' in @Password1
+Step: click on @Login Button
+Step: Enter 'iPhone 7' in @Search_box
+Verify: Get cookies and check 'csm-hit' is available
+Step: pause 5 sec
+End
+
+Test: AF29 Verify multi Driver Functionality
+#AF29 #regression
+Session: patel, ankit,
+DataSet: LinkedinUsers[2]
+[ankit]
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter {userName} into @emailTextBox
+Step: pause 1 sec
+Step: Enter {password} into @passwordTextBox
+Step: Click on @signInTextBox
+Step: pause 2 sec
+Step: Click on @MyNetwork
+Step: pause 5 sec
+Step: Click on @SeeAll
+Step: pause 2 sec
+Step: Enter 'ankit patel' on @ConSearch
+Step: Press Enter
+Step: Click on @Message
+Step: Enter 'Hi' on @MessageBox
+Step: Click on @Send
+Step: pause 5 sec
+[patel]
+Step: pause 5 sec
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter {userName1} into @emailTextBox
+Step: pause 1 sec
+Step: Enter {password1} into @passwordTextBox
+Step: Click on @signInTextBox
+Step: Click on @MessageIcon
+Step: pause for 5sec
+Step: Enter 'Fine' on @MessageBox
+Step: Click on @Send
+Step: pause 5 sec
+[ankit]
+Step: Enter 'Good day' on @MessageBox
+Step: Click on @Send
+Step: pause for 5sec
+[patel]
+Step: Enter 'Thanks' on @MessageBox
+Step: Click on @Send
+ExtCode: signOut
+End
