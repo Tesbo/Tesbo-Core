@@ -4,6 +4,7 @@ import Selenium.ExtendTesboDriver;
 import org.openqa.selenium.*;
 import ExtCode.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
 
 import java.util.Random;
 
@@ -15,14 +16,15 @@ public class Code extends ExtendTesboDriver {
 
     static String LowestPriceMobile;
 
-    @ExtCode("url")
+    @ExtCode("google")
     public void ExternalCode() {
-        driver.get("https://www.amazon.in");
+        driver.get("https://www.google.in");
         System.out.println("Hello My Tag");
     }
 
 
     public static void main(String[] args) throws InterruptedException {
+
 
 
 

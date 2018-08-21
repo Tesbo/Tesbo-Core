@@ -18,12 +18,12 @@ DataSet:
 }
 
 BeforeTest:
-ExtCode: url
+ExtCode: google
 Step: open URL 'https://www.linkedin.com/'
 Step: Print "Before Test"
 Verify: @Email_Field is displayed
 Step: Pause 2 sec
-Step: Enter {DataSet.Credentials.userName2} in @Email_Field
+Step: Enter '9033660480' in @Email_Field
 Step: Enter {DataSet.Credentials.password2} in @Password_Field
 Step: Print "Before Test Finish"
 End
@@ -74,9 +74,9 @@ Step: pause 5 sec
 [patel]
 Step: pause 5 sec
 Step: Open URL 'https://www.linkedin.com'
-Step: Enter {userName1} into @emailTextBox
+Step: Enter {DataSet.Credentials.linkedin1} into @emailTextBox
 Step: pause 1 sec
-Step: Enter {password1} into @passwordTextBox
+Step: Enter {DataSet.Credentials.password1} into @passwordTextBox
 Step: Click on @signInTextBox
 Step: Click on @MessageIcon
 Step: pause for 5sec
@@ -91,4 +91,16 @@ Step: pause for 5sec
 Step: Enter 'Thanks' on @MessageBox
 Step: Click on @Send
 ExtCode: signOut
+End
+
+Test: AF3 Priority severity and Print and Capture Screenshot of element
+#AF3
+Priority: high
+Severity: critical
+Step: Open URL 'https://www.google.com'
+Step: Enter 'random.firstname' on @GoogleSearch
+Step: pause 2 sec
+Step: Capture Screenshot of @GoogleSearch
+Step: Print @GoogleLocation
+Step: Print "All step going pass"
 End
