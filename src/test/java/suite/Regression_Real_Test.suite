@@ -5,8 +5,6 @@ DataSet:
           "password1": "tesbo@2018",
           "linkedin2": "9033660480",
           "password2": "tesbo@2018",
-          "amazonUser": "9033660480",
-          "amazonPass": "Ankit216",
           "travelUser": "admin@phptravels.com",
           "travelPass": "demoadmin",
      }
@@ -68,7 +66,7 @@ End
 
 Test: T5 Verify Press Keys Functionality
 #T5 #regression
-Collection: amazon_open
+Collection: phptravels
 Step: Enter 'admin@phptravels.com' in @Email_Box
 Step: pause 1 sec
 Step: Press 'CTRL' Plus 'A' in @Email_Box
@@ -82,7 +80,7 @@ Step: pause 1 sec
 Step: Press tab
 Step: Enter 'demoadmin' in @Password_Box
 Step: Press tab
-Step: press enter on @LoginBtn Button
+Step: Click on @LoginBtn Button
 Step: pause 4 sec
 End
 
@@ -365,19 +363,6 @@ Step: click on <0> from List @bootstrapElementListSecond
 Step: pause 5 sec
 End
 
-Test: T23 File upload
-#T23 #regression
-Step: Open URL 'http://demo.guru99.com/test/upload/'
-Step: Get Page Source
-Step: pause for 2sec
-Step: Upload File 'C:\Users\jsbot\Desktop\New.html' @UploadText
-Step: pause for 2sec
-Step: Click on @terms
-Step: pause 2 sec
-Step: Click on @send
-Step: pause 2 sec
-End
-
 Test: T24 Drag and Drop Demo
 #T24
 Step: Open URL 'http://jqueryui.com/resources/demos/droppable/default.html'
@@ -399,20 +384,6 @@ Step: Scroll to Horizontal
 Step: pause 5 sec
 End
 
-Test: T26 Get cookies
-#T26 #regression
-Step: Open URL 'https://www.amazon.in/'
-Step: click on @sign_in button
-Verify: @Email is displayed
-Step: Enter '9033660480' in @Email
-Step: Click on @continue button
-Step: Enter 'Ankit216' in @Password1
-Step: click on @Login Button
-Step: pause 2 sec
-Step: Enter 'iPhone 7' in @Search_box
-Verify: Get cookies and check 'csm-hit' is available
-Step: pause 5 sec
-End
 
 Test: T27 Priority severity and Print and Capture Screenshot of element
 #T27

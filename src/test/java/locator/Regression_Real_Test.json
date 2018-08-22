@@ -73,7 +73,7 @@
   "MessageIcon":"//span[@id='messaging-tab-icon']",
   "TextPath":"(//SPAN[@class='a-color-base'])[2]",
   "GoogleSearch":"//INPUT[@id='lst-ib']",
-  "GoogleLocation":"//SPAN[@class='Q8LRLc'][text()='India']",
+  "GoogleLocation":"//a[contains(text(),'Advertising')]",
   "sortBy":"//SELECT[@id='sort']",
   "priceLowToHigh":"//*[@id='sort']/option[3]",
   "FirstResult":"(//*[@class='a-link-normal s-access-detail-page  s-color-twister-title-link a-text-normal'])[1]",

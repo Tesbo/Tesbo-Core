@@ -183,10 +183,17 @@ Step: Click on @Send
 ExtCode: signOut
 End
 
-Test: phptravels
-#M7
-Step: Open URL 'https://www.phptravels.net/admin'
-Step: Enter Email 'admin@phptravels.com' in to @Email_Box
-Step: Enter Password 'demoadmin' in to @Password_Box
-Step: Click on @LoginBtn
+Test: T26 Get cookies
+#T26 #regression
+Step: Open URL 'https://www.amazon.in/'
+Step: click on @sign_in button
+Verify: @Email is displayed
+Step: Enter '9033660480' in @Email
+Step: Click on @continue button
+Step: Enter 'Ankit216' in @Password1
+Step: click on @Login Button
+Step: pause 2 sec
+Step: Enter 'iPhone 7' in @Search_box
+Verify: Get cookies and check 'csm-hit' is available
+Step: pause 5 sec
 End
