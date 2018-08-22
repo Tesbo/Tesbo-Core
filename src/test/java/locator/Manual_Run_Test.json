@@ -83,8 +83,10 @@
   "bootstrapElementList":"(//ul[@class='list-group'])[1]/li",
   "bootstrapElementListSecond":"(//ul[@class='list-group'])[2]/li",
   "Drag":"//P[text()='Drag me to my target']",
-  "Drop":"//DIV[@id='droppable']"
+  "Drop":"//DIV[@id='droppable']",
 
-
+  "Email_Box":"//INPUT[@type='text']",
+  "Password_Box":"//INPUT[@type='password']",
+  "LoginBtn":"//SPAN[@class='ladda-label'][text()='Login']"
 
 }

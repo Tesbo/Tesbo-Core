@@ -7,6 +7,8 @@ DataSet:
           "password2": "tesbo@2018",
           "amazonUser": "9033660480",
           "amazonPass": "Ankit216",
+          "travelUser": "admin@phptravels.com",
+          "travelPass": "demoadmin",
      }
      "GmailUsers": {
      "excelFile": "E:/Ankit/tesbo-core/src/test/Resources/GmailData.xlsx"
@@ -23,7 +25,7 @@ Collection Name: linkedin
 Step: pause for 5sec
 Step: Open URL 'https://www.linkedin.com'
 Step: Enter {linkedin1} in @Email_Field
-Step: Enter {password1} in @Password_Field
+Step: Enter {DataSet.Credentials.password1} in @Password_Field
 End
 
 Test: M2 Verify multi Driver Functionality
@@ -86,7 +88,7 @@ Step: Click on @emailTextBox
 Step: Pause 5 sec
 End
 
-Test: M4 Linkedin DataSet global + Multi Driver  collection  ExtCode
+Test: M4 Linkedin DataSet global + Multi Driver + collection + ExtCode
 #M4 #regression
 DataSet: Credentials
 Session: patel, ankit,
@@ -179,4 +181,12 @@ Step: pause for 5sec
 Step: Enter 'Thanks' on @MessageBox
 Step: Click on @Send
 ExtCode: signOut
+End
+
+Test: phptravels
+#M7
+Step: Open URL 'https://www.phptravels.net/admin'
+Step: Enter Email 'admin@phptravels.com' in to @Email_Box
+Step: Enter Password 'demoadmin' in to @Password_Box
+Step: Click on @LoginBtn
 End

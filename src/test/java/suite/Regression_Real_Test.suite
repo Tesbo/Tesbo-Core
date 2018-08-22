@@ -7,6 +7,8 @@ DataSet:
           "password2": "tesbo@2018",
           "amazonUser": "9033660480",
           "amazonPass": "Ankit216",
+          "travelUser": "admin@phptravels.com",
+          "travelPass": "demoadmin",
      }
      "GmailUsers": {
      "excelFile": "E:/Ankit/tesbo-core/src/test/Resources/GmailData.xlsx"
@@ -16,15 +18,20 @@ DataSet:
           }
 }
 
-Test: T1 login on amazon DataSet global Credentials
+Test: T1 login on phptravels DataSet global Credentials
 #T1 #regression
 DataSet: Credentials
-Step: Open URL 'https://www.amazon.in'
-Step: Click on @sign_in offset (10 , 10)
-Step: Enter {amazonUser} in @Email
-Step: Click on @continue button
-Step: Enter {DataSet.Credentials.amazonPass} in @Password1
-Step: Click on @Login Button
+Step: Open URL 'https://www.phptravels.net/admin'
+Step: pause 2 sec
+Step: Enter Email {travelUser} in to @Email_Box
+Step: Enter {DataSet.Credentials.travelPass} in @Password_Box
+Step: Click on @LoginBtn
+Step: pause 2 sec
+Step: Scroll to coordinate (300,250)
+Step: pause 2 sec
+Step: scroll to top
+Step: Print @QuickBooking
+Verify: @QuickBooking is displayed
 Step: Pause 2 sec
 End
 
@@ -44,46 +51,38 @@ Step: Enter {userName} on @UserName
 Step: Enter {password} on @Password
 End
 
-Test: T3 Verify Page Title is equal
+Test: T3 Verify Collection Functionality
 #T3 #regression
-Collection Name: amazon_open
-Step: Open URL 'https://www.amazon.in'
-Step: pause 2 sec
-Step: Mouse Hover @sign_in
-Step: pause 2 sec
-Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
-Step: Scroll to coordinate (300,250)
-Step: pause 2 sec
-Step: scroll to top
-Step: Print @sign_in
-Step: click on @sign_in button
-Verify: @Email is displayed
+Collection Name: phptravels
+Step: Open URL 'https://www.phptravels.net/admin'
+Step: Pause 2 sec
+Step: Mouse Hover @LoginBtn
+Verify: Page Title is equal to 'Administator Login'
 End
 
 Test: T4 Verify Collection without Test
 #T4 #regression
-Collection: amazon_open
-Step: Print "Coll amazon_open"
+Collection: phptravels
+Step: Print "Coll phptravels"
 End
 
 Test: T5 Verify Press Keys Functionality
 #T5 #regression
 Collection: amazon_open
-Step: Enter '9033660480' in @Email
+Step: Enter 'admin@phptravels.com' in @Email_Box
 Step: pause 1 sec
-Step: Press 'CTRL' Plus 'A' in @Email
+Step: Press 'CTRL' Plus 'A' in @Email_Box
 Step: pause 1 sec
-Step: Press 'CTRL' Plus 'C' in @Email
+Step: Press 'CTRL' Plus 'C' in @Email_Box
 Step: pause 1 sec
-Step: Clear @Email
+Step: Clear @Email_Box
 Step: pause 1 sec
-Step: Press 'CTRL' Plus 'V' in @Email
+Step: Press 'CTRL' Plus 'V' in @Email_Box
 Step: pause 1 sec
 Step: Press tab
-Step: Click on @continue button
-Step: Enter 'Ankit216' in @Password1
+Step: Enter 'demoadmin' in @Password_Box
 Step: Press tab
-Step: press enter on @Login Button
+Step: press enter on @LoginBtn Button
 Step: pause 4 sec
 End
 
@@ -91,33 +90,31 @@ End
 
 Test: T7 amazon iphone search
 #iphone #T7 #regression
-Step: Open URL 'https://www.amazon.in/'
-Verify: Page Title is equal to 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in'
-Step: click on @sign_in button
-Verify: @Email is displayed
-Step: Enter '9033660480' in @Email
-Step: Click on @continue button
-Step: Enter 'Ankit216' in @Password1
-Step: click on @Login Button
-Step: Enter 'iPhone 7' in @Search_box
-Step: Press Enter
+Step: Open URL 'https://www.phptravels.net/admin'
+Verify: @Email_Box is displayed
+Step: Enter Email 'admin@phptravels.com' in to @Email_Box
+Step: Enter Password 'demoadmin' in to @Password_Box
+Step: Click on @LoginBtn
+Step: pause 2 sec
 Step: Scroll to Bottom
 Step: scroll to top
-Step: scroll to @iphone_image1
-Step: scroll to @iphone_image2
-Step: scroll to @iphone_image3
+Step: Scroll to coordinate (400,350)
+Step: pause 2 sec
+Step: scroll to @RefNo
+Step: scroll to @pull_left
 Step: scroll to top
-Step: Click on @Today_deals
+Step: Click on @Booking
+Step: Navigate to back
+Step: Navigate to forward
 Step: Navigate to back
 Step: Navigate refresh
-Step: Navigate to forward
 Step: scroll to Bottom
-Verify: @Australia text is equal ignore case 'Australia'
-Verify: @Australia text is equal 'Australia'
-Verify: @Australia text is contains 'Australia'
-Verify: @Australia text is contains ignore case 'Australia'
+Verify: @Search_ text is equal ignore case 'search'
+Verify: @Search_ text is equal 'SEARCH'
+Verify: @Search_ text is contains 'SEAR'
+Verify: @Search_ text is contains ignore case 'sear'
 Step: pause 1sec
-Step: Click on @Australia
+Step: Click on @Search_
 End
 
 Test: T8 Verify Iframes
@@ -164,24 +161,24 @@ End
 
 Test: T10 Verify Double click
 #T10 #regression
-Step: Open URL 'https://www.amazon.in'
+Step: Open URL 'https://www.phptravels.net/admin'
+Step: Enter Email 'admin@phptravels.com' in to @Email_Box
+Step: Enter Password 'demoadmin' in to @Password_Box
+Step: Click on @LoginBtn
 Step: pause 2 sec
-Step: Scroll to coordinate (300,250)
+Step: Double click on @Unpaid
 Step: pause 2 sec
-Step: Double click on @TextPath
-Step: pause 2 sec
-Step: click on @sign_in button
-Verify: @Email is displayed
 End
 
 Test: T11 Verify Right click
 #T11 #regression
-Step: Open URL 'https://www.amazon.in'
+Step: Open URL 'https://www.phptravels.net/admin'
+Step: Enter Email 'admin@phptravels.com' in to @Email_Box
+Step: Enter Password 'demoadmin' in to @Password_Box
+Step: Click on @LoginBtn
 Step: pause 2 sec
-Step: Right click on @sign_in button
+Step: Right click on @Unpaid button
 Step: pause 2 sec
-Step: click on @sign_in button
-Verify: @Email is displayed
 End
 
 
@@ -291,9 +288,6 @@ Step: pause 2 sec
 Step: click @GoogleSignIn and hold
 Step: pause 5 sec
 End
-
-
-
 
 Test: T18 Clear cache
 #T18
