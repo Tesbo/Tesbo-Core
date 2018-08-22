@@ -87,46 +87,6 @@ Step: press enter on @Login Button
 Step: pause 4 sec
 End
 
-Test: T6 Verify multi Driver Functionality
-#T6 #Multi_browser #regression
-Session: patel, ankit,
-[ankit]
-Step: Open URL 'https://www.linkedin.com'
-Step: Enter '9033660480' into @emailTextBox
-Step: pause 1 sec
-Step: Enter 'tesbo@2018' into @passwordTextBox
-Step: Click on @signInTextBox
-Step: pause 2 sec
-Step: Click on @MyNetwork
-Step: pause 5 sec
-Step: Click on @SeeAll
-Step: pause 2 sec
-Step: Enter 'ankit patel' on @ConSearch
-Step: Press Enter
-Step: Click on @Message
-Step: Enter 'Hi' on @MessageBox
-Step: Click on @Send
-Step: pause 5 sec
-[patel]
-Step: pause for 5sec
-Step: Open URL 'https://www.linkedin.com'
-Step: Enter 'ankit@tesbo.io' into @emailTextBox
-Step: pause for 1 sec
-Step: Enter 'tesbo@2018' into @passwordTextBox
-Step: Click on @signInTextBox
-Step: Click on @MessageIcon
-Step: pause for 5sec
-Step: Enter 'Fine' on @MessageBox
-Step: Click on @Send
-Step: pause for 5se
-[ankit]
-Step: Enter 'Good day' on @MessageBox
-Step: Click on @Send
-Step: pause for 5sec
-[patel]
-Step: Enter 'Thanks' on @MessageBox
-Step: Click on @Send
-End
 
 
 Test: T7 amazon iphone search
@@ -225,24 +185,7 @@ Verify: @Email is displayed
 End
 
 
-Test: T12 Verify clear cookies
-#T12 #regression
-Step: Open URL 'https://www.linkedin.com'
-Step: pause for 3 sec
-Step: Enter '9033660480' into @emailTextBox
-Step: pause for 3 sec
-Step: Enter 'tesbo@2018' into @passwordTextBox
-Step: pause for 3 sec
-Step: Click on @signInTextBox
-ExtCode: signOut
-Step: Pause 3 sec
-Step: Click on @emailTextBox
-Step: Pause 5 sec
-Step: Clear Cookies
-Step: Pause 5 sec
-Step: Click on @emailTextBox
-Step: Pause 5 sec
-End
+
 
 Test: T13 Nokia mobile search on amazon with External code
 #T13 #regression
@@ -349,54 +292,6 @@ Step: click @GoogleSignIn and hold
 Step: pause 5 sec
 End
 
-Test: T16 Linkedin DataSet global  Multi Driver  collection  ExtCode
-#T16 #regression
-DataSet: Credentials
-Session: patel, ankit,
-[ankit]
-Step: Open URL 'https://www.linkedin.com'
-Step: Enter {linkedin2} into @Email_Field
-Step: pause 1 sec
-Step: Enter {password2} into @Password_Field
-Step: Click on @Login_Button
-Step: pause 2 sec
-Step: Click on @MyNetwork
-Step: pause 5 sec
-Step: Click on @SeeAll
-Step: pause 2 sec
-Step: Enter 'ankit patel' on @ConSearch
-Step: Press Enter
-Step: Click on @Message
-Step: Enter 'Hi' on @MessageBox
-Step: Click on @Send
-Step: pause 5 sec
-[patel]
-Collection: linkedin
-Step: Click on @signInTextBox
-Step: Click on @MessageIcon
-Step: pause for 5sec
-Step: Enter 'Fine' on @MessageBox
-Step: Click on @Send
-Step: pause for 5se
-[ankit]
-Step: Enter 'Good day' on @MessageBox
-Step: Click on @Send
-Step: pause for 5sec
-[patel]
-Step: Enter 'Thanks' on @MessageBox
-Step: Click on @Send
-End
-
-
-Test: T17 Collection linkedin
-#T17 #linkedin
-DataSet: Credentials
-Collection Name: linkedin
-Step: pause for 5sec
-Step: Open URL 'https://www.linkedin.com'
-Step: Enter {linkedin1} in @Email_Field
-Step: Enter {password1} in @Password_Field
-End
 
 
 
@@ -536,58 +431,6 @@ Step: Print @GoogleLocation
 Step: Print "All step going pass"
 End
 
-Test: T28 login on amazon DataSet global Credentials
-#T28 #ExcelData #regression
-Step: Open URL 'https://www.amazon.in'
-Step: Enter {DataSet.Credentials.linkedin2} in @Email
-Step: Click on @continue button
-Step: Enter {DataSet.Credentials.password2} in @Password1
-Step: click on @@Login Button
-Step: Pause 2 sec
-End
 
-
-Test: T29 Verify multi Driver Functionality
-#T29 #Multi_browser #regression
-Session: patel, ankit,
-DataSet: LinkedinUsers[2]
-[ankit]
-Step: Open URL 'https://www.linkedin.com'
-Step: Enter {userName} into @emailTextBox
-Step: pause 1 sec
-Step: Enter {password} into @passwordTextBox
-Step: Click on @signInTextBox
-Step: pause 2 sec
-Step: Click on @MyNetwork
-Step: pause 5 sec
-Step: Click on @SeeAll
-Step: pause 2 sec
-Step: Enter 'ankit patel' on @ConSearch
-Step: Press Enter
-Step: Click on @Message
-Step: Enter 'Hi' on @MessageBox
-Step: Click on @Send
-Step: pause 5 sec
-[patel]
-Step: pause 5 sec
-Step: Open URL 'https://www.linkedin.com'
-Step: Enter {DataSet.Credentials.linkedin1} into @emailTextBox
-Step: pause 1 sec
-Step: Enter {DataSet.Credentials.password1} into @passwordTextBox
-Step: Click on @signInTextBox
-Step: Click on @MessageIcon
-Step: pause for 5sec
-Step: Enter 'Fine' on @MessageBox
-Step: Click on @Send
-Step: pause 5 sec
-[ankit]
-Step: Enter 'Good day' on @MessageBox
-Step: Click on @Send
-Step: pause for 5sec
-[patel]
-Step: Enter 'Thanks' on @MessageBox
-Step: Click on @Send
-ExtCode: signOut
-End
 
 

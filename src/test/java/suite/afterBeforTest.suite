@@ -29,9 +29,13 @@ Step: Print "Before Test Finish"
 End
 
 AfterTest:
+Session: patel, ankit,
+[patel]
 Step: Open URL 'https://www.google.in/'
 Step: Print "After Test"
 Step: Window Minimize
+[ankit]
+Step: Open URL 'https://www.google.in/'
 Step: Pause 2 sec
 Step: Print "After Test Finish"
 End
