@@ -38,6 +38,7 @@ public class TestExecutor implements Runnable {
     String testResult = "";
     Commands cmd=new Commands();
     String exceptionAsString = null;
+    GetConfiguration config=new GetConfiguration();
 
     public TestExecutor() { }
     public TestExecutor(JSONObject test) {
@@ -148,7 +149,11 @@ public class TestExecutor implements Runnable {
                 stepReportObject=addStepExecutonOfannotation(driver,stepReportObject,step.toString());
 
                 if(stepReportObject.size()!=0) {
-                    testStepArray.add(stepReportObject);
+                    if(step.toString().toLowerCase().contains("pause") )
+                    {
+                        if(config.getPauseStepDisplay()==true){ testStepArray.add(stepReportObject); }
+                    }
+                    else { testStepArray.add(stepReportObject); }
                 }
                 if (stepReportObject.get("status").equals("failed")) {
                     isTestFail=true;
@@ -158,196 +163,205 @@ public class TestExecutor implements Runnable {
             }
         }
 
+        /*Getting step using SuiteName and Testcase Name*/
+        JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
+        int J = 0;
+        //JSONArray stepsArray = new JSONArray();
+        //boolean failFlag = false;
 
-        if(!isTestFail) {
+        for (int i = 0; i < steps.size(); i++) {
+            boolean stepPassed = true;
 
-            /*Getting step using SuiteName and Testcase Name*/
-            JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
-            int J = 0;
-            //JSONArray stepsArray = new JSONArray();
-            //boolean failFlag = false;
+            JSONObject stepReportObject = new JSONObject();
+            long startTimeStep = System.currentTimeMillis();
+            Object step = steps.get(i);
 
-            for (int i = 0; i < steps.size(); i++) {
-                boolean stepPassed = true;
+            if (!step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
+                stepReportObject.put("stepIndex", ++stepIndex);
+                stepReportObject.put("startTime", startTimeStep);
 
-                JSONObject stepReportObject = new JSONObject();
-                long startTimeStep = System.currentTimeMillis();
-                Object step = steps.get(i);
-
-
-                if (!step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
-                    stepReportObject.put("stepIndex", ++stepIndex);
-                    stepReportObject.put("startTime", startTimeStep);
-
-                    if (!(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("print") && step.toString().contains("random"))) {
+                if ( !(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("print") && step.toString().contains("random"))) {
+                    if(step.toString().toLowerCase().contains("pause") )
+                    {
+                        if(config.getPauseStepDisplay()==true){stepReportObject.put("steps", step.toString().replace("@", "")); }
+                    }
+                    else {
                         stepReportObject.put("steps", step.toString().replace("@", ""));
                     }
-                    if (step.toString().contains("print")) {
-                        try {
-                            stepReportObject.put("steps", stepParser.printStep(driver, step.toString(), test));
-                        } catch (Exception e) {
-                            e.printStackTrace(new PrintWriter(sw));
-                            logger.testFailed(sw.toString());
-                        }
+                }
+                if (step.toString().contains("print")) {
+                    try {
+                        stepReportObject.put("steps", stepParser.printStep(driver, step.toString(), test));
+                    } catch (Exception e) {
+                        e.printStackTrace(new PrintWriter(sw));
+                        logger.testFailed(sw.toString());
+                    }
+                }
+            }
+
+            if (isSession) {
+                initializeSessionRunTime(step);
+            }
+
+            try {
+                if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
+                    if (step.toString().contains("{") && step.toString().contains("}")) {
+
+                        stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
+                    }
+                    String Step = stepParser.parseStep(driver, test, step.toString());
+
+                    if (step.toString().toLowerCase().contains("random")) {
+                        stepReportObject.put("steps", Step.replace("@", ""));
                     }
                 }
 
-                if (isSession) {
-                    initializeSessionRunTime(step);
+                if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
+                    verifyParser.parseVerify(driver, test, step.toString());
+
                 }
+            } catch (Exception ae) {
+                if (step.toString().contains("{") && step.toString().contains("}")) {
+                    stepReportObject.put("steps", step.toString().replaceAll("[{,}]", "'").replace("@", ""));
+                }
+                ae.printStackTrace(new PrintWriter(sw));
+                exceptionAsString = sw.toString();
+                logger.testFailed("Failed");
+                logger.testFailed(exceptionAsString);
+                stepPassed = false;
+            }
+
+            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Close:")) {
+
+                String sessionName = step.toString().split(":")[1].trim().replace("]", "");
+                boolean isSession = false;
+                for (Map.Entry session : sessionList.entrySet()) {
+                    if (session.getKey().toString().equals(sessionName)) {
+                        isSession = true;
+                        break;
+                    }
+                }
+                if (isSession) {
+                    afterTest(sessionName);
+                }
+
+            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
 
                 try {
-                    if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
-                        if (step.toString().contains("{") && step.toString().contains("}")) {
-
-                            stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
-                        }
-                        String Step = stepParser.parseStep(driver, test, step.toString());
-
-                        if (step.toString().toLowerCase().contains("random")) {
-                            stepReportObject.put("steps", Step.replace("@", ""));
-                        }
-                    }
-
-                    if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
-                        verifyParser.parseVerify(driver, test, step.toString());
-
-                    }
-                } catch (Exception ae) {
-                    if (step.toString().contains("{") && step.toString().contains("}")) {
-                        stepReportObject.put("steps", step.toString().replaceAll("[{,}]", "'").replace("@", ""));
-                    }
-                    ae.printStackTrace(new PrintWriter(sw));
+                    externalCode.runAllAnnotatedWith(ExtCode.class, step.toString(), driver);
+                } catch (Exception e) {
+                    e.printStackTrace(new PrintWriter(sw));
                     exceptionAsString = sw.toString();
                     logger.testFailed("Failed");
-                    logger.testFailed(exceptionAsString);
+                    logger.testFailed(sw.toString());
+                    stepPassed = false;
+
+                }
+
+
+            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
+                JSONArray groupSteps = new JSONArray();
+                try {
+                    groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.getCollectionName(step.toString()));
+                } catch (Exception e) {
+                    if (groupSteps.size() == 0)
+                        throw e;
+                    J++;
+
+                    e.printStackTrace(new PrintWriter(sw));
+                    exceptionAsString = sw.toString();
+                    logger.testFailed("Failed");
+                    logger.testFailed(sw.toString());
+                    stepNumber++;
                     stepPassed = false;
                 }
 
-                if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Close:")) {
 
-                    String sessionName = step.toString().split(":")[1].trim().replace("]", "");
-                    boolean isSession = false;
-                    for (Map.Entry session : sessionList.entrySet()) {
-                        if (session.getKey().toString().equals(sessionName)) {
-                            isSession = true;
-                            break;
-                        }
-                    }
-                    if (isSession) {
-                        afterTest(sessionName);
-                    }
+                for (int s = 0; s <= groupSteps.size() - 1; s++) {
+                    Object groupStep = groupSteps.get(s);
 
-                } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
-
-                    try {
-                        externalCode.runAllAnnotatedWith(ExtCode.class, step.toString(), driver);
-                    } catch (Exception e) {
-                        e.printStackTrace(new PrintWriter(sw));
-                        exceptionAsString = sw.toString();
-                        logger.testFailed("Failed");
-                        logger.testFailed(sw.toString());
-                        stepPassed = false;
-
-                    }
-
-
-                } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
-                    JSONArray groupSteps = new JSONArray();
-                    try {
-                        groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.getCollectionName(step.toString()));
-                    } catch (Exception e) {
-                        if (groupSteps.size() == 0)
-                            throw e;
-                        J++;
-
-                        e.printStackTrace(new PrintWriter(sw));
-                        exceptionAsString = sw.toString();
-                        logger.testFailed("Failed");
-                        logger.testFailed(sw.toString());
-                        stepNumber++;
-                        stepPassed = false;
-                    }
-
-
-                    for (int s = 0; s <= groupSteps.size() - 1; s++) {
-                        Object groupStep = groupSteps.get(s);
-
-                        startTimeStep = System.currentTimeMillis();
-                        step = steps.get(i);
-
-                        stepReportObject.put("stepIndex", ++stepIndex);
-                        stepReportObject.put("startTime", startTimeStep);
-                        stepReportObject.put("steps", groupStep.toString().replace("@", ""));
-
-                        if (groupStep.toString().contains("Step:")) {
-                            try {
-                                stepParser.parseStep(driver, test, groupStep.toString());
-                            } catch (Exception ae) {
-                                J++;
-                                ae.printStackTrace(new PrintWriter(sw));
-                                exceptionAsString = sw.toString();
-                                logger.testFailed("Failed");
-                                logger.testFailed(sw.toString());
-                                stepPassed = false;
-
-
-                            }
-                        } else if (groupStep.toString().contains("Verify:")) {
-                            try {
-                                verifyParser.parseVerify(driver, test, groupStep.toString());
-                            } catch (Exception NE) {
-                                J++;
-                                NE.printStackTrace(new PrintWriter(sw));
-                                exceptionAsString = sw.toString();
-                                logger.testFailed("Failed");
-                                logger.testFailed(sw.toString());
-                                stepPassed = false;
-                            }
-                        }
-                        reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
-                        stepReportObject = addStepResultInReport(driver, stepReportObject, test, stepPassed);
-                        testStepArray.add(stepReportObject);
-                        stepReportObject = new JSONObject();
-                    }
-                    stepNumber++;
-                }
-
-                reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
-                if (stepReportObject.size() != 0) {
-                    stepReportObject = addStepResultInReport(driver, stepReportObject, test, stepPassed);
-                    testStepArray.add(stepReportObject);
-                }
-                if (!stepPassed) {
-                    isTestFail=true;
-                    break;
-                }
-            }
-        }
-        if(!isTestFail) {
-            if (suiteParser.isAfterTestInSuite(test.get("suiteName").toString())) {
-                JSONArray annotationSteps = parser.getBeforeAndAfterTestStepBySuite(test.get("suiteName").toString(), "AfterTest");
-                for (int i = 0; i < annotationSteps.size(); i++) {
-
-                    JSONObject stepReportObject = new JSONObject();
-                    long startTimeStep = System.currentTimeMillis();
-                    Object step = annotationSteps.get(i);
+                    startTimeStep = System.currentTimeMillis();
+                    step = steps.get(i);
 
                     stepReportObject.put("stepIndex", ++stepIndex);
                     stepReportObject.put("startTime", startTimeStep);
+                    stepReportObject.put("steps", groupStep.toString().replace("@", ""));
 
-                    stepReportObject = addStepExecutonOfannotation(driver, stepReportObject, step.toString());
+                    if (groupStep.toString().contains("Step:")) {
+                        try {
+                            stepParser.parseStep(driver, test, groupStep.toString());
+                        } catch (Exception ae) {
+                            J++;
+                            ae.printStackTrace(new PrintWriter(sw));
+                            exceptionAsString = sw.toString();
+                            logger.testFailed("Failed");
+                            logger.testFailed(sw.toString());
+                            stepPassed = false;
 
-                    if (stepReportObject.size() != 0) {
-                        testStepArray.add(stepReportObject);
+
+                        }
+                    } else if (groupStep.toString().contains("Verify:")) {
+                        try {
+                            verifyParser.parseVerify(driver, test, groupStep.toString());
+                        } catch (Exception NE) {
+                            J++;
+                            NE.printStackTrace(new PrintWriter(sw));
+                            exceptionAsString = sw.toString();
+                            logger.testFailed("Failed");
+                            logger.testFailed(sw.toString());
+                            stepPassed = false;
+                        }
                     }
-                    if (stepReportObject.get("status").equals("failed")) {
-                        break;
-                    }
-
+                    reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
+                    stepReportObject = addStepResultInReport(driver, stepReportObject, test, stepPassed);
+                    testStepArray.add(stepReportObject);
+                    stepReportObject = new JSONObject();
                 }
+                stepNumber++;
+            }
+
+            reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
+            if (stepReportObject.size() != 0) {
+                stepReportObject = addStepResultInReport(driver, stepReportObject, test, stepPassed);
+
+                if(step.toString().toLowerCase().contains("pause") )
+                {
+                    if(config.getPauseStepDisplay()==true){ testStepArray.add(stepReportObject); }
+                }
+                else { testStepArray.add(stepReportObject); }
+            }
+            if (!stepPassed) {
+                break;
             }
         }
+
+        if (suiteParser.isAfterTestInSuite(test.get("suiteName").toString())) {
+            JSONArray annotationSteps = parser.getBeforeAndAfterTestStepBySuite(test.get("suiteName").toString(), "AfterTest");
+            for (int i = 0; i < annotationSteps.size(); i++) {
+
+                JSONObject stepReportObject = new JSONObject();
+                long startTimeStep = System.currentTimeMillis();
+                Object step = annotationSteps.get(i);
+
+                stepReportObject.put("stepIndex", ++stepIndex);
+                stepReportObject.put("startTime", startTimeStep);
+
+                stepReportObject = addStepExecutonOfannotation(driver, stepReportObject, step.toString());
+
+                if (stepReportObject.size() != 0) {
+                    if(step.toString().toLowerCase().contains("pause") )
+                    {
+                        if(config.getPauseStepDisplay()==true){ testStepArray.add(stepReportObject); }
+                    }
+                    else { testStepArray.add(stepReportObject); }
+                }
+                if (stepReportObject.get("status").equals("failed")) {
+                    break;
+                }
+
+            }
+        }
+
         Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
 
         if(stepParser.isSeverityOrPriority(test)){
@@ -667,6 +681,7 @@ public class TestExecutor implements Runnable {
             logger.testFailed(exceptionAsString);
             stepPassed = false;
         }
+
         if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
 
             try {
