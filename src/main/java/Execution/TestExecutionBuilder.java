@@ -39,8 +39,10 @@ public class TestExecutionBuilder {
     public static boolean singleWindowRun= config.getSingleWindowRun();
     public static boolean isSingleWindow= config.getSingleWindowRun();
     public static WebDriver driver;
-
+    GetJsonData data = new GetJsonData();
+    ReportBuilder reportBuilder=new ReportBuilder();
     public static JSONArray failTestQueue=new JSONArray();
+    String buildHistory = new File(reportBuilder.getBuildHistoryPath()).getAbsolutePath();
 
     public void startExecution() throws Exception {
         Commands cmd=new Commands();
@@ -89,15 +91,15 @@ public class TestExecutionBuilder {
 
 
 
-        /*logger.customeLog("| Total : " + data.getCurrentBuildTotal(new File(getBuildHistoryPath()).getAbsolutePath()), Ansi.FColor.NONE);
+        logger.customeLog("| Total : " + data.getCurrentBuildTotal(new File(reportBuilder.getBuildHistoryPath()).getAbsolutePath()), Ansi.FColor.NONE);
         logger.customeLog(" | Passed : " + data.getCurrentBuildPassed(buildHistory), Ansi.FColor.NONE);
         logger.customeLog(" | Failed : " + data.getCurrentBuildFailed(buildHistory), Ansi.FColor.NONE);
         logger.customeLog(" | Time : " + data.getCurrentBuildTotalTime(buildHistory) + " |\n", Ansi.FColor.NONE);
 
 
-        logger.customeLog("\nReport Generated at :" + file.getAbsolutePath() + "\n", Ansi.FColor.NONE);
+        //logger.customeLog("\nReport Generated at :" + file.getAbsolutePath() + "\n", Ansi.FColor.NONE);
         logger.titleLog("-----------------------------------------------------------------------");
-*/
+
     }
 
 
