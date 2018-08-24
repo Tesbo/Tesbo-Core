@@ -64,14 +64,14 @@ public class ReportLibraryFiles {
     public void createLibrary() {
         ReportBuilder builder = new ReportBuilder();
         generateReportLibraryStructure();
-        builder.writeReportFile("./htmlReport/lib/bootstrap/dist/css/bootstrap.css", getFileContent("/Resources/lib/bootstrap/dist/css/bootstrap.css"));
-        builder.writeReportFile("./htmlReport/lib/bootstrap/dist/css/bootstrap.min.css", getFileContent("/Resources/lib/bootstrap/dist/css/bootstrap.min.css"));
-        builder.writeReportFile("./htmlReport/lib/bootstrap/dist/js/bootstrap.js", getFileContent("/Resources/lib/bootstrap/dist/js/bootstrap.js"));
-        builder.writeReportFile("./htmlReport/lib/bootstrap/dist/js/bootstrap.min.js", getFileContent("/Resources/lib/bootstrap/dist/js/bootstrap.min.js"));
-        builder.writeReportFile("./htmlReport/lib/build/css/custom.css", getFileContent("/Resources/lib/build/css/custom.css"));
-        builder.writeReportFile("./htmlReport/lib/build/css/custom.min.css", getFileContent("/Resources/lib/build/css/custom.min.css"));
-        builder.writeReportFile("./htmlReport/lib/jquery/dist/jquery.js", getFileContent("/Resources/lib/jquery/dist/jquery.js"));
-        builder.writeReportFile("./htmlReport/lib/jquery/dist/jquery.min.js", getFileContent("/Resources/lib/jquery/dist/jquery.min.js"));
+        builder.writeReportFile("./htmlReport/lib/bootstrap/dist/css/bootstrap.css", getFileContent("/lib/bootstrap/dist/css/bootstrap.css"));
+        builder.writeReportFile("./htmlReport/lib/bootstrap/dist/css/bootstrap.min.css", getFileContent("/lib/bootstrap/dist/css/bootstrap.min.css"));
+        builder.writeReportFile("./htmlReport/lib/bootstrap/dist/js/bootstrap.js", getFileContent("/lib/bootstrap/dist/js/bootstrap.js"));
+        builder.writeReportFile("./htmlReport/lib/bootstrap/dist/js/bootstrap.min.js", getFileContent("/lib/bootstrap/dist/js/bootstrap.min.js"));
+        builder.writeReportFile("./htmlReport/lib/build/css/custom.css", getFileContent("/lib/build/css/custom.css"));
+        builder.writeReportFile("./htmlReport/lib/build/css/custom.min.css", getFileContent("/lib/build/css/custom.min.css"));
+        builder.writeReportFile("./htmlReport/lib/jquery/dist/jquery.js", getFileContent("/lib/jquery/dist/jquery.js"));
+        builder.writeReportFile("./htmlReport/lib/jquery/dist/jquery.min.js", getFileContent("/lib/jquery/dist/jquery.min.js"));
         try {
             String chromePath = "./htmlReport/lib/Icon/chrome.svg";
             String firefoxPath = "./htmlReport/lib/Icon/firefox.svg";
