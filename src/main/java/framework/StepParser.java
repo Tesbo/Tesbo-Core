@@ -130,6 +130,7 @@ public class StepParser {
 
         // Get URL
         if (step.toLowerCase().contains("url")) {
+
             driver.get(parseTextToEnter(test, step));
         }
 
