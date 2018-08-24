@@ -262,4 +262,21 @@ public class GetConfiguration {
         }
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public boolean getPauseStepDisplay()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        try {
+            return (boolean) run.get("pause");
+        }catch (Exception e)
+        {
+            return false;
+        }
+    }
+
 }
