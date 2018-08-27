@@ -647,7 +647,7 @@ public class StepParser {
                         String dataSet[]=headerName.split("\\.");
                         if(dataSet.length==3) {
                             textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), dataSet[1], dataSet[2]);
-                            logger.stepLog(step.replace(headerName, textToEnter).replaceAll("[{,}]","'").replace("@",""));
+                            logger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
                         }
                         else{
                             throw new TesboException("Please enter DataSet in: '"+step+"'");
@@ -673,7 +673,7 @@ public class StepParser {
                         try {
                             textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
                             if (textToEnter != null) {
-                                logger.stepLog(step.replace(headerName, textToEnter).replaceAll("[{,}]","'").replace("@",""));
+                                logger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
                             }
 
                         } catch (StringIndexOutOfBoundsException e) {
@@ -689,7 +689,7 @@ public class StepParser {
                 try {
                     if (test.get("dataType").toString().equalsIgnoreCase("global")) {
                         textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
-                        logger.stepLog(step.replace(headerName, textToEnter).replaceAll("[{,}]","'").replace("@",""));
+                        logger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
 
                     }
                 } catch (Exception e) {
