@@ -86,7 +86,15 @@ Step: Click on @LoginBtn Button
 Step: pause 4 sec
 End
 
-
+Test: T6 Collection linkedin
+#T6 #linkedin
+DataSet: Credentials
+Collection Name: linkedin
+Step: pause for 5sec
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter {linkedin1} in @Email_Field
+Step: Enter {DataSet.Credentials.password1} in @Password_Field
+End
 
 Test: T7 amazon iphone search
 #iphone #T7 #regression

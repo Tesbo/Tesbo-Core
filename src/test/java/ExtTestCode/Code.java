@@ -19,7 +19,7 @@ public class Code extends ExtendTesboDriver {
     @ExtCode("google")
     public void ExternalCode() {
         driver.get("https://www.google.in");
-        System.out.println("Hello My Tag");
+        System.out.println("**************google External Code*********************");
     }
 
 
