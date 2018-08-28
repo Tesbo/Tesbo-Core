@@ -2,12 +2,14 @@
 DataSet:
 {
      "Credentials": {
-                    "linkedin1": "ankit@tesbo.io",
-                    "password1": "tesbo@2018",
-                    "linkedin2": "9033660480",
-                    "password2": "tesbo@2018",
-                    "amazonUser": "9033660480",
-                    "amazonPass": "Ankit216",
+          "linkedin1": "9033660480",
+          "password1": "tesbo@2018",
+          "linkedin2": "aenkymistry26@gmail.com",
+          "password2": "aki26991",
+          "amazonUser": "9033660480",
+          "amazonPass": "Ankit216",
+          "travelUser": "admin@phptravels.com",
+          "travelPass": "demoadmin",
      }
      "GmailUsers": {
      "excelFile": "E:/Tesbo_JAR/tesbo-core/src/test/Resources/GmailData.xlsx"

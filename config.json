@@ -7,7 +7,7 @@
     "seleniumAddress": "",
     "by": {
       "tag": [
-       "T15"
+       "T25"
       ]
     },
     "browser": {
@@ -17,13 +17,13 @@
     },
     "parallel": {
       "status": true,
-      "count": "1"
+      "count": "5"
     },
     "retryAnalyser":{
       "count":"0"
     },
     "binaries" : {
-      "chromePath": ""
+      "chrome": ""
     },
     "capabilities": {
       "chrome": {
@@ -31,7 +31,9 @@
         "platform" : ""
       }
     },
+    "pause":false,
     "SingleWindowRun": false,
     "highlightElement": true
+
   }
 }
