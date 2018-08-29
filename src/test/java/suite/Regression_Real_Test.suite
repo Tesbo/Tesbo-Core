@@ -1,18 +1,20 @@
 DataSet:
 {
      "Credentials": {
-          "linkedin1": "ankit@tesbo.io",
+          "linkedin1": "9033660480",
           "password1": "tesbo@2018",
-          "linkedin2": "9033660480",
-          "password2": "tesbo@2018",
+          "linkedin2": "aenkymistry26@gmail.com",
+          "password2": "aki26991",
+          "amazonUser": "9033660480",
+          "amazonPass": "Ankit216",
           "travelUser": "admin@phptravels.com",
           "travelPass": "demoadmin",
      }
      "GmailUsers": {
-     "excelFile": "E:/Ankit/tesbo-core/src/test/Resources/GmailData.xlsx"
+     "excelFile": "E:/Tesbo_JAR/tesbo-core/src/test/Resources/GmailData.xlsx"
      }
       "LinkedinUsers[2]": {
-          "excelFile": "E:/Ankit/tesbo-core/src/test/Resources/GmailData.xlsx"
+          "excelFile": "E:/Tesbo_JAR/tesbo-core/src/test/Resources/GmailData.xlsx"
           }
 }
 
@@ -84,7 +86,15 @@ Step: Click on @LoginBtn Button
 Step: pause 4 sec
 End
 
-
+Test: T6 Collection linkedin
+#T6 #linkedin
+DataSet: Credentials
+Collection Name: linkedin
+Step: pause for 5sec
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter {linkedin1} in @Email_Field
+Step: Enter {DataSet.Credentials.password1} in @Password_Field
+End
 
 Test: T7 amazon iphone search
 #iphone #T7 #regression
@@ -379,6 +389,7 @@ Test: T25 Scroll to Horizontal
 #T25
 Step: Open URL 'http://google.com'
 Step: Window Maximize
+Step: pause 1 sec
 Step: Window Resize (600,600)
 Step: Scroll to Horizontal
 Step: pause 5 sec
@@ -397,5 +408,183 @@ Step: Print "All step going pass"
 End
 
 
+Test: T28 Collection linkedin
+#T28 #linkedin
+DataSet: Credentials
+Collection Name: linkedin
+Step: pause for 5sec
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter {linkedin1} in @Email_Field
+Step: Enter {DataSet.Credentials.password1} in @Password_Field
+End
 
+Test: T29 Verify multi Driver Functionality
+#T29 #Multi_browser #regression
+Session: patel, ankit,
+[ankit]
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter '9033660480' into @emailTextBox
+Step: pause 1 sec
+Step: Enter 'tesbo@2018' into @passwordTextBox
+Step: Click on @signInTextBox
+Step: pause 2 sec
+Step: Click on @MyNetwork
+Step: pause 5 sec
+Step: Click on @SeeAll
+Step: pause 2 sec
+Step: Enter 'ankit Mistry' on @ConSearch
+Step: Press Enter
+Step: Click on @Message
+Step: Enter 'Hi' on @MessageBox
+Step: Click on @Send
+Step: pause 5 sec
+[patel]
+Step: pause for 5sec
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter 'aenkymistry26@gmail.com' into @emailTextBox
+Step: pause for 1 sec
+Step: Enter 'aki26991' into @passwordTextBox
+Step: Click on @signInTextBox
+Step: Click on @MessageIcon
+Step: pause for 5sec
+Step: Enter 'Fine' on @MessageBox
+Step: Click on @Send
+Step: pause for 5se
+[ankit]
+Step: Enter 'Good day' on @MessageBox
+Step: Click on @Send
+Step: pause for 5sec
+[patel]
+Step: Enter 'Thanks' on @MessageBox
+Step: Click on @Send
+End
+
+Test: T30 Verify clear cookies
+#T30 #regression
+Step: Open URL 'https://www.linkedin.com'
+Step: pause for 3 sec
+Step: Enter '9033660480' into @emailTextBox
+Step: pause for 3 sec
+Step: Enter 'tesbo@2018' into @passwordTextBox
+Step: pause for 3 sec
+Step: Click on @signInTextBox
+ExtCode: signOut
+Step: Pause 3 sec
+Step: Click on @emailTextBox
+Step: Pause 5 sec
+Step: Clear Cookies
+Step: Pause 5 sec
+Step: Click on @emailTextBox
+Step: Pause 5 sec
+End
+
+Test: T31 Linkedin DataSet global + Multi Driver + collection + ExtCode
+#T31 #regression
+DataSet: Credentials
+Session: patel, ankit,
+[ankit]
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter {linkedin1} into @Email_Field
+Step: pause 1 sec
+Step: Enter {password1} into @Password_Field
+Step: Click on @Login_Button
+Step: pause 2 sec
+Step: Click on @MyNetwork
+Step: pause 5 sec
+Step: Click on @SeeAll
+Step: pause 2 sec
+Step: Enter 'ankit Mistry' on @ConSearch
+Step: Press Enter
+Step: Click on @Message
+Step: Enter 'Hi' on @MessageBox
+Step: Click on @Send
+Step: pause 5 sec
+[patel]
+Collection: linkedin
+Step: Click on @signInTextBox
+Step: Click on @MessageIcon
+Step: pause for 5sec
+Step: Enter 'Fine' on @MessageBox
+Step: Click on @Send
+Step: pause for 5se
+[ankit]
+Step: Enter 'Good day' on @MessageBox
+Step: Click on @Send
+Step: pause for 5sec
+[patel]
+Step: Enter 'Thanks' on @MessageBox
+Step: Click on @Send
+End
+
+
+Test: T32 File upload
+#T32 #regression
+Step: Open URL 'http://demo.guru99.com/test/upload/'
+Step: Get Page Source
+Step: pause for 2sec
+Step: Upload File 'C:\Users\jsbot\Desktop\New.html' @UploadText
+Step: pause for 2sec
+Step: Click on @terms
+Step: pause 2 sec
+Step: Click on @send
+Step: pause 2 sec
+End
+
+Test: T33 Verify multi Driver Functionality
+#T33 #Multi_browser #regression
+Session: patel, ankit,
+DataSet: LinkedinUsers[2]
+[ankit]
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter {userName} into @emailTextBox
+Step: pause 1 sec
+Step: Enter {password} into @passwordTextBox
+Step: Click on @signInTextBox
+Step: pause 2 sec
+Step: Click on @MyNetwork
+Step: pause 5 sec
+Step: Click on @SeeAll
+Step: pause 2 sec
+Step: Enter 'ankit mistry' on @ConSearch
+Step: Press Enter
+Step: Click on @Message
+Step: Enter 'Hi' on @MessageBox
+Step: Click on @Send
+Step: pause 5 sec
+[patel]
+Step: pause 5 sec
+Step: Open URL 'https://www.linkedin.com'
+Step: Enter {DataSet.Credentials.linkedin1} into @emailTextBox
+Step: pause 1 sec
+Step: Enter {DataSet.Credentials.password1} into @passwordTextBox
+Step: Click on @signInTextBox
+Step: Click on @MessageIcon
+Step: pause for 5sec
+Step: Enter 'Fine' on @MessageBox
+Step: Click on @Send
+Step: pause 5 sec
+[ankit]
+Step: Enter 'Good day' on @MessageBox
+Step: Click on @Send
+Step: pause for 5sec
+[patel]
+Step: Enter 'Thanks' on @MessageBox
+Step: Click on @Send
+ExtCode: signOut
+End
+
+Test: T34 Get cookies
+#T34 #regression
+Step: Open URL 'https://www.amazon.in/'
+Step: click on @sign_in button
+Verify: @Email is displayed
+Step: Enter '9033660480' in @Email
+Step: Click on @continue button
+Step: Enter 'Ankit216' in @Password1
+Step: click on @Login Button
+Step: pause 2 sec
+Step: Enter 'iPhone 7' in @Search_box
+Verify: Get cookies and check 'csm-hit' is available
+Step: pause 5 sec
+End
 
