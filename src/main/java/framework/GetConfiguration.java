@@ -119,6 +119,27 @@ public class GetConfiguration {
         JSONObject by = (JSONObject) run.get("by");
         return (JSONArray) by.get("suite");
     }
+
+    /**
+     * @auther : Viral Patel
+     * @lastModifiedBy:
+     * @return
+     */
+    public JSONObject getCloudIntegration() {
+        Utility parser = new Utility();
+        File jsonFile = new File("config.json");
+        try {
+
+            return (JSONObject) parser.loadJsonFile(jsonFile.getAbsolutePath()).get("cloudIntegration");
+
+
+        }catch (Exception e){
+            throw new TesboException("Cloud Integration is not defined");
+        }
+    }
+
+
+
     public String getBaseUrl() {
         Utility parser = new Utility();
 
