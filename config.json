@@ -1,13 +1,13 @@
 {
-  "SuiteDirectory": "E:/Tesbo_JAR/tesbo-core/src/test/java/suite",
-  "locatorDirectory": "E:/Tesbo_JAR/tesbo-core/src/test/java/locator",
-  "ExtCodeDirectory": "E:/Tesbo_JAR/tesbo-core/src/test/java/ExtTestCode",
+  "SuiteDirectory": "E:/TesBo/tesbo-core/src/test/java/suite",
+  "locatorDirectory": "E:/TesBo/tesbo-core/src/test/java/locator",
+  "ExtCodeDirectory": "E:/TesBo/tesbo-core/src/test/java/ExtTestCode",
   "run": {
     "baseUrl": "https://google.in",
     "seleniumAddress": "",
     "by": {
-      "tag": [
-       "T25"
+      "suite": [
+       "Regression_Real_Test","afterBeforTest","Validation_Real_Test"
       ]
     },
     "browser": {
@@ -35,5 +35,13 @@
     "SingleWindowRun": false,
     "highlightElement": true
 
+
+
+  },
+  "cloudIntegration" : {
+    "report": true,
+    "userName": "viral103patel@gmail.com",
+    "password": "gopi1010",
+    "projectKey" : "5bcccbcb58d4ff0353f781a1"
   }
 }

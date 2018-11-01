@@ -11,6 +11,7 @@ import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
+import reportAPI.ReportAPIConfig;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -62,6 +63,12 @@ public class TestExecutionBuilder {
         files.createLibrary();
 
         TestExecutionBuilder.buildRunning = true;
+
+        ReportAPIConfig config = new ReportAPIConfig();
+        config.getBuildKey();
+
+
+
         BuildReportDataObject brdo = new BuildReportDataObject();
         brdo.startThread();
         //  reportBuilder.startThread();
@@ -83,7 +90,7 @@ public class TestExecutionBuilder {
         logger.titleLog("Build Execution Completed");
         logger.titleLog("-----------------------------------------------------------------------\n");
 
-
+        config.updateEndTime();
         while(!repotFileGenerated) {
             cmd.pause(3);
             reportBuilder.generatReport();

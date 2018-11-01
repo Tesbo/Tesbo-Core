@@ -4,6 +4,7 @@ import DataCollector.BuildReportDataObject;
 import Execution.TestExecutionBuilder;
 import ExtCode.*;
 import Exception.TesboException;
+import ReportBuilder.ReportLibraryFiles;
 import Selenium.Commands;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import logger.Logger;
@@ -17,6 +18,8 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import reportAPI.ReportAPIConfig;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.format.DateTimeFormatter;
@@ -128,6 +131,7 @@ public class TestExecutor implements Runnable {
         testReportObject.put("browserName", test.get("browser"));
         testReportObject.put("testName", test.get("testName").toString());
         testReportObject.put("suiteName", test.get("suiteName").toString());
+        testReportObject.put("buildKey",ReportAPIConfig.buildKey);
         logger.testLog("Test: "+test.get("testName").toString());
 
         int stepIndex=0;
@@ -369,7 +373,7 @@ public class TestExecutor implements Runnable {
             for (int i = 0; i < severityAndPrioritySteps.size(); i++) {
                 Object step = severityAndPrioritySteps.get(i);
                 if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority:")) {
-                    testReportObject.put("Priority", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
+                    testReportObject.put("priority", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
                 }
                 if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
                     testReportObject.put("Severity", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
@@ -385,15 +389,32 @@ public class TestExecutor implements Runnable {
         long stopTimeTest = System.currentTimeMillis();
         testReportObject.put("testStep", testStepArray);
 
+        JSONObject reportObjectForCloudReport = testReportObject;
         if (testResult.equals("failed")) {
             testReportObject.put("fullStackTrace", exceptionAsString);
             testReportObject.put("screenShot", screenShotPath);
+
+
+            ReportLibraryFiles reportFile = new ReportLibraryFiles();
+
+            reportObjectForCloudReport.put("fullStackTrace", exceptionAsString);
+            reportObjectForCloudReport.put("screenShot",reportFile.encoder(screenShotPath) );
+
         }
         long stopTimeSuite = System.currentTimeMillis();
         testReportObject.put("totalTime", stopTimeTest - startTime);
         testReportObject.put("status", testResult);
 
         buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(), test.get("testName").toString(), testReportObject);
+
+        ReportAPIConfig reportAPIConfig = new ReportAPIConfig();
+        reportAPIConfig.organiazeDataForCloudReport(reportObjectForCloudReport);
+
+
+
+
+
+
         if(testResult.toLowerCase().equals("failed")){
 
             testExecutionBuilder.failTestExecutionQueue(test);
