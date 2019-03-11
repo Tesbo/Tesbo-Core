@@ -1,13 +1,13 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-pro</artifactId>
-	<version>0.0.6</version>
+	<version>0.0.7</version>
+
 	<packaging>jar</packaging>
-	
 
 	<name>Tesbo</name>
 	<url>http://maven.apache.org</url>
@@ -25,7 +25,7 @@
 	<build>
 
 
-		<finalName>tesbo</finalName>
+		<finalName>testbo</finalName>
 		<plugins>
 			<plugin>
 				<groupId>com.github.wvengen</groupId>
@@ -33,22 +33,22 @@
 				<version>2.0.14</version>
 				<configuration>
 					<injar>${project.build.finalName}.${project.packaging}</injar>
+					<outjar>${project.build.finalName}-proguard.${project.packaging}</outjar>
 					<libs>
 						<!-- <lib>${java.home}/jmods/java.base.jmod(!**.jar;!module-info.class)</lib> -->
 						<lib>${java.bootstrap.classes}</lib>
-					
+
 
 					</libs>
 					<options>
-						<option>-keep public class Execution.Tesbo{public void
-							run();}</option>
+						<option>-keep public class Execution.Tesbo{*;}</option>
+						<option>-keep public class UserConfig.GetUserConfiguration{*;}</option>
+						<option>-keep public class Execution.SetCommandLineArgument{*;}</option>
 						<option>-keep class Selenium.ExtendTesboDriver{ *; }</option>
 						<option>-keep class ExtCode.ExtCode{ *; }</option>
 						<option> -keepattributes RuntimeVisibleAnnotations</option>
 						<option>-keep class Exception.*</option>
 						<option>-keep @javax.persistence.* class * { *; }</option>
-						<option>-ignorewarnings</option>
-						
 					</options>
 				</configuration>
 				<dependencies>
@@ -99,11 +99,11 @@
 						</goals>
 						<configuration>
 							<target>
-								<jar destfile="${project.build.directory}/tesbo.jar">
+								<jar destfile="${project.build.directory}/testbo-proguard-final.jar">
 									<zipfileset excludes="META-INF/*.SF"
-										src="${project.build.directory}\${project.build.finalName}-proguard.${project.packaging}" />
-										 <zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar" 
-              />
+												src="${project.build.directory}\${project.build.finalName}-proguard.${project.packaging}" />
+									<zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar"
+									/>
 								</jar>
 							</target>
 						</configuration>
@@ -112,17 +112,7 @@
 			</plugin>
 
 
-
-
-
-
-
-
-
-
-
 		</plugins>
-
 
 
 
@@ -140,19 +130,7 @@
 
 		</dependency>
 
-		<dependency>
-			<groupId>com.beust</groupId>
-			<artifactId>jcommander</artifactId>
-			<version>1.72</version>
-		</dependency>
 
-
-
-		<dependency>
-			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>okhttp</artifactId>
-			<version>3.11.0</version>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
@@ -171,12 +149,12 @@
 			<version>23.4-jre</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-server -->
-		<!-- <dependency> <groupId>org.seleniumhq.selenium</groupId> <artifactId>selenium-server</artifactId> 
+		<!-- <dependency> <groupId>org.seleniumhq.selenium</groupId> <artifactId>selenium-server</artifactId>
 			<version>3.12.0</version> </dependency> -->
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>3.141.59</version>
+			<version>3.12.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>
@@ -225,9 +203,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>okhttp</artifactId>
-			<version>3.11.0</version>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.72</version>
 		</dependency>
 
 	</dependencies>
