@@ -11,7 +11,6 @@ import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
-import reportAPI.ReportAPIConfig;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -32,6 +31,7 @@ public class TestExecutionBuilder {
     public static String buildReportName;
     public static long buildStartTime;
     public static long buildEndTime;
+    public static int failTest=0;
     public static boolean repotFileGenerated = false;
     DataDrivenParser dataDrivenParser = new DataDrivenParser();
     Logger logger = new Logger();
@@ -45,9 +45,12 @@ public class TestExecutionBuilder {
     public static JSONArray failTestQueue=new JSONArray();
     String buildHistory = new File(reportBuilder.getBuildHistoryPath()).getAbsolutePath();
 
-    public void startExecution() throws Exception {
+    public void startExecution(String[] argumentsArray) throws Exception {
         Commands cmd=new Commands();
         buildStartTime = System.currentTimeMillis();
+
+        SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
+        setCommandLineArgument.setArgument(argumentsArray);
 
         Logger logger = new Logger();
         logger.titleLog("-----------------------------------------------------------------------");
@@ -63,12 +66,6 @@ public class TestExecutionBuilder {
         files.createLibrary();
 
         TestExecutionBuilder.buildRunning = true;
-
-        ReportAPIConfig config = new ReportAPIConfig();
-        config.getBuildKey();
-
-
-
         BuildReportDataObject brdo = new BuildReportDataObject();
         brdo.startThread();
         //  reportBuilder.startThread();
@@ -90,7 +87,7 @@ public class TestExecutionBuilder {
         logger.titleLog("Build Execution Completed");
         logger.titleLog("-----------------------------------------------------------------------\n");
 
-        config.updateEndTime();
+
         while(!repotFileGenerated) {
             cmd.pause(3);
             reportBuilder.generatReport();
@@ -173,24 +170,40 @@ public class TestExecutionBuilder {
          */
         try {
             validation.beforeExecutionValidation();
-            parallelBuilder(buildExecutionQueue());
-            int failTestQueuesize= failTestQueue.size();
-            if(failTestQueuesize>0){
-                int retryAnalyserCount=Integer.parseInt(config.getRetryAnalyser());
-                if(retryAnalyserCount>0){
+            File file = new File("./htmlReport/Past Fail Test Details/LastBuildFailTest.json");
+            boolean runPastFailure=false;
+            JSONArray lastBuildFailExecutionQueue = null;
+            if (config.getRunPastFailure() && file.exists()) {
+                Utility parser = new Utility();
+                lastBuildFailExecutionQueue = parser.loadJsonArrayFile(file.getAbsolutePath());
+                if (!lastBuildFailExecutionQueue.equals(null)) {
+                    runPastFailure=true;
+                }
+            }
+            if(runPastFailure){
+                parallelBuilder(lastBuildFailExecutionQueue);
+            }else {
+                parallelBuilder(buildExecutionQueue());
+                int failTestQueuesize = failTestQueue.size();
+                lastBuildFailTestExecutionQueue(failTestQueue);
+                if (failTestQueuesize > 0) {
+                    failTest=0;
+                    int retryAnalyserCount = Integer.parseInt(config.getRetryAnalyser());
+                    if (retryAnalyserCount > 0) {
 
-                    JSONArray TestQueue=failTestQueue;
-                    for(int i=1;i<=retryAnalyserCount;i++) {
-                        parallelBuilder(TestQueue);
-                        if(failTestQueuesize!=failTestQueue.size()){
-                            TestQueue=failTestQueue;
-                            failTestQueuesize=failTestQueue.size();
+                        JSONArray TestQueue = failTestQueue;
+                        for (int i = 1; i <= retryAnalyserCount; i++) {
+                            failTest++;
+                            parallelBuilder(TestQueue);
+                            if (failTestQueuesize != failTestQueue.size()) {
+                                TestQueue = failTestQueue;
+                                failTestQueuesize = failTestQueue.size();
+                            }
                         }
                     }
+
                 }
-
             }
-
         } catch (Exception ne) {
             StringWriter sw = new StringWriter();
             ne.printStackTrace(new PrintWriter(sw));
@@ -347,5 +360,21 @@ public class TestExecutionBuilder {
         }
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param failTestQueue
+     */
+    public void lastBuildFailTestExecutionQueue(JSONArray failTestQueue) {
+        ReportLibraryFiles reportLibraryFiles=new ReportLibraryFiles();
+        ReportBuilder reportBuilder=new ReportBuilder();
+        reportLibraryFiles.generateDir("./htmlReport/Past Fail Test Details");
+        reportLibraryFiles.deleteFile("./htmlReport/Past Fail Test Details/LastBuildFailTest.json");
+        reportLibraryFiles.generatefile("./htmlReport/Past Fail Test Details/LastBuildFailTest.json");
+        StringBuffer currentBuildResult = new StringBuffer();
+        currentBuildResult.append(failTestQueue);
+        reportBuilder.writeReportFile("./htmlReport/Past Fail Test Details/LastBuildFailTest.json",currentBuildResult);
+
+    }
 
 }

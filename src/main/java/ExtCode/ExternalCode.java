@@ -1,6 +1,8 @@
 package ExtCode;
 
 import framework.GetConfiguration;
+import framework.StepParser;
+import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
@@ -25,14 +27,40 @@ public class ExternalCode  {
      * @param step
      * @throws Exception
      */
-    public void runAllAnnotatedWith(Class<? extends Annotation> annotation, String step, WebDriver driver) throws Exception {
+    public void runAllAnnotatedWith(Class<? extends Annotation> annotation, String step, JSONObject test, WebDriver driver) throws Exception {
         boolean flag=false;
         GetConfiguration getConfiguration=new GetConfiguration();
+        StepParser stepParser=new StepParser();
         File file=new File(getConfiguration.getExtCodeDirectory());
 
         String tagVal=null;
+        String arguments[]=null;
         try {
+
             tagVal=step.toString().split(":")[1].trim();
+            if(tagVal.split("\\(").length>1) {
+                if (tagVal.toString().contains("{") && tagVal.toString().contains("}")) {
+                    String[] args = tagVal.split("\\(")[1].trim().replaceAll("[()]", "").split(",");
+                    int i=0;
+                    String argument=null;
+                    for(String arg:args){
+
+                        if (arg.toString().contains("{") && arg.toString().contains("}")) {
+                            if(i==0){argument=stepParser.passArgsToExtCode(test,arg);i++;}
+                            else {argument+=","+stepParser.passArgsToExtCode(test,arg);i++;}
+                        }
+                        else{
+                            if(i==0) {argument = arg;i++;}
+                            else{argument += ","+arg;i++;}
+                        }
+                    }
+                    arguments=argument.split(",");
+                }
+                else {
+                    arguments = tagVal.split("\\(")[1].trim().replaceAll("[()]", "").split(",");
+                }
+            }
+            tagVal=tagVal.split("\\(")[0].trim();
         } catch (Exception e) {
             throw new TesboException("ExtCode step has no value");
         }
@@ -50,7 +78,11 @@ public class ExternalCode  {
                         Constructor<?> cons = cls.getConstructor(WebDriver.class);
                         Object myTestCode = (Object) cons.newInstance(driver);
                         flag = true;
-                        m.invoke(myTestCode);
+                        if(arguments==null) {
+                            m.invoke(myTestCode);
+                        }else{
+                            m.invoke(myTestCode,arguments);
+                        }
                         break;
                     }catch (Exception e) {
                         throw e;
