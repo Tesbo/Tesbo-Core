@@ -44,6 +44,8 @@ public class Validation {
         //Validation for parallel execution
         parallelExecutionValidation();
 
+        //Validation for locator types
+        locatorTypesValidation();
     }
 
     public void suiteDirectoryPathValidation() {
@@ -373,7 +375,7 @@ public class Validation {
         if(step.replaceAll("\\s{2,}", " ").trim().contains("Step :") | step.replaceAll("\\s{2,}", " ").trim().contains("step:") | step.replaceAll("\\s{2,}", " ").trim().contains("step :")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("Verify :") | step.replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.replaceAll("\\s{2,}", " ").trim().contains("verify :")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("Collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.replaceAll("\\s{2,}", " ").trim().contains("collection :")
-                | step.replaceAll("\\s{2,}", " ").trim().contains("ExtCode :") | step.replaceAll("\\s{2,}", " ").trim().contains("extCode:") | step.replaceAll("\\s{2,}", " ").trim().contains("extCode :")
+                | step.replaceAll("\\s{2,}", " ").trim().contains("ExtCode :") | step.replaceAll("\\s{2,}", " ").trim().contains("externalCode:") | step.replaceAll("\\s{2,}", " ").trim().contains("externalCode :")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("extcode :") | step.replaceAll("\\s{2,}", " ").trim().contains("extcode:") | step.replaceAll("\\s{2,}", " ").trim().contains("Extcode :") | step.replaceAll("\\s{2,}", " ").trim().contains("Extcode:")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("[Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("[close:") | step.replaceAll("\\s{2,}", " ").trim().contains("[close :")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("close:") | step.replaceAll("\\s{2,}", " ").trim().contains("close :")
@@ -463,6 +465,16 @@ public class Validation {
         }
 
         return isSeverityOrPriority;
+    }
+
+    public void locatorTypesValidation() {
+        ArrayList<String> locatorTypes=new ArrayList<>();
+        locatorTypes=getCofig.getLocatorPreference();
+        if(locatorTypes!=null){
+            if(locatorTypes.size()==0){
+                throw new TesboException("Please enter locator types");
+            }
+        }
     }
 
 }

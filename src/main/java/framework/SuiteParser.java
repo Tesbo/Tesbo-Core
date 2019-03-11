@@ -169,7 +169,6 @@ public class SuiteParser {
     public JSONObject getTestNameByTag(String tag)  {
         GetConfiguration configuration = new GetConfiguration();
         String directoryPath = configuration.getSuitesDirectory();
-
         JSONArray suiteFileList = getSuites(directoryPath);
         JSONObject allSuite = new JSONObject();
 
@@ -207,6 +206,7 @@ public class SuiteParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
+
             if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
                 String testNameArray[] = allLines[i].split(":");
 
@@ -343,7 +343,7 @@ public class SuiteParser {
             throw new TesboException("End Step is not found for '" + groupName + "' collection");
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].contains("Step:") | allLines[j].contains("Verify:")) {
+            if (allLines[j].contains("Step:") | allLines[j].contains("Verify:") | allLines[j].contains("ExtCode:")) {
                 testSteps.add(allLines[j]);
             }
         }

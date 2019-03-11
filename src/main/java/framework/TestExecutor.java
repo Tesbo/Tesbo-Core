@@ -1,10 +1,10 @@
 package framework;
 
 import DataCollector.BuildReportDataObject;
+import Execution.SetCommandLineArgument;
 import Execution.TestExecutionBuilder;
 import ExtCode.*;
 import Exception.TesboException;
-import ReportBuilder.ReportLibraryFiles;
 import Selenium.Commands;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import logger.Logger;
@@ -18,8 +18,6 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import reportAPI.ReportAPIConfig;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.format.DateTimeFormatter;
@@ -131,13 +129,35 @@ public class TestExecutor implements Runnable {
         testReportObject.put("browserName", test.get("browser"));
         testReportObject.put("testName", test.get("testName").toString());
         testReportObject.put("suiteName", test.get("suiteName").toString());
-        testReportObject.put("buildKey",ReportAPIConfig.buildKey);
         logger.testLog("Test: "+test.get("testName").toString());
 
         int stepIndex=0;
         JSONArray testStepArray = new JSONArray();
+        if(stepIndex==0){
+            JSONObject stepReportObject = new JSONObject();
+            logger.testLog("Step: Open "+config.getBaseUrl());
+            stepReportObject.put("stepIndex", ++stepIndex);
+            stepReportObject.put("steps", "Step: Open "+config.getBaseUrl());
+            stepReportObject.put("status", "passed");
+            testStepArray.add(stepReportObject);
 
+        }
         screenShotPath = null;
+
+        if(stepParser.isSeverityOrPriority(test)){
+            JSONArray severityAndPrioritySteps=suiteParser.getSeverityAndPriority(test);
+            for (int i = 0; i < severityAndPrioritySteps.size(); i++) {
+                Object step = severityAndPrioritySteps.get(i);
+                if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority:")) {
+                    logger.stepLog(step.toString());
+                    testReportObject.put("Priority", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
+                }
+                if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+                    logger.stepLog(step.toString());
+                    testReportObject.put("Severity", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
+                }
+            }
+        }
 
         if(suiteParser.isBeforeTestInSuite(test.get("suiteName").toString())){
             JSONArray annotationSteps = parser.getBeforeAndAfterTestStepBySuite(test.get("suiteName").toString(), "BeforeTest");
@@ -147,7 +167,12 @@ public class TestExecutor implements Runnable {
                 long startTimeStep = System.currentTimeMillis();
                 Object step = annotationSteps.get(i);
 
-                stepReportObject.put("stepIndex", ++stepIndex);
+                if(step.toString().toLowerCase().contains("pause") )
+                {
+                    if(config.getPauseStepDisplay()==true){ stepReportObject.put("stepIndex", ++stepIndex); }
+                }
+                else{ stepReportObject.put("stepIndex", ++stepIndex); }
+
                 stepReportObject.put("startTime", startTimeStep);
 
                 stepReportObject=addStepExecutonOfannotation(driver,stepReportObject,step.toString());
@@ -181,7 +206,14 @@ public class TestExecutor implements Runnable {
             Object step = steps.get(i);
 
             if (!step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
-                stepReportObject.put("stepIndex", ++stepIndex);
+                if(step.toString().toLowerCase().contains("pause") )
+                {
+                    if(config.getPauseStepDisplay()==true){ stepReportObject.put("stepIndex", ++stepIndex); }
+                }
+                else{
+                    stepReportObject.put("stepIndex", ++stepIndex);
+                }
+
                 stepReportObject.put("startTime", startTimeStep);
 
                 if ( !(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("print") && step.toString().contains("random"))) {
@@ -189,11 +221,33 @@ public class TestExecutor implements Runnable {
                     {
                         if(config.getPauseStepDisplay()==true){stepReportObject.put("steps", step.toString().replace("@", "")); }
                     }
+                    else if(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("ExtCode")){
+                        stepReportObject.put("steps", stepParser.replaceArgsOfExtCodeStep(test,step.toString()));
+                    }
                     else {
-                        stepReportObject.put("steps", step.toString().replace("@", ""));
+                        if(step.toString().contains("@")){
+                            String removeContent=null;
+                            String[] stepsWord=step.toString().split(" ");
+                            for(String word:stepsWord){
+                                if(word.contains("@") && !(word.contains("'"))){
+                                    removeContent= word.trim().replace("@","");
+                                }
+                            }
+                            //String removeContent=step.split("@")[1].trim().split(" ")[0].replace("@","");
+                            if(removeContent.contains(".")){
+                                stepReportObject.put("steps", step.toString().replace("@"+removeContent,removeContent.split("\\.")[1]));
+                            }
+                            else {
+                                stepReportObject.put("steps", step.toString().replace("@"+removeContent, removeContent));
+                            }
+
+                        }
+                        else {
+                            stepReportObject.put("steps", step.toString().replace("@", ""));
+                        }
                     }
                 }
-                if (step.toString().contains("print")) {
+                if (step.toString().toLowerCase().contains("print")) {
                     try {
                         stepReportObject.put("steps", stepParser.printStep(driver, step.toString(), test));
                     } catch (Exception e) {
@@ -252,7 +306,12 @@ public class TestExecutor implements Runnable {
             } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
 
                 try {
-                    externalCode.runAllAnnotatedWith(ExtCode.class, step.toString(), driver);
+                    if (step.toString().contains("{") && step.toString().contains("}")) {
+                        logger.stepLog(stepParser.replaceArgsOfExtCodeStep(test,step.toString()));
+                    }else {
+                        logger.stepLog(step.toString());
+                    }
+                    externalCode.runAllAnnotatedWith(ExtCode.class, step.toString(),test, driver);
                 } catch (Exception e) {
                     e.printStackTrace(new PrintWriter(sw));
                     exceptionAsString = sw.toString();
@@ -314,6 +373,25 @@ public class TestExecutor implements Runnable {
                             logger.testFailed("Failed");
                             logger.testFailed(sw.toString());
                             stepPassed = false;
+
+                        }
+                    }
+                    else if (groupStep.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
+
+                        try {
+                            if (step.toString().contains("{") && step.toString().contains("}")) {
+                                logger.stepLog(stepParser.replaceArgsOfExtCodeStep(test,step.toString()));
+                            }else {
+                                logger.stepLog(step.toString());
+                            }
+                            externalCode.runAllAnnotatedWith(ExtCode.class, groupStep.toString(),test, driver);
+                        } catch (Exception e) {
+                            e.printStackTrace(new PrintWriter(sw));
+                            exceptionAsString = sw.toString();
+                            logger.testFailed("Failed");
+                            logger.testFailed(sw.toString());
+                            stepPassed = false;
+
                         }
                     }
                     reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
@@ -338,7 +416,6 @@ public class TestExecutor implements Runnable {
                 break;
             }
         }
-
         if (suiteParser.isAfterTestInSuite(test.get("suiteName").toString())) {
             JSONArray annotationSteps = parser.getBeforeAndAfterTestStepBySuite(test.get("suiteName").toString(), "AfterTest");
             for (int i = 0; i < annotationSteps.size(); i++) {
@@ -347,7 +424,11 @@ public class TestExecutor implements Runnable {
                 long startTimeStep = System.currentTimeMillis();
                 Object step = annotationSteps.get(i);
 
-                stepReportObject.put("stepIndex", ++stepIndex);
+                if(step.toString().toLowerCase().contains("pause") )
+                {
+                    if(config.getPauseStepDisplay()==true){ stepReportObject.put("stepIndex", ++stepIndex); }
+                }
+                else{ stepReportObject.put("stepIndex", ++stepIndex); }
                 stepReportObject.put("startTime", startTimeStep);
 
                 stepReportObject = addStepExecutonOfannotation(driver, stepReportObject, step.toString());
@@ -368,19 +449,6 @@ public class TestExecutor implements Runnable {
 
         Capabilities caps = ((RemoteWebDriver) driver).getCapabilities();
 
-        if(stepParser.isSeverityOrPriority(test)){
-            JSONArray severityAndPrioritySteps=suiteParser.getSeverityAndPriority(test);
-            for (int i = 0; i < severityAndPrioritySteps.size(); i++) {
-                Object step = severityAndPrioritySteps.get(i);
-                if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority:")) {
-                    testReportObject.put("priority", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
-                }
-                if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
-                    testReportObject.put("Severity", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
-                }
-            }
-        }
-
         testReportObject.put("browserVersion", caps.getVersion());
         String osName= caps.getPlatform().toString();
         if(osName.toLowerCase().equals("xp")) { osName = "windows"; }
@@ -389,32 +457,15 @@ public class TestExecutor implements Runnable {
         long stopTimeTest = System.currentTimeMillis();
         testReportObject.put("testStep", testStepArray);
 
-        JSONObject reportObjectForCloudReport = testReportObject;
         if (testResult.equals("failed")) {
             testReportObject.put("fullStackTrace", exceptionAsString);
             testReportObject.put("screenShot", screenShotPath);
-
-
-            ReportLibraryFiles reportFile = new ReportLibraryFiles();
-
-            reportObjectForCloudReport.put("fullStackTrace", exceptionAsString);
-            reportObjectForCloudReport.put("screenShot",reportFile.encoder(screenShotPath) );
-
         }
         long stopTimeSuite = System.currentTimeMillis();
         testReportObject.put("totalTime", stopTimeTest - startTime);
         testReportObject.put("status", testResult);
 
         buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(), test.get("testName").toString(), testReportObject);
-
-        ReportAPIConfig reportAPIConfig = new ReportAPIConfig();
-        reportAPIConfig.organiazeDataForCloudReport(reportObjectForCloudReport);
-
-
-
-
-
-
         if(testResult.toLowerCase().equals("failed")){
 
             testExecutionBuilder.failTestExecutionQueue(test);
@@ -482,9 +533,12 @@ public class TestExecutor implements Runnable {
      */
     public WebDriver initializeBrowser(Object session) {
         GetConfiguration config = new GetConfiguration();
+        SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
         String seleniumAddress = null;
         Commands cmd = new Commands();
-        seleniumAddress = cmd.getSeleniumAddress();
+        if(config.getIsGrid() || Boolean.valueOf(setCommandLineArgument.IsGrid)) {
+            seleniumAddress = cmd.getSeleniumAddress();
+        }
         String browserName = test.get("browser").toString();
         DesiredCapabilities capability = new DesiredCapabilities();
         JSONObject capabilities = null;
@@ -542,6 +596,7 @@ public class TestExecutor implements Runnable {
             try {
                 if (!config.getBaseUrl().equals("") || !config.getBaseUrl().equals(null)) {
                     driver.get(config.getBaseUrl());
+
 
                 }
             } catch (org.openqa.selenium.WebDriverException e) {
@@ -704,9 +759,8 @@ public class TestExecutor implements Runnable {
         }
 
         if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
-
             try {
-                externalCode.runAllAnnotatedWith(ExtCode.class, step.toString(), driver);
+                externalCode.runAllAnnotatedWith(ExtCode.class, step.toString(),test, driver);
             }catch (Exception e){
                 e.printStackTrace(new PrintWriter(sw));
                 exceptionAsString = sw.toString();

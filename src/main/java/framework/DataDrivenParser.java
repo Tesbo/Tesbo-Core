@@ -80,32 +80,58 @@ public class DataDrivenParser {
      * @return
      */
     public String checkDataTypeIsExcelOrGlobleInDataset(String suiteName, String dataSetName,ArrayList<String> keyName) {
-        SuiteParser suiteParser=new SuiteParser();
-        StringBuffer suite= suiteParser.readSuiteFile(suiteName);
+        SuiteParser suiteParser = new SuiteParser();
+        StringBuffer suite = suiteParser.readSuiteFile(suiteName);
         String allLines[] = suite.toString().split("[\\r\\n]+");
-        boolean flag=false,isDataSetName=false;
-        String type=null;
+        boolean isExcel = false, isGlobal = false, isDataSetName = false;
+        String type = null;
         for (int i = 0; i < allLines.length; i++) {
-            if(allLines[i].contains("\""+dataSetName+"\":") ){
-                isDataSetName=true;
+
+            if (allLines[i].contains("\"" + dataSetName + "\":")) {
+                isDataSetName = true;
             }
-            if(isDataSetName) {
+            if (isDataSetName) {
                 if (allLines[i].contains("\"excelFile\":")) {
-                    type="excel";
-                    flag=true;
+                    type = "excel";
+                    isExcel = true;
                     break;
                 }
-                if(keyName.size()>0) {
-                    for(String key:keyName) {
-                        if (allLines[i].contains("\""+key+"\":")) {
-                            type = "global";
-                            flag = true;
-                            break;
-                        }
-                    }
 
+                if (allLines[i].contains("}"))
+                    break;
+            }
+
+        }
+
+        if (!isExcel) {
+            isDataSetName = false;
+            for (int i = 0; i < allLines.length; i++) {
+                if (allLines[i].contains("\"" + dataSetName + "\":")) {
+                    isDataSetName = true;
                 }
-                if(allLines[i].contains("}"))
+                if (isDataSetName) {
+                    if (keyName.size() > 0) {
+                        for (String key : keyName) {
+                            if(key.contains("DataSet.")){
+                                key=key.split("\\.")[2].toString().trim();
+                            }
+                            isGlobal = false;
+                            for (int j = i; j < allLines.length; j++) {
+                                if (allLines[j].contains("\"" + key + "\":")) {
+                                    type = "global";
+                                    isGlobal = true;
+                                    break;
+                                }
+                                if (allLines[j].contains("}")){ break;}
+                            }
+
+                            if (!isGlobal){ throw new TesboException(key+" is not found in " + dataSetName + " Data Set");}
+                        }
+
+                    }
+                    break;
+                }
+                if (allLines[i].contains("}"))
                     break;
             }
 
@@ -114,19 +140,9 @@ public class DataDrivenParser {
         if(!isDataSetName ) {
             throw new TesboException("'" + dataSetName + "' is not found in Data Set");
         }
-        try {
-            if(type.equalsIgnoreCase("excel")) {
-                if (!flag){ throw new TesboException("Excel File url is not found in " + dataSetName + " Data Set");}
-            }
-        }
-        catch (Exception e){
-            throw new TesboException("Enter valid key word for DataSet 'excelFile'");
-        }
 
+        if (!isExcel && !isGlobal){ throw new TesboException("Excel File url is not found in " + dataSetName + " Data Set");}
 
-        if(type.equalsIgnoreCase("global")) {
-            if (!flag){ throw new TesboException("Data is not found in " + dataSetName + " Data Set");}
-        }
         return type;
 
     }
@@ -160,13 +176,13 @@ public class DataDrivenParser {
 
             if (flag){
                 if (allLines[i].contains("\"excelFile\":")) {
-                    String[] excelUrl = allLines[i].replaceAll("[\"| |,]", "").split(":", 2);
+                    String[] excelUrl = allLines[i].replaceAll("[\"||,]", "").split(":", 2);
                     filePath = excelUrl[1];
                     break;
                 }
         }
         }
-        return filePath;
+        return filePath.trim();
     }
 
 
@@ -212,8 +228,7 @@ public class DataDrivenParser {
         FileInputStream file = null;
         try {
             file = new FileInputStream(new File(filePath));
-
-        XSSFWorkbook workbook = new XSSFWorkbook(file);
+            XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheetAt(sheetNo);
             Iterator<Row> rowIterator = sheet.iterator();
             ArrayList<String> CellNums=new ArrayList<String>();
@@ -321,7 +336,8 @@ public class DataDrivenParser {
             if(isDataSetName) {
                 if (allLines[i].contains("\""+keyName+"\":")) {
                     try{
-                        KeyValue=allLines[i].replaceAll("[\"| |,]","").split(":")[1];
+
+                        KeyValue=allLines[i].replaceAll("[\"|,]","").split(":")[1].trim();
                         isKeyName=true;
                         break;
                     }catch (Exception E){
