@@ -1,13 +1,11 @@
 {
-  "SuiteDirectory": "E:/TesBo/tesbo-core/src/test/java/suite",
-  "locatorDirectory": "E:/TesBo/tesbo-core/src/test/java/locator",
-  "ExtCodeDirectory": "E:/TesBo/tesbo-core/src/test/java/ExtTestCode",
+  "projectDIR": "E:/Project/New_Tesbo/tesbo-core/src/test/java",
   "run": {
     "baseUrl": "https://google.in",
     "seleniumAddress": "",
     "by": {
-      "suite": [
-       "Regression_Real_Test","afterBeforTest","Validation_Real_Test"
+      "tag": [
+       "T1"
       ]
     },
     "browser": {
@@ -39,7 +37,7 @@
 
   },
   "cloudIntegration" : {
-    "report": true,
+    "report": false,
     "userName": "viral103patel@gmail.com",
     "password": "gopi1010",
     "projectKey" : "5bcccbcb58d4ff0353f781a1"
