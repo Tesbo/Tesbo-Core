@@ -5,7 +5,7 @@
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-pro</artifactId>
-	<version>0.0.7</version>
+	<version>0.0.1</version>
 
 	<packaging>jar</packaging>
 
@@ -85,6 +85,33 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>zip-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<jar destfile="${project.build.directory}/tesbo-proguard-final.jar">
+									<zipfileset excludes="META-INF/*.SF"
+												src="${project.build.directory}\${project.build.finalName}-proguard.${project.packaging}" />
+									<zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar"
+									/>
+								</jar>
+								<delete file="${project.build.directory}\tesbo-proguard.jar" />
+								<delete file="${project.build.directory}\tesbo.jar" />
+							</target>
+
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -98,19 +125,10 @@
 							<goal>run</goal>
 						</goals>
 						<configuration>
-							<target>
-								<jar destfile="${project.build.directory}/testbo-proguard-final.jar">
-									<zipfileset excludes="META-INF/*.SF"
-												src="${project.build.directory}\${project.build.finalName}-proguard.${project.packaging}" />
-									<zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar"
-									/>
-								</jar>
-							</target>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-
 
 		</plugins>
 
