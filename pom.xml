@@ -5,7 +5,7 @@
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-pro</artifactId>
-	<version>0.0.7</version>
+	<version>0.0.8</version>
 
 	<packaging>jar</packaging>
 
@@ -49,6 +49,7 @@
 						<option> -keepattributes RuntimeVisibleAnnotations</option>
 						<option>-keep class Exception.*</option>
 						<option>-keep @javax.persistence.* class * { *; }</option>
+						<option>-ignorewarnings</option>
 					</options>
 				</configuration>
 				<dependencies>
