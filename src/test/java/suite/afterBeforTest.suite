@@ -12,10 +12,10 @@ DataSet:
           "travelPass": "demoadmin",
      }
      "GmailUsers": {
-     "excelFile": "E:/Tesbo_JAR/tesbo-core/src/test/Resources/GmailData.xlsx"
+     "excelFile": "E:/Project/New_Tesbo/tesbo-core/src/test/Resources/GmailData.xlsx"
      }
       "LinkedinUsers[2]": {
-          "excelFile": "E:/Tesbo_JAR/tesbo-core/src/test/Resources/GmailData.xlsx"
+          "excelFile": "E:/Project/New_Tesbo/tesbo-core/src/test/Resources/GmailData.xlsx"
           }
 }
 

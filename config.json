@@ -3,10 +3,13 @@
   "run": {
     "baseUrl": "https://google.in",
     "seleniumAddress": "",
+    "Environment":{
+      "QA":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/QA",
+      "Dev":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/Dev",
+      "Release":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/Release"
+    },
     "by": {
-      "tag": [
-       "T1"
-      ]
+      "tag": ["T1","T2","T3","V2"]
     },
     "browser": {
       "name": [
@@ -15,13 +18,13 @@
     },
     "parallel": {
       "status": true,
-      "count": "5"
+      "count": "3"
     },
     "retryAnalyser":{
       "count":"0"
     },
     "binaries" : {
-      "chrome": ""
+      "chromePath": ""
     },
     "capabilities": {
       "chrome": {
@@ -31,15 +34,13 @@
     },
     "pause":false,
     "SingleWindowRun": false,
-    "highlightElement": true
-
-
-
+    "highlightElement": true,
+    "locatorPreference": ["xpath","id"]
   },
   "cloudIntegration" : {
     "report": false,
-    "userName": "viral103patel@gmail.com",
-    "password": "gopi1010",
-    "projectKey" : "5bcccbcb58d4ff0353f781a1"
+    "apiKey": "89063e42aeb019f608d4d3127c626200",
+    "projectKey" : "5c88a06adfbbad0c046e333f",
+    "buildName":"QAble004"
   }
 }
