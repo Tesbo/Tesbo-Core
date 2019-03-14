@@ -19,7 +19,7 @@ import java.util.Arrays;
 public class ReportAPIConfig {
 
 
-    public static String buildKey;
+    public static String URL="http://api-stagging.tesbo.io:4848/graphql";
     public static String buildID;
 
 
@@ -37,7 +37,7 @@ public class ReportAPIConfig {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, content.toJSONString());
         Request request = new Request.Builder()
-                .url("http://192.168.0.103:8000/graphql")
+                .url(URL)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -81,7 +81,7 @@ public class ReportAPIConfig {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, content.toJSONString());
         Request request = new Request.Builder()
-                .url("http://192.168.0.103:8000/graphql")
+                .url(URL)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")
@@ -143,7 +143,7 @@ public class ReportAPIConfig {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, content.toJSONString());
         Request request = new Request.Builder()
-                .url("http://192.168.0.103:8000/graphql")
+                .url(URL)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
