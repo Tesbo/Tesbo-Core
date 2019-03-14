@@ -4,6 +4,7 @@ import Execution.SetCommandLineArgument;
 import framework.GetConfiguration;
 import framework.Utility;
 import logger.Logger;
+
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;

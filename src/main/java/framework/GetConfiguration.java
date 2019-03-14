@@ -151,9 +151,15 @@ public class GetConfiguration {
     public String getRunBy()  {
         Utility parser = new Utility();
         String runby = ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("by").toString();
-        if (runby.toLowerCase().contains("tag") || setCommandLineArgument.byTag !=null) {
+        if(runby.contains("Suite") || runby.contains("SUITE"))
+        {throw new TesboException("Enter 'suite' in small case on config file");}
+
+        if(runby.contains("Tag") || runby.contains("TAG") && setCommandLineArgument.byTag ==null)
+        {throw new TesboException("Enter 'tag' in small case on config file");}
+
+        if (runby.contains("tag") || setCommandLineArgument.byTag !=null) {
             return "tag";
-        } else if (runby.toLowerCase().contains("suite")) {
+        } else if (runby.contains("suite")) {
             return "suite";
         }
         return null;

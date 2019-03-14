@@ -6,18 +6,22 @@ import Execution.TestExecutionBuilder;
 import ExtCode.*;
 import Exception.TesboException;
 import Selenium.Commands;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
+
 import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import reportAPI.ReportAPIConfig;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.format.DateTimeFormatter;
@@ -466,6 +470,34 @@ public class TestExecutor implements Runnable {
         testReportObject.put("status", testResult);
 
         buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(), test.get("testName").toString(), testReportObject);
+
+        ReportAPIConfig reportAPIConfig = new ReportAPIConfig();
+        if(config.getIsCloudIntegration()) {
+            if(suiteParser.isRetry(test.get("suiteName").toString(), test.get("testName").toString()).toLowerCase().equals("null") || suiteParser.isRetry(test.get("suiteName").toString(), test.get("testName").toString()).toLowerCase().equals("false")){
+                if(!(Integer.parseInt(config.getRetryAnalyser())>0) || suiteParser.isRetry(test.get("suiteName").toString(), test.get("testName").toString()).toLowerCase().equals("false")){
+                    reportAPIConfig.organiazeDataForCloudReport(testReportObject);
+                }
+                else {
+                    if(testExecutionBuilder.failTest == Integer.parseInt(config.getRetryAnalyser())){
+                        reportAPIConfig.organiazeDataForCloudReport(testReportObject);
+                    }
+                    if(testResult.toLowerCase().equals("passed")){
+                        reportAPIConfig.organiazeDataForCloudReport(testReportObject);
+                    }
+                }
+            }
+            else {
+                if(testExecutionBuilder.failTest == Integer.parseInt(config.getRetryAnalyser())){
+                    reportAPIConfig.organiazeDataForCloudReport(testReportObject);
+                }
+                if(testResult.toLowerCase().equals("passed")){
+                    reportAPIConfig.organiazeDataForCloudReport(testReportObject);
+                }
+            }
+
+
+        }
+
         if(testResult.toLowerCase().equals("failed")){
 
             testExecutionBuilder.failTestExecutionQueue(test);
@@ -567,7 +599,6 @@ public class TestExecutor implements Runnable {
                 if (browserName.equalsIgnoreCase("chrome")) {
                     capability.setCapability("browserName","chrome");
                     WebDriverManager.chromedriver().setup();
-
                     if (seleniumAddress == null) {
                         driver = new ChromeDriver();
                     }

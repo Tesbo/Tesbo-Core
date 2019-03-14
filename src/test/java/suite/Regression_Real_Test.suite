@@ -11,10 +11,10 @@ DataSet:
           "travelPass": "demoadmin",
      }
      "GmailUsers": {
-     "excelFile": "E:/Tesbo_JAR/tesbo-core/src/test/Resources/GmailData.xlsx"
+     "excelFile": "E:/Project/New_Tesbo/tesbo-core/src/test/Resources/GmailData.xlsx"
      }
       "LinkedinUsers[2]": {
-          "excelFile": "E:/Tesbo_JAR/tesbo-core/src/test/Resources/GmailData.xlsx"
+          "excelFile": "E:/Project/New_Tesbo/tesbo-core/src/test/Resources/GmailData.xlsx"
           }
 }
 
@@ -26,7 +26,7 @@ Step: pause 2 sec
 Step: Enter Email {travelUser} in to @Email_Box
 Step: Enter {DataSet.Credentials.travelPass} in @Password_Box
 Step: Click on @LoginBtn
-Step: pause 2 sec
+Step: pause 10 sec
 Step: Scroll to coordinate (300,250)
 Step: pause 2 sec
 Step: scroll to top
@@ -49,15 +49,6 @@ Step: Enter {lastName} on @LastName
 Step: clear @UserName
 Step: Enter {userName} on @UserName
 Step: Enter {password} on @Password
-End
-
-Test: T3 Verify Collection Functionality
-#T3 #regression
-Collection Name: phptravels
-Step: Open URL 'https://www.phptravels.net/admin'
-Step: Pause 2 sec
-Step: Mouse Hover @LoginBtn
-Verify: Page Title is equal to 'Administator Login'
 End
 
 Test: T4 Verify Collection without Test

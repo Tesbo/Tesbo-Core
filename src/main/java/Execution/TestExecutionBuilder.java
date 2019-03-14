@@ -11,6 +11,7 @@ import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
+import reportAPI.ReportAPIConfig;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -48,7 +49,7 @@ public class TestExecutionBuilder {
     public void startExecution(String[] argumentsArray) throws Exception {
         Commands cmd=new Commands();
         buildStartTime = System.currentTimeMillis();
-
+        GetConfiguration getConfig = new GetConfiguration();
         SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
         setCommandLineArgument.setArgument(argumentsArray);
 
@@ -66,6 +67,12 @@ public class TestExecutionBuilder {
         files.createLibrary();
 
         TestExecutionBuilder.buildRunning = true;
+
+        ReportAPIConfig config = new ReportAPIConfig();
+        if(getConfig.getIsCloudIntegration() ) {
+            config.getBuildKey();
+        }
+
         BuildReportDataObject brdo = new BuildReportDataObject();
         brdo.startThread();
         //  reportBuilder.startThread();
@@ -87,13 +94,14 @@ public class TestExecutionBuilder {
         logger.titleLog("Build Execution Completed");
         logger.titleLog("-----------------------------------------------------------------------\n");
 
+        if(getConfig.getIsCloudIntegration()) {
+            config.updateEndTime();
+        }
 
         while(!repotFileGenerated) {
             cmd.pause(3);
             reportBuilder.generatReport();
         }
-
-
 
         logger.customeLog("| Total : " + data.getCurrentBuildTotal(new File(reportBuilder.getBuildHistoryPath()).getAbsolutePath()), Ansi.FColor.NONE);
         logger.customeLog(" | Passed : " + data.getCurrentBuildPassed(buildHistory), Ansi.FColor.NONE);
