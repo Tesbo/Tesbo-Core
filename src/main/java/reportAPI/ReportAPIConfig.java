@@ -72,7 +72,7 @@ public class ReportAPIConfig {
 
         JSONObject content = new JSONObject();
         content.put("query", "mutation{updateBuild(buildInput:{apiKey:\"" + userDetails.get("apiKey") + "\", id:\"" + buildID + "\",endTime:\"" + System.currentTimeMillis() + "\"}){_id name} }");
-
+        OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, content.toJSONString());
         Request request = new Request.Builder()
@@ -81,6 +81,12 @@ public class ReportAPIConfig {
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")
                 .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -117,7 +123,11 @@ public class ReportAPIConfig {
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
-
+        try {
+            Response response = client.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String awsScreenshotUpload(String screenshotUrl) {
