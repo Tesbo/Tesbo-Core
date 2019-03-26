@@ -53,7 +53,7 @@ public class StepParser {
         }
 
         //Clicks
-        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("right") || step.toLowerCase().contains("double") || step.toLowerCase().contains("and hold") || step.toLowerCase().contains("from list")) ) {
+        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("pause") && step.toLowerCase().contains("and click")) && !(step.toLowerCase().contains("scroll") && step.toLowerCase().contains("and click")) && !(step.toLowerCase().contains("right") || step.toLowerCase().contains("double") || step.toLowerCase().contains("and hold") || step.toLowerCase().contains("from list")) ) {
 
             if (step.toLowerCase().contains("from list")) {
                 clickOnElementFromList(driver,test,step);
@@ -75,6 +75,27 @@ public class StepParser {
              */
             cmd.clickAndHold(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
         }
+
+        // pause and Click
+        if (step.toLowerCase().contains("pause") && step.toLowerCase().contains("and click")) {
+            /**
+             * Step: pause and click on @element
+             * And
+             * Step: pause to @element and click
+             */
+            cmd.pauseAndClick(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+        }
+
+        // scroll and Click
+        if (step.toLowerCase().contains("scroll") && step.toLowerCase().contains("and click")) {
+            /**
+             * Step: scroll and click on @element1
+             * And
+             * Step: scroll to @element and click
+             */
+            cmd.scrollAndClick(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+        }
+
 
         //Right Click
         if (step.toLowerCase().contains("right click")) {
@@ -165,12 +186,12 @@ public class StepParser {
         }
 
         //scroll
-        if (step.toLowerCase().contains("scroll")) {
+        if (step.toLowerCase().contains("scroll") && !(step.toLowerCase().contains("and click"))) {
             scrollFunction(driver, test.get("suiteName").toString(), step);
         }
 
         //pause
-        if (step.toLowerCase().contains("pause")) {
+        if (step.toLowerCase().contains("pause") && !(step.toLowerCase().contains("and click"))) {
             pauseFunction(driver, test.get("suiteName").toString(), step);
         }
 
@@ -182,12 +203,21 @@ public class StepParser {
         //Window Minimize, maximize and resize
         if (step.toLowerCase().contains("window") && !(step.toLowerCase().contains("close"))) {
             if (step.toLowerCase().contains("resize")) {
+                /*
+                * Step: Window Resize (x, y)
+                * */
                 windowResize(step,driver);
             }
             if (step.toLowerCase().contains("minimize")) {
+                 /*
+                * Step: Window Minimize
+                * */
                 windowMinimize(driver);
             }
             if (step.toLowerCase().contains("maximize")) {
+                 /*
+                * Step: Window Maximize
+                * */
                 windowMaximize(driver);
             }
         }
@@ -214,6 +244,9 @@ public class StepParser {
 
         //Clear
         if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache"))) {
+            /*
+            * Step: clear @ElementText
+            * */
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
         }
 
@@ -1186,6 +1219,9 @@ public class StepParser {
         if(offsets.length!=2){
             throw new TesboException("Enter X and Y offset");
         }
+        /*
+        * Step: Click on offset (offset  x, offset  y)
+        * */
         cmd.clickOnOffset(driver,element,offsets);
 
 

@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import framework.GetConfiguration;
 import okhttp3.*;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -15,6 +16,7 @@ import org.json.simple.parser.ParseException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import Exception.TesboException;
 
 public class ReportAPIConfig {
 
@@ -25,10 +27,8 @@ public class ReportAPIConfig {
 
     public void getBuildKey() {
 
-
         GetConfiguration config = new GetConfiguration();
         JSONObject userDetails = config.getCloudIntegration();
-
         OkHttpClient client = new OkHttpClient();
 
         JSONObject content = new JSONObject();
@@ -43,16 +43,15 @@ public class ReportAPIConfig {
                 .build();
 
         try {
-            //.addHeader("cache-control", "no-cache")
             Response response = client.newCall(request).execute();
-            System.out.println("response:"+response);
             JSONParser parser = new JSONParser();
             JSONObject object = null;
             try {
-
                 object = (JSONObject) parser.parse(response.body().string());
-                System.out.println("object:" + object);
-                // buildKey = ((JSONObject) (object.get("data"))).get("buildKey").toString();
+                if(object.get("errors")!= null){
+                    throw new TesboException(((JSONObject)((JSONArray) (object.get("errors"))).get(0)).get("message").toString());
+                }
+
                 buildID = ((JSONObject) ((JSONObject) (object.get("data"))).get("createBuild")).get("_id").toString();
 
             } catch (ParseException e) {
@@ -71,12 +70,8 @@ public class ReportAPIConfig {
         GetConfiguration config = new GetConfiguration();
         JSONObject userDetails = config.getCloudIntegration();
 
-        OkHttpClient client = new OkHttpClient();
-
         JSONObject content = new JSONObject();
         content.put("query", "mutation{updateBuild(buildInput:{apiKey:\"" + userDetails.get("apiKey") + "\", id:\"" + buildID + "\",endTime:\"" + System.currentTimeMillis() + "\"}){_id name} }");
-
-        System.out.println("UP content:"+content);
 
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, content.toJSONString());
@@ -86,27 +81,6 @@ public class ReportAPIConfig {
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")
                 .build();
-
-        try {
-            Response response = client.newCall(request).execute();
-            System.out.println("UP response: "+response);
-            JSONParser parser = new JSONParser();
-            JSONObject object = null;
-            try {
-
-                object = (JSONObject) parser.parse(response.body().string());
-                //buildKey = ((JSONObject) (object.get("data"))).get("buildKey").toString();
-                System.out.println("object: "+object);
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
 
@@ -132,13 +106,9 @@ public class ReportAPIConfig {
         }
 
         String data = "mutation{createTest(testInput:{apiKey:\"" + userDetails.get("apiKey") + "\",build:\"" + buildID + "\", browserVersion:\"" + testObject.get("browserVersion") + "\", browserName:\"" + testObject.get("browserName") + "\", totalTime:" + testObject.get("totalTime") + ", startTime:\"" + testObject.get("totalTime") + "\", testStep:\"\"\"" + testObject.get("testStep") + "\"\"\", osName:\"" + testObject.get("osName") + "\", testName:\"" + testObject.get("testName") + "\", suiteName:\"" + testObject.get("suiteName") + "\", status:\"" + testObject.get("status") + "\",priority:\"" + testObject.get("Priority") + "\",severity:\"" + testObject.get("Severity") + "\",screenShot:\"" + testObject.get("screenShot") + "\",fullStackTrace:\"" + fullStackTrace + "\"}){_id} }";
-        System.out.println("data: "+data);
         content.put("query", data);
 
-
-
         OkHttpClient client = new OkHttpClient();
-        //String content = testObject.toJSONString();
 
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, content.toJSONString());
@@ -147,14 +117,6 @@ public class ReportAPIConfig {
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
-
-        try {
-            Response response = client.newCall(request).execute();
-            System.out.println("Test response:" + response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
 

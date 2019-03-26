@@ -282,6 +282,18 @@ public class Commands {
         driver.get(url);
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     * @param element
+     */
+    public void scrollAndClick(WebDriver driver, WebElement element)  {
+        scrollToCoordinate(driver, "250", "300");
+        pause(5);
+        element.click();
+    }
+
     public void pause(int sec) {
         try {
             Thread.sleep(sec * 1000);
@@ -319,7 +331,7 @@ public class Commands {
 
     /**
      * @param driver
-     * @Description : Switch to main or parent IFrame.
+     * @Description :
      */
     public void switchFrameElement(WebDriver driver, WebElement element) {
         driver.switchTo().frame(element);
@@ -475,6 +487,17 @@ public class Commands {
     public void pauseElementDisappear(WebDriver driver, WebElement element) {
         wait = new WebDriverWait(driver, 100);
         wait.until(invisibilityOf(element));
+    }
+
+    /**
+     * @param driver
+     * @param element
+     * @Description : pause driver until element clickable.
+     */
+    public void pauseAndClick(WebDriver driver, WebElement element) {
+        wait = new WebDriverWait(driver, 100);
+        wait.until(elementToBeClickable(element));
+        element.click();
     }
 
     /**
