@@ -105,8 +105,6 @@
 									<zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar"
 									/>
 								</jar>
-								<delete file="${project.build.directory}\tesbo-proguard.jar" />
-								<delete file="${project.build.directory}\tesbo.jar" />
 							</target>
 
 						</configuration>
