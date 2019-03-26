@@ -140,6 +140,22 @@ public class GetUserConfiguration {
         }
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public String getProjectDirectory()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        try {
+            String ProjectDirectory=main.get("projectDIR").toString();
+            return ProjectDirectory;
+        }catch (Exception e){
+            throw new TesboException("ExtCodeDirectory is not define on config");
+        }
+    }
+
     public ArrayList<String> getSuiteName() {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());

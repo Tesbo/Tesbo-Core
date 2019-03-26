@@ -331,7 +331,7 @@ public class Commands {
 
     /**
      * @param driver
-     * @Description : Switch to main or parent IFrame.
+     * @Description :
      */
     public void switchFrameElement(WebDriver driver, WebElement element) {
         driver.switchTo().frame(element);

@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import framework.GetConfiguration;
 import okhttp3.*;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -15,6 +16,7 @@ import org.json.simple.parser.ParseException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import Exception.TesboException;
 
 public class ReportAPIConfig {
 
@@ -45,8 +47,11 @@ public class ReportAPIConfig {
             JSONParser parser = new JSONParser();
             JSONObject object = null;
             try {
-
                 object = (JSONObject) parser.parse(response.body().string());
+                if(object.get("errors")!= null){
+                    throw new TesboException(((JSONObject)((JSONArray) (object.get("errors"))).get(0)).get("message").toString());
+                }
+
                 buildID = ((JSONObject) ((JSONObject) (object.get("data"))).get("createBuild")).get("_id").toString();
 
             } catch (ParseException e) {

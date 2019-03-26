@@ -79,7 +79,7 @@ public class StepParser {
         // pause and Click
         if (step.toLowerCase().contains("pause") && step.toLowerCase().contains("and click")) {
             /**
-             * Step: pause and click on @element1
+             * Step: pause and click on @element
              * And
              * Step: pause to @element and click
              */
@@ -203,12 +203,21 @@ public class StepParser {
         //Window Minimize, maximize and resize
         if (step.toLowerCase().contains("window") && !(step.toLowerCase().contains("close"))) {
             if (step.toLowerCase().contains("resize")) {
+                /*
+                * Step: Window Resize (x, y)
+                * */
                 windowResize(step,driver);
             }
             if (step.toLowerCase().contains("minimize")) {
+                 /*
+                * Step: Window Minimize
+                * */
                 windowMinimize(driver);
             }
             if (step.toLowerCase().contains("maximize")) {
+                 /*
+                * Step: Window Maximize
+                * */
                 windowMaximize(driver);
             }
         }
@@ -235,6 +244,9 @@ public class StepParser {
 
         //Clear
         if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache"))) {
+            /*
+            * Step: clear @ElementText
+            * */
             cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
         }
 
@@ -1207,6 +1219,9 @@ public class StepParser {
         if(offsets.length!=2){
             throw new TesboException("Enter X and Y offset");
         }
+        /*
+        * Step: Click on offset (offset  x, offset  y)
+        * */
         cmd.clickOnOffset(driver,element,offsets);
 
 
