@@ -93,40 +93,20 @@
 				<executions>
 					<execution>
 						<id>zip-artifacts</id>
-						<phase>package</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<move file="${project.build.directory}\${project.build.finalName}.jar" tofile="${project.build.directory}\jar\${project.build.finalName}.jar"/>
-								<move file="${project.build.directory}\${project.build.finalName}-proguard.${project.packaging}" tofile="${project.build.directory}\jar\${project.build.finalName}-proguard.${project.packaging}"/>
-
-								<jar destfile="${project.build.directory}/tesbo-proguard-final.jar">
-									<zipfileset excludes="META-INF/*.SF"
-												src="${project.build.directory}/jar/${project.build.finalName}-proguard.${project.packaging}" />
-									<zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar"
-									/>
-								</jar>
-							</target>
-
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
-					<execution>
-						<id>zip-artifacts</id>
 						<phase>install</phase>
 						<goals>
 							<goal>run</goal>
 						</goals>
 						<configuration>
+							<target>
+								<jar destfile="${project.build.directory}/tesbo-proguard-final.jar">
+									<zipfileset excludes="META-INF/*.SF"
+												src="${project.build.directory}/${project.build.finalName}-proguard.${project.packaging}" />
+									<zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar"
+									/>
+								</jar>
+							</target>
+
 						</configuration>
 					</execution>
 				</executions>
