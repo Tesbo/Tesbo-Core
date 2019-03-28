@@ -133,7 +133,7 @@ public class GetUserConfiguration {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         try {
-            String ExtCodeDirectory=main.get("projectDIR").toString()+"/externalCode";
+            String ExtCodeDirectory=main.get("projectDIR").toString()+"/ExtTestCode";
             return ExtCodeDirectory;
         }catch (Exception e){
             throw new TesboException("ExtCodeDirectory is not define on config");

@@ -26,7 +26,6 @@ public class ReportAPIConfig {
 
 
     public void getBuildKey() {
-
         GetConfiguration config = new GetConfiguration();
         JSONObject userDetails = config.getCloudIntegration();
         OkHttpClient client = new OkHttpClient();
@@ -51,14 +50,10 @@ public class ReportAPIConfig {
                 if(object.get("errors")!= null){
                     throw new TesboException(((JSONObject)((JSONArray) (object.get("errors"))).get(0)).get("message").toString());
                 }
-
                 buildID = ((JSONObject) ((JSONObject) (object.get("data"))).get("createBuild")).get("_id").toString();
-
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,7 +61,6 @@ public class ReportAPIConfig {
 
 
     public void updateEndTime() {
-
         GetConfiguration config = new GetConfiguration();
         JSONObject userDetails = config.getCloudIntegration();
 
@@ -91,7 +85,6 @@ public class ReportAPIConfig {
 
 
     public void organiazeDataForCloudReport(JSONObject testObject) {
-
         JSONObject content = new JSONObject();
         GetConfiguration config = new GetConfiguration();
         JSONObject userDetails = config.getCloudIntegration();
@@ -106,16 +99,13 @@ public class ReportAPIConfig {
         if(testObject.get("fullStackTrace")!= null){
             String stackTrace[]=testObject.get("fullStackTrace").toString().split("\\r?\\n");
             for (String stack:stackTrace){
-                if(fullStackTrace==null){fullStackTrace=fullStackTrace+stack.trim();}
+                if(fullStackTrace==null){fullStackTrace=stack.trim();}
                 else{fullStackTrace=fullStackTrace+","+stack.trim();}
             }
         }
-
-        String data = "mutation{createTest(testInput:{apiKey:\"" + userDetails.get("apiKey") + "\",build:\"" + buildID + "\", browserVersion:\"" + testObject.get("browserVersion") + "\", browserName:\"" + testObject.get("browserName") + "\", totalTime:" + testObject.get("totalTime") + ", startTime:\"" + testObject.get("totalTime") + "\", testStep:\"\"\"" + testObject.get("testStep") + "\"\"\", osName:\"" + testObject.get("osName") + "\", testName:\"" + testObject.get("testName") + "\", suiteName:\"" + testObject.get("suiteName") + "\", status:\"" + testObject.get("status") + "\",priority:\"" + testObject.get("Priority") + "\",severity:\"" + testObject.get("Severity") + "\",screenShot:\"" + testObject.get("screenShot") + "\",fullStackTrace:\"" + fullStackTrace + "\"}){_id} }";
+        String data = "mutation{createTest(testInput:{apiKey:\"" + userDetails.get("apiKey") + "\",build:\"" + buildID + "\", browserVersion:\"" + testObject.get("browserVersion") + "\", browserName:\"" + testObject.get("browserName") + "\", totalTime:" + testObject.get("totalTime") + ", startTime:\"" + testObject.get("startTime") + "\", testStep:\"\"\"" + testObject.get("testStep") + "\"\"\", osName:\"" + testObject.get("osName") + "\", testName:\"" + testObject.get("testName") + "\", suiteName:\"" + testObject.get("suiteName") + "\", status:\"" + testObject.get("status") + "\",priority:\"" + testObject.get("Priority") + "\",severity:\"" + testObject.get("Severity") + "\",screenShot:\"" + testObject.get("screenShot") + "\",fullStackTrace:\"\"\"" + fullStackTrace + "\"\"\"}){_id} }";
         content.put("query", data);
-
         OkHttpClient client = new OkHttpClient();
-
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, content.toJSONString());
         Request request = new Request.Builder()
@@ -131,7 +121,6 @@ public class ReportAPIConfig {
     }
 
     public String awsScreenshotUpload(String screenshotUrl) {
-
         String screenshot[] = screenshotUrl.split("/");
         String screenshotName = screenshot[screenshot.length - 1];
         File file = new File(screenshotUrl);
