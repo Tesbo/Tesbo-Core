@@ -5,7 +5,7 @@
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-pro</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.14</version>
 	<packaging>jar</packaging>
 	
 
@@ -48,7 +48,7 @@
 						<option>-keep class Exception.*</option>
 						<option>-keep @javax.persistence.* class * { *; }</option>
 						<option>-ignorewarnings</option>
-						
+
 					</options>
 				</configuration>
 				<dependencies>
@@ -113,7 +113,34 @@
 
 
 
-
+			<plugin>
+				<groupId>org.jfrog.buildinfo</groupId>
+				<artifactId>artifactory-maven-plugin</artifactId>
+				<version>2.2.1</version>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>build-info</id>
+						<goals>
+							<goal>publish</goal>
+						</goals>
+						<configuration>
+							<deployProperties>
+								<groupId>${project.groupId}</groupId>
+								<artifactId>${project.artifactId}</artifactId>
+								<version>${project.version}</version>
+							</deployProperties>
+							<publisher>
+								<contextUrl>https://34.209.78.94:8081/artifactory/</contextUrl>
+								<username>viral1010</username>
+								<password>gopi1010</password>
+								<repoKey>libs-release-local</repoKey>
+								<snapshotRepoKey>libs-snapshot-local</snapshotRepoKey>
+							</publisher>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 
 
@@ -139,6 +166,10 @@
 			<version>4.12</version>
 
 		</dependency>
+
+
+
+
 
 		<dependency>
 			<groupId>com.beust</groupId>
