@@ -1,8 +1,10 @@
 package Selenium;
 
+import Execution.SetCommandLineArgument;
 import framework.GetConfiguration;
 import framework.Utility;
 import logger.Logger;
+
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
@@ -25,10 +27,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import Exception.TesboException;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
@@ -60,48 +64,135 @@ public class Commands {
 
         WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
         pause(3);
-        try {
-
-            element = driver.findElement(By.cssSelector(elementvalue));
-
-        } catch (NoSuchElementException css) {
-
+        ArrayList<String> locatorTypes=new ArrayList<>();
+        locatorTypes=config.getLocatorPreference();
+        if(locatorTypes!=null){
+            if(locatorTypes.size()==0){
+                throw new TesboException("Please enter locator Preference");
+            }
+            element= findElementFromLocatorPreference(driver,elementvalue,locatorTypes);
+        }else {
             try {
-                element = driver.findElement(By.id(elementvalue));
-
-            } catch (NoSuchElementException id) {
+                element = driver.findElement(By.cssSelector(elementvalue));
+            } catch (NoSuchElementException css) {
                 try {
-
-                    element = driver.findElement(By.xpath(elementvalue));
-
-                } catch (Exception xpath) {
+                    element = driver.findElement(By.id(elementvalue));
+                } catch (NoSuchElementException id) {
                     try {
-                        element = driver.findElement(By.className(elementvalue));
-                    } catch (Exception className) {
+                        element = driver.findElement(By.xpath(elementvalue));
+                    } catch (Exception xpath) {
                         try {
-                            element = driver.findElement(By.name(elementvalue));
-                        } catch (Exception name) {
+                            element = driver.findElement(By.className(elementvalue));
+                        } catch (Exception className) {
                             try {
-                                element = driver.findElement(By.tagName(elementvalue));
-                            } catch (Exception tagName) {
+                                element = driver.findElement(By.name(elementvalue));
+                            } catch (Exception name) {
                                 try {
-                                    element = driver.findElement(By.linkText(elementvalue));
-                                } catch (Exception linkText) {
+                                    element = driver.findElement(By.tagName(elementvalue));
+                                } catch (Exception tagName) {
                                     try {
-                                        element = driver.findElement(By.partialLinkText(elementvalue));
-                                    } catch (NoSuchElementException e) {
-                                        logger.testFailed("Please enter valid locator value");
-                                        throw e;
+                                        element = driver.findElement(By.linkText(elementvalue));
+                                    } catch (Exception linkText) {
+                                        try {
+                                            element = driver.findElement(By.partialLinkText(elementvalue));
+                                        } catch (NoSuchElementException e) {
+                                            logger.testFailed("Please enter valid locator value");
+                                            //throw e;
+                                        }
                                     }
-                                }
 
+                                }
                             }
                         }
                     }
-
                 }
-
             }
+
+            if (config.getHighlightElement()) {
+                JavascriptExecutor js = (JavascriptExecutor) driver;
+                js.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", element);
+            }
+        }
+        return element;
+    }
+
+    public WebElement findElementFromLocatorPreference(WebDriver driver, String elementvalue,ArrayList<String> locatorTypes) {
+        WebElement element = null;
+        GetConfiguration config = new GetConfiguration();
+        int webdriverTime = 600;
+
+        WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
+        pause(3);
+
+        for (String locatorType:locatorTypes){
+            if(locatorType.equalsIgnoreCase("css")){
+                try {
+                    element = driver.findElement(By.cssSelector(elementvalue));
+                } catch (NoSuchElementException css) {
+                    //logger.testFailed("Please enter valid locator value");
+                    //throw css;
+                }
+            }
+            else if(locatorType.equalsIgnoreCase("id")){
+                try {
+                    element = driver.findElement(By.id(elementvalue));
+
+                } catch (NoSuchElementException id) {
+                    //logger.testFailed("Please enter valid locator value");
+                    //throw id;
+                }
+            }
+            else if(locatorType.equalsIgnoreCase("xpath")){
+                try {
+                    element = driver.findElement(By.xpath(elementvalue));
+                } catch (Exception xpath) {
+                    //logger.testFailed("Please enter valid locator value");
+                    //throw xpath;
+                }
+            }
+            else if(locatorType.equalsIgnoreCase("className")){
+                try {
+                    element = driver.findElement(By.className(elementvalue));
+                } catch (Exception className) {
+                    //logger.testFailed("Please enter valid locator value");
+                    //throw className;
+                }
+            }
+            else if(locatorType.equalsIgnoreCase("name")){
+                try {
+                    element = driver.findElement(By.name(elementvalue));
+                } catch (Exception name) {
+                    //logger.testFailed("Please enter valid locator value");
+                    //throw name;
+                }
+            }
+            else if(locatorType.equalsIgnoreCase("tagName")){
+                try {
+                    element = driver.findElement(By.tagName(elementvalue));
+                } catch (Exception tagName) {
+                    //logger.testFailed("Please enter valid locator value");
+                    //throw tagName;
+                }
+            }
+            else if(locatorType.equalsIgnoreCase("linkText")){
+                try {
+                    element = driver.findElement(By.linkText(elementvalue));
+                } catch (Exception linkText) {
+                    //logger.testFailed("Please enter valid locator value");
+                    //throw partialLinkText;
+                }
+            }
+            else if(locatorType.equalsIgnoreCase("partialLinkText")){
+                try {
+                    element = driver.findElement(By.partialLinkText(elementvalue));
+                } catch (NoSuchElementException partialLinkText) {
+                    //logger.testFailed("Please enter valid locator value");
+                    //throw partialLinkText;
+                }
+            }
+        }
+        if(element==null){
+            throw new TesboException("Please enter valid locator value");
         }
 
         if (config.getHighlightElement()) {
@@ -191,6 +282,18 @@ public class Commands {
         driver.get(url);
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     * @param element
+     */
+    public void scrollAndClick(WebDriver driver, WebElement element)  {
+        scrollToCoordinate(driver, "250", "300");
+        pause(5);
+        element.click();
+    }
+
     public void pause(int sec) {
         try {
             Thread.sleep(sec * 1000);
@@ -228,7 +331,7 @@ public class Commands {
 
     /**
      * @param driver
-     * @Description : Switch to main or parent IFrame.
+     * @Description :
      */
     public void switchFrameElement(WebDriver driver, WebElement element) {
         driver.switchTo().frame(element);
@@ -384,6 +487,17 @@ public class Commands {
     public void pauseElementDisappear(WebDriver driver, WebElement element) {
         wait = new WebDriverWait(driver, 100);
         wait.until(invisibilityOf(element));
+    }
+
+    /**
+     * @param driver
+     * @param element
+     * @Description : pause driver until element clickable.
+     */
+    public void pauseAndClick(WebDriver driver, WebElement element) {
+        wait = new WebDriverWait(driver, 100);
+        wait.until(elementToBeClickable(element));
+        element.click();
     }
 
     /**
@@ -622,9 +736,13 @@ public class Commands {
      * @lastModifiedBy:
      */
     public DesiredCapabilities setCapabilities(JSONObject Capabilities, DesiredCapabilities capability) {
-        //DesiredCapabilities capability1=new DesiredCapabilities();
+        SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
         for (Object cap : Capabilities.keySet()) {
             capability.setCapability(cap.toString(), Capabilities.get(cap.toString()));
+        }
+
+        if(setCommandLineArgument.platform!=null){
+            capability.setCapability("platform", setCommandLineArgument.platform);
         }
         return capability;
     }
@@ -813,6 +931,17 @@ public class Commands {
         Actions builder = new Actions(driver);
         builder.moveToElement(element, Integer.parseInt(offset[0].trim()), Integer.parseInt(offset[1].trim())).click().build().perform();
 
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     */
+    public boolean getCurrentUrl(WebDriver driver,String url)  {
+        boolean isURL=false;
+        if(url.equals(driver.getCurrentUrl())){ isURL=true; }
+        return isURL;
     }
 
 }

@@ -135,6 +135,20 @@ public class VerifyParser {
                 flag = true;
             }
         }
+        if (verify.toLowerCase().contains("current url")) {
+
+            if(verify.toLowerCase().contains("is equal to")) {
+
+                /**
+                 * Verify: current url is equal to 'https://tesbo10.atlassian.net'
+                 */
+                if (!cmd.getCurrentUrl(driver,stepParser.parseTextToEnter(test, verify))) {
+
+                    throw new AssertException("current url is not match with '" + stepParser.parseTextToEnter(test, verify) + "'");
+                }
+                flag = true;
+            }
+        }
         if(!flag) {
             throw new TesboException("Step is not define properly.");
         }

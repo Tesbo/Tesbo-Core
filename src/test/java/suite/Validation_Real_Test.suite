@@ -5,18 +5,27 @@ DataSet:
      "password": "tesbo@2018",
      }
      "GmailUsers": {
-     "excelFile": "E:/TesBo/tesbo-core/src/test/Resources/GmailData.xlsx"
+     "excelFile": "E:/Project/New_Tesbo/tesbo-core/src/test/Resources/GmailData.xlsx"
      }
 }
 
 Test: V1 Verify Open Url without single quotes
 #V1 #Verify
-Step: Open URL https://www.amazon.in
+Step: Open URL https://www.google.in
+End
+
+Test: T3 Verify Collection Functionality
+#T3 #regression
+Collection Name: phptravels
+Step: Open URL 'https://www.phptravels.net/admin'
+Step: Pause 2 sec
+Step: Mouse Hover @LoginBtn
+Verify: Page Title is equal to 'Administator Login'
 End
 
 Test: V2 Verify without sign Locator  Functionality
 #V2 #Verify
-Step: Open URL 'https://www.amazon.in'
+Step: Open URL 'https://www.google.in'
 Step: click on sign_in button
 End
 

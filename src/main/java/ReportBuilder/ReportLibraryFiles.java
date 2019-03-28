@@ -188,5 +188,15 @@ public class ReportLibraryFiles {
 
     }
 
+    public void deleteFile(String path) {
+
+        File lib = new File(path);
+
+        if (lib.exists()) {
+            lib.delete();
+        }
+
+
+    }
 
 }

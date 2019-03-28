@@ -1,9 +1,10 @@
-package framework;
+package UserConfig;
 
+import Exception.TesboException;
 import Execution.SetCommandLineArgument;
+import framework.Utility;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import Exception.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  * Get Configuration class will contains all the methods that will read
  * the configuration from the runner file and run according to that
  */
-public class GetConfiguration {
+public class GetUserConfiguration {
 
     SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
 
@@ -139,6 +140,22 @@ public class GetConfiguration {
         }
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public String getProjectDirectory()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        try {
+            String ProjectDirectory=main.get("projectDIR").toString();
+            return ProjectDirectory;
+        }catch (Exception e){
+            throw new TesboException("ExtCodeDirectory is not define on config");
+        }
+    }
+
     public ArrayList<String> getSuiteName() {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
@@ -151,15 +168,9 @@ public class GetConfiguration {
     public String getRunBy()  {
         Utility parser = new Utility();
         String runby = ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("by").toString();
-        if(runby.contains("Suite") || runby.contains("SUITE"))
-        {throw new TesboException("Enter 'suite' in small case on config file");}
-
-        if(runby.contains("Tag") || runby.contains("TAG") && setCommandLineArgument.byTag ==null)
-        {throw new TesboException("Enter 'tag' in small case on config file");}
-
-        if (runby.contains("tag") || setCommandLineArgument.byTag !=null) {
+        if (runby.toLowerCase().contains("tag") || setCommandLineArgument.byTag !=null) {
             return "tag";
-        } else if (runby.contains("suite")) {
+        } else if (runby.toLowerCase().contains("suite")) {
             return "suite";
         }
         return null;

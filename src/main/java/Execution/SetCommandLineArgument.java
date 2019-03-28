@@ -4,11 +4,9 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
 /**
- * Created by QAble on 10/3/2018.
+ * Created by Ankit Mistry on 26/2/2019.
  */
 public class SetCommandLineArgument {
-
-    //SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
 
     @Parameter(names={"--configFile", "-c"})
     public static String configFile;
@@ -18,10 +16,14 @@ public class SetCommandLineArgument {
     public static String browser;
     @Parameter(names={"--platform", "-p"})
     public static String platform;
-    @Parameter(names={"--IsCBT", "-i"})
-    public static String IsCBT;
+    @Parameter(names={"--IsGrid", "-i"})
+    public static String IsGrid;
     @Parameter(names={"--Environment", "-e"})
     public static String Environment;
+    @Parameter(names={"--runPastFailure", "-f"})
+    public static String runPastFailure;
+    @Parameter(names={"--byTag", "-t"})
+    public static String byTag;
 
     public void setArgument(String[] args) {
         SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();

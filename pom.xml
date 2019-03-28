@@ -5,7 +5,7 @@
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-pro</artifactId>
-	<version>0.0.14</version>
+	<version>0.0.5</version>
 	<packaging>jar</packaging>
 	
 
@@ -40,15 +40,16 @@
 
 					</libs>
 					<options>
-						<option>-keep public class Execution.Tesbo{public void
-							run();}</option>
+						<option>-keep public class Execution.Tesbo{*;}</option>
+						<option>-keep public class UserConfig.GetUserConfiguration{*;}</option>
+						<option>-keep public class Execution.SetCommandLineArgument{*;}</option>
 						<option>-keep class Selenium.ExtendTesboDriver{ *; }</option>
 						<option>-keep class ExtCode.ExtCode{ *; }</option>
 						<option> -keepattributes RuntimeVisibleAnnotations</option>
 						<option>-keep class Exception.*</option>
 						<option>-keep @javax.persistence.* class * { *; }</option>
 						<option>-ignorewarnings</option>
-
+						
 					</options>
 				</configuration>
 				<dependencies>
@@ -85,7 +86,6 @@
 				</executions>
 			</plugin>
 
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -99,13 +99,14 @@
 						</goals>
 						<configuration>
 							<target>
-								<jar destfile="${project.build.directory}/tesbo.jar">
+								<jar destfile="${project.build.directory}/tesbo-proguard-final.jar">
 									<zipfileset excludes="META-INF/*.SF"
-										src="${project.build.directory}\${project.build.finalName}-proguard.${project.packaging}" />
-										 <zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar" 
-              />
+												src="${project.build.directory}/${project.build.finalName}-proguard.${project.packaging}" />
+									<zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar"
+									/>
 								</jar>
 							</target>
+
 						</configuration>
 					</execution>
 				</executions>
@@ -167,10 +168,6 @@
 
 		</dependency>
 
-
-
-
-
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
@@ -230,11 +227,6 @@
 		</dependency>
 
 
-		<dependency>
-			<groupId>io.github.bonigarcia</groupId>
-			<artifactId>webdrivermanager</artifactId>
-			<version>2.2.1</version>
-		</dependency>
 
 		<dependency>
 			<groupId>com.google.truth</groupId>
@@ -256,9 +248,21 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>okhttp</artifactId>
-			<version>3.11.0</version>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.72</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>3.3.0</version>
 		</dependency>
 
 	</dependencies>

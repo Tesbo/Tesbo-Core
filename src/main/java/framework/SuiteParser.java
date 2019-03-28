@@ -169,7 +169,6 @@ public class SuiteParser {
     public JSONObject getTestNameByTag(String tag)  {
         GetConfiguration configuration = new GetConfiguration();
         String directoryPath = configuration.getSuitesDirectory();
-
         JSONArray suiteFileList = getSuites(directoryPath);
         JSONObject allSuite = new JSONObject();
 
@@ -207,6 +206,7 @@ public class SuiteParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
+
             if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
                 String testNameArray[] = allLines[i].split(":");
 
@@ -343,7 +343,7 @@ public class SuiteParser {
             throw new TesboException("End Step is not found for '" + groupName + "' collection");
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].contains("Step:") | allLines[j].contains("Verify:")) {
+            if (allLines[j].contains("Step:") | allLines[j].contains("Verify:") | allLines[j].contains("ExtCode:")) {
                 testSteps.add(allLines[j]);
             }
         }
@@ -751,5 +751,59 @@ public class SuiteParser {
 
         }
 
+    }
+
+    /**
+     * Not completed need to work on this...
+     * @lastModifiedBy: Ankit Mistry
+     * @param suiteName
+     * @return
+     */
+    public String isRetry(String suiteName, String testName) {
+        StringBuffer suiteDetails = readSuiteFile(suiteName);
+        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        int testCount=0;
+        int startPoint = 0;
+        boolean testStarted = false;
+        int endpoint = 0;
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+                String testNameArray[] = allLines[i].split(":");
+
+                if (testNameArray[1].trim().contains(testName)) {
+                    startPoint = i;
+                    testStarted = true;
+                }
+                if (testStarted) {
+                    testCount++;
+                }
+            }
+            if (testStarted) {
+
+                if (allLines[i].contains("End")) {
+                    endpoint = i;
+                    break;
+                }
+                if(allLines[i].replaceAll("\\s{2,}", " ").trim().equals("end")){
+                    throw new TesboException("Please define end step in a correct way: End");
+                }
+            }
+        }
+        String retry="null";
+        if(testCount>=2 || endpoint==0) {
+            throw new TesboException("End Step is not found for '" + testName + "' test");
+        }
+        for (int j = startPoint; j < endpoint; j++) {
+            if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].toString().replaceAll("\\s{2,}", " ").contains("Retry:")){
+                throw new TesboException("Retry is blank '"+allLines[j]+"'");
+            }
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Retry:") ) {
+
+                retry=allLines[j].split(":")[1];
+            }
+
+        }
+
+        return retry.trim();
     }
 }

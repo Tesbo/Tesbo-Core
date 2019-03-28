@@ -5,6 +5,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import Exception.TesboException;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
@@ -26,47 +27,74 @@ public class GetLocator {
         JSONArray locatorFileList = new JSONArray();
         boolean flag=false;
         String file=null;
-        try (Stream<Path> paths = Files.walk(Paths.get(config.getLocatorDirectory()))) {
+        Utility parser = new Utility();
+        JSONObject main=null;
+        if(LocatorName.contains(".")){
+            String fileName=LocatorName.split("\\.")[0];
+             main = parser.loadJsonFile(config.getLocatorDirectory() + "/" + fileName + ".json");
+        }
+        else {
+            try (Stream<Path> paths = Files.walk(Paths.get(config.getLocatorDirectory()))) {
 
-            locatorFileList.addAll(paths
-                    .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
-            for(Object locatorPath:locatorFileList) {
-                String[] locator=locatorPath.toString().split("\\.");
-                if (locator.length == 2) {
-                    if (!locator[1].equalsIgnoreCase("json")) {
-                        flag=true;
-                        if(file==null)
-                            file="'."+locator[1]+"'";
-                        else
-                            file+=", '."+locator[1]+"'";
+                locatorFileList.addAll(paths
+                        .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
+                for(Object locatorPath:locatorFileList) {
+                    String[] locator=locatorPath.toString().split("\\.");
+                    if (locator.length == 2) {
+                        if (!locator[1].equalsIgnoreCase("json")) {
+                            flag=true;
+                            if(file==null)
+                                file="'."+locator[1]+"'";
+                            else
+                                file+=", '."+locator[1]+"'";
+                        }
                     }
                 }
+                if(flag==true){
+                    logger.errorLog(file+" file found");
+                    throw (new NoSuchFieldException());
+                }
+            } catch (Exception e) {
+                if(flag==true) {
+                    logger.errorLog("Message : Please create only '.json' file in Locator directory.");
+                }
+                else {
+                    logger.errorLog("Message : Please Enter valid directory path for locators.");
+                    StringWriter sw = new StringWriter();
+                    e.printStackTrace(new PrintWriter(sw));
+                    logger.testFailed(sw.toString());
+                }
+                throw e;
             }
-            if(flag==true){
-                logger.errorLog(file+" file found");
-                throw (new NoSuchFieldException());
-            }
-        } catch (Exception e) {
-            if(flag==true) {
-                logger.errorLog("Message : Please create only '.json' file in Locator directory.");
-            }
-            else {
-                logger.errorLog("Message : Please Enter valid directory path for locators.");
-                StringWriter sw = new StringWriter();
-                e.printStackTrace(new PrintWriter(sw));
-                logger.testFailed(sw.toString());
-            }
-            throw e;
-        }
-        Utility parser = new Utility();
 
-        JSONObject main = parser.loadJsonFile(config.getLocatorDirectory() + "/" + suiteName.split(".suite")[0] + ".json");
+            main = parser.loadJsonFile(config.getLocatorDirectory() + "/" + suiteName.split(".suite")[0] + ".json");
+
+        }
+
         String LocatorsName = null;
         try{
-            LocatorsName= main.get(LocatorName).toString();
+            if(LocatorName.contains(".")) {
+                LocatorsName= main.get(LocatorName.split("\\.")[1]).toString();
+            }
+            else {LocatorsName= main.get(LocatorName).toString();}
+
         }catch (NullPointerException e)
         {
-            throw new TesboException("Locator '"+LocatorName + "' is not found.");
+            File[] files = new File(config.getLocatorDirectory()).listFiles();
+            boolean isLocator=false;
+            for(File file1:files){
+                if(!(config.getLocatorDirectory() + "/" + suiteName.split(".suite")[0] + ".json").equalsIgnoreCase(file1.toString())){
+                    main = parser.loadJsonFile(file1.toString());
+                    try{
+                        LocatorsName= main.get(LocatorName).toString();
+                        if(isLocator==false){
+                            isLocator=true;
+                        }
+                        else{throw new TesboException("Multiple Locator is found '"+LocatorName + "'.");}
+                    }catch (NullPointerException ex) {}
+                }
+            }
+            if(LocatorsName==null){throw new TesboException("Locator '"+LocatorName + "' is not found.");}
 
         }
         
