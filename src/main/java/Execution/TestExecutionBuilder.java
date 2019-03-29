@@ -86,7 +86,6 @@ public class TestExecutionBuilder {
 
         TestExecutionBuilder.buildRunning = false;
         buildEndTime = System.currentTimeMillis();
-
         BuildReportDataObject.mainReportObject.put("endTime", TestExecutionBuilder.buildEndTime);
         BuildReportDataObject.mainReportObject.put("totalTimeTaken", (TestExecutionBuilder.buildEndTime - TestExecutionBuilder.buildStartTime));
 
@@ -294,7 +293,6 @@ public class TestExecutionBuilder {
                         if (columnNameList.size() == 0) {
                             throw new NullPointerException("Data set value is not use on 'Test: " + testName + "' steps");
                         }
-
                         dataType = dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1], columnNameList);
 
                         if (dataType.equalsIgnoreCase("excel")) {

@@ -268,8 +268,6 @@ public class GetJsonData {
         } catch (Exception e) {
 
         }
-
-
         return parseTime(total);
     }
 
