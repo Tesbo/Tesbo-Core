@@ -152,13 +152,20 @@ public class DataDrivenParser {
         ArrayList<String> columnNameList=new ArrayList<String>();
         for(String step:testSteps)
         {
+            String[] splitStep;
             if(step.contains("{")&& step.contains("}")){
-                String[] splitStep=step.split("\\s");
-                for(String calName:splitStep)
-                {
-                    if(calName.contains("{")&& calName.contains("}"))
-                        columnNameList.add(calName.replaceAll("[{}]", ""));
+                if(step.contains("ExtCode:")){
+                    splitStep = step.split("\\(")[1].split(",");
+                }else {
+                    splitStep = step.split("\\s");
                 }
+
+                for (String calName : splitStep) {
+                    if (calName.contains("{") && calName.contains("}")) {
+                        columnNameList.add(calName.replaceAll("[{}()]", "").trim());
+                    }
+                }
+
             }
         }
         return columnNameList;
@@ -180,7 +187,7 @@ public class DataDrivenParser {
                     filePath = excelUrl[1];
                     break;
                 }
-        }
+            }
         }
         return filePath.trim();
     }

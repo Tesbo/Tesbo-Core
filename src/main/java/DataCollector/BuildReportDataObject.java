@@ -35,11 +35,11 @@ public class BuildReportDataObject implements Runnable {
                 String suiteName = tempSuiteObject.get("suiteName").toString();
                 testArray = (JSONArray) tempSuiteObject.get("tests");
                 //if (suiteName.equals(suite)) { testArray = (JSONArray) tempSuiteObject.get("tests"); }
-            }
-            for (int t = 0; t < testArray.size(); t++) {
-                if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) && testResultObject.get("status").equals("failed")) { flag = true; }
-                if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) && testResultObject.get("status").equals("passed") && ((JSONObject) testArray.get(t)).get("status").equals("failed")) { buildTotalFailed--; }
+                for (int t = 0; t < testArray.size(); t++) {
+                    if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) && testResultObject.get("status").equals("failed")) {flag = true; }
+                    if (testResultObject.get("testName").equals(((JSONObject) testArray.get(t)).get("testName")) && testResultObject.get("status").equals("passed") && ((JSONObject) testArray.get(t)).get("status").equals("failed")) { buildTotalFailed--; }
 
+                }
             }
         }
         if(!flag) {
@@ -54,6 +54,7 @@ public class BuildReportDataObject implements Runnable {
         mainReportObject.put("startTime", TestExecutionBuilder.buildStartTime);
         mainReportObject.put("totalPassed", buildTotalPassed);
         mainReportObject.put("totalFailed", buildTotalFailed);
+
 
 
     }
