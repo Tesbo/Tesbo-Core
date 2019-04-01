@@ -105,6 +105,7 @@ public class ReportAPIConfig {
         }
         String data = "mutation{createTest(testInput:{apiKey:\"" + userDetails.get("apiKey") + "\",build:\"" + buildID + "\", browserVersion:\"" + testObject.get("browserVersion") + "\", browserName:\"" + testObject.get("browserName") + "\", totalTime:" + testObject.get("totalTime") + ", startTime:\"" + testObject.get("startTime") + "\", testStep:\"\"\"" + testObject.get("testStep") + "\"\"\", osName:\"" + testObject.get("osName") + "\", testName:\"" + testObject.get("testName") + "\", suiteName:\"" + testObject.get("suiteName") + "\", status:\"" + testObject.get("status") + "\",priority:\"" + testObject.get("Priority") + "\",severity:\"" + testObject.get("Severity") + "\",screenShot:\"" + testObject.get("screenShot") + "\",fullStackTrace:\"\"\"" + fullStackTrace + "\"\"\"}){_id} }";
         content.put("query", data);
+        try {
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, content.toJSONString());
@@ -113,28 +114,34 @@ public class ReportAPIConfig {
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
-        try {
+
             Response response = client.newCall(request).execute();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public String awsScreenshotUpload(String screenshotUrl) {
-        String screenshot[] = screenshotUrl.split("/");
-        String screenshotName = screenshot[screenshot.length - 1];
-        File file = new File(screenshotUrl);
-        String path = file.getAbsolutePath();
-        AWSCredentials credentials = new BasicAWSCredentials(
-                "AKIAJOHN37HIKYIC77IA",
-                "cpA90V9UMSvpwdRH8EfZnpUrLK/3QQ+hLKaHNZ9n");
-        String bucketName = "place-pass";
-        AmazonS3 s3client = new AmazonS3Client(credentials);
-        s3client.putObject(new PutObjectRequest(bucketName, screenshotName,
-                new File(path))
-                .withCannedAcl(CannedAccessControlList.PublicRead));
-        String awsScreenshotUrl = "https://s3.amazonaws.com/" + bucketName + "/" + screenshotName;
-        return awsScreenshotUrl;
+        try {
+            String screenshot[] = screenshotUrl.split(File.pathSeparator);
+            String screenshotName = screenshot[screenshot.length - 1];
+            File file = new File(screenshotUrl);
+            String path = file.getAbsolutePath();
+            AWSCredentials credentials = new BasicAWSCredentials(
+                    "AKIAJOHN37HIKYIC77IA",
+                    "cpA90V9UMSvpwdRH8EfZnpUrLK/3QQ+hLKaHNZ9n");
+            String bucketName = "place-pass";
+            AmazonS3 s3client = new AmazonS3Client(credentials);
+            s3client.putObject(new PutObjectRequest(bucketName, screenshotName,
+                    new File(path))
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+            String awsScreenshotUrl = "https://s3.amazonaws.com/" + bucketName + "/" + screenshotName;
+            return awsScreenshotUrl;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+       return null;
 
     }
 
