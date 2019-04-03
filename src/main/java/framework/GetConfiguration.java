@@ -132,10 +132,26 @@ public class GetConfiguration {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         try {
-            String ExtCodeDirectory=main.get("projectDIR").toString()+"/ExtTestCode";
+            String ExtCodeDirectory=main.get("projectDIR").toString()+"/src/test/java/ExtTestCode";
             return ExtCodeDirectory;
         }catch (Exception e){
             throw new TesboException("ExtCodeDirectory is not define on config");
+        }
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public String getProjectDirectory()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        try {
+            String projectDIR=main.get("projectDIR").toString()+"/src/test/java/";
+            return projectDIR;
+        }catch (Exception e){
+            throw new TesboException("projectDIR is not define on config");
         }
     }
 
@@ -240,7 +256,7 @@ public class GetConfiguration {
     public String getSuitesDirectory()  {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
-        String SuiteDirectory=main.get("projectDIR").toString()+"/suite";
+        String SuiteDirectory=main.get("projectDIR").toString()+"/src/test/java/suite";
         return SuiteDirectory;
     }
 
@@ -248,7 +264,7 @@ public class GetConfiguration {
     public String getLocatorDirectory() {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
-        String locatorDirectory=main.get("projectDIR").toString()+"/locator";
+        String locatorDirectory=main.get("projectDIR").toString()+"/src/test/java/locator";
         return locatorDirectory;
     }
 

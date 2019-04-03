@@ -579,3 +579,44 @@ Verify: Get cookies and check 'csm-hit' is available
 Step: pause 5 sec
 End
 
+Test: T36 External code With parameter gb data
+#T36 #regression
+DataSet: GmailUsers
+Step: Open URL 'http://amazon.in'
+Step: pause 1 sec
+Step: Enter 'nokia mobile' in @Search_box
+Step: Press Enter
+ExtCode: Get Data ext({firstName},{lastName},{password})
+Step: Print "External code is working fine"
+Step: pause 1 sec
+Step: Open URL 'https://paytmmall.com'
+Step: pause 1 sec
+ExtCode: Send Data ext({DataSet.Credentials.travelUser},Hello,QAble,{DataSet.Credentials.travelPass})
+Step: Press Enter @paytm_search
+Step: pause 3 sec
+ExtCode: Send Data ext (Hello,QAble,Team,How are you)
+Step: Click on @paytmResult
+Step: pause 2 sec
+ExtCode: Window Resize
+End
+
+Test: T35 External code With parameter
+#T35 #regression
+DataSet: Credentials
+Step: Open URL 'http://amazon.in'
+Step: pause 1 sec
+Step: Enter 'nokia mobile' in @Search_box
+Step: Press Enter
+ExtCode: Get Data ext({linkedin2},{travelUser},{travelPass})
+Step: Print "External code is working fine"
+Step: pause 1 sec
+Step: Open URL 'https://paytmmall.com'
+Step: pause 1 sec
+ExtCode: Send Data ext({travelUser},Hello,QAble,{travelPass})
+Step: Press Enter @paytm_search
+Step: pause 3 sec
+ExtCode: Send Data ext (Hello,QAble,Team,How are you)
+Step: Click on @paytmResult
+Step: pause 2 sec
+ExtCode: Window Resize
+End

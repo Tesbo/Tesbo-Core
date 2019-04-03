@@ -24,6 +24,8 @@ public class Validation {
 
     public void beforeExecutionValidation() throws Exception {
 
+        //Validation for Project Directory Path is empty
+        projectDirectoryPathValidation();
 
         //Validation for SuiteDirectory Path
         suiteDirectoryPathValidation();
@@ -63,6 +65,45 @@ public class Validation {
             throw new TesboException("Suite directory path is not define in config file.");
         }
         if(Files.notExists(Paths.get(suiteDirectoryPath))){
+            throw new TesboException("Please enter valid suite directory path.");
+        }
+        if(file.list().length==0){
+            throw new TesboException("Suite directory is empty");
+        }
+
+    }
+
+    public void projectDirectoryPathValidation() {
+
+        //Validation for Project Directory Path is empty
+        String projectDirectoryPath=null;
+        try {
+            projectDirectoryPath=getCofig.getProjectDirectory();
+        }catch (Exception e){
+            throw new TesboException("'config.json' file not found in project");
+        }
+        File file = new File(projectDirectoryPath);
+
+        File[] files = file.listFiles();
+        if (files == null) {
+            throw new TesboException("Project directory is empty or not found: \""+projectDirectoryPath+"\"");
+        } else {
+            int count=0;
+            for (File aFile : files) {
+                if(aFile.getName().toString().equals("suite")){count++;}
+                if(aFile.getName().toString().equals("locator")){count++;}
+                if(aFile.getName().toString().equals("runner")){count++;}
+            }
+            if(count != 3){
+                throw new TesboException("Project directory has not found 'suite' OR 'locator' OR 'runner' package");
+            }
+        }
+
+
+        if(projectDirectoryPath.equals("")) {
+            throw new TesboException("Suite directory path is not define in config file.");
+        }
+        if(Files.notExists(Paths.get(projectDirectoryPath))){
             throw new TesboException("Please enter valid suite directory path.");
         }
         if(file.list().length==0){
