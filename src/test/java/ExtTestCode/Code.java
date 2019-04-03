@@ -148,6 +148,23 @@ public class Code extends ExtendTesboDriver {
 
     }
 
+    @ExtCode("Get Data ext")
+    public void getNameext(String Data,String Data1,String Data2) throws InterruptedException {
+        System.out.println("Data: "+Data);
+        System.out.println("Data1: "+Data1);
+        System.out.println("Data2: "+Data2);
+
+    }
+
+    @ExtCode("Send Data ext")
+    public void sendNameext(String Data,String Data1,String Data2,String Data3) throws InterruptedException {
+        System.out.println("Data: "+Data);
+        System.out.println("Data1: "+Data1);
+        System.out.println("Data2: "+Data2);
+        System.out.println("Data3: "+Data3);
+
+    }
+
 
 }
 

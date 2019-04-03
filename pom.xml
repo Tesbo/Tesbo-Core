@@ -112,9 +112,9 @@
 						</goals>
 						<configuration>
 							<target>
-								<jar destfile="${project.build.directory}/tesbo-proguard-final.jar">
+								<jar destfile="${project.build.directory}\tesbo-proguard-final.jar">
 									<zipfileset excludes="META-INF/*.SF"
-												src="${project.build.directory}/${project.build.finalName}-proguard.${project.packaging}" />
+												src="${project.build.directory}/${project.build.finalName}_proguard_base.${project.packaging}" />
 									<zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar"
 									/>
 								</jar>
@@ -300,6 +300,12 @@
 			<groupId>javax.activation</groupId>
 			<artifactId>activation</artifactId>
 			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.restassured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>2.9.0</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

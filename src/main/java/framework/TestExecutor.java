@@ -481,7 +481,7 @@ public class TestExecutor implements Runnable {
                     if(testExecutionBuilder.failTest == Integer.parseInt(config.getRetryAnalyser())){
                         reportAPIConfig.organiazeDataForCloudReport(testReportObject);
                     }
-                    if(testResult.toLowerCase().equals("passed")){
+                    else if(testResult.toLowerCase().equals("passed")){
                         reportAPIConfig.organiazeDataForCloudReport(testReportObject);
                     }
                 }
@@ -490,16 +490,13 @@ public class TestExecutor implements Runnable {
                 if(testExecutionBuilder.failTest == Integer.parseInt(config.getRetryAnalyser())){
                     reportAPIConfig.organiazeDataForCloudReport(testReportObject);
                 }
-                if(testResult.toLowerCase().equals("passed")){
+                else if(testResult.toLowerCase().equals("passed")){
                     reportAPIConfig.organiazeDataForCloudReport(testReportObject);
                 }
             }
-
-
         }
 
         if(testResult.toLowerCase().equals("failed")){
-
             testExecutionBuilder.failTestExecutionQueue(test);
         }
         else {
