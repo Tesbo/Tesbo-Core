@@ -113,7 +113,7 @@
 						</goals>
 						<configuration>
 							<target>
-								<jar destfile="${project.build.directory}\tesbo-proguard-final.jar">
+								<jar destfile="${project.build.directory}\tesbo.jar">
 									<zipfileset excludes="META-INF/*.SF"
 												src="${project.build.directory}/${project.build.finalName}_proguard_base.${project.packaging}" />
 									<zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar"
