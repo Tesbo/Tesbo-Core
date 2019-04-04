@@ -140,14 +140,11 @@
 							<goal>publish</goal>
 						</goals>
 						<configuration>
-							<deployProperties>
-								<gradle>awesome</gradle>
-								<review.team>qa</review.team>
-							</deployProperties>
+
 							<publisher>
 								<contextUrl>http://134.209.78.94:8081/artifactory/</contextUrl>
 								<username>viral1010</username>
-								<password>gopi1010</password>
+								<password>AP8wkgCacqHkBf29HsDw1YsjZAX</password>
 								<repoKey>libs-release-local</repoKey>
 								<snapshotRepoKey>libs-snapshot-local</snapshotRepoKey>
 							</publisher>
