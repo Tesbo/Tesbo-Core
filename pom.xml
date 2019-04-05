@@ -142,10 +142,10 @@
 				<version>1.0</version>
 				<executions>
 					<execution>
-						<id>rename-file</id>
+						<id>copy-file</id>
 						<phase>package</phase>
 						<goals>
-							<goal>rename</goal>
+							<goal>copy</goal>
 						</goals>
 						<configuration>
 							<sourceFile>${project.build.directory}\tesbo-proguard-final.jar</sourceFile>
