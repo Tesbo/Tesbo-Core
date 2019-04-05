@@ -132,7 +132,12 @@
 				<artifactId>maven-install-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<skip>true</skip>
+					<file>${project.build.directory}\tesbo-proguard-final.jar</file>
+					<generatePom>false</generatePom>
+					<pomFile>pom.xml</pomFile>
+					<packaging>jar</packaging>
+					<version>${project.version}</version>
+
 				</configuration>
 			</plugin>
 		</plugins>
