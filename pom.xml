@@ -5,7 +5,7 @@
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-pro</artifactId>
-	<version>0.0.11.3</version>
+	<version>0.0.11</version>
 	<packaging>jar</packaging>
 
 
@@ -113,7 +113,7 @@
 						</goals>
 						<configuration>
 							<target>
-								<jar destfile="${project.build.directory}\tesbo.jar">
+								<jar destfile="${project.build.directory}\tesbo-proguard-final.jar">
 									<zipfileset excludes="META-INF/*.SF"
 												src="${project.build.directory}/${project.build.finalName}-proguard.${project.packaging}" />
 									<zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar"
