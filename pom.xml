@@ -5,7 +5,7 @@
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-pro</artifactId>
-	<version>0.0.11.5</version>
+	<version>0.0.11.6</version>
 	<packaging>jar</packaging>
 
 
@@ -68,10 +68,12 @@
 						<option>-keep public class Execution.SetCommandLineArgument{*;}</option>
 						<option>-keep class Selenium.ExtendTesboDriver{ *; }</option>
 						<option>-keep class ExtCode.ExtCode{ *; }</option>
-						<option> -keepattributes RuntimeVisibleAnnotations</option>
+						<option>-keepattributes RuntimeVisibleAnnotations</option>
 						<option>-keep class Exception.*</option>
 						<option>-keep @javax.persistence.* class * { *; }</option>
 						<option>-ignorewarnings</option>
+						<option>-dontoptimize</option>
+
 					</options>
 				</configuration>
 				<dependencies>
@@ -353,7 +355,7 @@
 			<groupId>com.jayway.restassured</groupId>
 			<artifactId>rest-assured</artifactId>
 			<version>2.9.0</version>
-			<scope>test</scope>
+
 		</dependency>
 
 	</dependencies>
