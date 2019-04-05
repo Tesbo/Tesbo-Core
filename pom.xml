@@ -1,13 +1,13 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-pro</artifactId>
-	<version>0.0.11.2</version>
+	<version>0.0.11</version>
 	<packaging>jar</packaging>
-	
+
 
 	<name>Tesbo</name>
 	<url>http://maven.apache.org</url>
@@ -24,7 +24,6 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -47,10 +46,11 @@
 				<version>2.0.14</version>
 				<configuration>
 					<injar>${project.build.finalName}.${project.packaging}</injar>
+					<outjar>${project.build.finalName}-proguard.${project.packaging}</outjar>
 					<libs>
 						<!-- <lib>${java.home}/jmods/java.base.jmod(!**.jar;!module-info.class)</lib> -->
 						<lib>${java.bootstrap.classes}</lib>
-					
+
 
 					</libs>
 					<options>
@@ -63,7 +63,7 @@
 						<option>-keep class Exception.*</option>
 						<option>-keep @javax.persistence.* class * { *; }</option>
 						<option>-ignorewarnings</option>
-						
+
 					</options>
 				</configuration>
 				<dependencies>
@@ -115,7 +115,7 @@
 							<target>
 								<jar destfile="${project.build.directory}\tesbo.jar">
 									<zipfileset excludes="META-INF/*.SF"
-												src="${project.build.directory}/${project.build.finalName}_proguard_base.${project.packaging}" />
+												src="${project.build.directory}/${project.build.finalName}-proguard.${project.packaging}" />
 									<zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar"
 									/>
 								</jar>
@@ -125,12 +125,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-
-
-
-
-
 
 
 
@@ -184,7 +178,7 @@
 			<version>23.4-jre</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-server -->
-		<!-- <dependency> <groupId>org.seleniumhq.selenium</groupId> <artifactId>selenium-server</artifactId> 
+		<!-- <dependency> <groupId>org.seleniumhq.selenium</groupId> <artifactId>selenium-server</artifactId>
 			<version>3.12.0</version> </dependency> -->
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
