@@ -227,12 +227,6 @@
 
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-
-		</dependency>
 
 		<dependency>
 			<groupId>com.beust</groupId>
@@ -276,7 +270,7 @@
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>6.10</version>
-			<scope>test</scope>
+
 		</dependency>
 		<dependency>
 			<groupId>com.diogonunes</groupId>
@@ -294,11 +288,6 @@
 
 
 
-		<dependency>
-			<groupId>com.google.truth</groupId>
-			<artifactId>truth</artifactId>
-			<version>0.36</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.reflections</groupId>
@@ -313,11 +302,6 @@
 			<version>0.15</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.beust</groupId>
-			<artifactId>jcommander</artifactId>
-			<version>1.72</version>
-		</dependency>
 
 		<dependency>
 			<groupId>com.amazonaws</groupId>
