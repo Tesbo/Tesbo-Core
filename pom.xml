@@ -72,7 +72,7 @@
 						<option>-keep class Exception.*</option>
 						<option>-keep @javax.persistence.* class * { *; }</option>
 						<option>-ignorewarnings</option>
-						<option>-dontoptimize</option>
+
 
 					</options>
 				</configuration>
