@@ -107,36 +107,42 @@ public class ReportLibraryFiles {
 
 
     public StringBuilder getFileContent(String respath) {
-        InputStream in = ReportBuilder.class.getResourceAsStream(respath);
-        if (in == null)
-            try {
-                throw new Exception("resource not found: " + respath);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();
 
-        String line;
         try {
-
-            br = new BufferedReader(new InputStreamReader(in));
-            while ((line = br.readLine()) != null) {
-                sb.append(line+"\n");
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
+            InputStream in = ReportBuilder.class.getResourceAsStream(respath);
+            if (in == null)
                 try {
-                    br.close();
-                } catch (IOException e) {
+                    throw new Exception("resource not found: " + respath);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+
+
+            String line;
+            try {
+
+                br = new BufferedReader(new InputStreamReader(in));
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
         }
 
         return sb;
