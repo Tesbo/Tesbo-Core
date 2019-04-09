@@ -50,9 +50,9 @@ public class TestExecutionBuilder {
         Commands cmd=new Commands();
         buildStartTime = System.currentTimeMillis();
         GetConfiguration getConfig = new GetConfiguration();
+        Validation validation = new Validation();
         SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
         setCommandLineArgument.setArgument(argumentsArray);
-
         Logger logger = new Logger();
         logger.titleLog("-----------------------------------------------------------------------");
         logger.titleLog("Build execution Started");
@@ -69,6 +69,7 @@ public class TestExecutionBuilder {
         TestExecutionBuilder.buildRunning = true;
 
         ReportAPIConfig config = new ReportAPIConfig();
+        validation.configFilePathValidation();
         if(getConfig.getIsCloudIntegration() ) {
             config.getBuildKey();
         }
