@@ -284,14 +284,6 @@
 			<version>3.9.0</version>
 		</dependency>
 
-
-
-		<dependency>
-			<groupId>com.google.truth</groupId>
-			<artifactId>truth</artifactId>
-			<version>0.36</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
