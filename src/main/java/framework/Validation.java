@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
@@ -87,8 +88,8 @@ public class Validation {
             configName="config.json";
         }
         File file = new File(configName);
-        File[] files = file.listFiles();
-        if(files==null){
+        Path path = Paths.get(file.getAbsolutePath());
+        if(!Files.exists(path)){
             throw new TesboException("\""+file.getAbsolutePath()+"\""+ " config file is not found in project");
         }
 
