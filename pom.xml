@@ -73,6 +73,7 @@
 						<option>-keep @javax.persistence.* class * { *; }</option>
 						<option>-ignorewarnings</option>
 						<option>-dontoptimize</option>
+                        <option>-keeppackagenames src.main.Resources</option>
 
 
 					</options>
