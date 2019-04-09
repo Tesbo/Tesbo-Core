@@ -2,6 +2,7 @@ package framework;
 
 
 
+import Execution.SetCommandLineArgument;
 import logger.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -69,6 +70,26 @@ public class Validation {
         }
         if(file.list().length==0){
             throw new TesboException("Suite directory is empty");
+        }
+
+    }
+
+    public void configFilePathValidation() {
+
+        //config File Path is exist or not
+
+        SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
+        String configName;
+        if(setCommandLineArgument.configFile !=null){
+            configName=setCommandLineArgument.configFile;
+        }
+        else {
+            configName="config.json";
+        }
+        File file = new File(configName);
+        File[] files = file.listFiles();
+        if(files==null){
+            throw new TesboException("\""+file.getAbsolutePath()+"\""+ " config file is not found in project");
         }
 
     }
