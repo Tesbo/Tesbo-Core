@@ -5,7 +5,7 @@
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-pro</artifactId>
-	<version>0.0.11.14</version>
+	<version>0.0.11.15</version>
 	<packaging>jar</packaging>
 
 
@@ -73,8 +73,6 @@
 						<option>-keep @javax.persistence.* class * { *; }</option>
 						<option>-ignorewarnings</option>
 						<option>-dontoptimize</option>
-                        <option>-keeppackagenames src.main.Resources</option>
-
 
 					</options>
 				</configuration>
@@ -119,7 +117,7 @@
 				<executions>
 					<execution>
 						<id>zip-artifacts</id>
-						<phase>install</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>run</goal>
 						</goals>
