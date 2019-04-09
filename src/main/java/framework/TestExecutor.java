@@ -539,7 +539,9 @@ public class TestExecutor implements Runnable {
             runTest();
 
             if(! testExecutionBuilder.isSingleWindow && !testExecutionBuilder.singleWindowRun) {
-                afterTest(null);
+                if(!(!config.getBrowserClose() && testResult.toLowerCase().equals("failed"))) {
+                    afterTest(null);
+                }
             }
 
             //  testData.put(testResult.get("testName").toString(), testResult);
