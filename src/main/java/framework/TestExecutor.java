@@ -473,31 +473,34 @@ public class TestExecutor implements Runnable {
 
         ReportAPIConfig reportAPIConfig = new ReportAPIConfig();
         if(config.getIsCloudIntegration()) {
+            boolean isAddOnCloud=false;
             if(suiteParser.isRetry(test.get("suiteName").toString(), test.get("testName").toString()).toLowerCase().equals("null") || suiteParser.isRetry(test.get("suiteName").toString(), test.get("testName").toString()).toLowerCase().equals("false")){
                 if(!(Integer.parseInt(config.getRetryAnalyser())>0) || suiteParser.isRetry(test.get("suiteName").toString(), test.get("testName").toString()).toLowerCase().equals("false")){
-                    reportAPIConfig.organiazeDataForCloudReport(testReportObject);
+                    isAddOnCloud=true;
                 }
                 else {
                     if(testExecutionBuilder.failTest == Integer.parseInt(config.getRetryAnalyser())){
-                        reportAPIConfig.organiazeDataForCloudReport(testReportObject);
+                        isAddOnCloud=true;
                     }
                     else if(testResult.toLowerCase().equals("passed")){
-                        reportAPIConfig.organiazeDataForCloudReport(testReportObject);
+                        isAddOnCloud=true;
                     }
                 }
             }
             else {
                 if(testExecutionBuilder.failTest == Integer.parseInt(config.getRetryAnalyser())){
-                    reportAPIConfig.organiazeDataForCloudReport(testReportObject);
+                    isAddOnCloud=true;
                 }
                 else if(testResult.toLowerCase().equals("passed")){
-                    reportAPIConfig.organiazeDataForCloudReport(testReportObject);
+                    isAddOnCloud=true;
                 }
             }
+            if (isAddOnCloud) {reportAPIConfig.organiazeDataForCloudReport(testReportObject);}
         }
-
         if(testResult.toLowerCase().equals("failed")){
-            testExecutionBuilder.failTestExecutionQueue(test);
+            if(suiteParser.isRetry(test.get("suiteName").toString(), test.get("testName").toString()).toLowerCase().equals("null")){
+                testExecutionBuilder.failTestExecutionQueue(test);
+            }
         }
         else {
             Object removeTest=null;

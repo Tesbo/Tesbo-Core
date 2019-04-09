@@ -33,8 +33,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import Exception.TesboException;
-
-import static com.google.common.truth.Truth.assertThat;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOf;
 
@@ -272,11 +270,11 @@ public class Commands {
     }
 
     /**
-     * @param el verify element is displayed or not
+     *  verify element is displayed or not
      */
-    public void verifyElementShouldDisplayed(WebElement el) {
+    /*public void verifyElementShouldDisplayed(WebElement el) {
         assertThat(el.isDisplayed()).isTrue();
-    }
+    }*/
 
     public void openUrl(WebDriver driver, String url) {
         driver.get(url);
