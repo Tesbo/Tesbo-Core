@@ -254,10 +254,7 @@ public class TestExecutor implements Runnable {
                 if (step.toString().toLowerCase().contains("print")) {
                     try {
                         stepReportObject.put("steps", stepParser.printStep(driver, step.toString(), test));
-                    } catch (Exception e) {
-                        e.printStackTrace(new PrintWriter(sw));
-                        logger.testFailed(sw.toString());
-                    }
+                    } catch (Exception e) {}
                 }
             }
 
