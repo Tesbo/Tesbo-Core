@@ -94,7 +94,7 @@ public class Commands {
                                         try {
                                             element = driver.findElement(By.partialLinkText(elementvalue));
                                         } catch (NoSuchElementException e) {
-                                            logger.testFailed("Please enter valid locator value");
+                                            //logger.testFailed("Please enter valid locator value");
                                             //throw e;
                                         }
                                     }
@@ -105,7 +105,9 @@ public class Commands {
                     }
                 }
             }
-
+            if(element==null){
+                throw new TesboException("Please enter valid locator value");
+            }
             if (config.getHighlightElement()) {
                 JavascriptExecutor js = (JavascriptExecutor) driver;
                 js.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", element);

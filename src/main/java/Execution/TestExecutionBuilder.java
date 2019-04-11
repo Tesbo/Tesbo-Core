@@ -76,7 +76,7 @@ public class TestExecutionBuilder {
 
         BuildReportDataObject brdo = new BuildReportDataObject();
         brdo.startThread();
-        //  reportBuilder.startThread();
+        reportBuilder.startThread();
 
 
         builder.buildExecution();
