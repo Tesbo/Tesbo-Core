@@ -64,7 +64,7 @@ public class ReportLibraryFiles {
     public void createLibrary() {
         ReportBuilder builder = new ReportBuilder();
         generateReportLibraryStructure();
-        builder.writeReportFile("./htmlReport/lib/bootstrap/dist/css/bootstrap.css", getFileContent("/lib/bootstrap/dist/css/bootstrap.css"));
+       /* builder.writeReportFile("./htmlReport/lib/bootstrap/dist/css/bootstrap.css", getFileContent("/lib/bootstrap/dist/css/bootstrap.css"));
         builder.writeReportFile("./htmlReport/lib/bootstrap/dist/css/bootstrap.min.css", getFileContent("/lib/bootstrap/dist/css/bootstrap.min.css"));
         builder.writeReportFile("./htmlReport/lib/bootstrap/dist/js/bootstrap.js", getFileContent("/lib/bootstrap/dist/js/bootstrap.js"));
         builder.writeReportFile("./htmlReport/lib/bootstrap/dist/js/bootstrap.min.js", getFileContent("/lib/bootstrap/dist/js/bootstrap.min.js"));
@@ -72,7 +72,7 @@ public class ReportLibraryFiles {
         builder.writeReportFile("./htmlReport/lib/build/css/custom.min.css", getFileContent("/lib/build/css/custom.min.css"));
         builder.writeReportFile("./htmlReport/lib/jquery/dist/jquery.js", getFileContent("/lib/jquery/dist/jquery.js"));
         builder.writeReportFile("./htmlReport/lib/jquery/dist/jquery.min.js", getFileContent("/lib/jquery/dist/jquery.min.js"));
-        try {
+        */try {
             String chromePath = "./htmlReport/lib/Icon/chrome.svg";
             String firefoxPath = "./htmlReport/lib/Icon/firefox.svg";
             String iePath = "./htmlReport/lib/Icon/ie.svg";
@@ -107,42 +107,36 @@ public class ReportLibraryFiles {
 
 
     public StringBuilder getFileContent(String respath) {
+        InputStream in = ReportBuilder.class.getResourceAsStream(respath);
+        if (in == null)
+            try {
+                throw new Exception("resource not found: " + respath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();
 
+        String line;
         try {
-            InputStream in = ReportBuilder.class.getResourceAsStream(respath);
-            if (in == null)
+
+            br = new BufferedReader(new InputStreamReader(in));
+            while ((line = br.readLine()) != null) {
+                sb.append(line+"\n");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
                 try {
-                    throw new Exception("resource not found: " + respath);
-                } catch (Exception e) {
+                    br.close();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-
-
-            String line;
-            try {
-
-                br = new BufferedReader(new InputStreamReader(in));
-                while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
-        }catch (Exception e)
-        {
-            e.printStackTrace();
         }
 
         return sb;

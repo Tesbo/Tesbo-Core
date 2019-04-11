@@ -459,7 +459,7 @@ public class GetConfiguration {
             return (boolean) cloudIntegration.get("report");
 
         }catch (Exception e){
-            throw new TesboException("Cloud Integration is not defined");
+            return false;
         }
     }
 
