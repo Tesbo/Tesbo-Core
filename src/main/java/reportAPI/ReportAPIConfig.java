@@ -21,7 +21,7 @@ import Exception.TesboException;
 public class ReportAPIConfig {
 
 
-    public static String URL="http://api-stagging.tesbo.io:4848/graphql";
+    public static String URL="http://api.tesbo.io:4008/graphql";
     public static String buildID;
 
 
