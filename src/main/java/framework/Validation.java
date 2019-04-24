@@ -114,7 +114,7 @@ public class Validation {
             for (File aFile : files) {
                 if(aFile.getName().toString().equals("suite")){count++;}
                 if(aFile.getName().toString().equals("locator")){count++;}
-                if(aFile.getName().toString().equals("runner")){count++;}
+                if(aFile.getName().toString().equalsIgnoreCase("runner")){count++;}
             }
             if(count != 3){
                 throw new TesboException("Project directory has not found 'suite' OR 'locator' OR 'runner' package");
