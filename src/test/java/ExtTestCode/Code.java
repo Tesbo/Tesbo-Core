@@ -1,6 +1,7 @@
 package ExtTestCode;
 
 import Selenium.ExtendTesboDriver;
+import UserConfig.GetUserConfiguration;
 import org.openqa.selenium.*;
 import ExtCode.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -15,14 +16,32 @@ public class Code extends ExtendTesboDriver {
     }
 
     static String LowestPriceMobile;
-
+   GetUserConfiguration getUserConfiguration=new GetUserConfiguration();
     @ExtCode("google")
     public void ExternalCode() {
         driver.get("https://www.google.in");
         System.out.println("**************google External Code*********************");
     }
 
+    @ExtCode("hii")
+    public void Hii() {
+        System.out.println("**************google External Code*********************");
+    }
 
+    @ExtCode("Hello Test")
+    public void HelloTets() {
+        getUserConfiguration.printStep("ExtCode: Hiiii");
+        getUserConfiguration.printStep("ExtCode: Hello");
+        //driver.findElement(By.xpath("//input[@id='twotabsearchtextbox']")).sendKeys("nvnbfg");
+        getUserConfiguration.printStep("ExtCode: How r u?");
+    }
+
+    @ExtCode("New Test")
+    public void NewTets() {
+        getUserConfiguration.printStep("ExtCode: New Hiiii");
+        getUserConfiguration.printStep("ExtCode: New Hello");
+        getUserConfiguration.printStep("ExtCode: New How r u?");
+    }
     public static void main(String[] args) throws InterruptedException {
 
 

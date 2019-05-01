@@ -23,15 +23,16 @@ Test: T1 login on phptravels DataSet global Credentials
 DataSet: Credentials
 Step: Open URL 'https://www.phptravels.net/admin'
 Step: pause 2 sec
-Step: Enter Email {travelUser} in to @Email_Box
+ExtCode: Hello Test
+Step: Enter {travelUser} in to @Email_Box
 Step: Enter {DataSet.Credentials.travelPass} in @Password_Box
+ExtCode: hii
 Step: Click on @LoginBtn
 Step: pause 10 sec
+ExtCode: New Test
 Step: Scroll to coordinate (300,250)
 Step: pause 2 sec
 Step: scroll to top
-Step: Print @QuickBooking
-Verify: @QuickBooking is displayed
 Step: Pause 2 sec
 End
 

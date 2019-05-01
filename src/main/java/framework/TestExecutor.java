@@ -419,18 +419,14 @@ public class TestExecutor implements Runnable {
             }
 
             if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:") && GetUserConfiguration.printStepReportObject.size()!=0) {
-                System.out.println("New step: "+ GetUserConfiguration.printStepReportObject);
-                System.out.println("Size:"+GetUserConfiguration.printStepReportObject.size());
-
                 for (int j = 0; j < GetUserConfiguration.printStepReportObject.size(); j++){
                     JSONObject ExtStep = new JSONObject();
                     JSONObject printExtStep = new JSONObject();
                     ExtStep= (JSONObject) GetUserConfiguration.printStepReportObject.get(j);
-                    System.out.println("ExtStep: "+ExtStep);
                     printExtStep.put("stepIndex", ++stepIndex);
                     printExtStep.put("steps",ExtStep.get("steps"));
                     printExtStep.put("status","passed");
-                    System.out.println("printExtStep: "+printExtStep);
+                    logger.stepLog(ExtStep.get("steps").toString());
                     testStepArray.add(printExtStep);
                 }
 
