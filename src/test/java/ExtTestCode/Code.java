@@ -6,6 +6,7 @@ import org.openqa.selenium.*;
 import ExtCode.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
+import reportAPI.Reporter;
 
 import java.util.Random;
 
@@ -16,7 +17,7 @@ public class Code extends ExtendTesboDriver {
     }
 
     static String LowestPriceMobile;
-   GetUserConfiguration getUserConfiguration=new GetUserConfiguration();
+    Reporter reporter=new Reporter();
     @ExtCode("google")
     public void ExternalCode() {
         driver.get("https://www.google.in");
@@ -30,17 +31,17 @@ public class Code extends ExtendTesboDriver {
 
     @ExtCode("Hello Test")
     public void HelloTets() {
-        getUserConfiguration.printStep("ExtCode: Hiiii");
-        getUserConfiguration.printStep("ExtCode: Hello");
+        reporter.printStep("ExtCode: Hiiii");
+        reporter.printStep("ExtCode: Hello");
         //driver.findElement(By.xpath("//input[@id='twotabsearchtextbox']")).sendKeys("nvnbfg");
-        getUserConfiguration.printStep("ExtCode: How r u?");
+        reporter.printStep("ExtCode: How r u?");
     }
 
     @ExtCode("New Test")
     public void NewTets() {
-        getUserConfiguration.printStep("ExtCode: New Hiiii");
-        getUserConfiguration.printStep("ExtCode: New Hello");
-        getUserConfiguration.printStep("ExtCode: New How r u?");
+        reporter.printStep("ExtCode: New Hiiii");
+        reporter.printStep("ExtCode: New Hello");
+        reporter.printStep("ExtCode: New How r u?");
     }
     public static void main(String[] args) throws InterruptedException {
 
