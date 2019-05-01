@@ -7,7 +7,7 @@ import ExtCode.*;
 import Exception.TesboException;
 import Selenium.Commands;
 
-import UserConfig.GetUserConfiguration;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -22,6 +22,7 @@ import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import reportAPI.ReportAPIConfig;
+import reportAPI.Reporter;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -418,11 +419,11 @@ public class TestExecutor implements Runnable {
                 break;
             }
 
-            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:") && GetUserConfiguration.printStepReportObject.size()!=0) {
-                for (int j = 0; j < GetUserConfiguration.printStepReportObject.size(); j++){
+            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:") && Reporter.printStepReportObject.size()!=0) {
+                for (int j = 0; j < Reporter.printStepReportObject.size(); j++){
                     JSONObject ExtStep = new JSONObject();
                     JSONObject printExtStep = new JSONObject();
-                    ExtStep= (JSONObject) GetUserConfiguration.printStepReportObject.get(j);
+                    ExtStep= (JSONObject) Reporter.printStepReportObject.get(j);
                     printExtStep.put("stepIndex", ++stepIndex);
                     printExtStep.put("steps",ExtStep.get("steps"));
                     printExtStep.put("status","passed");
@@ -430,7 +431,7 @@ public class TestExecutor implements Runnable {
                     testStepArray.add(printExtStep);
                 }
 
-                GetUserConfiguration.printStepReportObject = new JSONArray();
+                Reporter.printStepReportObject = new JSONArray();
             }
         }
         if (suiteParser.isAfterTestInSuite(test.get("suiteName").toString())) {

@@ -5,7 +5,7 @@
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-pro</artifactId>
-	<version>0.0.4</version>
+	<version>test2</version>
 	<packaging>jar</packaging>
 
 
@@ -67,6 +67,7 @@
 					</libs>
 					<options>
 						<option>-keep public class Execution.Tesbo{*;}</option>
+						<option>-keep public class reportAPI.Reporter{*;}</option>
 						<option>-keep public class UserConfig.GetUserConfiguration{*;}</option>
 						<option>-keep public class Execution.SetCommandLineArgument{*;}</option>
 						<option>-keep class Selenium.ExtendTesboDriver{ *; }</option>
