@@ -18,6 +18,14 @@ import java.util.ArrayList;
 public class GetUserConfiguration {
 
     SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
+    public static JSONArray printStepReportObject = new JSONArray();
+
+    public void printStep(String Step) {
+        JSONObject stepReportObject = new JSONObject();
+
+        stepReportObject.put("steps", Step);
+        printStepReportObject.add(stepReportObject);
+    }
 
     public String getConfigFilePath() {
         String configName;

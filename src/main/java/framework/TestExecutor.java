@@ -7,6 +7,7 @@ import ExtCode.*;
 import Exception.TesboException;
 import Selenium.Commands;
 
+import UserConfig.GetUserConfiguration;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -415,6 +416,25 @@ public class TestExecutor implements Runnable {
             }
             if (!stepPassed) {
                 break;
+            }
+
+            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:") && GetUserConfiguration.printStepReportObject.size()!=0) {
+                System.out.println("New step: "+ GetUserConfiguration.printStepReportObject);
+                System.out.println("Size:"+GetUserConfiguration.printStepReportObject.size());
+
+                for (int j = 0; j < GetUserConfiguration.printStepReportObject.size(); j++){
+                    JSONObject ExtStep = new JSONObject();
+                    JSONObject printExtStep = new JSONObject();
+                    ExtStep= (JSONObject) GetUserConfiguration.printStepReportObject.get(j);
+                    System.out.println("ExtStep: "+ExtStep);
+                    printExtStep.put("stepIndex", ++stepIndex);
+                    printExtStep.put("steps",ExtStep.get("steps"));
+                    printExtStep.put("status","passed");
+                    System.out.println("printExtStep: "+printExtStep);
+                    testStepArray.add(printExtStep);
+                }
+
+                GetUserConfiguration.printStepReportObject = new JSONArray();
             }
         }
         if (suiteParser.isAfterTestInSuite(test.get("suiteName").toString())) {
