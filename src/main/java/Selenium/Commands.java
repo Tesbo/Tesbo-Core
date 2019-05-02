@@ -123,14 +123,18 @@ public class Commands {
 
         WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
         pause(3);
-
+        int locatorTypesSize=locatorTypes.size();
+        int locatorCount=1;
         for (String locatorType:locatorTypes){
+
             if(locatorType.equalsIgnoreCase("css")){
                 try {
                     element = driver.findElement(By.cssSelector(elementvalue));
                 } catch (NoSuchElementException css) {
-                    //logger.testFailed("Please enter valid locator value");
-                    //throw css;
+                    if(locatorCount==locatorTypesSize) {
+                        logger.testFailed("Please enter valid locator value");
+                        throw css;
+                    }
                 }
             }
             else if(locatorType.equalsIgnoreCase("id")){
@@ -138,58 +142,73 @@ public class Commands {
                     element = driver.findElement(By.id(elementvalue));
 
                 } catch (NoSuchElementException id) {
-                    //logger.testFailed("Please enter valid locator value");
-                    //throw id;
+                    if(locatorCount==locatorTypesSize) {
+                        logger.testFailed("Please enter valid locator value");
+                        throw id;
+                    }
                 }
             }
             else if(locatorType.equalsIgnoreCase("xpath")){
                 try {
                     element = driver.findElement(By.xpath(elementvalue));
                 } catch (Exception xpath) {
-                    //logger.testFailed("Please enter valid locator value");
-                    //throw xpath;
+                    if(locatorCount==locatorTypesSize) {
+                        logger.testFailed("Please enter valid locator value");
+                        throw xpath;
+                    }
                 }
             }
             else if(locatorType.equalsIgnoreCase("className")){
                 try {
                     element = driver.findElement(By.className(elementvalue));
                 } catch (Exception className) {
-                    //logger.testFailed("Please enter valid locator value");
-                    //throw className;
+                    if(locatorCount==locatorTypesSize) {
+                        logger.testFailed("Please enter valid locator value");
+                        throw className;
+                    }
                 }
             }
             else if(locatorType.equalsIgnoreCase("name")){
                 try {
                     element = driver.findElement(By.name(elementvalue));
                 } catch (Exception name) {
-                    //logger.testFailed("Please enter valid locator value");
-                    //throw name;
+                    if(locatorCount==locatorTypesSize) {
+                        logger.testFailed("Please enter valid locator value");
+                        throw name;
+                    }
                 }
             }
             else if(locatorType.equalsIgnoreCase("tagName")){
                 try {
                     element = driver.findElement(By.tagName(elementvalue));
                 } catch (Exception tagName) {
-                    //logger.testFailed("Please enter valid locator value");
-                    //throw tagName;
+                    if(locatorCount==locatorTypesSize) {
+                        logger.testFailed("Please enter valid locator value");
+                        throw tagName;
+                    }
                 }
             }
             else if(locatorType.equalsIgnoreCase("linkText")){
                 try {
                     element = driver.findElement(By.linkText(elementvalue));
                 } catch (Exception linkText) {
-                    //logger.testFailed("Please enter valid locator value");
-                    //throw partialLinkText;
+                    if(locatorCount==locatorTypesSize) {
+                        logger.testFailed("Please enter valid locator value");
+                        throw linkText;
+                    }
                 }
             }
             else if(locatorType.equalsIgnoreCase("partialLinkText")){
                 try {
                     element = driver.findElement(By.partialLinkText(elementvalue));
-                } catch (NoSuchElementException partialLinkText) {
-                    logger.testFailed("Please enter valid locator value");
-                    throw partialLinkText;
+                } catch (NoSuchElementException e) {
+                    if(locatorCount==locatorTypesSize) {
+                        logger.testFailed("Please enter valid locator value");
+                        throw e;
+                    }
                 }
             }
+            locatorCount++;
         }
         if(element==null){
             //throw new TesboException("Please enter valid locator value");
