@@ -94,8 +94,8 @@ public class Commands {
                                         try {
                                             element = driver.findElement(By.partialLinkText(elementvalue));
                                         } catch (NoSuchElementException e) {
-                                            //logger.testFailed("Please enter valid locator value");
-                                            //throw e;
+                                            logger.testFailed("Please enter valid locator value");
+                                            throw e;
                                         }
                                     }
 
@@ -106,7 +106,7 @@ public class Commands {
                 }
             }
             if(element==null){
-                throw new TesboException("Please enter valid locator value");
+                //throw new TesboException("Please enter valid locator value");
             }
             if (config.getHighlightElement()) {
                 JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -186,13 +186,13 @@ public class Commands {
                 try {
                     element = driver.findElement(By.partialLinkText(elementvalue));
                 } catch (NoSuchElementException partialLinkText) {
-                    //logger.testFailed("Please enter valid locator value");
-                    //throw partialLinkText;
+                    logger.testFailed("Please enter valid locator value");
+                    throw partialLinkText;
                 }
             }
         }
         if(element==null){
-            throw new TesboException("Please enter valid locator value");
+            //throw new TesboException("Please enter valid locator value");
         }
 
         if (config.getHighlightElement()) {
