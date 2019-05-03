@@ -51,6 +51,7 @@ public class ReportAPIConfig {
                     throw new TesboException(((JSONObject)((JSONArray) (object.get("errors"))).get(0)).get("message").toString());
                 }
                 buildID = ((JSONObject) ((JSONObject) (object.get("data"))).get("createBuild")).get("_id").toString();
+                response.close();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -78,6 +79,7 @@ public class ReportAPIConfig {
 
         try {
             Response response = client.newCall(request).execute();
+            response.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -116,6 +118,7 @@ public class ReportAPIConfig {
                 .build();
 
             Response response = client.newCall(request).execute();
+            response.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
