@@ -639,3 +639,16 @@ Step: pause 2 sec
 Verify: @Email_Box text should be number
 Step: pause 2 sec
 End
+
+Test: T38 verify text should number
+#T38 #regression
+Step: Open URL 'https://www.mathsisfun.com/numbers/counting.html'
+Step: pause 2 sec
+Verify: @NumberOne text should be number
+Step: pause 2 sec
+Verify: @listCount has size of '20'
+Step: pause 2 sec
+Step: Open URL 'https://www.mathsisfun.com/decimals.html'
+Verify: @DecimalNumber text should be number
+Step: pause 20 sec
+End

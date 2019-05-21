@@ -18,6 +18,23 @@ public class VerifyParser {
         boolean flag=false;
         logger.stepLog(verify.replace("@",""));
 
+        //Is list size
+        if (verify.toLowerCase().contains("size")) {
+            try {
+                /**
+                 * Verify: @element has size of '10'
+                 */
+
+                if(cmd.findElements(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).size()!= Integer.parseInt(stepParser.parseTextToEnter(test,verify))) {
+                    throw new AssertException("Element list size not equal to '"+stepParser.parseTextToEnter(test,verify)+"'");
+                }
+                flag=true;
+            } catch (Exception e) {
+                throw e;
+            }
+
+        }
+
         //Text verification.
         if (verify.toLowerCase().contains("text")) {
             try {
@@ -93,19 +110,15 @@ public class VerifyParser {
                     flag=true;
 
                 }
-                else if(verify.toLowerCase().contains("should be")){
+                else if(verify.toLowerCase().contains("number")){
                     /**
-                     * Verify: @element should be number.
+                     * Verify: @element text should be number.
                      */
-                    if(verify.toLowerCase().contains("number")){
-
-                        //assertThat(isNumeric(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText())).isTrue();
-                        if(!isNumeric(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText())) {
-                            throw new AssertException("ComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
-                        }
-
-                        flag=true;
+                    //assertThat(isNumeric(54).isTrue();
+                    if(!isNumeric(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText())) {
+                        throw new AssertException("ComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
                     }
+                    flag=true;
 
                 }
             } catch (Exception e) {
@@ -133,7 +146,7 @@ public class VerifyParser {
 
         if (verify.toLowerCase().contains("page title")) {
 
-                //equal
+            //equal
             try {
                 if (verify.toLowerCase().contains("equal")) {
                     /**

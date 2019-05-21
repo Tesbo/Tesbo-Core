@@ -95,8 +95,10 @@
   "pull_left":"//DIV[@class='pull-left']",
   "Booking":"(//BUTTON[@type='submit'])[1]",
   "Search_":"(//*[contains(text(),'Search')])[1]",
-  "Unpaid":"(//STRONG[text()='Unpaid :'][text()='Unpaid :'])[1]"
-
+  "Unpaid":"(//STRONG[text()='Unpaid :'][text()='Unpaid :'])[1]",
+  "NumberOne":"(//tr[@align='center']/td[1])[1]",
+  "DecimalNumber":"//div[@class='example']/p[6]/b",
+  "listCount":"//tr[@align='center']/td"
 
 
 }
