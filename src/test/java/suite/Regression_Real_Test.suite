@@ -621,3 +621,21 @@ Step: Click on @paytmResult
 Step: pause 2 sec
 ExtCode: Window Resize
 End
+
+Test: T37 verify urls
+#T37 #regression
+Step: Open URL 'https://www.phptravels.net/admin'
+Step: pause 2 sec
+Verify: current url is contains '/admin-portal'
+Step: pause 2 sec
+Verify: current url is equal to 'https://www.phptravels.net/admin-portal/admin'
+Step: pause 2 sec
+Verify: @LoginBtn text is not equal 'LOGIN1'
+Verify: @LoginBtn text is equal to 'LOGIN'
+Verify: @LoginBtn text is start with 'LOG'
+Verify: @LoginBtn text is end with 'GIN'
+Step: Enter '1234' in to @Email_Box
+Step: pause 2 sec
+Verify: @Email_Box text should be number
+Step: pause 2 sec
+End

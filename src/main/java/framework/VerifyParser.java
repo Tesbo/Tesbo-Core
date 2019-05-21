@@ -22,9 +22,19 @@ public class VerifyParser {
         if (verify.toLowerCase().contains("text")) {
             try {
                 //equal
-                if (verify.toLowerCase().contains("equal")) {
+                if (verify.toLowerCase().contains("not equal")) {
                     /**
-                     * Verify: @element text is equal ignore case "Text"
+                     * Verify: @element text is not equal 'Text'
+                     */
+                    //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).isNotEqualTo(stepParser.parseTextToEnter(test,verify));
+                    if(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText().equals(stepParser.parseTextToEnter(test,verify))) {
+                        throw new AssertException("Expecting:<\""+cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()+"\"> not to be equal to:<\""+stepParser.parseTextToEnter(test,verify)+"\">");
+                    }
+                    flag=true;
+                }
+                else if(verify.toLowerCase().contains("equal")) {
+                    /**
+                     * Verify: @element text is equal ignore case 'Text'
                      */
                     if (verify.toLowerCase().contains("ignore case")) {
                         //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).isEqualToIgnoringCase(stepParser.parseTextToEnter(test,verify));
@@ -34,7 +44,7 @@ public class VerifyParser {
                         flag=true;
                     }
                     /**
-                     * Verify: @element text is equal "Text"
+                     * Verify: @element text is equal 'Text'
                      */
                     else {
                         //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).isEqualTo(stepParser.parseTextToEnter(test,verify));
@@ -47,7 +57,7 @@ public class VerifyParser {
                 //contains
                 else if (verify.toLowerCase().contains("contains")) {
                     /**
-                     * Verify: @element text is contains ignore case "Text".
+                     * Verify: @element text is contains ignore case 'Text'.
                      */
                     if (verify.toLowerCase().contains("ignore case")) {
                         //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).containsIgnoringCase(stepParser.parseTextToEnter(test,verify));
@@ -57,7 +67,7 @@ public class VerifyParser {
                         flag=true;
                     }
                     /**
-                     * Verify: @element text is contains "Text".
+                     * Verify: @element text is contains 'Text'.
                      */
                     else {
                         //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).contains(stepParser.parseTextToEnter(test,verify));
@@ -67,6 +77,36 @@ public class VerifyParser {
 
                         flag=true;
                     }
+                }
+                else if(verify.toLowerCase().contains("start with")){
+                    /**
+                     * Verify: @element text is start with 'Text'.
+                     */
+                    assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).startsWith(stepParser.parseTextToEnter(test,verify));
+                    flag=true;
+                }
+                else if(verify.toLowerCase().contains("end with")){
+                    /**
+                     * Verify: @element text is end with 'Text'.
+                     */
+                    assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).endsWith(stepParser.parseTextToEnter(test,verify));
+                    flag=true;
+
+                }
+                else if(verify.toLowerCase().contains("should be")){
+                    /**
+                     * Verify: @element should be number.
+                     */
+                    if(verify.toLowerCase().contains("number")){
+
+                        //assertThat(isNumeric(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText())).isTrue();
+                        if(!isNumeric(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText())) {
+                            throw new AssertException("ComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
+                        }
+
+                        flag=true;
+                    }
+
                 }
             } catch (Exception e) {
                 throw e;
@@ -148,12 +188,30 @@ public class VerifyParser {
                 }
                 flag = true;
             }
+            if(verify.toLowerCase().contains("is contains")) {
+
+                /**
+                 * Verify: current url is contains 'https://tesbo10.atlassian.net'
+                 */
+                if (!cmd.verifyCurrentUrlContains(driver,stepParser.parseTextToEnter(test, verify))) {
+
+                    throw new AssertException("current url contains is not match with '" + stepParser.parseTextToEnter(test, verify) + "'");
+                }
+                flag = true;
+            }
         }
         if(!flag) {
             throw new TesboException("Step is not define properly.");
         }
         logger.testPassed("Passed");
     }
-
+    public static boolean isNumeric(String strNum) {
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException | NullPointerException nfe) {
+            return false;
+        }
+        return true;
+    }
 }
 

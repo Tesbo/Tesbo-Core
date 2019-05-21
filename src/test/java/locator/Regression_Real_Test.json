@@ -87,7 +87,7 @@
 
   "Email_Box":"//INPUT[@type='text']",
   "Password_Box":"//INPUT[@type='password']",
-  "LoginBtn":"//SPAN[@class='ladda-label'][text()='Login']",
+  "LoginBtn":"//span[contains(text(),'Login')]",
   "General":"//A[@href='#menu-ui']",
   "QuickBooking":"//*[contains(text(),' Quick Booking')]",
   "Today":"//BUTTON[@class='btn btn-default btn-block rev-but'][text()='Today']",

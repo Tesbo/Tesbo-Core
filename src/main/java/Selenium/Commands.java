@@ -130,6 +130,7 @@ public class Commands {
             if(locatorType.equalsIgnoreCase("css")){
                 try {
                     element = driver.findElement(By.cssSelector(elementvalue));
+                    break;
                 } catch (NoSuchElementException css) {
                     if(locatorCount==locatorTypesSize) {
                         logger.testFailed("Please enter valid locator value");
@@ -140,7 +141,7 @@ public class Commands {
             else if(locatorType.equalsIgnoreCase("id")){
                 try {
                     element = driver.findElement(By.id(elementvalue));
-
+                    break;
                 } catch (NoSuchElementException id) {
                     if(locatorCount==locatorTypesSize) {
                         logger.testFailed("Please enter valid locator value");
@@ -151,6 +152,7 @@ public class Commands {
             else if(locatorType.equalsIgnoreCase("xpath")){
                 try {
                     element = driver.findElement(By.xpath(elementvalue));
+                    break;
                 } catch (Exception xpath) {
                     if(locatorCount==locatorTypesSize) {
                         logger.testFailed("Please enter valid locator value");
@@ -161,6 +163,7 @@ public class Commands {
             else if(locatorType.equalsIgnoreCase("className")){
                 try {
                     element = driver.findElement(By.className(elementvalue));
+                    break;
                 } catch (Exception className) {
                     if(locatorCount==locatorTypesSize) {
                         logger.testFailed("Please enter valid locator value");
@@ -171,6 +174,7 @@ public class Commands {
             else if(locatorType.equalsIgnoreCase("name")){
                 try {
                     element = driver.findElement(By.name(elementvalue));
+                    break;
                 } catch (Exception name) {
                     if(locatorCount==locatorTypesSize) {
                         logger.testFailed("Please enter valid locator value");
@@ -181,6 +185,7 @@ public class Commands {
             else if(locatorType.equalsIgnoreCase("tagName")){
                 try {
                     element = driver.findElement(By.tagName(elementvalue));
+                    break;
                 } catch (Exception tagName) {
                     if(locatorCount==locatorTypesSize) {
                         logger.testFailed("Please enter valid locator value");
@@ -191,6 +196,7 @@ public class Commands {
             else if(locatorType.equalsIgnoreCase("linkText")){
                 try {
                     element = driver.findElement(By.linkText(elementvalue));
+                    break;
                 } catch (Exception linkText) {
                     if(locatorCount==locatorTypesSize) {
                         logger.testFailed("Please enter valid locator value");
@@ -201,6 +207,7 @@ public class Commands {
             else if(locatorType.equalsIgnoreCase("partialLinkText")){
                 try {
                     element = driver.findElement(By.partialLinkText(elementvalue));
+                    break;
                 } catch (NoSuchElementException e) {
                     if(locatorCount==locatorTypesSize) {
                         logger.testFailed("Please enter valid locator value");
@@ -960,6 +967,17 @@ public class Commands {
     public boolean getCurrentUrl(WebDriver driver,String url)  {
         boolean isURL=false;
         if(url.equals(driver.getCurrentUrl())){ isURL=true; }
+        return isURL;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     */
+    public boolean verifyCurrentUrlContains(WebDriver driver,String url)  {
+        boolean isURL=false;
+        if(driver.getCurrentUrl().contains(url)){ isURL=true; }
         return isURL;
     }
 
