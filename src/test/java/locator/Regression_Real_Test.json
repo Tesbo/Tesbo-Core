@@ -87,7 +87,7 @@
 
   "Email_Box":"//INPUT[@type='text']",
   "Password_Box":"//INPUT[@type='password']",
-  "LoginBtn":"//SPAN[@class='ladda-label'][text()='Login']",
+  "LoginBtn":"//span[contains(text(),'Login')]",
   "General":"//A[@href='#menu-ui']",
   "QuickBooking":"//*[contains(text(),' Quick Booking')]",
   "Today":"//BUTTON[@class='btn btn-default btn-block rev-but'][text()='Today']",
@@ -95,8 +95,12 @@
   "pull_left":"//DIV[@class='pull-left']",
   "Booking":"(//BUTTON[@type='submit'])[1]",
   "Search_":"(//*[contains(text(),'Search')])[1]",
-  "Unpaid":"(//STRONG[text()='Unpaid :'][text()='Unpaid :'])[1]"
-
+  "Unpaid":"(//STRONG[text()='Unpaid :'][text()='Unpaid :'])[1]",
+  "NumberOne":"(//tr[@align='center']/td[1])[1]",
+  "DecimalNumber":"//div[@class='example']/p[6]/b",
+  "listCount":"//tr[@align='center']/td",
+  "loginText":"//h2[@class='form-heading text-center']/strong",
+  "alphanumericText":"(//span[contains(text(),'10 times')])[2]"
 
 
 }
