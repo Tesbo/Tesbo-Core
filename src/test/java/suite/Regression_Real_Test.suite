@@ -632,11 +632,12 @@ Verify: current url is equal to 'https://www.phptravels.net/admin-portal/admin'
 Step: pause 2 sec
 Verify: @LoginBtn text is not equal 'LOGIN1'
 Verify: @LoginBtn text is equal to 'LOGIN'
+Verify: @LoginBtn text is equal ignore case 'logIN'
 Verify: @LoginBtn text is start with 'LOG'
 Verify: @LoginBtn text is end with 'GIN'
-Step: Enter '1234' in to @Email_Box
-Step: pause 2 sec
-Verify: @Email_Box text should be number
+Verify: @loginText text contains ignore case 'panel'
+Verify: @loginText text is contains 'PANEL'
+Verify: @Email_Box is displayed
 Step: pause 2 sec
 End
 
@@ -649,6 +650,24 @@ Step: pause 2 sec
 Verify: @listCount has size of '20'
 Step: pause 2 sec
 Step: Open URL 'https://www.mathsisfun.com/decimals.html'
+Step: pause 2 sec
+Verify: @alphanumericText is displayed
 Verify: @DecimalNumber text should be number
-Step: pause 20 sec
+Step: pause 2 sec
+Step: scroll to @alphanumericText
+Step: pause 2 sec
+Verify: @alphanumericText text should be Alphanumeric
+Step: pause 2 sec
+End
+
+Test: T39 verify is Visible and Present
+#T39 #regression
+Step: Open URL 'https://www.mathsisfun.com/decimals.html'
+Step: pause 2 sec
+Verify: @alphanumericText is present
+Step: pause 2 sec
+Step: scroll to @alphanumericText
+Step: pause 2 sec
+Verify: @alphanumericText is Visible
+Step: pause 10 sec
 End

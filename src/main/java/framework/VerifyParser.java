@@ -3,8 +3,11 @@ package framework;
 import Selenium.Commands;
 import org.json.simple.JSONObject;
 import logger.Logger;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import Exception.*;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebElement;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,7 +20,14 @@ public class VerifyParser {
         Logger logger = new Logger();
         boolean flag=false;
         logger.stepLog(verify.replace("@",""));
-
+        WebElement element=null;
+        String textOfStep=null;
+        if(verify.contains("@")) {
+            element = cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify)));
+        }
+        if(verify.contains("'")) {
+             textOfStep = stepParser.parseTextToEnter(test, verify);
+        }
         //Is list size
         if (verify.toLowerCase().contains("size")) {
             try {
@@ -43,9 +53,9 @@ public class VerifyParser {
                     /**
                      * Verify: @element text is not equal 'Text'
                      */
-                    //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).isNotEqualTo(stepParser.parseTextToEnter(test,verify));
-                    if(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText().equals(stepParser.parseTextToEnter(test,verify))) {
-                        throw new AssertException("Expecting:<\""+cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()+"\"> not to be equal to:<\""+stepParser.parseTextToEnter(test,verify)+"\">");
+                    //assertThat(element.getText()).isNotEqualTo(textOfStep);
+                    if(element.getText().equals(textOfStep)) {
+                        throw new AssertException("Expecting:<\""+element.getText()+"\"> not to be equal to:<\""+textOfStep+"\">");
                     }
                     flag=true;
                 }
@@ -54,9 +64,9 @@ public class VerifyParser {
                      * Verify: @element text is equal ignore case 'Text'
                      */
                     if (verify.toLowerCase().contains("ignore case")) {
-                        //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).isEqualToIgnoringCase(stepParser.parseTextToEnter(test,verify));
-                        if(!cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText().equalsIgnoreCase(stepParser.parseTextToEnter(test,verify))) {
-                            throw new AssertException("Expecting:<\""+cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()+"\"> to be equal to: <\""+stepParser.parseTextToEnter(test,verify)+"\"> ignoring case considerations");
+                        //assertThat(element.getText()).isEqualToIgnoringCase(textOfStep);
+                        if(!element.getText().equalsIgnoreCase(textOfStep)) {
+                            throw new AssertException("Expecting:<\""+element.getText()+"\"> to be equal to: <\""+textOfStep+"\"> ignoring case considerations");
                         }
                         flag=true;
                     }
@@ -64,9 +74,9 @@ public class VerifyParser {
                      * Verify: @element text is equal 'Text'
                      */
                     else {
-                        //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).isEqualTo(stepParser.parseTextToEnter(test,verify));
-                        if(!cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText().equals(stepParser.parseTextToEnter(test,verify))) {
-                            throw new AssertException("ComparisonFailure: expected:<\""+cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()+"\"> but was:<\""+stepParser.parseTextToEnter(test,verify)+"\">");
+                        //assertThat(element.getText()).isEqualTo(textOfStep);
+                        if(!element.getText().equals(textOfStep)) {
+                            throw new AssertException("ComparisonFailure: expected:<\""+element.getText()+"\"> but was:<\""+textOfStep+"\">");
                         }
                         flag=true;
                     }
@@ -77,9 +87,9 @@ public class VerifyParser {
                      * Verify: @element text is contains ignore case 'Text'.
                      */
                     if (verify.toLowerCase().contains("ignore case")) {
-                        //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).containsIgnoringCase(stepParser.parseTextToEnter(test,verify));
-                        if(!cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText().toLowerCase().contains(stepParser.parseTextToEnter(test,verify).toLowerCase())) {
-                            throw new AssertException("Expecting:<\""+cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()+"\"> to contain: <\""+stepParser.parseTextToEnter(test,verify)+"\"> (ignoring case)");
+                        //assertThat(element.getText()).containsIgnoringCase(textOfStep);
+                        if(!element.getText().toLowerCase().contains(textOfStep.toLowerCase())) {
+                            throw new AssertException("Expecting:<\""+element.getText()+"\"> to contain: <\""+textOfStep+"\"> (ignoring case)");
                         }
                         flag=true;
                     }
@@ -87,9 +97,9 @@ public class VerifyParser {
                      * Verify: @element text is contains 'Text'.
                      */
                     else {
-                        //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).contains(stepParser.parseTextToEnter(test,verify));
-                        if(!cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText().contains(stepParser.parseTextToEnter(test,verify))) {
-                            throw new AssertException("Expecting:<\""+cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()+"\"> to contain: <\""+stepParser.parseTextToEnter(test,verify)+"\">");
+                        //assertThat(element.getText()).contains(textOfStep);
+                        if(!element.getText().contains(textOfStep)) {
+                            throw new AssertException("Expecting:<\""+element.getText()+"\"> to contain: <\""+textOfStep+"\">");
                         }
 
                         flag=true;
@@ -99,14 +109,22 @@ public class VerifyParser {
                     /**
                      * Verify: @element text is start with 'Text'.
                      */
-                    assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).startsWith(stepParser.parseTextToEnter(test,verify));
+
+                    //assertThat(element.getText()).startsWith(textOfStep);
+                    if(!element.getText().startsWith(textOfStep)){
+                        throw new AssertException("Expecting:<\""+element.getText()+"\"> to start with: <\""+textOfStep+"\">");
+                    }
                     flag=true;
                 }
                 else if(verify.toLowerCase().contains("end with")){
                     /**
                      * Verify: @element text is end with 'Text'.
                      */
-                    assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).endsWith(stepParser.parseTextToEnter(test,verify));
+                    //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).endsWith(stepParser.parseTextToEnter(test,verify));
+
+                    if(!element.getText().endsWith(textOfStep)){
+                        throw new AssertException("Expecting:<\""+element.getText()+"\"> to end with: <\""+textOfStep+"\">");
+                    }
                     flag=true;
 
                 }
@@ -114,9 +132,19 @@ public class VerifyParser {
                     /**
                      * Verify: @element text should be number.
                      */
-                    //assertThat(isNumeric(54).isTrue();
-                    if(!isNumeric(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText())) {
+                    //assertThat(isNumeric(element.getText())).isTrue();
+                    if(!isNumeric(element.getText())) {
                         throw new AssertException("ComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
+                    }
+                    flag=true;
+
+                }
+                else if(verify.toLowerCase().contains("alphanumeric")){
+                    /**
+                     * Verify: @element text should be Alphanumeric.
+                     */
+                    if(!element.getText().matches("[a-zA-Z0-9 ]+")) {
+                        throw new AssertException("AlphanumericComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
                     }
                     flag=true;
 
@@ -127,15 +155,32 @@ public class VerifyParser {
         }
 
         //Is displayed
-        if (verify.toLowerCase().contains("displayed")) {
+        if (verify.toLowerCase().contains("displayed") || verify.toLowerCase().contains("present")) {
             try {
                 /**
                  * Verify: @element is displayed
                  * Verify: @element should displayed
+                 * Verify: @element is present
                  */
-                //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).isDisplayed()).isEqualTo(true);
-                if(!cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).isDisplayed()) {
+                //assertThat(element.isDisplayed()).isEqualTo(true);
+                if(!element.isDisplayed()) {
                     throw new AssertException("Element is not displayed");
+                }
+                flag=true;
+            } catch (Exception e) {
+                throw e;
+            }
+
+        }
+
+        //Is Visible
+        if (verify.toLowerCase().contains("visible")) {
+            try {
+                /**
+                 * Verify: @element is Visible
+                 */
+                if(!isVisibleInViewport(element)) {
+                    throw new AssertException("Element is not Visible");
                 }
                 flag=true;
             } catch (Exception e) {
@@ -153,9 +198,9 @@ public class VerifyParser {
                      * Verify : Page Title is equal to ignore case 'Google search'
                      */
                     if (verify.toLowerCase().contains("ignore case")) {
-                        //assertThat(driver.getTitle()).isEqualToIgnoringCase(stepParser.parseTextToEnter(test,verify));
-                        if(!driver.getTitle().equalsIgnoreCase(stepParser.parseTextToEnter(test,verify))) {
-                            throw new AssertException("ComparisonFailure: expected:<\""+driver.getTitle()+"\"> but was:<\""+stepParser.parseTextToEnter(test,verify)+"\">");
+                        //assertThat(driver.getTitle()).isEqualToIgnoringCase(textOfStep);
+                        if(!driver.getTitle().equalsIgnoreCase(textOfStep)) {
+                            throw new AssertException("ComparisonFailure: expected:<\""+driver.getTitle()+"\"> but was:<\""+textOfStep+"\">");
                         }
                         flag=true;
                     }
@@ -163,9 +208,9 @@ public class VerifyParser {
                      * Verify : Page Title is equal to 'Google search'
                      */
                     else {
-                        //assertThat(driver.getTitle()).isEqualTo(stepParser.parseTextToEnter(test,verify));
-                        if(!driver.getTitle().equals(stepParser.parseTextToEnter(test,verify))) {
-                            throw new AssertException("ComparisonFailure: expected:<\""+driver.getTitle()+"\"> but was:<\""+stepParser.parseTextToEnter(test,verify)+"\">");
+                        //assertThat(driver.getTitle()).isEqualTo(textOfStep);
+                        if(!driver.getTitle().equals(textOfStep)) {
+                            throw new AssertException("ComparisonFailure: expected:<\""+driver.getTitle()+"\"> but was:<\""+textOfStep+"\">");
                         }
                         flag=true;
                     }
@@ -225,6 +270,23 @@ public class VerifyParser {
             return false;
         }
         return true;
+    }
+
+    public static Boolean isVisibleInViewport(WebElement element) {
+        WebDriver driver = ((RemoteWebElement)element).getWrappedDriver();
+
+        return (Boolean)((JavascriptExecutor)driver).executeScript(
+                "var elem = arguments[0],                 " +
+                        "  box = elem.getBoundingClientRect(),    " +
+                        "  cx = box.left + box.width / 2,         " +
+                        "  cy = box.top + box.height / 2,         " +
+                        "  e = document.elementFromPoint(cx, cy); " +
+                        "for (; e; e = e.parentElement) {         " +
+                        "  if (e === elem)                        " +
+                        "    return true;                         " +
+                        "}                                        " +
+                        "return false;                            "
+                , element);
     }
 }
 

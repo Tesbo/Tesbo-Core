@@ -98,7 +98,9 @@
   "Unpaid":"(//STRONG[text()='Unpaid :'][text()='Unpaid :'])[1]",
   "NumberOne":"(//tr[@align='center']/td[1])[1]",
   "DecimalNumber":"//div[@class='example']/p[6]/b",
-  "listCount":"//tr[@align='center']/td"
+  "listCount":"//tr[@align='center']/td",
+  "loginText":"//h2[@class='form-heading text-center']/strong",
+  "alphanumericText":"(//span[contains(text(),'10 times')])[2]"
 
 
 }
