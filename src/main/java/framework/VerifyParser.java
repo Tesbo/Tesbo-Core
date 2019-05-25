@@ -263,6 +263,7 @@ public class VerifyParser {
         }
         logger.testPassed("Passed");
     }
+
     public static boolean isNumeric(String strNum) {
         try {
             double d = Double.parseDouble(strNum);

@@ -4,7 +4,7 @@ import DataCollector.BuildReportDataObject;
 import Execution.SetCommandLineArgument;
 import Execution.TestExecutionBuilder;
 import ExtCode.*;
-import Exception.TesboException;
+import Exception.*;
 import Selenium.Commands;
 
 
@@ -278,7 +278,45 @@ public class TestExecutor implements Runnable {
                 }
 
                 if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
-                    verifyParser.parseVerify(driver, test, step.toString());
+                    //verifyParser.parseVerify(driver, test, step.toString());
+                    if(step.toString().toLowerCase().contains("and")){
+                        int x=0;
+                        for(String andConditionStep:step.toString().split("(?i)and")){
+                                if(x==0){
+                                    x++;
+                                    verifyParser.parseVerify(driver, test, andConditionStep.trim());
+
+                                }else{
+                                    x++;
+                                    verifyParser.parseVerify(driver, test, "verify:"+andConditionStep.trim());
+                                }
+
+                        }
+                    }else if(step.toString().toLowerCase().contains("or")){
+                        int x=0, failCount=0;
+                        for(String orConditionStep:step.toString().split("(?i)or")){
+                            try{
+                                if(x==0){
+                                    x++;
+                                    verifyParser.parseVerify(driver, test, "verify:"+orConditionStep);
+                                }else{
+                                    x++;
+                                    verifyParser.parseVerify(driver, test, "verify:"+orConditionStep);
+                                }
+
+                            }catch (Exception e){
+                                failCount++;
+                                if(failCount==step.toString().toLowerCase().split("(?i)or").length){
+                                    throw new AssertException("'"+step+"' step is not verified");
+
+                                }
+                            }
+
+                        }
+                    }
+                    else {
+                        verifyParser.parseVerify(driver, test, step.toString());
+                    }
 
                 }
             } catch (Exception ae) {
