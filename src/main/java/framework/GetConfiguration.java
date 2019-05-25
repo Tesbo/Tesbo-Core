@@ -426,6 +426,16 @@ public class GetConfiguration {
      * @lastModifiedBy:
      * @return
      */
+    public JSONObject getEnvironmentList() {
+        Utility parser = new Utility();
+        return (JSONObject) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("Environment");
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
     public boolean getRunPastFailure()  {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
