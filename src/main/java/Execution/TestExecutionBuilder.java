@@ -78,8 +78,20 @@ public class TestExecutionBuilder {
         brdo.startThread();
         reportBuilder.startThread();
 
-
-        builder.buildExecution();
+        if(setCommandLineArgument.Environment!=null) {
+            if (setCommandLineArgument.Environment.equalsIgnoreCase("all")) {
+                for (Object env : getConfig.getEnvironmentList().keySet()) {
+                    failTest=0;
+                    setCommandLineArgument.Environment = env.toString();
+                    builder.buildExecution();
+                }
+            } else {
+                builder.buildExecution();
+            }
+        }
+        else{
+            builder.buildExecution();
+        }
 
         if(! isSingleWindow && singleWindowRun) {
             driver.quit();
