@@ -265,6 +265,7 @@ public class TestExecutor implements Runnable {
             }
 
             try {
+
                 if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
                     if (step.toString().contains("{") && step.toString().contains("}")) {
 
@@ -279,44 +280,7 @@ public class TestExecutor implements Runnable {
 
                 if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
                     //verifyParser.parseVerify(driver, test, step.toString());
-                    if(step.toString().toLowerCase().contains("and")){
-                        int x=0;
-                        for(String andConditionStep:step.toString().split("(?i)and")){
-                                if(x==0){
-                                    x++;
-                                    verifyParser.parseVerify(driver, test, andConditionStep.trim());
-
-                                }else{
-                                    x++;
-                                    verifyParser.parseVerify(driver, test, "verify:"+andConditionStep.trim());
-                                }
-
-                        }
-                    }else if(step.toString().toLowerCase().contains("or")){
-                        int x=0, failCount=0;
-                        for(String orConditionStep:step.toString().split("(?i)or")){
-                            try{
-                                if(x==0){
-                                    x++;
-                                    verifyParser.parseVerify(driver, test, "verify:"+orConditionStep);
-                                }else{
-                                    x++;
-                                    verifyParser.parseVerify(driver, test, "verify:"+orConditionStep);
-                                }
-
-                            }catch (Exception e){
-                                failCount++;
-                                if(failCount==step.toString().toLowerCase().split("(?i)or").length){
-                                    throw new AssertException("'"+step+"' step is not verified");
-
-                                }
-                            }
-
-                        }
-                    }
-                    else {
-                        verifyParser.parseVerify(driver, test, step.toString());
-                    }
+                    sendVerifyStep(step.toString());
 
                 }
             } catch (Exception ae) {
@@ -406,7 +370,8 @@ public class TestExecutor implements Runnable {
                         }
                     } else if (groupStep.toString().contains("Verify:")) {
                         try {
-                            verifyParser.parseVerify(driver, test, groupStep.toString());
+                            //verifyParser.parseVerify(driver, test, groupStep.toString());
+                            sendVerifyStep(step.toString());
                         } catch (Exception NE) {
                             J++;
                             NE.printStackTrace(new PrintWriter(sw));
@@ -829,7 +794,8 @@ public class TestExecutor implements Runnable {
             }
 
             if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
-                verifyParser.parseVerify(driver, test, step.toString());
+                //verifyParser.parseVerify(driver, test, step.toString());
+                sendVerifyStep(step.toString());
 
             }
         } catch (Exception ae) {
@@ -861,4 +827,108 @@ public class TestExecutor implements Runnable {
         }
         return stepReportObject;
     }
+
+    /**
+     * @param step
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public void sendVerifyStep(String step) throws Exception {
+        VerifyParser verifyParser=new VerifyParser();
+        int count = (int)step.chars().filter(ch -> ch == '@').count();
+
+        if(count>=2){
+            listOfSteps(step,count);
+            for(String newStep:listOfSteps(step,count)){
+                verifyParser.parseVerify(driver, test, newStep);
+            }
+        }
+        else if(step.toString().toLowerCase().contains("and")){
+            int x=0;
+            for(String andConditionStep:step.toString().split("(?i)and")){
+                if(x==0){
+                    x++;
+                    verifyParser.parseVerify(driver, test, andConditionStep.trim());
+
+                }else{
+                    x++;
+                    verifyParser.parseVerify(driver, test, "verify:"+andConditionStep.trim());
+                }
+
+            }
+        }else if(step.toString().toLowerCase().contains("or")){
+            int x=0, failCount=0;
+            for(String orConditionStep:step.toString().split("(?i)or")){
+                try{
+                    if(x==0){
+                        x++;
+                        verifyParser.parseVerify(driver, test, "verify:"+orConditionStep);
+                    }else{
+                        x++;
+                        verifyParser.parseVerify(driver, test, "verify:"+orConditionStep);
+                    }
+
+                }catch (Exception e){
+                    failCount++;
+                    if(failCount==step.toString().toLowerCase().split("(?i)or").length){
+                        throw new AssertException("'"+step+"' step is not verified");
+
+                    }
+                }
+
+            }
+        }
+        else {
+            verifyParser.parseVerify(driver, test, step.toString());
+        }
+    }
+
+    /**
+     * @param step
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public String[] listOfElementName(String step,int count) {
+        String[] stepWordList = step.split(":|\\s+");
+        String[] elementName =new String[count];
+        int x=0;
+        for (String word : stepWordList) {
+            if (word.contains("@")) {
+                elementName[x] = word;
+                x++;
+            }
+        }
+        return elementName;
+    }
+
+    /**
+     * @param step
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public String[] listOfSteps(String step, int count) {
+
+        String[] stepWordList = step.split(":|\\s+");
+        String[] listOfElement= listOfElementName(step,count);
+        String steps[]=new String[count];
+        int x=0;
+        for(String element:listOfElement){
+            String newStep="";
+            for (String word : stepWordList) {
+                if (!(word.contains("@") | word.toLowerCase().contains("verify"))) {
+                    if(newStep.equals("")){
+                        newStep=word.trim();
+                    }else {
+                        newStep = newStep + " " + word.trim();
+                    }
+                }
+            }
+            steps[x]="Verify: "+element+" "+newStep;
+            x++;
+        }
+
+        return steps;
+    }
+
+
 }

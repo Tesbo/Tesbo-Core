@@ -697,3 +697,17 @@ Step: pause 2 sec
 Verify: @loginText is displayed Or @listCount has size of '2' or @loginText is displayed
 Step: pause 2 sec
 End
+
+Test: T42 verify multiple element validation
+#T42 #regression
+Step: Open URL 'https://www.mathsisfun.com/numbers/counting.html'
+Step: pause 2 sec
+Verify: @NumberOne text should be number
+Step: pause 2 sec
+Verify: @NumberOneT @NumberTwoT is displayed
+Step: pause 2 sec
+Verify: @NumberOne @NumberTwo @NumberThree is displayed
+Step: pause 2 sec
+Verify: @NumberOneT @NumberTwoT text is equal to 'one'
+Step: pause 2 sec
+End
