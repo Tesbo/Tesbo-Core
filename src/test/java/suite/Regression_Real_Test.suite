@@ -671,3 +671,43 @@ Step: pause 2 sec
 Verify: @alphanumericText is Visible
 Step: pause 10 sec
 End
+
+Test: T40 verify and multiple validation
+#T40 #regression
+Step: Open URL 'https://www.mathsisfun.com/decimals.html'
+Step: pause 2 sec
+Verify: @alphanumericText is present
+Step: scroll to @alphanumericText
+Step: pause 2 sec
+Verify: @alphanumericText is present And @alphanumericText is Visible
+Step: pause 2 sec
+Step: scroll to top
+Step: pause 2 sec
+Verify: @alphanumericText is present AND @alphanumericText is Visible and @alphanumericText is present
+End
+
+Test: T41 verify OR multiple validation
+#T41 #regression
+Step: Open URL 'https://www.mathsisfun.com/numbers/counting.html'
+Step: pause 2 sec
+Verify: @NumberOne text should be number
+Step: pause 2 sec
+Verify: @NumberOne text should be number OR @listCount has size of '20'
+Step: pause 2 sec
+Verify: @loginText is displayed Or @listCount has size of '2' or @loginText is displayed
+Step: pause 2 sec
+End
+
+Test: T42 verify multiple element validation
+#T42 #regression
+Step: Open URL 'https://www.mathsisfun.com/numbers/counting.html'
+Step: pause 2 sec
+Verify: @NumberOne text should be number
+Step: pause 2 sec
+Verify: @NumberOneT @NumberTwoT is displayed
+Step: pause 2 sec
+Verify: @NumberOne @NumberTwo @NumberThree is displayed
+Step: pause 2 sec
+Verify: @NumberOneT @NumberTwoT text is equal to 'one'
+Step: pause 2 sec
+End

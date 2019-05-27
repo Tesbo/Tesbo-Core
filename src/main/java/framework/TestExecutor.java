@@ -4,7 +4,7 @@ import DataCollector.BuildReportDataObject;
 import Execution.SetCommandLineArgument;
 import Execution.TestExecutionBuilder;
 import ExtCode.*;
-import Exception.TesboException;
+import Exception.*;
 import Selenium.Commands;
 
 
@@ -265,6 +265,7 @@ public class TestExecutor implements Runnable {
             }
 
             try {
+
                 if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
                     if (step.toString().contains("{") && step.toString().contains("}")) {
 
@@ -278,7 +279,8 @@ public class TestExecutor implements Runnable {
                 }
 
                 if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
-                    verifyParser.parseVerify(driver, test, step.toString());
+                    //verifyParser.parseVerify(driver, test, step.toString());
+                    sendVerifyStep(step.toString());
 
                 }
             } catch (Exception ae) {
@@ -368,7 +370,8 @@ public class TestExecutor implements Runnable {
                         }
                     } else if (groupStep.toString().contains("Verify:")) {
                         try {
-                            verifyParser.parseVerify(driver, test, groupStep.toString());
+                            //verifyParser.parseVerify(driver, test, groupStep.toString());
+                            sendVerifyStep(step.toString());
                         } catch (Exception NE) {
                             J++;
                             NE.printStackTrace(new PrintWriter(sw));
@@ -791,7 +794,8 @@ public class TestExecutor implements Runnable {
             }
 
             if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
-                verifyParser.parseVerify(driver, test, step.toString());
+                //verifyParser.parseVerify(driver, test, step.toString());
+                sendVerifyStep(step.toString());
 
             }
         } catch (Exception ae) {
@@ -823,4 +827,64 @@ public class TestExecutor implements Runnable {
         }
         return stepReportObject;
     }
+
+    /**
+     * @param step
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public void sendVerifyStep(String step) throws Exception {
+        VerifyParser verifyParser=new VerifyParser();
+        StepParser stepParser=new StepParser();
+        int count = (int)step.chars().filter(ch -> ch == '@').count();
+
+        if(count>=2){
+            stepParser.listOfSteps(step,count);
+            for(String newStep:stepParser.listOfSteps(step,count)){
+                verifyParser.parseVerify(driver, test, newStep);
+            }
+        }
+        else if(step.toString().toLowerCase().contains("and")){
+            int x=0;
+            for(String andConditionStep:step.toString().split("(?i)and")){
+                if(x==0){
+                    x++;
+                    verifyParser.parseVerify(driver, test, andConditionStep.trim());
+
+                }else{
+                    x++;
+                    verifyParser.parseVerify(driver, test, "verify:"+andConditionStep.trim());
+                }
+
+            }
+        }else if(step.toString().toLowerCase().contains("or")){
+            int x=0, failCount=0;
+            for(String orConditionStep:step.toString().split("(?i)or")){
+                try{
+                    if(x==0){
+                        x++;
+                        verifyParser.parseVerify(driver, test, "verify:"+orConditionStep);
+                    }else{
+                        x++;
+                        verifyParser.parseVerify(driver, test, "verify:"+orConditionStep);
+                    }
+
+                }catch (Exception e){
+                    failCount++;
+                    if(failCount==step.toString().toLowerCase().split("(?i)or").length){
+                        throw new AssertException("'"+step+"' step is not verified");
+
+                    }
+                }
+
+            }
+        }
+        else {
+            verifyParser.parseVerify(driver, test, step.toString());
+        }
+    }
+
+
+
+
 }
