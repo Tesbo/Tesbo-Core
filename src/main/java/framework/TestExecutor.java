@@ -835,11 +835,12 @@ public class TestExecutor implements Runnable {
      */
     public void sendVerifyStep(String step) throws Exception {
         VerifyParser verifyParser=new VerifyParser();
+        StepParser stepParser=new StepParser();
         int count = (int)step.chars().filter(ch -> ch == '@').count();
 
         if(count>=2){
-            listOfSteps(step,count);
-            for(String newStep:listOfSteps(step,count)){
+            stepParser.listOfSteps(step,count);
+            for(String newStep:stepParser.listOfSteps(step,count)){
                 verifyParser.parseVerify(driver, test, newStep);
             }
         }
@@ -883,52 +884,7 @@ public class TestExecutor implements Runnable {
         }
     }
 
-    /**
-     * @param step
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     */
-    public String[] listOfElementName(String step,int count) {
-        String[] stepWordList = step.split(":|\\s+");
-        String[] elementName =new String[count];
-        int x=0;
-        for (String word : stepWordList) {
-            if (word.contains("@")) {
-                elementName[x] = word;
-                x++;
-            }
-        }
-        return elementName;
-    }
 
-    /**
-     * @param step
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     */
-    public String[] listOfSteps(String step, int count) {
-
-        String[] stepWordList = step.split(":|\\s+");
-        String[] listOfElement= listOfElementName(step,count);
-        String steps[]=new String[count];
-        int x=0;
-        for(String element:listOfElement){
-            String newStep="";
-            for (String word : stepWordList) {
-                if (!(word.contains("@") | word.toLowerCase().contains("verify"))) {
-                    if(newStep.equals("")){
-                        newStep=word.trim();
-                    }else {
-                        newStep = newStep + " " + word.trim();
-                    }
-                }
-            }
-            steps[x]="Verify: "+element+" "+newStep;
-            x++;
-        }
-
-        return steps;
-    }
 
 
 }
