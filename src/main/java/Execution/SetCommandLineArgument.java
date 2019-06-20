@@ -24,6 +24,8 @@ public class SetCommandLineArgument {
     public static String runPastFailure;
     @Parameter(names={"--byTag", "-t"})
     public static String byTag;
+    @Parameter(names={"--buildName", "-n"})
+    public static String buildName;
 
     public void setArgument(String[] args) {
         SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
