@@ -485,4 +485,17 @@ public class GetConfiguration {
         return (JSONArray) run.get("locatorPreference");
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public String getBuildName()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject cloudIntegration = (JSONObject) main.get("cloudIntegration");
+        return cloudIntegration.get("buildName").toString();
+
+    }
+
 }

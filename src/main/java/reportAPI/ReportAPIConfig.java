@@ -1,5 +1,6 @@
 package reportAPI;
 
+import Execution.SetCommandLineArgument;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -24,14 +25,25 @@ public class ReportAPIConfig {
     public static String URL="http://api.tesbo.io:4008/graphql";
     public static String buildID;
 
+    public static void main(String[] args) {
+        ReportAPIConfig reportAPIConfig=new ReportAPIConfig();
+    }
 
     public void getBuildKey() {
         GetConfiguration config = new GetConfiguration();
+        SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
+        String buildName=null;
         JSONObject userDetails = config.getCloudIntegration();
+        if(setCommandLineArgument.buildName != null ){
+            buildName=setCommandLineArgument.buildName;
+        }
+        else{
+            buildName=userDetails.get("buildName").toString();
+        }
         OkHttpClient client = new OkHttpClient();
 
         JSONObject content = new JSONObject();
-        content.put("query", "mutation{createBuild(buildInput:{apiKey:\"" + userDetails.get("apiKey") + "\",projectId:\"" + userDetails.get("projectKey") + "\",name:\"" + userDetails.get("buildName") + "\",startTime:\"" + System.currentTimeMillis() + "\"}){_id name} }");
+        content.put("query", "mutation{createBuild(buildInput:{apiKey:\"" + userDetails.get("apiKey") + "\",projectId:\"" + userDetails.get("projectKey") + "\",name:\"" + buildName + "\",startTime:\"" + System.currentTimeMillis() + "\"}){_id name} }");
 
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, content.toJSONString());
@@ -105,6 +117,7 @@ public class ReportAPIConfig {
                 else{fullStackTrace=fullStackTrace+","+stack.trim();}
             }
         }
+
         String data = "mutation{createTest(testInput:{apiKey:\"" + userDetails.get("apiKey") + "\",build:\"" + buildID + "\", browserVersion:\"" + testObject.get("browserVersion") + "\", browserName:\"" + testObject.get("browserName") + "\", totalTime:" + testObject.get("totalTime") + ", startTime:\"" + testObject.get("startTime") + "\", testStep:\"\"\"" + testObject.get("testStep") + "\"\"\", osName:\"" + testObject.get("osName") + "\", testName:\"" + testObject.get("testName") + "\", suiteName:\"" + testObject.get("suiteName") + "\", status:\"" + testObject.get("status") + "\",priority:\"" + testObject.get("Priority") + "\",severity:\"" + testObject.get("Severity") + "\",screenShot:\"" + testObject.get("screenShot") + "\",fullStackTrace:\"\"\"" + fullStackTrace + "\"\"\"}){_id} }";
         content.put("query", data);
         try {
