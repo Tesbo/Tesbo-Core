@@ -400,7 +400,7 @@ public class Commands {
      * @param driver
      * @Description : Switch to new open window.
      */
-    public void switchNewWindow(WebDriver driver) {
+    public void switchNewWindow(WebDriver driver, String browser) {
         //Get parent window.
         parantWindow = driver.getWindowHandle();
         //Get all open windows.
@@ -412,6 +412,9 @@ public class Commands {
                 childWindow = windowHandle;
                 //Switch to new window.
                 driver.switchTo().window(childWindow);
+                if(browser.equals("firefox")){
+                    break;
+                }
             }
         }
     }
@@ -421,7 +424,14 @@ public class Commands {
      * @Description : Switch to main/parent window.
      */
     public void switchMainWindow(WebDriver driver) {
-        driver.switchTo().window(parantWindow);
+        Set<String> handles = driver.getWindowHandles();
+
+        for (String windowHandle : handles) {
+            //Condition for get new window.
+            driver.switchTo().window(windowHandle);
+            break;
+        }
+
     }
 
     /**

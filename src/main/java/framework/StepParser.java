@@ -461,7 +461,13 @@ public class StepParser {
                  * Step : Switch to new window.
                  */
                 if (step.toLowerCase().contains("new")) {
-                    cmd.switchNewWindow(driver);
+                    String browser=test.get("browser").toString().toLowerCase();
+                    if(test.get("browser").toString().toLowerCase().equals("firefox")) {
+                        cmd.switchNewWindow(driver,browser);
+                    }
+                    else{
+                        cmd.switchNewWindow(driver,browser);
+                    }
                 }
                 /**
                  * Step : Switch to main window.
