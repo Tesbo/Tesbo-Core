@@ -31,7 +31,10 @@ public class GetConfiguration {
     }
 
     public ArrayList<String> getBrowsers() {
-        if(setCommandLineArgument.browser !=null){
+
+        System.out.println(setCommandLineArgument.browser);
+
+        if(setCommandLineArgument.browser !=null && !(setCommandLineArgument.browser.toLowerCase().equals("all"))){
             String browserList=setCommandLineArgument.browser;
             String browsers[]=browserList.split(",");
             String browser = null;
@@ -55,13 +58,20 @@ public class GetConfiguration {
             return  browserJsonArray;
         }
         else {
-            Utility parser = new Utility();
-            JSONObject main = parser.loadJsonFile(getConfigFilePath());
-            JSONObject run = (JSONObject) main.get("run");
-            JSONObject browser = (JSONObject) run.get("browser");
-            return (JSONArray) browser.get("name");
+
+            System.out.println("Detected Browser in Config" + getBrowser());
+            return getBrowser();
         }
     }
+
+    public ArrayList<String> getBrowser() {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        JSONObject browser = (JSONObject) run.get("browser");
+        return (JSONArray) browser.get("name");
+    }
+
 
     public JSONObject getCapabilities(String browserName)  {
         Utility parser = new Utility();
