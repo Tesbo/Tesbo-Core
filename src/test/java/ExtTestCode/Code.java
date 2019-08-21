@@ -15,9 +15,20 @@ public class Code extends ExtendTesboDriver {
     public Code(WebDriver driver) {
         super(driver);
     }
+    GetUserConfiguration getUserConfiguration=new GetUserConfiguration();
+
+
 
     static String LowestPriceMobile;
     Reporter reporter=new Reporter();
+
+    @ExtCode("Get Config File Attribute Value")
+    public void GetConfigFileAttributeValue() {
+        System.out.println(getUserConfiguration.getEnvironment());
+        System.out.println(getUserConfiguration.getBaseUrl());
+        System.out.println(getUserConfiguration.getBrowsers());
+    }
+
     @ExtCode("google")
     public void ExternalCode() {
         driver.get("https://www.google.in");
@@ -169,7 +180,7 @@ public class Code extends ExtendTesboDriver {
     }
 
     @ExtCode("Get Data ext")
-    public void getNameext(String Data,String Data1,String Data2) throws InterruptedException {
+    public void getNameext(String Data,String Data1,String Data2) {
         System.out.println("Data: "+Data);
         System.out.println("Data1: "+Data1);
         System.out.println("Data2: "+Data2);
@@ -177,7 +188,7 @@ public class Code extends ExtendTesboDriver {
     }
 
     @ExtCode("Send Data ext")
-    public void sendNameext(String Data,String Data1,String Data2,String Data3) throws InterruptedException {
+    public void sendNameext(String Data,String Data1,String Data2,String Data3) {
         System.out.println("Data: "+Data);
         System.out.println("Data1: "+Data1);
         System.out.println("Data2: "+Data2);

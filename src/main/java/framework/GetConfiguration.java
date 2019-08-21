@@ -32,8 +32,6 @@ public class GetConfiguration {
 
     public ArrayList<String> getBrowsers() {
 
-        System.out.println(setCommandLineArgument.browser);
-
         if(setCommandLineArgument.browser !=null && !(setCommandLineArgument.browser.toLowerCase().equals("all"))){
             String browserList=setCommandLineArgument.browser;
             String browsers[]=browserList.split(",");
@@ -58,8 +56,6 @@ public class GetConfiguration {
             return  browserJsonArray;
         }
         else {
-
-            System.out.println("Detected Browser in Config" + getBrowser());
             return getBrowser();
         }
     }

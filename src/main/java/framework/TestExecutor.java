@@ -809,9 +809,9 @@ public class TestExecutor implements Runnable {
             stepPassed = false;
         }
 
-        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
+        if (step.replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
             try {
-                externalCode.runAllAnnotatedWith(ExtCode.class, step.toString(),test, driver);
+                externalCode.runAllAnnotatedWith(ExtCode.class, step,test, driver);
             }catch (Exception e){
                 e.printStackTrace(new PrintWriter(sw));
                 exceptionAsString = sw.toString();
@@ -821,7 +821,7 @@ public class TestExecutor implements Runnable {
 
             }
         }
-        reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
+        reportParser.addScreenshotUrlInReport(stepReportObject, step);
         if(stepReportObject.size()!=0) {
             stepReportObject = addStepResultInReport(driver, stepReportObject, test, stepPassed);
         }
@@ -834,53 +834,39 @@ public class TestExecutor implements Runnable {
      * @lastModifiedBy:
      */
     public void sendVerifyStep(String step) throws Exception {
-        VerifyParser verifyParser=new VerifyParser();
-        StepParser stepParser=new StepParser();
-        int count = (int)step.chars().filter(ch -> ch == '@').count();
-
-        if(count>=2){
-            stepParser.listOfSteps(step,count);
-            for(String newStep:stepParser.listOfSteps(step,count)){
-                verifyParser.parseVerify(driver, test, newStep);
-            }
-        }
-        else if(step.toString().toLowerCase().contains("and")){
-            int x=0;
-            for(String andConditionStep:step.toString().split("(?i)and")){
-                if(x==0){
-                    x++;
-                    verifyParser.parseVerify(driver, test, andConditionStep.trim());
-
-                }else{
-                    x++;
-                    verifyParser.parseVerify(driver, test, "verify:"+andConditionStep.trim());
+        VerifyParser verifyParser = new VerifyParser();
+        StepParser stepParser = new StepParser();
+        int count = (int) step.chars().filter(ch -> ch == '@').count();
+        String verifyStep = stepParser.RemovedVerificationTextFromSteps(step);
+        if (count >= 2) {
+            if (!(verifyStep.toLowerCase().contains(" and ") | verifyStep.toLowerCase().contains(" or "))) {
+                stepParser.listOfSteps(step, count);
+                for (String newStep : stepParser.listOfSteps(step, count)) {
+                    verifyParser.parseVerify(driver, test, newStep);
                 }
-
+            }else if (verifyStep.toLowerCase().contains(" and "))
+            {
+                for(String newStep:stepParser.ListOfStepWhoHasSameVerifier(step,"and")){
+                    verifyParser.parseVerify(driver, test,newStep);
+                }
             }
-        }else if(step.toString().toLowerCase().contains("or")){
-            int x=0, failCount=0;
-            for(String orConditionStep:step.toString().split("(?i)or")){
-                try{
-                    if(x==0){
-                        x++;
-                        verifyParser.parseVerify(driver, test, "verify:"+orConditionStep);
-                    }else{
-                        x++;
-                        verifyParser.parseVerify(driver, test, "verify:"+orConditionStep);
-                    }
-
-                }catch (Exception e){
-                    failCount++;
-                    if(failCount==step.toString().toLowerCase().split("(?i)or").length){
-                        throw new AssertException("'"+step+"' step is not verified");
-
+            else if (verifyStep.toLowerCase().contains(" or "))
+            {
+                int failCount = 0;
+                for (String orConditionStep : stepParser.ListOfStepWhoHasSameVerifier(step,"or")) {
+                    try {
+                        verifyParser.parseVerify(driver, test, orConditionStep);
+                    } catch (Exception e) {
+                        failCount++;
+                        if (failCount == stepParser.ListOfStepWhoHasSameVerifier(step,"or").size()) {
+                            throw new AssertException("'" + step + "' step is not verified");
+                        }
                     }
                 }
-
             }
         }
         else {
-            verifyParser.parseVerify(driver, test, step.toString());
+            verifyParser.parseVerify(driver, test, step);
         }
     }
 
