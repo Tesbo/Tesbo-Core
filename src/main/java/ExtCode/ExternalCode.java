@@ -31,7 +31,7 @@ public class ExternalCode  {
         boolean flag=false;
         GetConfiguration getConfiguration=new GetConfiguration();
         StepParser stepParser=new StepParser();
-        File file=new File(getConfiguration.getExtCodeDirectory());
+        File file=new File(getConfiguration.getCustomStepDirectory());
 
         String tagVal=null;
         String arguments[]=null;
@@ -46,8 +46,8 @@ public class ExternalCode  {
                     for(String arg:args){
 
                         if (arg.toString().contains("{") && arg.toString().contains("}")) {
-                            if(i==0){argument=stepParser.passArgsToExtCode(test,arg);i++;}
-                            else {argument+=","+stepParser.passArgsToExtCode(test,arg);i++;}
+                            if(i==0){argument=stepParser.passArgsToCode(test,arg);i++;}
+                            else {argument+=","+stepParser.passArgsToCode(test,arg);i++;}
                         }
                         else{
                             if(i==0) {argument = arg;i++;}
@@ -62,7 +62,7 @@ public class ExternalCode  {
             }
             tagVal=tagVal.split("\\(")[0].trim();
         } catch (Exception e) {
-            throw new TesboException("ExtCode step has no value");
+            throw new TesboException("Code step has no value");
         }
 
         Reflections reflections = new Reflections(new ConfigurationBuilder()
@@ -70,8 +70,8 @@ public class ExternalCode  {
                 .setScanners(new MethodAnnotationsScanner()));
         Set<Method> methods = reflections.getMethodsAnnotatedWith(annotation);
         for (Method m : methods) {
-            if (m.getAnnotation(ExtCode.class) != null) {
-                if (m.getAnnotation(ExtCode.class).value().equals(tagVal)) {
+            if (m.getAnnotation(Step.class) != null) {
+                if (m.getAnnotation(Step.class).value().equals(tagVal)) {
                     String className = m.getDeclaringClass().toString().split("class")[1].trim();
                     try {
                         Class<?> cls = Class.forName(className);

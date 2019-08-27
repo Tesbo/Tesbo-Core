@@ -780,7 +780,7 @@ public class StepParser {
      * @auther :
      * @lastModifiedBy: Ankit Mistry
      */
-    public String passArgsToExtCode(JSONObject test, String step) {
+    public String passArgsToCode(JSONObject test, String step) {
         String textToEnter = "";
 
         int startPoint = 0;
@@ -865,7 +865,7 @@ public class StepParser {
      * @auther :
      * @lastModifiedBy: Ankit Mistry
      */
-    public String replaceArgsOfExtCodeStep(JSONObject test, String steps) {
+    public String replaceArgsOfCodeStep(JSONObject test, String steps) {
 
         String tagVal=null;
         String arguments[]=null;
@@ -882,8 +882,8 @@ public class StepParser {
 
                     for(String arg:args){
                         if (arg.toString().contains("{") && arg.toString().contains("}")) {
-                            if(i==0){argument=passArgsToExtCode(test,arg);i++;}
-                            else {argument+=","+passArgsToExtCode(test,arg);i++;}
+                            if(i==0){argument=passArgsToCode(test,arg);i++;}
+                            else {argument+=","+passArgsToCode(test,arg);i++;}
                         }
                         else{
                             if(i==0) {argument = arg;i++;}
@@ -894,7 +894,7 @@ public class StepParser {
                 }
             }
         } catch (Exception e) {
-            throw new TesboException("ExtCode step has no value");
+            throw new TesboException("Code step has no value");
         }
         for(int i=0;i<arguments.length;i++){
             step=step.replace(args[i],arguments[i]);

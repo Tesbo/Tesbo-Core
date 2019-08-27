@@ -228,8 +228,8 @@ public class TestExecutor implements Runnable {
                     {
                         if(config.getPauseStepDisplay()==true){stepReportObject.put("steps", step.toString().replace("@", "")); }
                     }
-                    else if(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("ExtCode")){
-                        stepReportObject.put("steps", stepParser.replaceArgsOfExtCodeStep(test,step.toString()));
+                    else if(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("Code")){
+                        stepReportObject.put("steps", stepParser.replaceArgsOfCodeStep(test,step.toString()));
                     }
                     else {
                         if(step.toString().contains("@")){
@@ -309,15 +309,15 @@ public class TestExecutor implements Runnable {
                     afterTest(sessionName);
                 }
 
-            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
+            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Code:")) {
 
                 try {
                     if (step.toString().contains("{") && step.toString().contains("}")) {
-                        logger.stepLog(stepParser.replaceArgsOfExtCodeStep(test,step.toString()));
+                        logger.stepLog(stepParser.replaceArgsOfCodeStep(test,step.toString()));
                     }else {
                         logger.stepLog(step.toString());
                     }
-                    externalCode.runAllAnnotatedWith(ExtCode.class, step.toString(),test, driver);
+                    externalCode.runAllAnnotatedWith(Step.class, step.toString(),test, driver);
                 } catch (Exception e) {
                     e.printStackTrace(new PrintWriter(sw));
                     exceptionAsString = sw.toString();
@@ -376,15 +376,15 @@ public class TestExecutor implements Runnable {
                             stepPassed = false;
                         }
                     }
-                    else if (groupStep.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
+                    else if (groupStep.toString().replaceAll("\\s{2,}", " ").trim().contains("Code:")) {
 
                         try {
                             if (step.toString().contains("{") && step.toString().contains("}")) {
-                                logger.stepLog(stepParser.replaceArgsOfExtCodeStep(test,groupStep.toString()));
+                                logger.stepLog(stepParser.replaceArgsOfCodeStep(test,groupStep.toString()));
                             }else {
                                 logger.stepLog(groupStep.toString());
                             }
-                            externalCode.runAllAnnotatedWith(ExtCode.class, groupStep.toString(),test, driver);
+                            externalCode.runAllAnnotatedWith(Step.class, groupStep.toString(),test, driver);
                         } catch (Exception e) {
                             e.printStackTrace(new PrintWriter(sw));
                             exceptionAsString = sw.toString();
@@ -415,7 +415,7 @@ public class TestExecutor implements Runnable {
                 break;
             }
 
-            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:") && Reporter.printStepReportObject.size()!=0) {
+            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Code:") && Reporter.printStepReportObject.size()!=0) {
                 for (int j = 0; j < Reporter.printStepReportObject.size(); j++){
                     JSONObject ExtStep = new JSONObject();
                     JSONObject printExtStep = new JSONObject();
@@ -802,9 +802,9 @@ public class TestExecutor implements Runnable {
             stepPassed = false;
         }
 
-        if (step.replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
+        if (step.replaceAll("\\s{2,}", " ").trim().contains("Code:")) {
             try {
-                externalCode.runAllAnnotatedWith(ExtCode.class, step,test, driver);
+                externalCode.runAllAnnotatedWith(Step.class, step,test, driver);
             }catch (Exception e){
                 e.printStackTrace(new PrintWriter(sw));
                 exceptionAsString = sw.toString();

@@ -1,11 +1,9 @@
-package ExtTestCode;
+package CustomStep;
 
 import Selenium.ExtendTesboDriver;
 import UserConfig.GetUserConfiguration;
 import org.openqa.selenium.*;
 import ExtCode.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 import reportAPI.Reporter;
 
 import java.util.Random;
@@ -22,25 +20,25 @@ public class Code extends ExtendTesboDriver {
     static String LowestPriceMobile;
     Reporter reporter=new Reporter();
 
-    @ExtCode("Get Config File Attribute Value")
+    @Step("Get Config File Attribute Value")
     public void GetConfigFileAttributeValue() {
         System.out.println(getUserConfiguration.getEnvironment());
         System.out.println(getUserConfiguration.getBaseUrl());
         System.out.println(getUserConfiguration.getBrowsers());
     }
 
-    @ExtCode("google")
+    @Step("google")
     public void ExternalCode() {
         driver.get("https://www.google.in");
         System.out.println("**************google External Code*********************");
     }
 
-    @ExtCode("hii")
+    @Step("hii")
     public void Hii() {
         System.out.println("**************google External Code*********************");
     }
 
-    @ExtCode("Hello Test")
+    @Step("Hello Test")
     public void HelloTets() {
         reporter.printStep("ExtCode: Hiiii");
         reporter.printStep("ExtCode: Hello");
@@ -48,7 +46,7 @@ public class Code extends ExtendTesboDriver {
         reporter.printStep("ExtCode: How r u?");
     }
 
-    @ExtCode("New Test")
+    @Step("New Test")
     public void NewTets() {
         reporter.printStep("ExtCode: New Hiiii");
         reporter.printStep("ExtCode: New Hello");
@@ -60,7 +58,7 @@ public class Code extends ExtendTesboDriver {
 
 
     }
-    @ExtCode("Random")
+    @Step("Random")
     public void Random() {
         //driver.get("https://www.amazon.in");
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -76,7 +74,7 @@ public class Code extends ExtendTesboDriver {
 
 
     }
-    @ExtCode("RandomError")
+    @Step("RandomError")
     public void RandomError() {
         //driver.get("https://www.amazon.in");
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -93,21 +91,21 @@ public class Code extends ExtendTesboDriver {
 
     }
 
-    @ExtCode("Window Resize")
+    @Step("Window Resize")
     public void WindowResize() {
         Dimension dimension = new Dimension(900, 750);
         driver.manage().window().setSize(dimension);
 
     }
 
-    @ExtCode("signOut")
+    @Step("signOut")
     public void me() throws InterruptedException {
         driver.findElement(By.xpath("//*[@class='nav-item__profile-member-photo nav-item__icon']")).click();
         Thread.sleep(2000);
         driver.findElement(By.xpath("//*[@data-control-name='nav.settings_signout']")).click();
     }
 
-    @ExtCode("Get Data")
+    @Step("Get Data")
     public void getName() throws InterruptedException {
         driver.findElement(By.xpath("//SELECT[@id='sort']")).click();
         Thread.sleep(1000);
@@ -117,7 +115,7 @@ public class Code extends ExtendTesboDriver {
         LowestPriceMobile = name.getText();
     }
 
-    @ExtCode("Send Data")
+    @Step("Send Data")
     public void sendName() throws InterruptedException {
         Thread.sleep(1000);
         driver.findElement(By.xpath("//INPUT[@type='search']")).sendKeys(LowestPriceMobile);
@@ -162,7 +160,7 @@ public class Code extends ExtendTesboDriver {
         System.out.println("Random alpha : "+saltStr);
 
     }
-    @ExtCode("JavascriptExecutor")
+    @Step("JavascriptExecutor")
     public void jsSendKey() throws InterruptedException {
         JavascriptExecutor myExecutor = ((JavascriptExecutor) driver);
         driver.get("http://demo.guru99.com/V4/");
@@ -179,7 +177,7 @@ public class Code extends ExtendTesboDriver {
 
     }
 
-    @ExtCode("Get Data ext")
+    @Step("Get Data ext")
     public void getNameext(String Data,String Data1,String Data2) {
         System.out.println("Data: "+Data);
         System.out.println("Data1: "+Data1);
@@ -187,7 +185,7 @@ public class Code extends ExtendTesboDriver {
 
     }
 
-    @ExtCode("Send Data ext")
+    @Step("Send Data ext")
     public void sendNameext(String Data,String Data1,String Data2,String Data3) {
         System.out.println("Data: "+Data);
         System.out.println("Data1: "+Data1);

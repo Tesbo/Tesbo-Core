@@ -130,14 +130,14 @@ public class GetUserConfiguration {
      * @lastModifiedBy:
      * @return
      */
-    public String getExtCodeDirectory()  {
+    public String getCustomStepDirectory()  {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         try {
-            String ExtCodeDirectory=main.get("projectDIR").toString()+"/ExtTestCode";
-            return ExtCodeDirectory;
+            String CustomStepDirectory=main.get("projectDIR").toString()+"/src/test/java/CustomStep";
+            return CustomStepDirectory;
         }catch (Exception e){
-            throw new TesboException("ExtCodeDirectory is not define on config");
+            throw new TesboException("CustomStepDirectory is not define on config");
         }
     }
 
@@ -150,10 +150,10 @@ public class GetUserConfiguration {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         try {
-            String ProjectDirectory=main.get("projectDIR").toString();
-            return ProjectDirectory;
+            String projectDIR=main.get("projectDIR").toString()+"/src/test/java/";
+            return projectDIR;
         }catch (Exception e){
-            throw new TesboException("ExtCodeDirectory is not define on config");
+            throw new TesboException("projectDIR is not define on config");
         }
     }
 

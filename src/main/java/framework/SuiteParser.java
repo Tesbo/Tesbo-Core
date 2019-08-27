@@ -238,7 +238,7 @@ public class SuiteParser {
             }
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
                     allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("ExtCode:") |
+                    (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Code:") && !allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("extcode:")) |
                     ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
 
                 testSteps.add(allLines[j]);
@@ -307,6 +307,7 @@ public class SuiteParser {
     public JSONArray getGroupTestStepBySuiteandTestCaseName(String suiteName, String groupName) {
         StringBuffer suiteDetails = readSuiteFile(suiteName);
         String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        Validation validation=new Validation();
         JSONArray testSteps = new JSONArray();
         int startPoint = 0;
         int groupCount=0;
@@ -343,8 +344,11 @@ public class SuiteParser {
             throw new TesboException("End Step is not found for '" + groupName + "' collection");
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].contains("Step:") | allLines[j].contains("Verify:") | allLines[j].contains("ExtCode:")) {
+            if (allLines[j].contains("Step:") | allLines[j].contains("Verify:") | (allLines[j].contains("Code:") & !allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("extcode:"))) {
                 testSteps.add(allLines[j]);
+            }
+            else{
+                validation.keyWordValidation(allLines[j]);
             }
         }
         if (testSteps.size() == 0) {
@@ -698,7 +702,7 @@ public class SuiteParser {
             }
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
                     allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("ExtCode:") |
+                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Code:") |
                     ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
 
                 annotationSteps.add(allLines[j]);

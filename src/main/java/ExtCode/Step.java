@@ -3,7 +3,7 @@ package ExtCode;
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ExtCode {
+public @interface Step {
     String value();
 }
 

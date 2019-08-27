@@ -25,10 +25,9 @@ Verify: @FirstNameError text is equal to 'Enter first name'
 Verify: @LastNameError text is equal 'Enter last name'
 Verify: @UserNameError text is equal 'Choose a Gmail address'
 Verify: @PasswordError text is equal 'Enter a password'
-ExtCode: Hello Test
+Code: google
 Step: pause 2 sec
-Get Config File Attribute Value
-Step: pause 2 sec
+
 End
 
 
@@ -769,5 +768,17 @@ Step: pause 2 sec
 Verify: @alphanumericText is present OR @NewTest text is equal 'The decimal point goes between Ones and Tenths.'
 Step: pause 2 sec
 Verify: @NewTest text contains is 'The decimal point' or @NewTest1 text is equal to '45.6 has 4 Tens, 5 Ones and 6 Tenths, like this:'
+End
+
+Test: T46 verify OR multiple validation
+#T46 #regression
+Step: Open URL 'https://www.mathsisfun.com/decimals.html'
+Step: pause 2 sec
+Code: Hello Test
+Verify: @NewTest text is equal 'The decimal point goes between Ones and Tenths.'
+Step: pause 2 sec
+Verify: @alphanumericText is present
+Step: pause 2 sec
+Verify: @NewTest text contains is 'The decimal point'
 End
 

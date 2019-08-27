@@ -134,14 +134,19 @@ public class GetConfiguration {
      * @lastModifiedBy:
      * @return
      */
-    public String getExtCodeDirectory()  {
+    public String getCustomStepDirectory()  {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        File file = null;
         try {
-            String ExtCodeDirectory=main.get("projectDIR").toString()+"/src/test/java/ExtTestCode";
-            return ExtCodeDirectory;
+            String CustomStepDirectory=main.get("projectDIR").toString()+"/src/test/java/CustomStep";
+            file = new File(CustomStepDirectory);
+            if(!file.exists()){
+                throw new TesboException("Custom Step Directory is not found: "+file);
+            }
+            return CustomStepDirectory;
         }catch (Exception e){
-            throw new TesboException("ExtCodeDirectory is not define on config");
+            throw new TesboException("Custom Step Directory is not found: "+file);
         }
     }
 
