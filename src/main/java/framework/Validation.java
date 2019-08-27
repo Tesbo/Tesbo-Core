@@ -177,14 +177,9 @@ public class Validation {
         }
         if(browserList.size()>0){
             boolean flag=false;
-            System.out.println(browserList);
             for (String browser:browserList){
                 if(browser.equalsIgnoreCase("opera") || browser.equalsIgnoreCase("firefox") || browser.equalsIgnoreCase("chrome") ||browser.equalsIgnoreCase("ie") ){
                     flag=true;
-                }else
-                {
-                    System.out.println("Browser" + browser);
-                    System.err.println("desired browser Not detected");
                 }
                 if(browser.equalsIgnoreCase("Internet Explorer") || browser.equalsIgnoreCase("InternetExplorer")){
                     throw new TesboException("Please enter 'IE' instead of 'Internet Explorer'");

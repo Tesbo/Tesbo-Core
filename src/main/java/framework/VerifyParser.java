@@ -259,7 +259,7 @@ public class VerifyParser {
             }
         }
         if(!flag) {
-            throw new TesboException("Step is not define properly.");
+            throw new TesboException("'"+verify+"' Step is not define properly.");
         }
         logger.testPassed("Passed");
     }

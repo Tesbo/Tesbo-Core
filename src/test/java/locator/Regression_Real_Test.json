@@ -104,7 +104,10 @@
   "DecimalNumber":"//div[@class='example']/p[6]/b",
   "listCount":"//tr[@align='center']/td",
   "loginText":"//h2[@class='form-heading text-center']/strong",
-  "alphanumericText":"(//span[contains(text(),'10 times')])[2]"
+  "alphanumericText":"(//span[contains(text(),'10 times')])[2]",
+  "NewTest":"//div[@class='example']/p[4]",
+  "NewTest1":"//div[@class='example']/p[6]"
+
 
 
 }

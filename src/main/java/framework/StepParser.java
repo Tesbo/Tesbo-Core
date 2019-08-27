@@ -10,8 +10,11 @@ import org.openqa.selenium.interactions.Actions;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Exception.TesboException;
 
@@ -1265,7 +1268,7 @@ public class StepParser {
         for(String element:listOfElement){
             String newStep="";
             for (String word : stepWordList) {
-                if (!(word.contains("@") | word.toLowerCase().contains("verify"))) {
+                if (!(word.contains("@") | word.toLowerCase().contains("verify") | word.toLowerCase().contains("and"))) {
                     if(newStep.equals("")){
                         newStep=word.trim();
                     }else {
@@ -1278,6 +1281,74 @@ public class StepParser {
         }
 
         return steps;
+    }
+
+    /**
+     * @param step
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public String RemovedVerificationTextFromSteps(String step){
+        String textToEnter = "";
+        int startPoint = 0;
+        int endPoint = 0;
+        int count=countOfCharacter(step);
+        int x=0;
+        for (int i=0;i<count;i++){
+            try {
+                startPoint = step.indexOf("'");
+                endPoint = step.indexOf("'", startPoint + 1) + 1;
+                textToEnter = step.substring(startPoint, endPoint);
+                step = step.replace(textToEnter, "");
+                textToEnter = "";
+            }catch (Exception e){}
+        }
+        return step;
+    }
+
+    public int countOfCharacter(String step){
+
+        int count = 0;
+
+        //Counts each character except space
+        for(int i = 0; i < step.length(); i++) {
+            if(step.charAt(i) == '\'')
+                count++;
+        }
+        return count;
+    }
+
+    /**
+     * @param step
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public List<String> ListOfStepWhoHasSameVerifier(String step, String condition) {
+        List<String> stepList = new ArrayList<String>();
+        Pattern regex = Pattern.compile("[^\\s\"']+|\"[^\"]*\"|'[^']*'");
+        Matcher regexMatcher = regex.matcher(step);
+        int numberOfStep=0;
+        String newStep="";
+        int endStep=regexMatcher.regionEnd();
+        while (regexMatcher.find()) {
+            if(!(regexMatcher.group().toLowerCase().equals(condition.toLowerCase()))){
+                newStep=newStep+" "+ regexMatcher.group();
+            }
+
+            if(regexMatcher.group().toLowerCase().equals(condition.toLowerCase()) | regexMatcher.end()==endStep) {
+                if(numberOfStep==0){
+                    stepList.add(newStep.trim());
+                    newStep="";
+                    numberOfStep++;
+                }
+                else {
+                    stepList.add("Verify:"+newStep);
+                    newStep="";
+                }
+            }
+        }
+
+        return stepList;
     }
 
 }
