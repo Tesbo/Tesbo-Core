@@ -154,7 +154,7 @@ public class DataDrivenParser {
         {
             String[] splitStep;
             if(step.contains("{")&& step.contains("}")){
-                if(step.contains("ExtCode:")){
+                if(step.contains("Code:")){
                     splitStep = step.split("\\(")[1].split(",");
                 }else {
                     splitStep = step.split("\\s");
