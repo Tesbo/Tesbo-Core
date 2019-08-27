@@ -200,6 +200,7 @@ public class TestExecutor implements Runnable {
 
         /*Getting step using SuiteName and Testcase Name*/
         JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
+
         int J = 0;
         //JSONArray stepsArray = new JSONArray();
         //boolean failFlag = false;
@@ -335,7 +336,6 @@ public class TestExecutor implements Runnable {
                     if (groupSteps.size() == 0)
                         throw e;
                     J++;
-
                     e.printStackTrace(new PrintWriter(sw));
                     exceptionAsString = sw.toString();
                     logger.testFailed("Failed");
@@ -343,14 +343,11 @@ public class TestExecutor implements Runnable {
                     stepNumber++;
                     stepPassed = false;
                 }
-
-
                 for (int s = 0; s <= groupSteps.size() - 1; s++) {
                     Object groupStep = groupSteps.get(s);
 
                     startTimeStep = System.currentTimeMillis();
                     step = steps.get(i);
-
                     stepReportObject.put("stepIndex", ++stepIndex);
                     stepReportObject.put("startTime", startTimeStep);
                     stepReportObject.put("steps", groupStep.toString().replace("@", ""));
@@ -365,13 +362,11 @@ public class TestExecutor implements Runnable {
                             logger.testFailed("Failed");
                             logger.testFailed(sw.toString());
                             stepPassed = false;
-
-
                         }
                     } else if (groupStep.toString().contains("Verify:")) {
                         try {
                             //verifyParser.parseVerify(driver, test, groupStep.toString());
-                            sendVerifyStep(step.toString());
+                            sendVerifyStep(groupStep.toString());
                         } catch (Exception NE) {
                             J++;
                             NE.printStackTrace(new PrintWriter(sw));
@@ -379,16 +374,15 @@ public class TestExecutor implements Runnable {
                             logger.testFailed("Failed");
                             logger.testFailed(sw.toString());
                             stepPassed = false;
-
                         }
                     }
                     else if (groupStep.toString().replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")) {
 
                         try {
                             if (step.toString().contains("{") && step.toString().contains("}")) {
-                                logger.stepLog(stepParser.replaceArgsOfExtCodeStep(test,step.toString()));
+                                logger.stepLog(stepParser.replaceArgsOfExtCodeStep(test,groupStep.toString()));
                             }else {
-                                logger.stepLog(step.toString());
+                                logger.stepLog(groupStep.toString());
                             }
                             externalCode.runAllAnnotatedWith(ExtCode.class, groupStep.toString(),test, driver);
                         } catch (Exception e) {
@@ -397,7 +391,6 @@ public class TestExecutor implements Runnable {
                             logger.testFailed("Failed");
                             logger.testFailed(sw.toString());
                             stepPassed = false;
-
                         }
                     }
                     reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
