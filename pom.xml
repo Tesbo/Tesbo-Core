@@ -62,8 +62,8 @@
 					<injar>${project.build.finalName}.${project.packaging}</injar>
 					<outjar>${project.build.finalName}-proguard.${project.packaging}</outjar>
 					<libs>
-						<!-- <lib>${java.home}/jmods/java.base.jmod(!**.jar;!module-info.class)</lib> -->
-						<lib>${java.bootstrap.classes}</lib>
+						<!-- <lib>${java.home}/jmods/java.base.jmod(!**.jar;!module-info.class)</lib>
+						<lib>${java.bootstrap.classes}</lib> -->
 
 					</libs>
 					<options>
