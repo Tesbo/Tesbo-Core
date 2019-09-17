@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>Tesbo</groupId>
-	<artifactId>Tesbo-pro</artifactId>
-	<version>0.0.9</version>
+	<artifactId>Tesbo-Beta</artifactId>
+	<version>0.0.2-testing</version>
 	<packaging>jar</packaging>
 
 
