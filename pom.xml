@@ -62,9 +62,7 @@
 					<injar>${project.build.finalName}.${project.packaging}</injar>
 					<outjar>${project.build.finalName}-proguard.${project.packaging}</outjar>
 					<libs>
-						<lib>${java.bootstrap.classes}</lib>
-                        <lib>/usr/lib/jvm/java-11-openjdk-amd64/lib</lib>
-
+	
 					</libs>
 					<options>
 						<option>-keep public class Execution.Tesbo{*;}</option>
