@@ -1,6 +1,9 @@
 package framework;
 
-import logger.Logger;
+import Execution.Tesbo;
+import logger.TesboLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import Exception.TesboException;
@@ -17,12 +20,13 @@ import java.util.stream.Stream;
 
 public class GetLocator {
 
-    Logger logger = new Logger();
-
+    TesboLogger tesboLogger = new TesboLogger();
+    private static final Logger log = LogManager.getLogger(Tesbo.class);
     public String getLocatorValue(String suiteName, String LocatorName) throws Exception {
-        if(LocatorName.equals(""))
-            throw new TesboException("Locator is not define.") ;
-
+        if(LocatorName.equals("")) {
+            log.error("Locator is not define.");
+            throw new TesboException("Locator is not define.");
+        }
         GetConfiguration config = new GetConfiguration();
         JSONArray locatorFileList = new JSONArray();
         boolean flag=false;
@@ -51,18 +55,22 @@ public class GetLocator {
                     }
                 }
                 if(flag==true){
-                    logger.errorLog(file+" file found");
+                    log.error(file+" file found");
+                    tesboLogger.errorLog(file+" file found");
                     throw (new NoSuchFieldException());
                 }
             } catch (Exception e) {
                 if(flag==true) {
-                    logger.errorLog("Message : Please create only '.json' file in Locator directory.");
+                    log.error("Message : Please create only '.json' file in Locator directory.");
+                    tesboLogger.errorLog("Message : Please create only '.json' file in Locator directory.");
                 }
                 else {
-                    logger.errorLog("Message : Please Enter valid directory path for locators.");
+                    log.error("Message : Please Enter valid directory path for locators.");
+                    tesboLogger.errorLog("Message : Please Enter valid directory path for locators.");
                     StringWriter sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
-                    logger.testFailed(sw.toString());
+                    tesboLogger.testFailed(sw.toString());
+                    log.error(sw.toString());
                 }
                 throw e;
             }
@@ -90,11 +98,17 @@ public class GetLocator {
                         if(isLocator==false){
                             isLocator=true;
                         }
-                        else{throw new TesboException("Multiple Locator is found '"+LocatorName + "'.");}
+                        else{
+                            log.error("Multiple Locator is found '"+LocatorName + "'.");
+                            throw new TesboException("Multiple Locator is found '"+LocatorName + "'.");
+                        }
                     }catch (NullPointerException ex) {}
                 }
             }
-            if(LocatorsName==null){throw new TesboException("Locator '"+LocatorName + "' is not found.");}
+            if(LocatorsName==null){
+                log.error("Locator '"+LocatorName + "' is not found.");
+                throw new TesboException("Locator '"+LocatorName + "' is not found.");
+            }
 
         }
         

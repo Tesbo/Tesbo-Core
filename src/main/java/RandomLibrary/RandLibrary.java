@@ -1,7 +1,7 @@
 package RandomLibrary;
 
 import com.github.javafaker.Faker;
-import logger.Logger;
+import logger.TesboLogger;
 
 
 import java.util.Locale;
@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class RandLibrary {
     Faker faker = new Faker();
-    Logger logger=new Logger();
+    TesboLogger tesboLogger =new TesboLogger();
     /**
      * +     * @param
      * +     * @auther : Ankit Patel

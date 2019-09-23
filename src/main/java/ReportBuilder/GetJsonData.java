@@ -1,7 +1,5 @@
 package ReportBuilder;
 
-import com.diogonunes.jcdp.color.api.Ansi;
-import logger.Logger;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.json.simple.JSONArray;

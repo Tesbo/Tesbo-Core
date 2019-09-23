@@ -3,9 +3,12 @@ package Selenium;
 import Execution.SetCommandLineArgument;
 import framework.GetConfiguration;
 import framework.Utility;
-import logger.Logger;
+import framework.Validation;
+import logger.TesboLogger;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -41,13 +44,8 @@ public class Commands {
     protected static Wait<WebDriver> wait;
     public String parantWindow = "";
     public String childWindow = "";
-    Logger logger=new Logger();
-
-    public String getElementValue(String elementName, String suiteName) throws Exception {
-        Utility jsonParser = new Utility();
-
-        return jsonParser.loadJsonFile(suiteName).get(elementName).toString();
-    }
+    TesboLogger tesboLogger =new TesboLogger();
+    private static final Logger log = LogManager.getLogger(Validation.class);
 
     /**
      * @param driver       webdriver object for the Test
@@ -66,6 +64,7 @@ public class Commands {
         locatorTypes=config.getLocatorPreference();
         if(locatorTypes!=null){
             if(locatorTypes.size()==0){
+                log.error("Please enter locator Preference");
                 throw new TesboException("Please enter locator Preference");
             }
             element= findElementFromLocatorPreference(driver,elementvalue,locatorTypes);
@@ -94,7 +93,8 @@ public class Commands {
                                         try {
                                             element = driver.findElement(By.partialLinkText(elementvalue));
                                         } catch (NoSuchElementException e) {
-                                            logger.testFailed("Please enter valid locator value");
+                                            log.error("Please enter valid locator value");
+                                            tesboLogger.testFailed("Please enter valid locator value");
                                             throw e;
                                         }
                                     }
@@ -133,7 +133,8 @@ public class Commands {
                     break;
                 } catch (NoSuchElementException css) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
+                        log.error("Please enter valid locator value");
+                        tesboLogger.testFailed("Please enter valid locator value");
                         throw css;
                     }
                 }
@@ -144,7 +145,8 @@ public class Commands {
                     break;
                 } catch (NoSuchElementException id) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
+                        log.error("Please enter valid locator value");
+                        tesboLogger.testFailed("Please enter valid locator value");
                         throw id;
                     }
                 }
@@ -155,7 +157,8 @@ public class Commands {
                     break;
                 } catch (Exception xpath) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
+                        log.error("Please enter valid locator value");
+                        tesboLogger.testFailed("Please enter valid locator value");
                         throw xpath;
                     }
                 }
@@ -166,7 +169,8 @@ public class Commands {
                     break;
                 } catch (Exception className) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
+                        log.error("Please enter valid locator value");
+                        tesboLogger.testFailed("Please enter valid locator value");
                         throw className;
                     }
                 }
@@ -177,7 +181,8 @@ public class Commands {
                     break;
                 } catch (Exception name) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
+                        log.error("Please enter valid locator value");
+                        tesboLogger.testFailed("Please enter valid locator value");
                         throw name;
                     }
                 }
@@ -188,7 +193,8 @@ public class Commands {
                     break;
                 } catch (Exception tagName) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
+                        log.error("Please enter valid locator value");
+                        tesboLogger.testFailed("Please enter valid locator value");
                         throw tagName;
                     }
                 }
@@ -199,7 +205,8 @@ public class Commands {
                     break;
                 } catch (Exception linkText) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
+                        log.error("Please enter valid locator value");
+                        tesboLogger.testFailed("Please enter valid locator value");
                         throw linkText;
                     }
                 }
@@ -210,7 +217,8 @@ public class Commands {
                     break;
                 } catch (NoSuchElementException e) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
+                        log.error("Please enter valid locator value");
+                        tesboLogger.testFailed("Please enter valid locator value");
                         throw e;
                     }
                 }
@@ -263,7 +271,8 @@ public class Commands {
                                     try {
                                         listOfElements = driver.findElements(By.partialLinkText(elementvalue));
                                     } catch (NoSuchElementException e) {
-                                        logger.testFailed("Please enter valid locator value");
+                                        log.error("Please enter valid locator value");
+                                        tesboLogger.testFailed("Please enter valid locator value");
                                         throw  e;
                                     }
                                 }
@@ -326,7 +335,8 @@ public class Commands {
         } catch (InterruptedException e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         }
     }
 
@@ -708,7 +718,8 @@ public class Commands {
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         }
         if (capabilities != null) {
             if(capabilities.size()>0){
@@ -734,7 +745,8 @@ public class Commands {
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         }
         return seleniumAddress;
     }
@@ -755,7 +767,8 @@ public class Commands {
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         }
         //ArrayList<String> capabilitieList = (ArrayList<String>) capabilities.get(browserName);
 
@@ -797,7 +810,8 @@ public class Commands {
         } catch (MalformedURLException e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         }
         return driver;
     }
@@ -902,7 +916,8 @@ public class Commands {
      *
      */
     public void getPageSource(WebDriver driver)  {
-        logger.stepLog(driver.getPageSource());
+        log.error(driver.getPageSource());
+        tesboLogger.stepLog(driver.getPageSource());
     }
 
     /**

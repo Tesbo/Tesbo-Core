@@ -1,8 +1,11 @@
 package framework;
 
+import Execution.Tesbo;
 import RandomLibrary.RandLibrary;
 import Selenium.Commands;
-import logger.Logger;
+import logger.TesboLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
@@ -22,8 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StepParser {
 
-
-    Logger logger = new Logger();
+    private static final Logger log = LogManager.getLogger(StepParser.class);
+    TesboLogger tesboLogger = new TesboLogger();
     DataDrivenParser dataDrivenParser = new DataDrivenParser();
     public static String screenShotURL=null;
 
@@ -40,17 +43,18 @@ public class StepParser {
                         removeContent= word.trim().replace("@","");
                     }
                 }
-                //String removeContent=step.split("@")[1].trim().split(" ")[0].replace("@","");
                 if(removeContent.contains(".")){
-                    logger.stepLog(step.replace("@"+removeContent,removeContent.split("\\.")[1]));
+                    log.info(step.replace("@"+removeContent,removeContent.split("\\.")[1]));
+                    tesboLogger.stepLog(step.replace("@"+removeContent,removeContent.split("\\.")[1]));
                 }
                 else {
-                    logger.stepLog(step.replace("@"+removeContent, removeContent));
+                    log.info(step.replace("@"+removeContent, removeContent));
+                    tesboLogger.stepLog(step.replace("@"+removeContent, removeContent));
                 }
-
             }
             else {
-                logger.stepLog(step.replace("@", ""));
+                log.info(step.replace("@", ""));
+                tesboLogger.stepLog(step.replace("@", ""));
             }
 
         }
@@ -117,7 +121,8 @@ public class StepParser {
              * Step: print "User should redirect into the login page "
              * Step: print @elementName
              */
-            logger.stepLog(printStep(driver,step,test));
+            tesboLogger.stepLog(printStep(driver,step,test));
+            log.info(printStep(driver,step,test));
         }
 
         //Capture Screenshot
@@ -127,14 +132,16 @@ public class StepParser {
              */
             if(step.toLowerCase().contains("screenshot of") && step.toLowerCase().contains("@")) {
                 screenShotURL = cmd.screenshotElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))),test.get("suiteName").toString(), test.get("testName").toString());
-                logger.stepLog("Screenshot: " + screenShotURL);
+                tesboLogger.stepLog("Screenshot: " + screenShotURL);
+                log.info("Screenshot: " + screenShotURL);
             }
             /**
              * Step: capture screenshot
              */
             else if(step.toLowerCase().contains("screenshot")) {
                 screenShotURL = cmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
-                logger.stepLog("Screenshot: " + screenShotURL);
+                tesboLogger.stepLog("Screenshot: " + screenShotURL);
+                log.info("Screenshot: " + screenShotURL);
             }
         }
 
@@ -261,7 +268,7 @@ public class StepParser {
             cmd.closeWindow(driver);
         }
 
-        logger.testPassed("Passed");
+        tesboLogger.testPassed("Passed");
         return step;
 
     }
@@ -348,7 +355,8 @@ public class StepParser {
             startPoint = step.indexOf("'") + 1;
             endPoint = step.lastIndexOf("'");
             stepText = step.substring(startPoint, endPoint);
-            logger.stepLog(step.replace(stepText, textToEnter).replace("@",""));
+            log.info(step.replace(stepText, textToEnter).replace("@",""));
+            tesboLogger.stepLog(step.replace(stepText, textToEnter).replace("@",""));
             if (step.toLowerCase().contains("birthday")){
                 cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys((CharSequence) textToEnter);
 
@@ -369,7 +377,6 @@ public class StepParser {
 
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
-
 
         try {
             //Step :  switch to active Element
@@ -450,7 +457,8 @@ public class StepParser {
                     try {
                         cmd.switchFrameElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
                     } catch (NullPointerException e) {
-                        logger.errorLog("No element found.");
+                        log.info("No element found.");
+                        tesboLogger.errorLog("No element found.");
                         throw e;
                     }
                 }
@@ -483,7 +491,8 @@ public class StepParser {
             }
 
         } catch (Exception e) {
-            logger.testFailed("Step Failed");
+            log.error("Step Failed");
+            tesboLogger.testFailed("Step Failed");
             throw e;
         }
     }
@@ -549,7 +558,8 @@ public class StepParser {
                 String y = parseNumverToEnter(step, 1);
                 cmd.scrollToCoordinate(driver, x, y);
             } catch (NullPointerException e) {
-                logger.testFailed("No coordinate found");
+                log.error("No coordinate found");
+                tesboLogger.testFailed("No coordinate found");
             }
         }
         /**
@@ -560,7 +570,8 @@ public class StepParser {
             try {
                 cmd.scrollToElement(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
             } catch (NullPointerException e) {
-                logger.testFailed("No element found");
+                log.error("No element found");
+                tesboLogger.testFailed("No element found");
                 throw e;
             } catch (Exception e) {
                 throw e;
@@ -679,7 +690,6 @@ public class StepParser {
             if (word.contains("@")) {
                 elementName = word.substring(1);
             }
-
         }
         return elementName;
     }
@@ -709,9 +719,11 @@ public class StepParser {
                         String dataSet[]=headerName.split("\\.");
                         if(dataSet.length==3) {
                             textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), dataSet[1], dataSet[2]);
-                            logger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
+                            tesboLogger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
+                            log.info(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
                         }
                         else{
+                            log.info("Please enter DataSet in: '"+step+"'");
                             throw new TesboException("Please enter DataSet in: '"+step+"'");
                         }
 
@@ -720,12 +732,14 @@ public class StepParser {
                     }
                 }
                 else if(headerName.contains("Dataset.") || headerName.contains("dataSet.") || headerName.contains("dataset.")){
+                    log.error("Please enter valid DataSet in: '"+step+"'");
                     throw new TesboException("Please enter valid DataSet in: '"+step+"'");
                 }
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
                 e.printStackTrace(new PrintWriter(sw));
-                logger.testFailed(sw.toString());
+                tesboLogger.testFailed(sw.toString());
+                log.error(sw.toString());
                 throw e;
             }
 
@@ -735,26 +749,31 @@ public class StepParser {
                         try {
                             textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
                             if (textToEnter != null) {
-                                logger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
+                                log.info(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
+                                tesboLogger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
                             }
 
                         } catch (StringIndexOutOfBoundsException e) {
-                            logger.stepLog(step);
-                            logger.testFailed("no string to enter. Create a separate exeception here");
+                            tesboLogger.stepLog(step);
+                            log.info(step);
+                            tesboLogger.testFailed("no string to enter. Create a separate exeception here");
+                            log.error("no string to enter. Create a separate exeception here");
                         }
                     }
                 } catch (Exception e) {
                     StringWriter sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
-                    logger.testFailed(sw.toString());
+                    tesboLogger.testFailed(sw.toString());
+                    log.error(sw.toString());
                 }
                 try {
                     if (test.get("dataType").toString().equalsIgnoreCase("global")) {
                         textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
-                        logger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
-
+                        tesboLogger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
+                        log.info(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
                     }
                 } catch (Exception e) {
+                    log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
                     throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
                 }
             }
@@ -762,10 +781,9 @@ public class StepParser {
             startPoint = step.indexOf("'") + 1;
             endPoint = step.lastIndexOf("'");
             try {
-
                 textToEnter = step.substring(startPoint, endPoint);
-
             } catch (StringIndexOutOfBoundsException e) {
+                log.error("No string found to enter.");
                 throw new TesboException("No string found to enter.");
             }
         }
@@ -800,6 +818,7 @@ public class StepParser {
                             textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), dataSet[1], dataSet[2]);
                         }
                         else{
+                            log.error("Please enter DataSet in: '"+step+"'");
                             throw new TesboException("Please enter DataSet in: '"+step+"'");
                         }
 
@@ -808,12 +827,14 @@ public class StepParser {
                     }
                 }
                 else if(headerName.contains("Dataset.") || headerName.contains("dataSet.") || headerName.contains("dataset.")){
+                    log.error("Please enter valid DataSet in: '"+step+"'");
                     throw new TesboException("Please enter valid DataSet in: '"+step+"'");
                 }
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
                 e.printStackTrace(new PrintWriter(sw));
-                logger.testFailed(sw.toString());
+                tesboLogger.testFailed(sw.toString());
+                log.error(sw.toString());
                 throw e;
             }
 
@@ -822,24 +843,23 @@ public class StepParser {
                     if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
                         try {
                             textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
-                            if (textToEnter != null) {
-                                //logger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
-                            }
-
                         } catch (StringIndexOutOfBoundsException e) {
-                            logger.testFailed("no string to enter. Create a separate exeception here");
+                            log.error("no string to enter. Create a separate exeception here");
+                            tesboLogger.testFailed("no string to enter. Create a separate exeception here");
                         }
                     }
                 } catch (Exception e) {
                     StringWriter sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
-                    logger.testFailed(sw.toString());
+                    tesboLogger.testFailed(sw.toString());
+                    log.error(sw.toString());
                 }
                 try {
                     if (test.get("dataType").toString().equalsIgnoreCase("global")) {
                         textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
                     }
                 } catch (Exception e) {
+                    log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
                     throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
                 }
             }
@@ -847,10 +867,9 @@ public class StepParser {
             startPoint = step.indexOf("'") + 1;
             endPoint = step.lastIndexOf("'");
             try {
-
                 textToEnter = step.substring(startPoint, endPoint);
-
             } catch (StringIndexOutOfBoundsException e) {
+                log.error("No string found to enter.");
                 throw new TesboException("No string found to enter.");
             }
         }
@@ -894,6 +913,7 @@ public class StepParser {
                 }
             }
         } catch (Exception e) {
+            log.error("Code step has no value");
             throw new TesboException("Code step has no value");
         }
         for(int i=0;i<arguments.length;i++){
@@ -910,11 +930,13 @@ public class StepParser {
         //extracting string
         numbers = step.replaceAll("[^-?0-9]+", " ");
         if(numbers.trim().equals("")){
+            log.error("Seconds to pause is not found in '"+step+"'");
             throw new TesboException("Seconds to pause is not found in '"+step+"'");
         }
         try {
             return Arrays.asList(numbers.trim().split(" ")).get(index);
         }catch (Exception e){
+            log.error("Please add coordinate value (X, Y) in step '"+step+"'");
             throw new TesboException("Please add coordinate value (X, Y) in step '"+step+"'");
         }
     }
@@ -955,15 +977,18 @@ public class StepParser {
                         cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(Keys.chord(Keys.CONTROL, Steps[i + 2].replaceAll("'", "").toLowerCase()));
                     }
                     else {
+                        log.error("Please enter valid key");
                         throw new TesboException("Please enter valid key");
                     }
                 }
             }
             if(!flag){
+                log.error("Please enter valid step.");
                 throw new TesboException("Please enter valid step.");
             }
 
         } else {
+            log.error("Please enter valid step.");
             throw new TesboException("Please enter valid step.");
         }
     }
@@ -1024,6 +1049,7 @@ public class StepParser {
         try {
             textToEnter = step.split(":")[1].trim();
         } catch (Exception e) {
+            log.error("Pleas enter collection name");
             throw new TesboException("Pleas enter collection name");
         }
         return textToEnter;
@@ -1042,6 +1068,7 @@ public class StepParser {
             Dimension dimension = new Dimension(Integer.parseInt(size[0]), Integer.parseInt(size[1]));
             driver.manage().window().setSize(dimension);
         } catch (Exception e) {
+            log.error("Pleas enter 'X' and 'Y' dimension for window resize");
             throw new TesboException("Pleas enter 'X' and 'Y' dimension for window resize");
         }
     }
@@ -1090,7 +1117,10 @@ public class StepParser {
             // Not working
             cmd.dragAndDrop(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), elementFrom)), cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), elementTo)));
         }
-        else{ throw new TesboException("Pleas enter valid step: '"+step+"'"); }
+        else{
+            log.error("Pleas enter valid step: '"+step+"'");
+            throw new TesboException("Pleas enter valid step: '"+step+"'");
+        }
 
     }
 
@@ -1133,6 +1163,7 @@ public class StepParser {
             try {
                 clickOnIndex = step.substring(startPoint, endPoint).trim();
             } catch (StringIndexOutOfBoundsException e) {
+                log.error("No string found for click");
                 throw new TesboException("No string found for click");
             }
             listOfElements.get(Integer.parseInt(clickOnIndex)).click();
@@ -1150,6 +1181,7 @@ public class StepParser {
                 clickOnText = step.substring(startPoint, endPoint);
 
             } catch (StringIndexOutOfBoundsException e) {
+                log.error("No string found for click");
                 throw new TesboException("No string found for click");
             }
             for(WebElement element:listOfElements){
@@ -1200,7 +1232,6 @@ public class StepParser {
             startPoint = step.indexOf("\"") + 1;
             endPoint = step.lastIndexOf("\"");
             String printText = step.substring(startPoint, endPoint);
-
             printStep="Step: "+printText;
         }
         return printStep.replace("@","");
@@ -1226,6 +1257,7 @@ public class StepParser {
         String offsetString = step.substring(startPoint, endPoint);
         String offsets[]=offsetString.trim().split(",");
         if(offsets.length!=2){
+            log.error("Enter X and Y offset");
             throw new TesboException("Enter X and Y offset");
         }
         /*
@@ -1279,7 +1311,6 @@ public class StepParser {
             steps[x]="Verify: "+element+" "+newStep;
             x++;
         }
-
         return steps;
     }
 
@@ -1347,7 +1378,6 @@ public class StepParser {
                 }
             }
         }
-
         return stepList;
     }
 

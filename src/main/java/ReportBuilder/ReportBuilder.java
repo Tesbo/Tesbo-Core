@@ -1,8 +1,7 @@
 package ReportBuilder;
 
 import Execution.TestExecutionBuilder;
-import com.diogonunes.jcdp.color.api.Ansi;
-import logger.Logger;
+import logger.TesboLogger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -22,7 +21,7 @@ public class ReportBuilder implements Runnable {
 
     String buildHistory = new File(getBuildHistoryPath()).getAbsolutePath();
     JSONArray dataArray = null;
-    Logger logger = new Logger();
+    TesboLogger tesboLogger = new TesboLogger();
 
     public static void main(String[] args) {
         ReportBuilder builder = new ReportBuilder();
@@ -711,14 +710,14 @@ public class ReportBuilder implements Runnable {
                         try {
                             stacktrace = ((JSONObject) test).get("fullStackTrace").toString();
                         } catch (Exception e) {
-                            logger.errorLog("StackTrace Not Found");
+                            tesboLogger.errorLog("StackTrace Not Found");
 
                         }
                         try {
                             screenShotpath = ((JSONObject) test).get("screenShot").toString();
 
                         } catch (Exception e) {
-                            logger.errorLog("Screenshot Not Found");
+                            tesboLogger.errorLog("Screenshot Not Found");
 
                         }
                     }
