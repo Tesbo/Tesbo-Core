@@ -1,8 +1,10 @@
 package framework;
 
 import Selenium.Commands;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
-import logger.Logger;
+import logger.TesboLogger;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import Exception.*;
@@ -13,13 +15,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class VerifyParser {
 
+    private static final Logger log = LogManager.getLogger(Validation.class);
     public void parseVerify(WebDriver driver, JSONObject test, String verify) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
         StepParser stepParser = new StepParser();
-        Logger logger = new Logger();
+        TesboLogger tesboLogger = new TesboLogger();
         boolean flag=false;
-        logger.stepLog(verify.replace("@",""));
+        tesboLogger.stepLog(verify.replace("@",""));
+        log.info(verify.replace("@",""));
+
         WebElement element=null;
         String textOfStep=null;
         if(verify.contains("@")) {
@@ -36,6 +41,7 @@ public class VerifyParser {
                  */
 
                 if(cmd.findElements(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).size()!= Integer.parseInt(stepParser.parseTextToEnter(test,verify))) {
+                    log.error("Element list size not equal to '"+stepParser.parseTextToEnter(test,verify)+"'");
                     throw new AssertException("Element list size not equal to '"+stepParser.parseTextToEnter(test,verify)+"'");
                 }
                 flag=true;
@@ -55,6 +61,7 @@ public class VerifyParser {
                      */
                     //assertThat(element.getText()).isNotEqualTo(textOfStep);
                     if(element.getText().equals(textOfStep)) {
+                        log.error("Expecting:<\""+element.getText()+"\"> not to be equal to:<\""+textOfStep+"\">");
                         throw new AssertException("Expecting:<\""+element.getText()+"\"> not to be equal to:<\""+textOfStep+"\">");
                     }
                     flag=true;
@@ -66,6 +73,7 @@ public class VerifyParser {
                     if (verify.toLowerCase().contains("ignore case")) {
                         //assertThat(element.getText()).isEqualToIgnoringCase(textOfStep);
                         if(!element.getText().equalsIgnoreCase(textOfStep)) {
+                            log.error("Expecting:<\""+element.getText()+"\"> to be equal to: <\""+textOfStep+"\"> ignoring case considerations");
                             throw new AssertException("Expecting:<\""+element.getText()+"\"> to be equal to: <\""+textOfStep+"\"> ignoring case considerations");
                         }
                         flag=true;
@@ -76,6 +84,7 @@ public class VerifyParser {
                     else {
                         //assertThat(element.getText()).isEqualTo(textOfStep);
                         if(!element.getText().equals(textOfStep)) {
+                            log.error("ComparisonFailure: expected:<\""+element.getText()+"\"> but was:<\""+textOfStep+"\">");
                             throw new AssertException("ComparisonFailure: expected:<\""+element.getText()+"\"> but was:<\""+textOfStep+"\">");
                         }
                         flag=true;
@@ -89,6 +98,7 @@ public class VerifyParser {
                     if (verify.toLowerCase().contains("ignore case")) {
                         //assertThat(element.getText()).containsIgnoringCase(textOfStep);
                         if(!element.getText().toLowerCase().contains(textOfStep.toLowerCase())) {
+                            log.error("Expecting:<\""+element.getText()+"\"> to contain: <\""+textOfStep+"\"> (ignoring case)");
                             throw new AssertException("Expecting:<\""+element.getText()+"\"> to contain: <\""+textOfStep+"\"> (ignoring case)");
                         }
                         flag=true;
@@ -99,6 +109,7 @@ public class VerifyParser {
                     else {
                         //assertThat(element.getText()).contains(textOfStep);
                         if(!element.getText().contains(textOfStep)) {
+                            log.error("Expecting:<\""+element.getText()+"\"> to contain: <\""+textOfStep+"\">");
                             throw new AssertException("Expecting:<\""+element.getText()+"\"> to contain: <\""+textOfStep+"\">");
                         }
 
@@ -112,6 +123,7 @@ public class VerifyParser {
 
                     //assertThat(element.getText()).startsWith(textOfStep);
                     if(!element.getText().startsWith(textOfStep)){
+                        log.error("Expecting:<\""+element.getText()+"\"> to start with: <\""+textOfStep+"\">");
                         throw new AssertException("Expecting:<\""+element.getText()+"\"> to start with: <\""+textOfStep+"\">");
                     }
                     flag=true;
@@ -123,6 +135,7 @@ public class VerifyParser {
                     //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).endsWith(stepParser.parseTextToEnter(test,verify));
 
                     if(!element.getText().endsWith(textOfStep)){
+                        log.error("Expecting:<\""+element.getText()+"\"> to end with: <\""+textOfStep+"\">");
                         throw new AssertException("Expecting:<\""+element.getText()+"\"> to end with: <\""+textOfStep+"\">");
                     }
                     flag=true;
@@ -134,6 +147,7 @@ public class VerifyParser {
                      */
                     //assertThat(isNumeric(element.getText())).isTrue();
                     if(!isNumeric(element.getText())) {
+                        log.error("ComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
                         throw new AssertException("ComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
                     }
                     flag=true;
@@ -144,6 +158,7 @@ public class VerifyParser {
                      * Verify: @element text should be Alphanumeric.
                      */
                     if(!element.getText().matches("[a-zA-Z0-9 ]+")) {
+                        log.error("AlphanumericComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
                         throw new AssertException("AlphanumericComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
                     }
                     flag=true;
@@ -164,6 +179,7 @@ public class VerifyParser {
                  */
                 //assertThat(element.isDisplayed()).isEqualTo(true);
                 if(!element.isDisplayed()) {
+                    log.error("Element is not displayed");
                     throw new AssertException("Element is not displayed");
                 }
                 flag=true;
@@ -180,6 +196,7 @@ public class VerifyParser {
                  * Verify: @element is Visible
                  */
                 if(!isVisibleInViewport(element)) {
+                    log.error("Element is not Visible");
                     throw new AssertException("Element is not Visible");
                 }
                 flag=true;
@@ -200,6 +217,7 @@ public class VerifyParser {
                     if (verify.toLowerCase().contains("ignore case")) {
                         //assertThat(driver.getTitle()).isEqualToIgnoringCase(textOfStep);
                         if(!driver.getTitle().equalsIgnoreCase(textOfStep)) {
+                            log.error("ComparisonFailure: expected:<\""+driver.getTitle()+"\"> but was:<\""+textOfStep+"\">");
                             throw new AssertException("ComparisonFailure: expected:<\""+driver.getTitle()+"\"> but was:<\""+textOfStep+"\">");
                         }
                         flag=true;
@@ -210,6 +228,7 @@ public class VerifyParser {
                     else {
                         //assertThat(driver.getTitle()).isEqualTo(textOfStep);
                         if(!driver.getTitle().equals(textOfStep)) {
+                            log.error("ComparisonFailure: expected:<\""+driver.getTitle()+"\"> but was:<\""+textOfStep+"\">");
                             throw new AssertException("ComparisonFailure: expected:<\""+driver.getTitle()+"\"> but was:<\""+textOfStep+"\">");
                         }
                         flag=true;
@@ -227,7 +246,7 @@ public class VerifyParser {
                  * Step: Get cookies and check 'any cookie name' is available
                  */
                 if (!cmd.isCookieAvailable(driver, stepParser.parseTextToEnter(test, verify))) {
-
+                    log.error("'" + stepParser.parseTextToEnter(test, verify) + "' cookie is not found");
                     throw new AssertException("'" + stepParser.parseTextToEnter(test, verify) + "' cookie is not found");
                 }
                 flag = true;
@@ -241,7 +260,7 @@ public class VerifyParser {
                  * Verify: current url is equal to 'https://tesbo10.atlassian.net'
                  */
                 if (!cmd.getCurrentUrl(driver,stepParser.parseTextToEnter(test, verify))) {
-
+                    log.error("current url is not match with '" + stepParser.parseTextToEnter(test, verify) + "'");
                     throw new AssertException("current url is not match with '" + stepParser.parseTextToEnter(test, verify) + "'");
                 }
                 flag = true;
@@ -252,16 +271,17 @@ public class VerifyParser {
                  * Verify: current url is contains 'https://tesbo10.atlassian.net'
                  */
                 if (!cmd.verifyCurrentUrlContains(driver,stepParser.parseTextToEnter(test, verify))) {
-
+                    log.error("current url contains is not match with '" + stepParser.parseTextToEnter(test, verify) + "'");
                     throw new AssertException("current url contains is not match with '" + stepParser.parseTextToEnter(test, verify) + "'");
                 }
                 flag = true;
             }
         }
         if(!flag) {
+            log.error("'"+verify+"' Step is not define properly.");
             throw new TesboException("'"+verify+"' Step is not define properly.");
         }
-        logger.testPassed("Passed");
+        tesboLogger.testPassed("Passed");
     }
 
     public static boolean isNumeric(String strNum) {

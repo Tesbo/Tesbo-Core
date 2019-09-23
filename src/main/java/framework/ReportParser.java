@@ -1,7 +1,10 @@
 package framework;
 
+import Execution.Tesbo;
 import Execution.TestExecutionBuilder;
-import logger.Logger;
+import logger.TesboLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -11,11 +14,7 @@ import java.io.*;
 import Exception.TesboException;
 
 public class ReportParser {
-
-    TestExecutionBuilder build = new TestExecutionBuilder();
-
-
-
+    private static final Logger log = LogManager.getLogger(Tesbo.class);
     /**
      * @return
      * @throws Exception
@@ -44,7 +43,6 @@ public class ReportParser {
      */
     public void writeJsonFile(JSONObject obj, String fileName) {
 
-
         try  {
             FileWriter file = new FileWriter("./htmlReport/Build History/" + fileName + ".json");
 
@@ -65,35 +63,12 @@ public class ReportParser {
             htmlReportMainDir.mkdir();
         }
 
-
         File buildHistory = new File("./htmlReport/Build History");
 
         if (!buildHistory.exists()) {
             buildHistory.mkdir();
         }
 
-
-    }
-
-    public JSONObject readJsonFile() throws IOException, ParseException {
-
-        JSONParser parser = new JSONParser();
-
-        try {
-            Object obj = parser.parse(new FileReader("C:\\Users\\jsbot\\Desktop\\buildResult_4.json"));
-
-            JSONObject jsonObject = (JSONObject) obj;
-            return jsonObject;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            throw e;
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw e;
-        } catch (ParseException e) {
-            e.printStackTrace();
-            throw e;
-        }
     }
 
     /**
@@ -106,7 +81,7 @@ public class ReportParser {
     public String dataSetStepReplaceValue(JSONObject test, String step) {
 
         DataDrivenParser dataDrivenParser=new DataDrivenParser();
-        Logger logger = new Logger();
+        TesboLogger tesboLogger = new TesboLogger();
         String textToEnter = "";
         int startPoint = 0;
         int endPoint = 0;
@@ -126,6 +101,7 @@ public class ReportParser {
                             textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), dataSet[1], dataSet[2]);
                         }
                         else{
+                            log.error("Please enter DataSet in: '"+step+"'");
                             throw new TesboException("Please enter DataSet in: '"+step+"'");
                         }
 
@@ -135,6 +111,7 @@ public class ReportParser {
                     }
                 }
                 else if(headerName.contains("Dataset.") || headerName.contains("dataSet.") || headerName.contains("dataset.")){
+                    log.error("Please enter valid DataSet in: '"+step+"'");
                     throw new TesboException("Please enter valid DataSet in: '"+step+"'");
                 }
             } catch (Exception e) {
@@ -148,8 +125,10 @@ public class ReportParser {
                             textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
 
                         } catch (StringIndexOutOfBoundsException e) {
-                            logger.stepLog(step);
-                            logger.testFailed("no string to enter. Create a separate exeception here");
+                            tesboLogger.stepLog(step);
+                            log.error(step);
+                            log.error("no string to enter. Create a separate exeception here");
+                            tesboLogger.testFailed("no string to enter. Create a separate exeception here");
                             throw e;
                         }
                     }
@@ -161,6 +140,7 @@ public class ReportParser {
                         textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
                     }
                 } catch (Exception e) {
+                    log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
                     throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
                 }
             }
@@ -172,6 +152,7 @@ public class ReportParser {
                 textToEnter = step.substring(startPoint, endPoint);
 
             } catch (StringIndexOutOfBoundsException e) {
+                log.error("No string found to enter.");
                 throw new TesboException("No string found to enter.");
             }
         }

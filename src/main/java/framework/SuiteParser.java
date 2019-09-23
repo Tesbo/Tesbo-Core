@@ -1,6 +1,9 @@
 package framework;
 
-import logger.Logger;
+import Execution.Tesbo;
+import logger.TesboLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import Exception.TesboException;
@@ -18,8 +21,8 @@ import java.util.stream.Stream;
 
 public class SuiteParser {
 
-    Logger logger = new Logger();
-
+    TesboLogger tesboLogger = new TesboLogger();
+    private static final Logger log = LogManager.getLogger(Tesbo.class);
     /**
      * @param directory
      * @return give all the file inside a directory
@@ -46,29 +49,34 @@ public class SuiteParser {
                 }
             }
             if(flag==true){
-                logger.errorLog(file+" file found");
+                log.error(file+" file not found");
+                tesboLogger.errorLog(file+" file not found");
                 throw (new NoSuchFileException(""));
             }
         } catch (Exception e) {
             if(flag==true){
-                logger.testFailed("Message : Please create only '.suite' file in suite directory.");
+                log.error("Message : Please create only '.suite' file in suite directory.");
+                tesboLogger.testFailed("Message : Please create only '.suite' file in suite directory.");
             }
             else {
-                logger.testFailed("Message : Please Enter valid directory path.");
-                logger.testFailed("'" + directory + "' no files found on your location.");
+                log.error("Message : Please Enter valid directory path.");
+                log.error("'" + directory + "' no files found on your location.");
+                tesboLogger.testFailed("Message : Please Enter valid directory path.");
+                tesboLogger.testFailed("'" + directory + "' no files found on your location.");
                 StringWriter sw = new StringWriter();
                 e.printStackTrace(new PrintWriter(sw));
-                logger.testFailed(sw.toString());
+                tesboLogger.testFailed(sw.toString());
+                log.error(sw.toString());
             }
             try {
                 throw e;
             } catch (IOException ie) {
                 StringWriter sw = new StringWriter();
                 ie.printStackTrace(new PrintWriter(sw));
-                logger.testFailed(sw.toString());
+                tesboLogger.testFailed(sw.toString());
+                log.error(sw.toString());
             }
         }
-
         return suiteFileList;
     }
 
@@ -79,10 +87,8 @@ public class SuiteParser {
     public StringBuffer readSuiteFile(String fileName) {
 
         GetConfiguration configuration = new GetConfiguration();
-
         BufferedReader br = null;
         FileReader fr = null;
-
         StringBuffer suites = new StringBuffer();
 
         try {
@@ -95,7 +101,8 @@ public class SuiteParser {
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         } finally {
 
             try {
@@ -106,9 +113,9 @@ public class SuiteParser {
             } catch (Exception ex) {
                 StringWriter sw = new StringWriter();
                 ex.printStackTrace(new PrintWriter(sw));
-                logger.testFailed(sw.toString());
+                tesboLogger.testFailed(sw.toString());
+                log.error(sw.toString());
             }
-
         }
         return suites;
     }
@@ -138,10 +145,12 @@ public class SuiteParser {
                     if(!tag.equals("")) {
                         if (tag.toLowerCase().trim().equals(tagName.toLowerCase())) {
                             if (allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")) {
+                                log.error("Please write valid keyword for this \"" + allLines[i] + "\"");
                                 throw new TesboException("Please write valid keyword for this \"" + allLines[i] + "\"");
                             }
                             String testNameArray[] = allLines[i].split(":");
                             if(testNameArray.length<2){
+                                log.error("Test name is blank '"+allLines[i]+"'");
                                 throw new TesboException("Test name is blank '"+allLines[i]+"'");
                             }
                             testName.add(testNameArray[1].trim());
@@ -154,7 +163,6 @@ public class SuiteParser {
         }
         // When No Test Available
         if (testName.size() == 0) {
-
             //throw new NoTestFoundException("No test found in suite file");
             return null;
         }
@@ -225,15 +233,18 @@ public class SuiteParser {
                     break;
                 }
                 if(allLines[i].replaceAll("\\s{2,}", " ").trim().equals("end")){
+                    log.error("Please define end step in a correct way: End");
                     throw new TesboException("Please define end step in a correct way: End");
                 }
             }
         }
         if(testCount>=2 || endpoint==0) {
+            log.error("End Step is not found for '" + testName + "' test");
             throw new TesboException("End Step is not found for '" + testName + "' test");
         }
         for (int j = startPoint; j < endpoint; j++) {
             if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].toString().replaceAll("\\s{2,}", " ").contains("Step:")){
+                log.error("Step is blank '"+allLines[j]+"'");
                 throw new TesboException("Step is blank '"+allLines[j]+"'");
             }
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
@@ -248,6 +259,7 @@ public class SuiteParser {
             }
         }
         if (testSteps.size() == 0) {
+            log.error("Steps are not defined for test : " + testName);
             throw new TesboException("Steps are not defined for test : " + testName);
         }
 
@@ -288,18 +300,20 @@ public class SuiteParser {
         }
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) {
-                if (!(allLines[j].contains("DataSet:")))
+                if (!(allLines[j].contains("DataSet:"))) {
+                    log.error("Write 'DataSet' keyword in test");
                     throw new TesboException("Write 'DataSet' keyword in test");
+                }
                 testDataSet=allLines[j];
                 break;
             }
             else{
                 if(allLines[j].toLowerCase().contains("dataset:") || allLines[j].toLowerCase().contains("dataset :")){
+                    log.error("Please add valid key word for: '"+allLines[j]+"'");
                     throw new TesboException("Please add valid key word for: '"+allLines[j]+"'");
                 }
             }
         }
-
         return testDataSet;
     }
 
@@ -338,9 +352,11 @@ public class SuiteParser {
         }
         if(startPoint==0)
         {
+            log.error("Collection name "+ groupName +" is not found on suite");
             throw new TesboException("Collection name "+ groupName +" is not found on suite");
         }
         if(groupCount>=2 || endpoint==0) {
+            log.error("End Step is not found for '" + groupName + "' collection");
             throw new TesboException("End Step is not found for '" + groupName + "' collection");
         }
         for (int j = startPoint; j < endpoint; j++) {
@@ -352,6 +368,7 @@ public class SuiteParser {
             }
         }
         if (testSteps.size() == 0) {
+            log.error("Steps are not defined for collection : " + groupName);
             throw new TesboException("Steps are not defined for collection : " + groupName);
         }
         return testSteps;
@@ -373,44 +390,6 @@ public class SuiteParser {
         if (testName.size() == 0) { return null; }
 
         return testName;
-    }
-
-    /**
-     * @return
-     * @throws Exception
-     */
-    public JSONObject getgroupName() throws Exception {
-
-        GetConfiguration configuration = new GetConfiguration();
-        String directoryPath = configuration.getSuitesDirectory();
-
-        JSONArray suiteFileList = getSuites(directoryPath);
-        JSONObject allSuite = new JSONObject();
-
-        JSONObject testNameWithSuites = new JSONObject();
-
-        for (int i = 0; i < suiteFileList.size(); i++) {
-
-            File name = new File(suiteFileList.get(i).toString());
-            SuiteParser suiteName = new SuiteParser();
-            allSuite.put(name.getName(), suiteName.readSuiteFile(name.getName()));
-        }
-
-        for (Object suite : allSuite.keySet()) {
-            for (String suiteName : configuration.getSuite()) {
-                if (suite.toString().contains(suiteName)) {
-                    /*JSONArray testNames = getTestNameByTag(tag, (StringBuffer) allSuite.get(suite));*/
-                    JSONArray testNames = getGroupName((StringBuffer) allSuite.get(suite));
-                    if (testNames != null) {
-                        testNameWithSuites.put(suite.toString(), testNames);
-                    }
-                }
-            }
-
-        }
-
-
-        return testNameWithSuites;
     }
 
     /**
@@ -456,24 +435,24 @@ public class SuiteParser {
         String allLines[] = suite.toString().split("[\\r\\n]+");
         JSONArray testName = new JSONArray();
 
-
         for (int i = 0; i < allLines.length; i++) {
             if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
 
                 String testNameArray[] = allLines[i].split(":");
                 if(testNameArray.length<2){
+                    log.error("Test name is blank '"+allLines[i]+"'");
                     throw new TesboException("Test name is blank '"+allLines[i]+"'");
                 }
                 testName.add(testNameArray[1].trim());
             }
             else {
                 if(allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")){
+                    log.error("Please write valid keyword for this \"" +allLines[i]+"\"");
                     throw new TesboException("Please write valid keyword for this \"" +allLines[i]+"\"");
                 }
             }
         }   // When No Test Available
         if (testName.size() == 0) {
-
             //throw new NoTestFoundException("No test found in suite file");
             return null;
         }
@@ -503,8 +482,7 @@ public class SuiteParser {
                     startPoint = i;
                     testStarted = true;
                 }
-                if (testStarted)
-                    testCount++;
+                if (testStarted){testCount++;}
             }
             if (testStarted) {
 
@@ -516,6 +494,7 @@ public class SuiteParser {
         }
 
         if(testCount>=2 || endpoint==0) {
+            log.error("End Step is not found for '" + testName + "' test");
             throw new TesboException("End Step is not found for '" + testName + "' test");
         }
 
@@ -531,6 +510,7 @@ public class SuiteParser {
                 }
             }
             else if(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("session:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("session :") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Session :")){
+                log.error("Please write valid keyword for this step \"" +allLines[j]+"\"");
                 throw new TesboException("Please write valid keyword for this step \"" +allLines[j]+"\"");
             }
         }
@@ -574,6 +554,7 @@ public class SuiteParser {
             }
         }
         if(testCount>=2 || endpoint==0) {
+            log.error("Step is not found for '" + test.get("testName").toString() + "' test");
             throw new TesboException("Step is not found for '" + test.get("testName").toString() + "' test");
         }
 
@@ -607,6 +588,7 @@ public class SuiteParser {
                     break;
                 }
                 if (allLines[i].contains("Test:") && allLines[i].contains("Collection Name:")) {
+                    log.error("End Step is not found for BeforeTest");
                     throw new TesboException("End Step is not found for BeforeTest");
                 }
 
@@ -615,8 +597,8 @@ public class SuiteParser {
             if (allLines[i].trim().equals("BeforeTest :") || allLines[i].trim().equals("beforeTest:") || allLines[i].trim().equals("beforeTest :")
                     || allLines[i].trim().equals("beforetest:") || allLines[i].trim().equals("beforetest :")
                     || allLines[i].trim().equals("Beforetest:") || allLines[i].trim().equals("Beforetest :")) {
+                log.error("Please write valid keyword for this step \"" +allLines[i]+"\"");
                 throw new TesboException("Please write valid keyword for this step \"" +allLines[i]+"\"");
-
             }
         }
 
@@ -643,12 +625,14 @@ public class SuiteParser {
                     break;
                 }
                 if (allLines[i].contains("Test:") && allLines[i].contains("Collection Name:")) {
+                    log.error("End Step is not found for BeforeTest");
                     throw new TesboException("End Step is not found for BeforeTest");
                 }
             }
             if (allLines[i].trim().equals("AfterTest :") || allLines[i].trim().equals("afterTest:") || allLines[i].trim().equals("afterTest :")
                     || allLines[i].trim().equals("aftertest:") || allLines[i].trim().equals("aftertest :")
                     || allLines[i].trim().equals("Aftertest:") || allLines[i].trim().equals("Aftertest :")) {
+                log.error("Please write valid keyword for this step \"" +allLines[i]+"\"");
                 throw new TesboException("Please write valid keyword for this step \"" +allLines[i]+"\"");
 
             }
@@ -689,15 +673,18 @@ public class SuiteParser {
                     break;
                 }
                 if(allLines[i].replaceAll("\\s{2,}", " ").trim().equals("end")){
+                    log.error("Please define end step in a correct way: End");
                     throw new TesboException("Please define end step in a correct way: End");
                 }
             }
         }
         if(testCount>=2 || endpoint==0) {
+            log.error("End Step is not found for '" + annotationName + "' test");
             throw new TesboException("End Step is not found for '" + annotationName + "' test");
         }
         for (int j = startPoint; j < endpoint; j++) {
             if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].toString().replaceAll("\\s{2,}", " ").contains("Step:")){
+                log.error("Step is blank '"+allLines[j]+"'");
                 throw new TesboException("Step is blank '"+allLines[j]+"'");
             }
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
@@ -712,10 +699,9 @@ public class SuiteParser {
             }
         }
         if (annotationSteps.size() == 0) {
+            log.error("Steps are not defined for annotation : " + annotationName);
             throw new TesboException("Steps are not defined for annotation : " + annotationName);
         }
-
-
         return annotationSteps;
     }
 
@@ -747,9 +733,11 @@ public class SuiteParser {
         }
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) {
+                log.error("DataSet is not use in BeforeTest and AfterTest annotation");
                 throw new TesboException("DataSet is not use in BeforeTest and AfterTest annotation");
             }
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("{") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("{DataSet."))) {
+                log.error("DataSet value not use directly in BeforeTest and AfterTest annotation");
                 throw new TesboException("DataSet value not use directly in BeforeTest and AfterTest annotation");
             }
 
@@ -789,20 +777,22 @@ public class SuiteParser {
                     break;
                 }
                 if(allLines[i].replaceAll("\\s{2,}", " ").trim().equals("end")){
+                    log.error("Please define end step in a correct way: End");
                     throw new TesboException("Please define end step in a correct way: End");
                 }
             }
         }
         String retry="null";
         if(testCount>=2 || endpoint==0) {
+            log.error("End Step is not found for '" + testName + "' test");
             throw new TesboException("End Step is not found for '" + testName + "' test");
         }
         for (int j = startPoint; j < endpoint; j++) {
             if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].toString().replaceAll("\\s{2,}", " ").contains("Retry:")){
+                log.error("Retry is blank '"+allLines[j]+"'");
                 throw new TesboException("Retry is blank '"+allLines[j]+"'");
             }
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Retry:") ) {
-
                 retry=allLines[j].split(":")[1];
             }
 
