@@ -36,9 +36,6 @@
 	</distributionManagement>
 
 
-
-
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -72,7 +69,7 @@
 						<option>-keep public class UserConfig.GetUserConfiguration{*;}</option>
 						<option>-keep public class Execution.SetCommandLineArgument{*;}</option>
 						<option>-keep class Selenium.ExtendTesboDriver{ *; }</option>
-						<option>-keep class CustomStep.Code{ *; }</option>
+						<option>-keep class CustomStep.Step{ *; }</option>
 						<option>-keepattributes RuntimeVisibleAnnotations</option>
 						<option>-keep class Exception.*</option>
 						<option>-keep @javax.persistence.* class * { *; }</option>

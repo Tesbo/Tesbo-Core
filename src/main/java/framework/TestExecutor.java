@@ -2,9 +2,8 @@ package framework;
 
 import DataCollector.BuildReportDataObject;
 import Execution.SetCommandLineArgument;
-import Execution.Tesbo;
 import Execution.TestExecutionBuilder;
-import ExtCode.*;
+import CustomStep.*;
 import Exception.*;
 import Selenium.Commands;
 
@@ -216,24 +215,60 @@ public class TestExecutor implements Runnable {
 
         int J = 0;
         log.info(test.get("testName").toString()+" test has "+steps.size()+" steps");
-        String ifCondition=null;
-        String elseCondition=null;
-        for (int i = 0; i < steps.size(); i++) {
+        String ifCondition="";
+        String elseCondition="";
+        for(int i = 0; i < steps.size(); i++) {
             boolean stepPassed = true;
 
             JSONObject stepReportObject = new JSONObject();
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
-
+            IfStepParser ifStepParser=new IfStepParser();
 
             if(step.toString().contains("If::")){
-                //------------------
-                //-------------------
-                ifCondition="Passed";
+                try {
+                    if (ifStepParser.parseIfStep(driver, test, step.toString())) {
+                        ifCondition = "Passed";
+                        //tesboLogger.testLog(step.toString());
+                    }
+                    else{
+                        ifCondition = "Fail";
+                    }
+                }
+                catch (Exception e){ifCondition = "Fail";}
+                continue;
+            }
+            if(step.toString().contains("Else If::") && ifCondition.equals("Fail")){
+                try {
+                    if (ifStepParser.parseIfStep(driver, test, step.toString())) {
+                        ifCondition = "Passed";
+                        //tesboLogger.testLog(step.toString());
+                    }
+                    else{
+                        ifCondition = "Fail";
+                    }
+                }
+                catch (Exception e){ifCondition = "Fail";}
                 continue;
             }
 
-            if(ifCondition.equals("Passed") | elseCondition.equals("Passed") | (ifCondition==null && elseCondition==null) ){
+            if(step.toString().contains("Else::")){
+                if(ifCondition.equals("Passed")){
+                    ifCondition="";
+                    elseCondition="Fail";
+
+                }else {
+                    elseCondition = "Passed";
+                    //tesboLogger.testLog(step.toString());
+                }
+            }
+
+            if(step.toString().contains("End::")){
+                elseCondition="";
+                ifCondition = "";
+                //tesboLogger.testLog(step.toString());
+            }
+            if(ifCondition.equals("Passed") | elseCondition.equals("Passed") | (ifCondition.equals("") && elseCondition.equals("")) ){
 
                 if (!step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
                     if(step.toString().toLowerCase().contains("pause") )
@@ -474,7 +509,7 @@ public class TestExecutor implements Runnable {
                 }
 
             }
-            else{
+            /*else{
                 if(step.toString().contains("Else::")){
                     elseCondition="Passed";
                     ifCondition="fail";
@@ -484,7 +519,7 @@ public class TestExecutor implements Runnable {
                     ifCondition=null;
                 }
 
-            }
+            }*/
 
         }
         if (suiteParser.isAfterTestInSuite(test.get("suiteName").toString())) {

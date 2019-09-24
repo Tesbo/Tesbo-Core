@@ -46,6 +46,7 @@ public class Commands {
     public String childWindow = "";
     TesboLogger tesboLogger =new TesboLogger();
     private static final Logger log = LogManager.getLogger(Validation.class);
+    boolean isIf=true;
 
     /**
      * @param driver       webdriver object for the Test
@@ -60,6 +61,11 @@ public class Commands {
 
         WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
         pause(3);
+
+        if(elementvalue.contains("_IF")){
+            isIf=false;
+            elementvalue=elementvalue.replace("_IF","");
+        }
         ArrayList<String> locatorTypes=new ArrayList<>();
         locatorTypes=config.getLocatorPreference();
         if(locatorTypes!=null){
@@ -93,9 +99,11 @@ public class Commands {
                                         try {
                                             element = driver.findElement(By.partialLinkText(elementvalue));
                                         } catch (NoSuchElementException e) {
-                                            log.error("Please enter valid locator value");
-                                            tesboLogger.testFailed("Please enter valid locator value");
-                                            throw e;
+                                            if(isIf) {
+                                                log.error("Please enter valid locator value");
+                                                tesboLogger.testFailed("Please enter valid locator value");
+                                                throw e;
+                                            }
                                         }
                                     }
 
@@ -133,9 +141,11 @@ public class Commands {
                     break;
                 } catch (NoSuchElementException css) {
                     if(locatorCount==locatorTypesSize) {
-                        log.error("Please enter valid locator value");
-                        tesboLogger.testFailed("Please enter valid locator value");
-                        throw css;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw css;
+                        }
                     }
                 }
             }
@@ -145,9 +155,14 @@ public class Commands {
                     break;
                 } catch (NoSuchElementException id) {
                     if(locatorCount==locatorTypesSize) {
-                        log.error("Please enter valid locator value");
-                        tesboLogger.testFailed("Please enter valid locator value");
-                        throw id;
+                        {
+                            if(isIf){
+                                System.out.println("IF===>");
+                                log.error("Please enter valid locator value");
+                                tesboLogger.testFailed("Please enter valid locator value");
+                                throw id;
+                            }
+                        }
                     }
                 }
             }
@@ -157,9 +172,11 @@ public class Commands {
                     break;
                 } catch (Exception xpath) {
                     if(locatorCount==locatorTypesSize) {
-                        log.error("Please enter valid locator value");
-                        tesboLogger.testFailed("Please enter valid locator value");
-                        throw xpath;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw xpath;
+                        }
                     }
                 }
             }
@@ -169,9 +186,11 @@ public class Commands {
                     break;
                 } catch (Exception className) {
                     if(locatorCount==locatorTypesSize) {
-                        log.error("Please enter valid locator value");
-                        tesboLogger.testFailed("Please enter valid locator value");
-                        throw className;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw className;
+                        }
                     }
                 }
             }
@@ -181,9 +200,11 @@ public class Commands {
                     break;
                 } catch (Exception name) {
                     if(locatorCount==locatorTypesSize) {
-                        log.error("Please enter valid locator value");
-                        tesboLogger.testFailed("Please enter valid locator value");
-                        throw name;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw name;
+                        }
                     }
                 }
             }
@@ -193,9 +214,11 @@ public class Commands {
                     break;
                 } catch (Exception tagName) {
                     if(locatorCount==locatorTypesSize) {
-                        log.error("Please enter valid locator value");
-                        tesboLogger.testFailed("Please enter valid locator value");
-                        throw tagName;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw tagName;
+                        }
                     }
                 }
             }
@@ -205,9 +228,11 @@ public class Commands {
                     break;
                 } catch (Exception linkText) {
                     if(locatorCount==locatorTypesSize) {
-                        log.error("Please enter valid locator value");
-                        tesboLogger.testFailed("Please enter valid locator value");
-                        throw linkText;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw linkText;
+                        }
                     }
                 }
             }
@@ -217,9 +242,11 @@ public class Commands {
                     break;
                 } catch (NoSuchElementException e) {
                     if(locatorCount==locatorTypesSize) {
-                        log.error("Please enter valid locator value");
-                        tesboLogger.testFailed("Please enter valid locator value");
-                        throw e;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw e;
+                        }
                     }
                 }
             }
@@ -271,9 +298,11 @@ public class Commands {
                                     try {
                                         listOfElements = driver.findElements(By.partialLinkText(elementvalue));
                                     } catch (NoSuchElementException e) {
-                                        log.error("Please enter valid locator value");
-                                        tesboLogger.testFailed("Please enter valid locator value");
-                                        throw  e;
+                                        if(isIf) {
+                                            log.error("Please enter valid locator value");
+                                            tesboLogger.testFailed("Please enter valid locator value");
+                                            throw e;
+                                        }
                                     }
                                 }
 
