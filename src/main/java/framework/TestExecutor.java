@@ -217,6 +217,8 @@ public class TestExecutor implements Runnable {
         log.info(test.get("testName").toString()+" test has "+steps.size()+" steps");
         String ifCondition="";
         String elseCondition="";
+        String elseIfCondition="";
+        Boolean isIf=false;
         for(int i = 0; i < steps.size(); i++) {
             boolean stepPassed = true;
 
@@ -225,37 +227,49 @@ public class TestExecutor implements Runnable {
             Object step = steps.get(i);
             IfStepParser ifStepParser=new IfStepParser();
 
+            if(step.toString().contains("Else If::")){
+                if(ifCondition.equals("Fail")) {
+                    try {
+
+                        if (ifStepParser.parseIfStep(driver, test, step.toString())) {
+                            elseIfCondition = "Passed";
+                            //tesboLogger.testLog(step.toString());
+                        } else {
+                            elseIfCondition = "Fail";
+                        }
+                    } catch (Exception e) {
+                        elseIfCondition = "Fail";
+                    }
+                    continue;
+                }
+                else if(ifCondition.equals("Passed")){
+                    elseIfCondition = "Fail";
+                    ifCondition = "Fail";
+                    isIf=true;
+                    continue;
+                }
+
+            }
+
             if(step.toString().contains("If::")){
                 try {
                     if (ifStepParser.parseIfStep(driver, test, step.toString())) {
                         ifCondition = "Passed";
                         //tesboLogger.testLog(step.toString());
                     }
-                    else{
-                        ifCondition = "Fail";
-                    }
+                    else{ifCondition = "Fail";}
                 }
-                catch (Exception e){ifCondition = "Fail";}
-                continue;
-            }
-            if(step.toString().contains("Else If::") && ifCondition.equals("Fail")){
-                try {
-                    if (ifStepParser.parseIfStep(driver, test, step.toString())) {
-                        ifCondition = "Passed";
-                        //tesboLogger.testLog(step.toString());
-                    }
-                    else{
-                        ifCondition = "Fail";
-                    }
+                catch (Exception e){
+                    ifCondition = "Fail";
                 }
-                catch (Exception e){ifCondition = "Fail";}
                 continue;
             }
 
             if(step.toString().contains("Else::")){
-                if(ifCondition.equals("Passed")){
+                if(ifCondition.equals("Passed") |  elseIfCondition.equals("Passed") | isIf){
                     ifCondition="";
                     elseCondition="Fail";
+                    elseIfCondition = "";
 
                 }else {
                     elseCondition = "Passed";
@@ -266,9 +280,10 @@ public class TestExecutor implements Runnable {
             if(step.toString().contains("End::")){
                 elseCondition="";
                 ifCondition = "";
+                elseIfCondition = "";
                 //tesboLogger.testLog(step.toString());
             }
-            if(ifCondition.equals("Passed") | elseCondition.equals("Passed") | (ifCondition.equals("") && elseCondition.equals("")) ){
+            if(ifCondition.equals("Passed") | elseIfCondition.equals("Passed") | elseCondition.equals("Passed") | (ifCondition.equals("") && elseCondition.equals("") && elseIfCondition.equals("")) ){
 
                 if (!step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
                     if(step.toString().toLowerCase().contains("pause") )

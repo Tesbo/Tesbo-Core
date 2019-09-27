@@ -74,6 +74,7 @@ public class Commands {
                 throw new TesboException("Please enter locator Preference");
             }
             element= findElementFromLocatorPreference(driver,elementvalue,locatorTypes);
+
         }else {
             try {
                 element = driver.findElement(By.cssSelector(elementvalue));
@@ -256,7 +257,7 @@ public class Commands {
             //throw new TesboException("Please enter valid locator value");
         }
 
-        if (config.getHighlightElement()) {
+        if (config.getHighlightElement() && isIf) {
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", element);
         }
