@@ -9,10 +9,10 @@ import Exception.*;
 import javax.swing.plaf.synth.SynthOptionPaneUI;
 
 /**
- * Created by QAble on 9/23/2019.
+ * Created by Ankit Mistry on 9/23/2019.
  */
 public class IfStepParser {
-
+    public static boolean isIfError=false;
     public boolean parseIfStep(WebDriver driver, JSONObject test, String step) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
@@ -56,10 +56,16 @@ public class IfStepParser {
                 String textOfStep = stepParser.parseTextToEnter(test, step);
 
                 try{number=Integer.parseInt(textOfStep);}
-                catch (Exception e){throw new TesboException("Please enter numeric value in if condition");}
+                catch (Exception e){
+                    isIfError=true;
+                    throw new TesboException("Please enter numeric value for verification in if condition");
+                }
 
                 try{elementNumber= Integer.parseInt(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step, 1))+"_IF").getText());}
-                catch (Exception e) {throw new TesboException("Given element has not numeric value: "+parseElementName(step, 1));}
+                catch (Exception e) {
+                    isIfError=true;
+                    throw new TesboException("Given element has not numeric value: "+parseElementName(step, 1));
+                }
 
                 /*
                 * If:: @element text number is grater then equal to 'any number'
@@ -136,13 +142,8 @@ public class IfStepParser {
                         isIfCondition = true;
                     }
                 }
-
-
             }
-
         }
-
-
         return isIfCondition;
     }
 
@@ -179,11 +180,6 @@ public class IfStepParser {
         StepParser stepParser=new StepParser();
         boolean flag=false;
         if(step.contains("'")) {
-            /*int startPoint = step.indexOf("'") + 1;
-            int endPoint = step.lastIndexOf("'");
-            String text = step.substring(startPoint, endPoint);
-            step = step.replace(text, "");*/
-
            step= stepParser.RemovedVerificationTextFromSteps(step);
         }
        if(step.toLowerCase().contains(" and ")){
@@ -192,11 +188,11 @@ public class IfStepParser {
        }
        if(step.toLowerCase().contains(" or ")){
            if(flag){
+               isIfError=true;
                throw new TesboException("You can not use 'And' 'Or' condition in same if condition");
            }
            conditionType="or";
        }
-
         return conditionType;
     }
 
@@ -210,7 +206,6 @@ public class IfStepParser {
                 steps[i]= "If:: "+stepWordList[i];
             }
         }
-
         return steps;
     }
 

@@ -239,6 +239,17 @@ public class TestExecutor implements Runnable {
                         }
                     } catch (Exception e) {
                         elseIfCondition = "Fail";
+                        if(IfStepParser.isIfError){
+                            tesboLogger.testLog(step.toString());
+                            e.printStackTrace(new PrintWriter(sw));
+                            exceptionAsString = sw.toString();
+                            tesboLogger.testFailed("Failed");
+                            tesboLogger.testFailed(exceptionAsString);
+                            log.error(step.toString());
+                            log.error("Failed");
+                            log.error(exceptionAsString);
+                            break;
+                        }
                     }
                     continue;
                 }
@@ -261,6 +272,17 @@ public class TestExecutor implements Runnable {
                 }
                 catch (Exception e){
                     ifCondition = "Fail";
+                    if(IfStepParser.isIfError){
+                        tesboLogger.testLog(step.toString());
+                        e.printStackTrace(new PrintWriter(sw));
+                        exceptionAsString = sw.toString();
+                        tesboLogger.testFailed("Failed");
+                        tesboLogger.testFailed(exceptionAsString);
+                        log.error(step.toString());
+                        log.error("Failed");
+                        log.error(exceptionAsString);
+                        break;
+                    }
                 }
                 continue;
             }
@@ -283,6 +305,7 @@ public class TestExecutor implements Runnable {
                 elseIfCondition = "";
                 //tesboLogger.testLog(step.toString());
             }
+
             if(ifCondition.equals("Passed") | elseIfCondition.equals("Passed") | elseCondition.equals("Passed") | (ifCondition.equals("") && elseCondition.equals("") && elseIfCondition.equals("")) ){
 
                 if (!step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
