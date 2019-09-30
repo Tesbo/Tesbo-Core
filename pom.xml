@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>Tesbo</groupId>
-	<artifactId>Tesbo-Beta</artifactId>
-	<version>0.0.4-testing</version>
+	<artifactId>Tesbo-Dev</artifactId>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
 
@@ -34,9 +34,6 @@
 			<url>http://download.tesbo.io:8081/artifactory/libs-snapshot-local/</url>
 		</snapshotRepository>
 	</distributionManagement>
-
-
-
 
 
 	<properties>
@@ -72,7 +69,7 @@
 						<option>-keep public class UserConfig.GetUserConfiguration{*;}</option>
 						<option>-keep public class Execution.SetCommandLineArgument{*;}</option>
 						<option>-keep class Selenium.ExtendTesboDriver{ *; }</option>
-						<option>-keep class CustomStep.Code{ *; }</option>
+						<option>-keep class CustomStep.Step{ *; }</option>
 						<option>-keepattributes RuntimeVisibleAnnotations</option>
 						<option>-keep class Exception.*</option>
 						<option>-keep @javax.persistence.* class * { *; }</option>

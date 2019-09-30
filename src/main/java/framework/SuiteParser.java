@@ -213,6 +213,7 @@ public class SuiteParser {
         int startPoint = 0;
         boolean testStarted = false;
         int endpoint = 0;
+        boolean isIf=false;
         for (int i = 0; i < allLines.length; i++) {
 
             if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
@@ -228,7 +229,9 @@ public class SuiteParser {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("End")) {
+                if(allLines[i].contains("If::") && isIf==true){isIf=true;}
+
+                if (allLines[i].contains("End") && !(allLines[i].contains("End::"))) {
                     endpoint = i;
                     break;
                 }
@@ -248,6 +251,7 @@ public class SuiteParser {
                 throw new TesboException("Step is blank '"+allLines[j]+"'");
             }
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
+                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("If::") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Else::") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("If Else::") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("End::") |
                     allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
                     (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Code:") && !allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("extcode:")) |
                     ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
@@ -262,7 +266,6 @@ public class SuiteParser {
             log.error("Steps are not defined for test : " + testName);
             throw new TesboException("Steps are not defined for test : " + testName);
         }
-
 
         return testSteps;
     }
@@ -800,4 +803,30 @@ public class SuiteParser {
 
         return retry.trim();
     }
+
+    /**
+     * Not completed need to work on this...
+     * @lastModifiedBy: Ankit Mistry
+     * @param steps
+     * @param isIf
+     * @return
+     */
+    public String getStepsListThatHasExecutable(JSONArray steps, boolean isIf) {
+        boolean flag=false;
+        for(Object step:steps){
+            if(isIf){
+                if(step.toString().contains("If::")){
+
+                }
+            }else
+            {
+
+            }
+
+        }
+
+        return null;
+    }
+
+
 }
