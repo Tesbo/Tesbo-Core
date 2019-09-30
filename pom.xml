@@ -5,7 +5,7 @@
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-Beta</artifactId>
-	<version>0.0.2-testing</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
 
