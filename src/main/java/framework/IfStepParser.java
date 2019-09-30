@@ -1,12 +1,11 @@
 package framework;
 
 import Selenium.Commands;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
 import Exception.*;
 
-import javax.swing.plaf.synth.SynthOptionPaneUI;
+
 
 /**
  * Created by Ankit Mistry on 9/23/2019.
