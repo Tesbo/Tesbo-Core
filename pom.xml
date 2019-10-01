@@ -55,7 +55,7 @@
 						<option>-keep public class UserConfig.GetUserConfiguration{*;}</option>
 						<option>-keep public class Execution.SetCommandLineArgument{*;}</option>
 						<option>-keep class Selenium.ExtendTesboDriver{ *; }</option>
-						<option>-keep class CustomStep.Code{ *; }</option>
+						<option>-keep class CustomStep.Step{ *; }</option>
 						<option>-keepattributes RuntimeVisibleAnnotations</option>
 						<option>-keep class Exception.*</option>
 						<option>-keep @javax.persistence.* class * { *; }</option>
@@ -244,7 +244,7 @@
 		<dependency>
 			<groupId>io.github.bonigarcia</groupId>
 			<artifactId>webdrivermanager</artifactId>
-			<version>3.3.0</version>
+			<version>3.7.0</version>
 		</dependency>
 
 		<dependency>
