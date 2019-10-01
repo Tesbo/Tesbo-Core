@@ -22,23 +22,6 @@
 -->
 
 
-
-	<distributionManagement>
-		<repository>
-
-			<id>releases</id>
-			<url>http://download.tesbo.io:8081/artifactory/libs-release-local/</url>
-		</repository>
-		<snapshotRepository>
-			<id>snapshots</id>
-			<url>http://download.tesbo.io:8081/artifactory/libs-snapshot-local/</url>
-		</snapshotRepository>
-	</distributionManagement>
-
-
-
-
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -166,61 +149,6 @@
 
 
 
-			<!--<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<skip>true</skip>
-					<file>${project.build.directory}\tesbo-proguard-final.jar</file>
-					<generatePom>false</generatePom>
-					<pomFile>pom.xml</pomFile>
-					<packaging>jar</packaging>
-					<version>${project.version}</version>
-				</configuration>
-			</plugin>
-			-->
-
-
-		<!--	<plugin>
-				<groupId>org.jfrog.buildinfo</groupId>
-				<artifactId>artifactory-maven-plugin</artifactId>
-				<version>2.2.1</version>
-				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<id>build-info</id>
-						<goals>
-							<goal>publish</goal>
-						</goals>
-						<configuration>
-							<deployProperties>
-								<gradle>awesome</gradle>
-							</deployProperties>
-							<artifactory>
-								<includeEnvVars>true</includeEnvVars>
-								<envVarsExcludePatterns>*password*,*secret*,*key*,*token*,*passphrase*</envVarsExcludePatterns>
-								<timeoutSec>60</timeoutSec>
-							</artifactory>
-							<publisher>
-								<contextUrl>http://localhost:8081/artifactory</contextUrl>
-								<username>${username}</username>
-								<password>${password}</password>
-								<excludePatterns>*-tests.jar</excludePatterns>
-								<repoKey>libs-release-local</repoKey>
-								<snapshotRepoKey>libs-snapshot-local</snapshotRepoKey>
-							</publisher>
-							<buildInfo>
-								<buildName>plugin-demo</buildName>
-								<buildNumber>${buildnumber}</buildNumber>
-								<buildUrl>http://build-url.org</buildUrl>
-							</buildInfo>
-
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
--->
 		</plugins>
 
 
