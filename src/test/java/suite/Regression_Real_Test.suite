@@ -36,13 +36,13 @@ Test: T1 login on phptravels DataSet global Credentials
 DataSet: Credentials
 Step: Open URL 'https://www.phptravels.net/admin'
 Step: pause 2 sec
-ExtCode: Hello Test
+CustomStep: Hello Test
 Step: Enter {travelUser} in to @Email_Box
 Step: Enter {DataSet.Credentials.travelPass} in @Password_Box
-ExtCode: hii
+CustomStep: hii
 Step: Click on @LoginBtn
 Step: pause 10 sec
-ExtCode: New Test
+CustomStep: New Test
 Step: Scroll to coordinate (300,250)
 Step: pause 2 sec
 Step: scroll to top
@@ -203,12 +203,12 @@ Step: Open URL 'http://amazon.in'
 Step: pause 1 sec
 Step: Enter 'nokia mobile' in @Search_box
 Step: Press Enter
-ExtCode: Get Data
+CustomStep: Get Data
 Step: Print "External code is working fine"
 Step: pause 1 sec
 Step: Open URL 'https://paytmmall.com'
 Step: pause 1 sec
-ExtCode: Send Data
+CustomStep: Send Data
 Step: Press Enter @paytm_search
 Step: pause 3 sec
 Step: Click on @paytmResult
@@ -359,7 +359,7 @@ End
 Test: T21 JavascriptExecutor
 #T21
 sendKey/Click/scroll
-ExtCode: JavascriptExecutor
+CustomStep: JavascriptExecutor
 Step: print "Code is working fine"
 End
 
@@ -473,7 +473,7 @@ Step: pause for 3 sec
 Step: Enter 'tesbo@2018' into @passwordTextBox
 Step: pause for 3 sec
 Step: Click on @signInTextBox
-ExtCode: signOut
+CustomStep: signOut
 Step: Pause 3 sec
 Step: Click on @emailTextBox
 Step: Pause 5 sec
@@ -483,7 +483,7 @@ Step: Click on @emailTextBox
 Step: Pause 5 sec
 End
 
-Test: T31 Linkedin DataSet global + Multi Driver + collection + ExtCode
+Test: T31 Linkedin DataSet global + Multi Driver + collection + CustomStep
 #T31 #regression
 DataSet: Credentials
 Session: patel, ankit,
@@ -575,7 +575,7 @@ Step: pause for 5sec
 [patel]
 Step: Enter 'Thanks' on @MessageBox
 Step: Click on @Send
-ExtCode: signOut
+CustomStep: signOut
 End
 
 Test: T34 Get cookies
@@ -600,18 +600,18 @@ Step: Open URL 'http://amazon.in'
 Step: pause 1 sec
 Step: Enter 'nokia mobile' in @Search_box
 Step: Press Enter
-ExtCode: Get Data ext({firstName},{lastName},{password})
+CustomStep: Get Data ext({firstName},{lastName},{password})
 Step: Print "External code is working fine"
 Step: pause 1 sec
 Step: Open URL 'https://paytmmall.com'
 Step: pause 1 sec
-ExtCode: Send Data ext({DataSet.Credentials.travelUser},Hello,QAble,{DataSet.Credentials.travelPass})
+CustomStep: Send Data ext({DataSet.Credentials.travelUser},Hello,QAble,{DataSet.Credentials.travelPass})
 Step: Press Enter @paytm_search
 Step: pause 3 sec
-ExtCode: Send Data ext (Hello,QAble,Team,How are you)
+CustomStep: Send Data ext (Hello,QAble,Team,How are you)
 Step: Click on @paytmResult
 Step: pause 2 sec
-ExtCode: Window Resize
+CustomStep: Window Resize
 End
 
 Test: T35 External code With parameter
@@ -621,18 +621,18 @@ Step: Open URL 'http://amazon.in'
 Step: pause 1 sec
 Step: Enter 'nokia mobile' in @Search_box
 Step: Press Enter
-ExtCode: Get Data ext({linkedin2},{travelUser},{travelPass})
+CustomStep: Get Data ext({linkedin2},{travelUser},{travelPass})
 Step: Print "External code is working fine"
 Step: pause 1 sec
 Step: Open URL 'https://paytmmall.com'
 Step: pause 1 sec
-ExtCode: Send Data ext({travelUser},Hello,QAble,{travelPass})
+CustomStep: Send Data ext({travelUser},Hello,QAble,{travelPass})
 Step: Press Enter @paytm_search
 Step: pause 3 sec
-ExtCode: Send Data ext (Hello,QAble,Team,How are you)
+CustomStep: Send Data ext (Hello,QAble,Team,How are you)
 Step: Click on @paytmResult
 Step: pause 2 sec
-ExtCode: Window Resize
+CustomStep: Window Resize
 End
 
 Test: T37 verify urls

@@ -3,7 +3,6 @@ package CustomStep;
 import Selenium.ExtendTesboDriver;
 import UserConfig.GetUserConfiguration;
 import org.openqa.selenium.*;
-import ExtCode.*;
 import reportAPI.Reporter;
 
 import java.util.Random;
@@ -40,17 +39,17 @@ public class Code extends ExtendTesboDriver {
 
     @Step("Hello Test")
     public void HelloTets() {
-        reporter.printStep("ExtCode: Hiiii");
-        reporter.printStep("ExtCode: Hello");
+        reporter.printStep("CustomStep: Hiiii");
+        reporter.printStep("CustomStep: Hello");
         //driver.findElement(By.xpath("//input[@id='twotabsearchtextbox']")).sendKeys("nvnbfg");
-        reporter.printStep("ExtCode: How r u?");
+        reporter.printStep("CustomStep: How r u?");
     }
 
     @Step("New Test")
     public void NewTets() {
-        reporter.printStep("ExtCode: New Hiiii");
-        reporter.printStep("ExtCode: New Hello");
-        reporter.printStep("ExtCode: New How r u?");
+        reporter.printStep("CustomStep: New Hiiii");
+        reporter.printStep("CustomStep: New Hello");
+        reporter.printStep("CustomStep: New How r u?");
     }
     public static void main(String[] args) throws InterruptedException {
 

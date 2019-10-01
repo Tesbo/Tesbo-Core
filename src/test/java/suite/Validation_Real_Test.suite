@@ -78,9 +78,9 @@ End
 Test: V10 Verify External Code failed take screenshot
 #V10 #Verify
 Step: Open URL 'https://www.amazon.in'
-ExtCode: Window Resize
+CustomStep: Window Resize
 Step: pause 2 sec
-ExtCode: RandomError
+CustomStep: RandomError
 Step: pause 2 sec
 End
 
