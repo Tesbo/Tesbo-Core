@@ -1,4 +1,4 @@
-package ExtCode;
+package CustomStep;
 
 import framework.GetConfiguration;
 import framework.StepParser;
