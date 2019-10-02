@@ -12,7 +12,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -30,11 +29,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
+
 import Exception.TesboException;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOf;
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
 
 public class Commands {
 
@@ -548,57 +547,14 @@ public class Commands {
 
     /**
      * @param driver
-     * @param elementvalue
+     * @param element
      * @return : Web element
      * @Description : pause driver until element display.
      */
-    public WebElement pauseElementDisplay(WebDriver driver, String elementvalue) {
-        Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
-                .withTimeout(100, TimeUnit.SECONDS)
-                .pollingEvery(1, TimeUnit.SECONDS)
-                .ignoring(NoSuchElementException.class);
+    public void pauseElementDisplay(WebDriver driver, WebElement element) {
+        wait = new WebDriverWait(driver, 100);
+        wait.until(visibilityOf(element));
 
-        WebElement foo = wait.until(new Function<WebDriver, WebElement>() {
-            public WebElement apply(WebDriver driver) {
-                WebElement element = null;
-                try {
-                    element = driver.findElement(By.cssSelector(elementvalue));
-                } catch (NoSuchElementException css) {
-                    try {
-                        element = driver.findElement(By.id(elementvalue));
-                    } catch (NoSuchElementException id) {
-                        try {
-                            element = driver.findElement(By.xpath(elementvalue));
-                        } catch (Exception xpath) {
-                            try {
-                                element = driver.findElement(By.className(elementvalue));
-                            } catch (Exception className) {
-                                try {
-                                    element = driver.findElement(By.name(elementvalue));
-                                } catch (Exception name) {
-                                    try {
-                                        element = driver.findElement(By.tagName(elementvalue));
-                                    } catch (Exception tagName) {
-                                        try {
-                                            element = driver.findElement(By.linkText(elementvalue));
-                                        } catch (Exception linkText) {
-                                            try {
-                                                element = driver.findElement(By.partialLinkText(elementvalue));
-                                            } catch (Exception partialLinkText) {
-                                                throw partialLinkText;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                return element;
-            }
-        });
-
-        return foo;
     }
 
     /**
