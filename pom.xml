@@ -5,7 +5,7 @@
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-Beta</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<packaging>jar</packaging>
 
 
@@ -50,6 +50,7 @@
 
 					</libs>
 					<options>
+						<option>-keep public class DataCollector.BuildReportDataObject{ public void run();}</option>
 						<option>-keep public class Execution.Tesbo{*;}</option>
 						<option>-keep public class reportAPI.Reporter{*;}</option>
 						<option>-keep public class UserConfig.GetUserConfiguration{*;}</option>
