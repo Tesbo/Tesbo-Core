@@ -509,4 +509,21 @@ public class GetConfiguration {
 
     }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public String getReportFileName()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+
+        try {
+            return main.get("reportFileName").toString();
+        }catch (Exception e)
+        {
+            return "";
+        }
+    }
+
 }

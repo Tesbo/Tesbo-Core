@@ -1,6 +1,7 @@
 package ReportBuilder;
 
 import Execution.TestExecutionBuilder;
+import framework.GetConfiguration;
 import logger.TesboLogger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,14 +32,19 @@ public class ReportBuilder implements Runnable {
 
     public void generatReport() {
 
-
+        GetConfiguration getConfiguration=new GetConfiguration();
         dataArray = data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath());
         ReportBuilder builder = new ReportBuilder();
 
         StringBuffer indexfile = new StringBuffer();
         //index.html file generator
         File file = new File("./htmlReport/index.html");
-        File currentBuildFile = new File("./htmlReport/currentBuildResult.html");
+
+        String reportFileName=getConfiguration.getReportFileName();
+        if(reportFileName.equals("")){
+            reportFileName="currentBuildResult";
+        }
+        File currentBuildFile = new File("./htmlReport/"+reportFileName+".html");
         StringBuffer currentBuildResult = null;
         try {
 
