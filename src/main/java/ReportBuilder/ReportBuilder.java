@@ -10,6 +10,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -41,6 +44,7 @@ public class ReportBuilder implements Runnable {
         File file = new File("./htmlReport/index.html");
 
         String reportFileName=getConfiguration.getReportFileName();
+
         if(reportFileName.equals("")){
             reportFileName="currentBuildResult";
         }
@@ -86,7 +90,23 @@ public class ReportBuilder implements Runnable {
 
         builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
 
+    }
 
+    public void copyReport(String reportFileName){
+        File source = new File("./htmlReport/"+reportFileName+".html");
+
+        File files = new File("./htmlReport/Report History");
+        if (!files.exists()) {
+            files.mkdirs();
+        }
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd_HHmm");
+        LocalDateTime now = LocalDateTime.now();
+        File dest = new File("./htmlReport/Report History/"+reportFileName+"_"+dtf.format(now)+".html");
+        try {
+            Files.copy(source.toPath(), dest.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -618,7 +638,7 @@ public class ReportBuilder implements Runnable {
                     "<div name=\"browserLogo\" align=\"center\" class=\"accordion\" role=\"tablist\"\n" +
                     "aria-multiselectable=\"true\">\n" +
                     "\n" +
-                    "<img src=\"../htmlReport/lib/Icon/" + browser + ".svg\"\n" +
+                    "<img src=\"../lib/Icon/" + browser + ".svg\"\n" +
                     "style=\"max-width: 100%;height: 20px;\">\n" +
                     "<h5>" + browser.toUpperCase() + "</h5>\n" +
                     "\n" +
@@ -677,7 +697,7 @@ public class ReportBuilder implements Runnable {
                     boolean isTestFailed = false;
                     String osName = "";
                     if (((JSONObject) test).get("osName").toString().toLowerCase().contains("win")) {
-                        osName = "windows";
+                        osName = "Win10";
                     }
 
                     if (((JSONObject) test).get("osName").toString().toLowerCase().contains("linux")) {
@@ -743,11 +763,11 @@ public class ReportBuilder implements Runnable {
                             "<h4 class=\"panel-title\">\n" +
                             "<font color=\"#" + fontColor + "\"> " + testDetails.get("testName").toString() + "</font>\n" +
                             "<div class=\"nav navbar-right \">\n" +
-                            "<img src=\"../htmlReport/lib/Icon/" + browser + ".svg\"\n" +
+                            "<img src=\"../lib/Icon/" + browser + ".svg\"\n" +
                             "style=\"max-width: 100%;height: 20px;\"\n" +
                             "data-toggle=\"tooltip\" data-placement=\"left\"\n" +
                             "title=\"" + testDetails.get("browserVersion").toString() + "\">\n" +
-                            "<img src=\"../htmlReport/lib/Icon/" + osName + ".svg\"\n" +
+                            "<img src=\"../lib/Icon/" + osName + ".svg\"\n" +
                             "style=\"max-width: 100%;height: 25px;\"\n" +
                             "\n" +
                             "data-toggle=\"tooltip\" data-placement=\"left\"\n" +

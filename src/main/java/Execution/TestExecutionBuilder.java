@@ -147,6 +147,13 @@ public class TestExecutionBuilder {
         logger.titleLog("-----------------------------------------------------------------------");
         log.info("*********************************************** Build Execution Completed ***********************************************");
 
+        String reportFileName=getConfig.getReportFileName();
+        if(reportFileName.equals("")){
+            reportFileName="currentBuildResult";
+        }
+        
+        reportBuilder.copyReport(reportFileName);
+    
     }
 
 

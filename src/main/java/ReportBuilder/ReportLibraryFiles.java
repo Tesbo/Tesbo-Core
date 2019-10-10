@@ -80,7 +80,7 @@ public class ReportLibraryFiles {
             String operaPath = "./htmlReport/lib/Icon/opera.svg";
             String safariPath = "./htmlReport/lib/Icon/safari.svg";
             String ubantuPath = "./htmlReport/lib/Icon/ubantu.svg";
-            String win10Path = "./htmlReport/lib/Icon/windows.svg";
+            String win10Path = "./htmlReport/lib/Icon/Win10.svg";
             generatefile(chromePath);
             generatefile(firefoxPath);
             generatefile(iePath);
