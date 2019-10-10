@@ -60,7 +60,8 @@ public class StepParser {
         }
 
         //Clicks
-        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("pause") && step.toLowerCase().contains("and click")) && !(step.toLowerCase().contains("scroll") && step.toLowerCase().contains("and click")) && !(step.toLowerCase().contains("right") || step.toLowerCase().contains("double") || step.toLowerCase().contains("and hold") || step.toLowerCase().contains("from list")) ) {
+
+        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("pause") && step.toLowerCase().contains("and click")) && !(step.toLowerCase().contains("scroll") && step.toLowerCase().contains("and click")) && !(step.toLowerCase().contains("right") || step.toLowerCase().contains("double") || step.toLowerCase().contains("and hold")) ) {
 
             if (step.toLowerCase().contains("from list")) {
                 clickOnElementFromList(driver,test,step);
@@ -1136,7 +1137,6 @@ public class StepParser {
     public void clickOnElementFromList(WebDriver driver,JSONObject test,String step)throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
-
         List<WebElement> listOfElements =cmd.findElements(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step)));
 
         //Click on first element from list
@@ -1145,6 +1145,7 @@ public class StepParser {
             Step: Click on first element from List @elementName
           */
             listOfElements.get(0).click();
+
         }
 
         if (step.toLowerCase().contains("last element")) {
