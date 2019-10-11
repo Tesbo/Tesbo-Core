@@ -157,7 +157,7 @@ public class StepParser {
         }
 
         //Sendkeys
-        if (step.toLowerCase().contains("enter") && (!step.toLowerCase().contains("press"))) {
+        if (step.toLowerCase().contains("enter") && !(step.toLowerCase().contains("press") | step.toLowerCase().contains("switch"))) {
             if (step.toLowerCase().contains("random")) {step= randomStepParse(driver,test,step); }
             else {
                 cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
@@ -416,8 +416,11 @@ public class StepParser {
                  * enter identify.
                  * Step : Switch to alert then enter 'Text'.
                  */
+
                 else if (step.toLowerCase().contains("enter")) {
-                    cmd.switchAlertSendKey(driver, parseTextToEnter(test, step));
+                    try {
+                        cmd.switchAlertSendKey(driver, parseTextToEnter(test, step));
+                    }catch (Exception e){e.printStackTrace();}
                 }
             }
 
@@ -569,6 +572,7 @@ public class StepParser {
          */
         else if (parseElementName(step) != "") {
             try {
+
                 cmd.scrollToElement(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
             } catch (NullPointerException e) {
                 log.error("No element found");

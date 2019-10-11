@@ -15,10 +15,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -158,7 +155,6 @@ public class Commands {
                     if(locatorCount==locatorTypesSize) {
                         {
                             if(isIf){
-                                System.out.println("IF===>");
                                 log.error("Please enter valid locator value");
                                 tesboLogger.testFailed("Please enter valid locator value");
                                 throw id;
@@ -433,7 +429,10 @@ public class Commands {
      * @Description : Switch to alert and enter text.
      */
     public void switchAlertSendKey(WebDriver driver, String Text) {
-        driver.switchTo().alert().sendKeys(Text);
+        //driver.switchTo().alert().sendKeys(Text);
+        Alert alert  = new WebDriverWait(driver, 10).until(ExpectedConditions.alertIsPresent());
+        alert.sendKeys(Text);
+        alert.accept();
     }
 
     /**
