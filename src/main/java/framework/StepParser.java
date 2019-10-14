@@ -160,6 +160,9 @@ public class StepParser {
         if (step.toLowerCase().contains("enter") && !(step.toLowerCase().contains("press") | step.toLowerCase().contains("switch"))) {
             if (step.toLowerCase().contains("random")) {step= randomStepParse(driver,test,step); }
             else {
+                if(step.toLowerCase().contains("clear")){
+                    cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
+                }
                 cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
             }
         }
@@ -254,7 +257,7 @@ public class StepParser {
         }
 
         //Clear
-        if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache"))) {
+        if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache") | step.toLowerCase().contains("enter"))) {
             /*
             * Step: clear @ElementText
             * */
