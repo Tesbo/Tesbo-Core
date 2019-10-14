@@ -257,7 +257,7 @@ public class StepParser {
         }
 
         //Clear
-        if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache"))) {
+        if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache") | step.toLowerCase().contains("enter"))) {
             /*
             * Step: clear @ElementText
             * */
