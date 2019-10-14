@@ -142,6 +142,24 @@ public class IfStepParser {
                     }
                 }
             }
+            else if(step.toLowerCase().contains("is") && (step.toLowerCase().contains("checked") | step.toLowerCase().contains("selected"))){
+                /*
+                 * If:: @element is checked
+                 * If:: @element is selected
+                 * */
+                if(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step, 1))+"_IF").isSelected()){
+                    isIfCondition = true;
+                }
+            }
+            else if(step.toLowerCase().contains("is") && step.toLowerCase().contains("enabled")){
+                /*
+                 * If:: @element is enabled
+                 * */
+                if(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step, 1))+"_IF").isEnabled()){
+                    isIfCondition = true;
+                }
+            }
+
         }
         return isIfCondition;
     }
