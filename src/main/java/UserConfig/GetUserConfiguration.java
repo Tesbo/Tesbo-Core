@@ -9,6 +9,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 public class GetUserConfiguration {
 
     SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
-
 
     public String getConfigFilePath() {
         String configName;
@@ -33,7 +33,8 @@ public class GetUserConfiguration {
     }
 
     public ArrayList<String> getBrowsers() {
-        if(setCommandLineArgument.browser !=null){
+
+        if(setCommandLineArgument.browser !=null && !(setCommandLineArgument.browser.toLowerCase().equals("all"))){
             String browserList=setCommandLineArgument.browser;
             String browsers[]=browserList.split(",");
             String browser = null;
@@ -57,13 +58,18 @@ public class GetUserConfiguration {
             return  browserJsonArray;
         }
         else {
-            Utility parser = new Utility();
-            JSONObject main = parser.loadJsonFile(getConfigFilePath());
-            JSONObject run = (JSONObject) main.get("run");
-            JSONObject browser = (JSONObject) run.get("browser");
-            return (JSONArray) browser.get("name");
+            return getBrowser();
         }
     }
+
+    public ArrayList<String> getBrowser() {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        JSONObject browser = (JSONObject) run.get("browser");
+        return (JSONArray) browser.get("name");
+    }
+
 
     public JSONObject getCapabilities(String browserName)  {
         Utility parser = new Utility();
@@ -131,13 +137,18 @@ public class GetUserConfiguration {
      * @return
      */
     public String getCustomStepDirectory()  {
-        Utility parser = new Utility();
-        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+       /* Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());*/
+        File file = null;
         try {
-            String CustomStepDirectory=main.get("projectDIR").toString()+"/src/test/java/CustomStep";
+            String CustomStepDirectory= Paths.get("").toAbsolutePath().toString()+"/src/test/java/CustomStep";
+            file = new File(CustomStepDirectory);
+            if(!file.exists()){
+                throw new TesboException("Custom Step Directory is not found: "+file);
+            }
             return CustomStepDirectory;
         }catch (Exception e){
-            throw new TesboException("CustomStepDirectory is not define on config");
+            throw new TesboException("Custom Step Directory is not found: "+file);
         }
     }
 
@@ -147,10 +158,10 @@ public class GetUserConfiguration {
      * @return
      */
     public String getProjectDirectory()  {
-        Utility parser = new Utility();
-        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        //Utility parser = new Utility();
+        //JSONObject main = parser.loadJsonFile(getConfigFilePath());
         try {
-            String projectDIR=main.get("projectDIR").toString()+"/src/test/java/";
+            String projectDIR= Paths.get("").toAbsolutePath().toString()+"/src/test/java/";
             return projectDIR;
         }catch (Exception e){
             throw new TesboException("projectDIR is not define on config");
@@ -169,9 +180,15 @@ public class GetUserConfiguration {
     public String getRunBy()  {
         Utility parser = new Utility();
         String runby = ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("by").toString();
-        if (runby.toLowerCase().contains("tag") || setCommandLineArgument.byTag !=null) {
+        if(runby.contains("Suite") || runby.contains("SUITE"))
+        {throw new TesboException("Enter 'suite' in small case on config file");}
+
+        if(runby.contains("Tag") || runby.contains("TAG") && setCommandLineArgument.byTag ==null)
+        {throw new TesboException("Enter 'tag' in small case on config file");}
+
+        if (runby.contains("tag") || setCommandLineArgument.byTag !=null) {
             return "tag";
-        } else if (runby.toLowerCase().contains("suite")) {
+        } else if (runby.contains("suite")) {
             return "suite";
         }
         return null;
@@ -252,7 +269,7 @@ public class GetUserConfiguration {
     public String getSuitesDirectory()  {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
-        String SuiteDirectory=main.get("projectDIR").toString()+"/suite";
+        String SuiteDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/suite";
         return SuiteDirectory;
     }
 
@@ -260,7 +277,7 @@ public class GetUserConfiguration {
     public String getLocatorDirectory() {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
-        String locatorDirectory=main.get("projectDIR").toString()+"/locator";
+        String locatorDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/locator";
         return locatorDirectory;
     }
 
@@ -422,6 +439,16 @@ public class GetUserConfiguration {
      * @lastModifiedBy:
      * @return
      */
+    public JSONObject getEnvironmentList() {
+        Utility parser = new Utility();
+        return (JSONObject) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("Environment");
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
     public boolean getRunPastFailure()  {
         Utility parser = new Utility();
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
@@ -469,6 +496,36 @@ public class GetUserConfiguration {
         JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         return (JSONArray) run.get("locatorPreference");
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public String getBuildName()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject cloudIntegration = (JSONObject) main.get("cloudIntegration");
+        return cloudIntegration.get("buildName").toString();
+
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @return
+     */
+    public String getReportFileName()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+
+        try {
+            return main.get("reportFileName").toString();
+        }catch (Exception e)
+        {
+            return "";
+        }
     }
 
 }
