@@ -614,7 +614,7 @@ public class StepParser {
          */
         else if (step.toLowerCase().contains("display")) {
             try {
-                cmd.pauseElementDisplay(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
+                cmd.pauseElementDisplay(driver, locator.getLocatorValue(suiteName, parseElementName(step)));
             } catch (Exception e) {
             }
         }
