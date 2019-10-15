@@ -64,7 +64,7 @@
 
 					</libs>
 					<options>
-						<option>-keeppackagenames Resources.*</option>
+						<option>-keeppackagenames Resources.log4j2.xml</option>
 						<option>-keep public class DataCollector.BuildReportDataObject{ public void run();}</option>
 						<option>-keep public class Execution.Tesbo{*;}</option>
 						<option>-keep public class reportAPI.Reporter{*;}</option>
