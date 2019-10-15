@@ -12,7 +12,28 @@
 	<name>Tesbo</name>
 	<url>http://maven.apache.org</url>
 
+	<!--<repositories>
+		<repository>
+			<id>Placepass</id>
+			<url>https://dl.bintray.com/jfrog/jfrog-jars/</url>
+		</repository>
+	</repositories>
 
+-->
+
+
+
+	<distributionManagement>
+		<repository>
+
+			<id>releases</id>
+			<url>http://download.tesbo.io:8081/artifactory/libs-release-local/</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>http://download.tesbo.io:8081/artifactory/libs-snapshot-local/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 
 	<properties>
@@ -43,7 +64,6 @@
 
 					</libs>
 					<options>
-						<option>-keeppackagenames Resources.*</option>
 						<option>-keep public class DataCollector.BuildReportDataObject{ public void run();}</option>
 						<option>-keep public class Execution.Tesbo{*;}</option>
 						<option>-keep public class reportAPI.Reporter{*;}</option>

@@ -111,6 +111,14 @@
   "NewPageHeading":"(//h1)[1]",
   "NumTitle":"(//h2)[1]",
   "SecondNum":"(//h2)[2]",
-  "ThaeredNumber":"(//div[@class='beach']//td)[3]"
+  "ThaeredNumber":"(//div[@class='beach']//td)[3]",
+  "NumberList":"//div[@id='tools']/div/button",
 
+  "ClickMe": "(//button[contains(text(),'Click me!')])[1]",
+  "ClickMeButton": "(//button[contains(text(),'Click me!')])[2]",
+  "ConfirmationMessage": "//p[@id='confirm-demo']",
+  "ClickForPromptBox": "//button[contains(text(),'Click for Prompt Box')]",
+
+  "CheckBox": "//input[@id='isAgeSelected']",
+  "CheckMessage": "//div[@id='txtAge']"
 }

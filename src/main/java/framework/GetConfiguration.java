@@ -8,6 +8,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -135,11 +136,9 @@ public class GetConfiguration {
      * @return
      */
     public String getCustomStepDirectory()  {
-        Utility parser = new Utility();
-        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         File file = null;
         try {
-            String CustomStepDirectory=main.get("projectDIR").toString()+"/src/test/java/CustomStep";
+            String CustomStepDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/CustomStep";
             file = new File(CustomStepDirectory);
             if(!file.exists()){
                 throw new TesboException("Custom Step Directory is not found: "+file);
@@ -156,10 +155,8 @@ public class GetConfiguration {
      * @return
      */
     public String getProjectDirectory()  {
-        Utility parser = new Utility();
-        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         try {
-            String projectDIR=main.get("projectDIR").toString()+"/src/test/java/";
+            String projectDIR= Paths.get("").toAbsolutePath().toString()+"/src/test/java/";
             return projectDIR;
         }catch (Exception e){
             throw new TesboException("projectDIR is not define on config");
@@ -265,17 +262,13 @@ public class GetConfiguration {
     }
 
     public String getSuitesDirectory()  {
-        Utility parser = new Utility();
-        JSONObject main = parser.loadJsonFile(getConfigFilePath());
-        String SuiteDirectory=main.get("projectDIR").toString()+"/src/test/java/suite";
+        String SuiteDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/suite";
         return SuiteDirectory;
     }
 
 
     public String getLocatorDirectory() {
-        Utility parser = new Utility();
-        JSONObject main = parser.loadJsonFile(getConfigFilePath());
-        String locatorDirectory=main.get("projectDIR").toString()+"/src/test/java/locator";
+        String locatorDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/locator";
         return locatorDirectory;
     }
 
@@ -525,5 +518,6 @@ public class GetConfiguration {
             return "";
         }
     }
+
 
 }

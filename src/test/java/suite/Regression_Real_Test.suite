@@ -103,7 +103,6 @@ End
 Test: T7 amazon iphone search
 #iphone #T7 #regression
 Step: Open URL 'https://www.phptravels.net/admin'
-Verify: @Email_Box is displayed
 Step: Enter Email 'admin@phptravels.com' in to @Email_Box
 Step: Enter Password 'demoadmin' in to @Password_Box
 Step: Click on @LoginBtn
@@ -905,4 +904,57 @@ End::
 Verify: @SecondNum text contains is 'Count to 100'
 End
 
+Test: T55 verify OR condition
+#T55 #regression
+Step: Open URL 'https://www.mathsisfun.com/numbers/counting.html'
+Step: pause 2 sec
+If:: @ThaeredNumber text is grater then equal to '5' or @SecondNum text contains is ' hj Count to 100'
+Verify: @NewPageHeading text is equal 'Counting'
+Step: pause 2 sec
+Else::
+Verify: @NumTitle is present
+Step: pause 2 sec
+End::
+Verify: @SecondNum text contains is 'Count to 100'
+End
+
+Test: T56 verify is selected or is checked functionality in if condition
+#T56 #regression
+Step: Open URL 'https://www.seleniumeasy.com/test/basic-checkbox-demo.html'
+Step: pause 2 sec
+Step: click on @CheckBox
+If:: @CheckBox is selected
+Verify: @CheckMessage is displayed
+Step: pause 2 sec
+Else::
+Step: print "Element is not selected"
+End
+
+Test: Verify click on particular element number from List functionality
+#All #click12
+Step: Open URL 'https://www.mathsisfun.com/numbers/number-chart.php'
+Step: click on "Red" from List @NumberList
+Step: pause 5 sec
+End
+
+
+Test: Verify switch to alert then close functionality
+#All #switch1
+Step: Open URL 'https://www.seleniumeasy.com/test/javascript-alert-box-demo.html'
+Step: Scroll to @ClickMeButton
+Step: Click on @ClickMeButton
+Step: pause 2 sec
+Step: Switch to alert then close
+Verify: @ConfirmationMessage text is equal to 'You pressed Cancel!'
+Step: pause 2 sec
+End
+
+Test: Verify switch to alert then enter text on alert
+#All #switch
+Step: Open URL 'https://www.seleniumeasy.com/test/javascript-alert-box-demo.html'
+Step: Scroll and Click on @ClickForPromptBox
+Step: pause 5 sec
+Step: Switch to alert then enter 'Testing Demo'
+Step: pause 15 sec
+End
 

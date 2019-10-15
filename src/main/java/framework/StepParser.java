@@ -160,6 +160,9 @@ public class StepParser {
         if (step.toLowerCase().contains("enter") && !(step.toLowerCase().contains("press") | step.toLowerCase().contains("switch"))) {
             if (step.toLowerCase().contains("random")) {step= randomStepParse(driver,test,step); }
             else {
+                if(step.toLowerCase().contains("clear")){
+                    cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
+                }
                 cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
             }
         }
@@ -180,9 +183,11 @@ public class StepParser {
             cmd.getPageSource(driver);
         }
 
-        // Get URL
+        // Open URL
         if (step.toLowerCase().contains("url")) {
-
+            /*
+            Step: Open URL 'http://demo.guru99.com/test/upload/'
+            */
             driver.get(parseTextToEnter(test, step));
         }
 
@@ -192,7 +197,7 @@ public class StepParser {
         }
 
         //navigate
-        if (step.toLowerCase().contains("navigate")) {
+        if (step.toLowerCase().contains("navigate") | (step.toLowerCase().contains("refresh") && step.toLowerCase().contains("page"))) {
             navigateFunction(driver, step);
         }
 
@@ -254,7 +259,7 @@ public class StepParser {
         }
 
         //Clear
-        if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache"))) {
+        if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache") | step.toLowerCase().contains("enter"))) {
             /*
             * Step: clear @ElementText
             * */
@@ -520,9 +525,10 @@ public class StepParser {
         }
         /**
          * refresh identify.
-         * Step : Navigate refresh
+         * Step : Page Refresh
+         * Step : Refresh Page
          */
-        else if (step.toLowerCase().contains("refresh")) {
+        else if (step.toLowerCase().contains("refresh") && step.toLowerCase().contains("page")) {
             cmd.navigateRefresh(driver);
         }
     }
