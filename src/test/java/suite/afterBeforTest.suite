@@ -30,7 +30,7 @@ End
 
 BeforeTest:
 Test: Linkedin Login with Data set
-CustomStep: google
+Code: google
 Step: open URL 'https://www.linkedin.com/'
 Step: Print "Before Test"
 Verify: @Email_Field is displayed
@@ -110,7 +110,7 @@ Step: pause for 5sec
 [patel]
 Step: Enter 'Thanks' on @MessageBox
 Step: Click on @Send
-CustomStep: signOut
+Code: signOut
 End
 
 Test: AF3 Priority severity and Print and Capture Screenshot of element

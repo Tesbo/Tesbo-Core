@@ -1,6 +1,8 @@
 package framework;
 
 import com.google.common.io.Files;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -17,60 +19,7 @@ import Exception.TesboException;
 
 public class DataDrivenParser {
 
-    public boolean isExcel(String suiteName) {
-        SuiteParser suiteParser=new SuiteParser();
-        StringBuffer suite= suiteParser.readSuiteFile(suiteName);
-        String allLines[] = suite.toString().split("[\\r\\n]+");
-        boolean flag=false;
-        for (int i = 0; i < allLines.length; i++) {
-            if(allLines[i].contains("Test:"))
-                break;
-
-            if(allLines[i].contains("\"excelFile\":")){
-                String[] excelUrl= allLines[i].replaceAll("[\"| |,]","").split(":",2);
-                if(excelUrl.length==2)
-                {
-                    String filePath=excelUrl[1];
-                    File file = new File(filePath);
-                    String ext = Files.getFileExtension(filePath);
-                    if(file.exists()) {
-                        flag = true;
-                    }else {
-                        throw new TesboException("Excel file Not Found On " + filePath);
-                    }
-                    if(!ext.equalsIgnoreCase("xlsx"))
-                        throw new TesboException("Required only '.xlsx' file : "+filePath);
-                }else{
-                    throw new TesboException("Please Enter File Path");
-                }
-
-            }
-        }
-        return flag;
-    }
-
-    public boolean isDataSet(String suiteName) {
-        SuiteParser suiteParser=new SuiteParser();
-        StringBuffer suite= suiteParser.readSuiteFile(suiteName);
-        String allLines[] = suite.toString().split("[\\r\\n]+");
-        boolean flag=false;
-        for (int i = 0; i < allLines.length; i++) {
-
-            if(allLines[i].contains("DataSet:")){
-                if (!(allLines[i].contains("DataSet:")))
-                    throw new TesboException("Write 'DataSet' keyword in suite");
-                flag = true;
-                break;
-            }
-            else{
-                if(allLines[i].toLowerCase().contains("dataset:") || allLines[i].toLowerCase().contains("dataset :")){
-                    throw new TesboException("Please add valid key word for: '"+allLines[i]+"'");
-                }
-            }
-        }
-        return flag;
-    }
-
+    private static final Logger log = LogManager.getLogger(DataDrivenParser.class);
 
     /**
      *
@@ -138,6 +87,7 @@ public class DataDrivenParser {
         }
 
         if(!isDataSetName ) {
+            log.error("'" + dataSetName + "' is not found in Data Set");
             throw new TesboException("'" + dataSetName + "' is not found in Data Set");
         }
 
@@ -224,8 +174,10 @@ public class DataDrivenParser {
         }
         if(flag) {
             return excelHeaderList;
-        }else
+        }else {
+            log.error("Excel data is not used in suite file.");
             throw new TesboException("Excel data is not used in suite file.");
+        }
     }
 
     public JSONArray getHeaderValuefromExcel(String url,ArrayList<String> dataSetValues,int sheetNo)
@@ -303,6 +255,7 @@ public class DataDrivenParser {
                             }
                         }
                         if(columnIndex==null){
+                            log.error("Please enter valid headerName: "+headerName);
                             throw new TesboException("Please enter valid headerName: "+headerName);
                         }
                     }
@@ -324,6 +277,7 @@ public class DataDrivenParser {
 
             file.close();
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new TesboException(e.getMessage());
         }
         return CellData;
@@ -356,37 +310,11 @@ public class DataDrivenParser {
             }
         }
         if(KeyValue.equals(null)){
+            log.error("Key name " + keyName + " is not found in " + dataSetName + " data set");
             throw new TesboException("Key name " + keyName + " is not found in " + dataSetName + " data set");
         }
 
         return KeyValue;
-
-    }
-
-    public void isHeader(JSONObject test,String step){
-        SuiteParser suiteParser=new SuiteParser();
-        String dataSetName = suiteParser.getTestDataSetBySuiteAndTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
-
-        ArrayList<String> columnNameList = new ArrayList<String>();
-        columnNameList = getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString()));
-
-
-        JSONArray  listOfHeader=getHeaderValuefromExcel(getExcelUrl(test.get("suiteName").toString(), dataSetName.replace(" ", "").split(":")[1]), columnNameList,Integer.parseInt(SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
-
-        for(Object h:listOfHeader){
-
-            String[] splitStep=step.split("\\s");
-            String HeaderName = null;
-            for(String calName:splitStep)
-            {
-                if(calName.contains("{")&& calName.contains("}"))
-                    HeaderName=calName.replaceAll("[{}]", "");
-            }
-
-            if(((JSONObject) h).get(HeaderName)==null) {
-               throw new TesboException("Please enter valid headerName: "+HeaderName);
-            }
-        }
 
     }
 

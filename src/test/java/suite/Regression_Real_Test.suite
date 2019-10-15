@@ -27,7 +27,6 @@ Verify: @UserNameError text is equal 'Choose a Gmail address'
 Verify: @PasswordError text is equal 'Enter a password'
 Code: google
 Step: pause 2 sec
-
 End
 
 
@@ -36,13 +35,13 @@ Test: T1 login on phptravels DataSet global Credentials
 DataSet: Credentials
 Step: Open URL 'https://www.phptravels.net/admin'
 Step: pause 2 sec
-CustomStep: Hello Test
+Code: Hello Test
 Step: Enter {travelUser} in to @Email_Box
 Step: Enter {DataSet.Credentials.travelPass} in @Password_Box
-CustomStep: hii
+Code: hii
 Step: Click on @LoginBtn
 Step: pause 10 sec
-CustomStep: New Test
+Code: New Test
 Step: Scroll to coordinate (300,250)
 Step: pause 2 sec
 Step: scroll to top
@@ -203,12 +202,12 @@ Step: Open URL 'http://amazon.in'
 Step: pause 1 sec
 Step: Enter 'nokia mobile' in @Search_box
 Step: Press Enter
-CustomStep: Get Data
+Code: Get Data
 Step: Print "External code is working fine"
 Step: pause 1 sec
 Step: Open URL 'https://paytmmall.com'
 Step: pause 1 sec
-CustomStep: Send Data
+Code: Send Data
 Step: Press Enter @paytm_search
 Step: pause 3 sec
 Step: Click on @paytmResult
@@ -359,7 +358,7 @@ End
 Test: T21 JavascriptExecutor
 #T21
 sendKey/Click/scroll
-CustomStep: JavascriptExecutor
+Code: JavascriptExecutor
 Step: print "Code is working fine"
 End
 
@@ -473,7 +472,7 @@ Step: pause for 3 sec
 Step: Enter 'tesbo@2018' into @passwordTextBox
 Step: pause for 3 sec
 Step: Click on @signInTextBox
-CustomStep: signOut
+Code: signOut
 Step: Pause 3 sec
 Step: Click on @emailTextBox
 Step: Pause 5 sec
@@ -483,7 +482,7 @@ Step: Click on @emailTextBox
 Step: Pause 5 sec
 End
 
-Test: T31 Linkedin DataSet global + Multi Driver + collection + CustomStep
+Test: T31 Linkedin DataSet global + Multi Driver + collection + Code
 #T31 #regression
 DataSet: Credentials
 Session: patel, ankit,
@@ -575,7 +574,7 @@ Step: pause for 5sec
 [patel]
 Step: Enter 'Thanks' on @MessageBox
 Step: Click on @Send
-CustomStep: signOut
+Code: signOut
 End
 
 Test: T34 Get cookies
@@ -600,18 +599,18 @@ Step: Open URL 'http://amazon.in'
 Step: pause 1 sec
 Step: Enter 'nokia mobile' in @Search_box
 Step: Press Enter
-CustomStep: Get Data ext({firstName},{lastName},{password})
+Code: Get Data ext({firstName},{lastName},{password})
 Step: Print "External code is working fine"
 Step: pause 1 sec
 Step: Open URL 'https://paytmmall.com'
 Step: pause 1 sec
-CustomStep: Send Data ext({DataSet.Credentials.travelUser},Hello,QAble,{DataSet.Credentials.travelPass})
+Code: Send Data ext({DataSet.Credentials.travelUser},Hello,QAble,{DataSet.Credentials.travelPass})
 Step: Press Enter @paytm_search
 Step: pause 3 sec
-CustomStep: Send Data ext (Hello,QAble,Team,How are you)
+Code: Send Data ext (Hello,QAble,Team,How are you)
 Step: Click on @paytmResult
 Step: pause 2 sec
-CustomStep: Window Resize
+Code: Window Resize
 End
 
 Test: T35 External code With parameter
@@ -621,18 +620,18 @@ Step: Open URL 'http://amazon.in'
 Step: pause 1 sec
 Step: Enter 'nokia mobile' in @Search_box
 Step: Press Enter
-CustomStep: Get Data ext({linkedin2},{travelUser},{travelPass})
+Code: Get Data ext({linkedin2},{travelUser},{travelPass})
 Step: Print "External code is working fine"
 Step: pause 1 sec
 Step: Open URL 'https://paytmmall.com'
 Step: pause 1 sec
-CustomStep: Send Data ext({travelUser},Hello,QAble,{travelPass})
+Code: Send Data ext({travelUser},Hello,QAble,{travelPass})
 Step: Press Enter @paytm_search
 Step: pause 3 sec
-CustomStep: Send Data ext (Hello,QAble,Team,How are you)
+Code: Send Data ext (Hello,QAble,Team,How are you)
 Step: Click on @paytmResult
 Step: pause 2 sec
-CustomStep: Window Resize
+Code: Window Resize
 End
 
 Test: T37 verify urls
@@ -740,7 +739,9 @@ Test: T43 verify and multiple validation
 #T43 #regression
 Step: Open URL 'https://www.mathsisfun.com/decimals.html'
 Step: pause 2 sec
+Code: Get Config File Attribute Value
 Verify: @alphanumericText is present
+Code: Hello Test
 Step: scroll to @alphanumericText
 Step: pause 2 sec
 Verify: @alphanumericText @alphanumericText text is equal to 'test'
@@ -781,4 +782,127 @@ Verify: @alphanumericText is present
 Step: pause 2 sec
 Verify: @NewTest text contains is 'The decimal point'
 End
+
+
+Test: T47 verify if condition
+#T47 #regression
+Step: Open URL 'https://www.mathsisfun.com/decimals.html'
+Step: pause 2 sec
+If:: @NewPageHeading is displayed
+Verify: @NewTest text is equal 'The decimal point goes between Ones and Tenths.'
+Step: pause 2 sec
+Else::
+Verify: @alphanumericText is present
+Step: pause 2 sec
+End::
+Verify: @NewTest text contains is 'The decimal point'
+End
+
+Test: T48 verify if else condition
+#T48 #regression
+Step: Open URL 'https://www.mathsisfun.com/decimals.html'
+Step: pause 2 sec
+If:: @PageHeading is displayed
+Verify: @NewTest text contains is 'The decimal'
+Step: pause 2 sec
+Else If:: @PageHeading is displayed
+Verify: @NewTest text is equal 'The decimal point goes between Ones and Tenths.'
+Step: pause 2 sec
+Else::
+Verify: @alphanumericText is present
+Step: pause 2 sec
+End::
+Verify: @NewTest text contains is 'The decimal point'
+End
+
+Test: T49 verify wrong if else condition
+#T49 #regression
+Step: Open URL 'https://www.mathsisfun.com/decimals.html'
+Step: pause 2 sec
+If:: @PageHeading is displayed
+Verify: @NewTest text is equal 'The decimal'
+Step: pause 2 sec
+Else If:: @PageHeading is displayed
+Verify: @NewTest text is equal 'The decimal point goes between Ones and Tenths.'
+Step: pause 2 sec
+Else::
+Verify: @alphanumericText is present
+Step: pause 2 sec
+End::
+Verify: @NewTest text contains is 'The decimal point'
+End
+
+Test: T50 verify else condition with And
+#T50 #regression
+Step: Open URL 'https://www.mathsisfun.com/decimals.html'
+Step: pause 2 sec
+If:: @NewTest text is equal to 'The decimal point goes between Ones and Tenths.'
+Verify: @NewTest text is equal 'The decimal point goes between Ones and Tenths.'
+Step: pause 2 sec
+Else::
+Verify: @alphanumericText is present
+Step: pause 2 sec
+End::
+Verify: @NewTest text contains is 'The decimal point'
+End
+
+Test: T51 verify if else condition with number less then
+#T51 #regression
+Step: Open URL 'https://www.mathsisfun.com/numbers/counting.html'
+Step: pause 2 sec
+If:: @ThaeredNumber text is less then equal to '2'
+Verify: @NewPageHeading text is equal 'Counting'
+Step: pause 2 sec
+Else::
+Verify: @NumTitle is present
+Step: pause 2 sec
+End::
+Verify: @SecondNum text contains is 'Count to 100'
+End
+
+Test: T52 verify if else condition with number grater then
+#T52 #regression
+Step: Open URL 'https://www.mathsisfun.com/numbers/counting.html'
+Step: pause 2 sec
+If:: @ThaeredNumber text is grater then equal to '5'
+Verify: @NewPageHeading text is equal 'Counting'
+Step: pause 2 sec
+Else::
+Verify: @NumTitle is present
+Step: pause 2 sec
+End::
+Verify: @SecondNum text contains is 'Count to 100'
+End
+
+Test: T53 verify And condition
+#T53 #regression
+Step: Open URL 'https://www.mathsisfun.com/numbers/counting.html'
+Step: pause 2 sec
+If:: @SecondNum text contains is 'Count to 100'
+Verify: @NewPageHeading text is equal 'Counting'
+Step: pause 2 sec
+End::
+Step: pause 2 sec
+If:: @NewTest is present
+Verify: @NumTitle is present
+Step: pause 2 sec
+Else If:: @SecondNum text contains is 'Count to 100'
+Verify: @SecondNum text contains is 'Count to 100'
+Step: pause 2 sec
+End
+
+Test: T54 verify And condition
+#T54 #regression
+Step: Open URL 'https://www.mathsisfun.com/numbers/counting.html'
+Step: pause 2 sec
+If:: @ThaeredNumber text is grater then equal to '2' And @SecondNum text contains is 'Count to 100' or @NumTitle is present
+Verify: @NewPageHeading text is equal 'Counting'
+Step: pause 2 sec
+Else::
+Verify: @NumTitle is present
+Step: pause 2 sec
+End::
+Verify: @SecondNum text contains is 'Count to 100'
+End
+
 

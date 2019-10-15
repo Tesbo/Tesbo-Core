@@ -1,5 +1,5 @@
 {
-  "projectDIR": "/Volumes/Viral/QAble/tesbo-core",
+  "projectDIR": "E:/Project/Tesbo/NewTB/tesbo-core",
   "run": {
     "baseUrl": "https://google.in",
     "seleniumAddress": "",
@@ -9,7 +9,7 @@
       "Release":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/Release"
     },
     "by": {
-      "tag": ["calculateMahesh"]
+      "tag": ["T51"]
     },
     "browser": {
       "name": [
@@ -35,7 +35,7 @@
     "pause":false,
     "SingleWindowRun": false,
     "highlightElement": true,
-
+    "locatorPreference": ["xpath","id"]
   },
   "cloudIntegration" : {
     "report": false,

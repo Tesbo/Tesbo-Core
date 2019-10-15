@@ -7,12 +7,13 @@ import ReportBuilder.ReportLibraryFiles;
 import Selenium.Commands;
 import com.diogonunes.jcdp.color.api.Ansi;
 import framework.*;
-import logger.Logger;
+import logger.TesboLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
 import reportAPI.ReportAPIConfig;
-
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 
 public class TestExecutionBuilder {
 
+
     public static boolean buildRunning;
     public static String buildReportName;
     public static long buildStartTime;
@@ -34,7 +36,7 @@ public class TestExecutionBuilder {
     public static int failTest=0;
     public static boolean repotFileGenerated = false;
     DataDrivenParser dataDrivenParser = new DataDrivenParser();
-    Logger logger = new Logger();
+    TesboLogger logger = new TesboLogger();
 
     static GetConfiguration config=new GetConfiguration();
     public static boolean singleWindowRun= config.getSingleWindowRun();
@@ -44,6 +46,7 @@ public class TestExecutionBuilder {
     ReportBuilder reportBuilder=new ReportBuilder();
     public static JSONArray failTestQueue=new JSONArray();
     String buildHistory = new File(reportBuilder.getBuildHistoryPath()).getAbsolutePath();
+    private static final Logger log = LogManager.getLogger(Tesbo.class);
 
     public void startExecution(String[] argumentsArray) throws Exception {
         Commands cmd=new Commands();
@@ -52,7 +55,11 @@ public class TestExecutionBuilder {
         Validation validation = new Validation();
         SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
         setCommandLineArgument.setArgument(argumentsArray);
-        Logger logger = new Logger();
+        TesboLogger logger = new TesboLogger();
+        log.info("-----------------------------------------------------------------------");
+        log.info("Build execution Started");
+        log.info("-----------------------------------------------------------------------");
+
         logger.titleLog("-----------------------------------------------------------------------");
         logger.titleLog("Build execution Started");
         logger.titleLog("-----------------------------------------------------------------------");
@@ -60,16 +67,19 @@ public class TestExecutionBuilder {
         TestExecutionBuilder builder = new TestExecutionBuilder();
         ReportBuilder reportBuilder = new ReportBuilder();
         ReportParser report = new ReportParser();
+        log.info("Generate Report Directory");
         report.generateReportDir();
         buildReportName = builder.getbuildReportName();
+        log.info("Get build report name: "+buildReportName);
         ReportLibraryFiles files = new ReportLibraryFiles();
         files.createLibrary();
 
         TestExecutionBuilder.buildRunning = true;
-
         ReportAPIConfig config = new ReportAPIConfig();
+        log.info("Verify config file path validation");
         validation.configFilePathValidation();
         if(getConfig.getIsCloudIntegration() ) {
+            log.info("Get cloud integration build key");
             config.getBuildKey();
         }
 
@@ -78,21 +88,27 @@ public class TestExecutionBuilder {
         reportBuilder.startThread();
 
         if(setCommandLineArgument.Environment!=null) {
+            log.info("Environment Name: "+setCommandLineArgument.Environment);
             if (setCommandLineArgument.Environment.equalsIgnoreCase("all")) {
                 for (Object env : getConfig.getEnvironmentList().keySet()) {
                     failTest=0;
                     setCommandLineArgument.Environment = env.toString();
+                    log.info("Start build execution with "+setCommandLineArgument.Environment+" environment");
                     builder.buildExecution();
                 }
             } else {
+                log.info("Start build execution with "+setCommandLineArgument.Environment+" environment");
                 builder.buildExecution();
             }
         }
         else{
+            log.info("Environment is null");
+            log.info("Start build execution with base URL");
             builder.buildExecution();
         }
 
         if(! isSingleWindow && singleWindowRun) {
+            log.info("Driver is quit.");
             driver.quit();
         }
 
@@ -100,7 +116,6 @@ public class TestExecutionBuilder {
         buildEndTime = System.currentTimeMillis();
         BuildReportDataObject.mainReportObject.put("endTime", TestExecutionBuilder.buildEndTime);
         BuildReportDataObject.mainReportObject.put("totalTimeTaken", (TestExecutionBuilder.buildEndTime - TestExecutionBuilder.buildStartTime));
-
         logger.titleLog("-----------------------------------------------------------------------");
         logger.titleLog("Build Execution Completed");
         logger.titleLog("-----------------------------------------------------------------------\n");
@@ -111,18 +126,34 @@ public class TestExecutionBuilder {
 
         while(!repotFileGenerated) {
             cmd.pause(3);
+            log.info("Start to generate report");
             reportBuilder.generatReport();
+            log.info("Report is generated");
         }
+        log.info("***********************************************************************************************************************");
 
         logger.customeLog("| Total : " + data.getCurrentBuildTotal(new File(reportBuilder.getBuildHistoryPath()).getAbsolutePath()), Ansi.FColor.NONE);
         logger.customeLog(" | Passed : " + data.getCurrentBuildPassed(buildHistory), Ansi.FColor.NONE);
         logger.customeLog(" | Failed : " + data.getCurrentBuildFailed(buildHistory), Ansi.FColor.NONE);
         logger.customeLog(" | Time : " + data.getCurrentBuildTotalTime(buildHistory) + " |\n", Ansi.FColor.NONE);
 
+        log.info("Total Run Test: " + data.getCurrentBuildTotal(new File(reportBuilder.getBuildHistoryPath()).getAbsolutePath()), Ansi.FColor.NONE);
+        log.info("Total Passed Test: " + data.getCurrentBuildPassed(buildHistory), Ansi.FColor.NONE);
+        log.info("Total Failed Test: " + data.getCurrentBuildFailed(buildHistory), Ansi.FColor.NONE);
+        log.info("Total Time To Run Test: " + data.getCurrentBuildTotalTime(buildHistory) + " |\n", Ansi.FColor.NONE);
+
 
         //logger.customeLog("\nReport Generated at :" + file.getAbsolutePath() + "\n", Ansi.FColor.NONE);
         logger.titleLog("-----------------------------------------------------------------------");
+        log.info("*********************************************** Build Execution Completed ***********************************************");
 
+        String reportFileName=getConfig.getReportFileName();
+        if(reportFileName.equals("")){
+            reportFileName="currentBuildResult";
+        }
+        
+        reportBuilder.copyReport(reportFileName);
+    
     }
 
 
@@ -180,39 +211,45 @@ public class TestExecutionBuilder {
     public void buildExecution() throws Exception {
         Validation validation = new Validation();
         GetConfiguration config = new GetConfiguration();
-        ReportParser report = new ReportParser();
-
         int tagSuiteCount = 0;
 
         /**
          * @Discription : Run by tag method.
          */
         try {
+            log.info("Start verify necessary validation before start execution");
             validation.beforeExecutionValidation();
             File file = new File("./htmlReport/Past Fail Test Details/LastBuildFailTest.json");
             boolean runPastFailure=false;
             JSONArray lastBuildFailExecutionQueue = null;
             if (config.getRunPastFailure() && file.exists()) {
                 Utility parser = new Utility();
+                log.info("Get last build fail execution queue details");
                 lastBuildFailExecutionQueue = parser.loadJsonArrayFile(file.getAbsolutePath());
                 if (!lastBuildFailExecutionQueue.equals(null)) {
                     runPastFailure=true;
                 }
             }
             if(runPastFailure){
+                log.info("Run only that test whose going to fail in last build execution");
                 parallelBuilder(lastBuildFailExecutionQueue);
             }else {
+                log.info("Start run parallel execution builder");
                 parallelBuilder(buildExecutionQueue());
                 int failTestQueuesize = failTestQueue.size();
+                log.info("Create fail test queue list");
                 lastBuildFailTestExecutionQueue(failTestQueue);
+                log.info("Number of fail test is "+failTestQueuesize);
                 if (failTestQueuesize > 0) {
                     failTest=0;
                     int retryAnalyserCount = Integer.parseInt(config.getRetryAnalyser());
+                    log.info("Number retry analyser is "+retryAnalyserCount);
                     if (retryAnalyserCount > 0) {
 
                         JSONArray TestQueue = failTestQueue;
                         for (int i = 1; i <= retryAnalyserCount; i++) {
                             failTest++;
+                            log.info("Run retry analyser: "+i);
                             parallelBuilder(TestQueue);
                             if (failTestQueuesize != failTestQueue.size()) {
                                 TestQueue = failTestQueue;
@@ -220,14 +257,13 @@ public class TestExecutionBuilder {
                             }
                         }
                     }
-
                 }
             }
         } catch (Exception ne) {
             StringWriter sw = new StringWriter();
             ne.printStackTrace(new PrintWriter(sw));
             logger.testFailed(sw.toString());
-
+            log.error(sw.toString());
         }
 
     }
@@ -253,11 +289,15 @@ public class TestExecutionBuilder {
 
         if (config.getRunBy().equals("tag")) {
             suiteOrTaglist = config.getTags();
+            log.info("Test is run by tag");
+            log.info("Tag List: "+suiteOrTaglist);
             isTag = true;
         }
 
         if (config.getRunBy().equals("suite")) {
             suiteOrTaglist = config.getSuite();
+            log.info("Test is run by suite");
+            log.info("Suite List: "+suiteOrTaglist);
             isSuite = true;
         }
 

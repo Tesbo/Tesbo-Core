@@ -3,18 +3,19 @@ package Selenium;
 import Execution.SetCommandLineArgument;
 import framework.GetConfiguration;
 import framework.Utility;
-import logger.Logger;
+import framework.Validation;
+import logger.TesboLogger;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -29,24 +30,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import Exception.TesboException;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOf;
-import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
 
 public class Commands {
 
     protected static Wait<WebDriver> wait;
     public String parantWindow = "";
     public String childWindow = "";
-    Logger logger=new Logger();
-
-    public String getElementValue(String elementName, String suiteName) throws Exception {
-        Utility jsonParser = new Utility();
-
-        return jsonParser.loadJsonFile(suiteName).get(elementName).toString();
-    }
+    TesboLogger tesboLogger =new TesboLogger();
+    private static final Logger log = LogManager.getLogger(Validation.class);
+    boolean isIf=true;
 
     /**
      * @param driver       webdriver object for the Test
@@ -61,13 +58,20 @@ public class Commands {
 
         WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
         pause(3);
+
+        if(elementvalue.contains("_IF")){
+            isIf=false;
+            elementvalue=elementvalue.replace("_IF","");
+        }
         ArrayList<String> locatorTypes=new ArrayList<>();
         locatorTypes=config.getLocatorPreference();
         if(locatorTypes!=null){
             if(locatorTypes.size()==0){
+                log.error("Please enter locator Preference");
                 throw new TesboException("Please enter locator Preference");
             }
             element= findElementFromLocatorPreference(driver,elementvalue,locatorTypes);
+
         }else {
             try {
                 element = driver.findElement(By.cssSelector(elementvalue));
@@ -93,8 +97,11 @@ public class Commands {
                                         try {
                                             element = driver.findElement(By.partialLinkText(elementvalue));
                                         } catch (NoSuchElementException e) {
-                                            logger.testFailed("Please enter valid locator value");
-                                            throw e;
+                                            if(isIf) {
+                                                log.error("Please enter valid locator value");
+                                                tesboLogger.testFailed("Please enter valid locator value");
+                                                throw e;
+                                            }
                                         }
                                     }
 
@@ -132,8 +139,11 @@ public class Commands {
                     break;
                 } catch (NoSuchElementException css) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
-                        throw css;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw css;
+                        }
                     }
                 }
             }
@@ -143,8 +153,13 @@ public class Commands {
                     break;
                 } catch (NoSuchElementException id) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
-                        throw id;
+                        {
+                            if(isIf){
+                                log.error("Please enter valid locator value");
+                                tesboLogger.testFailed("Please enter valid locator value");
+                                throw id;
+                            }
+                        }
                     }
                 }
             }
@@ -154,8 +169,11 @@ public class Commands {
                     break;
                 } catch (Exception xpath) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
-                        throw xpath;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw xpath;
+                        }
                     }
                 }
             }
@@ -165,8 +183,11 @@ public class Commands {
                     break;
                 } catch (Exception className) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
-                        throw className;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw className;
+                        }
                     }
                 }
             }
@@ -176,8 +197,11 @@ public class Commands {
                     break;
                 } catch (Exception name) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
-                        throw name;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw name;
+                        }
                     }
                 }
             }
@@ -187,8 +211,11 @@ public class Commands {
                     break;
                 } catch (Exception tagName) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
-                        throw tagName;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw tagName;
+                        }
                     }
                 }
             }
@@ -198,8 +225,11 @@ public class Commands {
                     break;
                 } catch (Exception linkText) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
-                        throw linkText;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw linkText;
+                        }
                     }
                 }
             }
@@ -209,8 +239,11 @@ public class Commands {
                     break;
                 } catch (NoSuchElementException e) {
                     if(locatorCount==locatorTypesSize) {
-                        logger.testFailed("Please enter valid locator value");
-                        throw e;
+                        if(isIf) {
+                            log.error("Please enter valid locator value");
+                            tesboLogger.testFailed("Please enter valid locator value");
+                            throw e;
+                        }
                     }
                 }
             }
@@ -220,7 +253,7 @@ public class Commands {
             //throw new TesboException("Please enter valid locator value");
         }
 
-        if (config.getHighlightElement()) {
+        if (config.getHighlightElement() && isIf) {
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", element);
         }
@@ -262,8 +295,11 @@ public class Commands {
                                     try {
                                         listOfElements = driver.findElements(By.partialLinkText(elementvalue));
                                     } catch (NoSuchElementException e) {
-                                        logger.testFailed("Please enter valid locator value");
-                                        throw  e;
+                                        if(isIf) {
+                                            log.error("Please enter valid locator value");
+                                            tesboLogger.testFailed("Please enter valid locator value");
+                                            throw e;
+                                        }
                                     }
                                 }
 
@@ -325,7 +361,8 @@ public class Commands {
         } catch (InterruptedException e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         }
     }
 
@@ -392,7 +429,10 @@ public class Commands {
      * @Description : Switch to alert and enter text.
      */
     public void switchAlertSendKey(WebDriver driver, String Text) {
-        driver.switchTo().alert().sendKeys(Text);
+        //driver.switchTo().alert().sendKeys(Text);
+        Alert alert  = new WebDriverWait(driver, 10).until(ExpectedConditions.alertIsPresent());
+        alert.sendKeys(Text);
+        alert.accept();
     }
 
     /**
@@ -547,14 +587,57 @@ public class Commands {
 
     /**
      * @param driver
-     * @param element
+     * @param elementvalue
      * @return : Web element
      * @Description : pause driver until element display.
      */
-    public void pauseElementDisplay(WebDriver driver, WebElement element) {
-        wait = new WebDriverWait(driver, 100);
-        wait.until(visibilityOf(element));
+    public WebElement pauseElementDisplay(WebDriver driver, String elementvalue) {
+        Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+                .withTimeout(100, TimeUnit.SECONDS)
+                .pollingEvery(1, TimeUnit.SECONDS)
+                .ignoring(NoSuchElementException.class);
 
+        WebElement foo = wait.until(new Function<WebDriver, WebElement>() {
+            public WebElement apply(WebDriver driver) {
+                WebElement element = null;
+                try {
+                    element = driver.findElement(By.cssSelector(elementvalue));
+                } catch (NoSuchElementException css) {
+                    try {
+                        element = driver.findElement(By.id(elementvalue));
+                    } catch (NoSuchElementException id) {
+                        try {
+                            element = driver.findElement(By.xpath(elementvalue));
+                        } catch (Exception xpath) {
+                            try {
+                                element = driver.findElement(By.className(elementvalue));
+                            } catch (Exception className) {
+                                try {
+                                    element = driver.findElement(By.name(elementvalue));
+                                } catch (Exception name) {
+                                    try {
+                                        element = driver.findElement(By.tagName(elementvalue));
+                                    } catch (Exception tagName) {
+                                        try {
+                                            element = driver.findElement(By.linkText(elementvalue));
+                                        } catch (Exception linkText) {
+                                            try {
+                                                element = driver.findElement(By.partialLinkText(elementvalue));
+                                            } catch (Exception partialLinkText) {
+                                                throw partialLinkText;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return element;
+            }
+        });
+
+        return foo;
     }
 
     /**
@@ -664,7 +747,8 @@ public class Commands {
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         }
         if (capabilities != null) {
             if(capabilities.size()>0){
@@ -690,7 +774,8 @@ public class Commands {
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         }
         return seleniumAddress;
     }
@@ -711,7 +796,8 @@ public class Commands {
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         }
         //ArrayList<String> capabilitieList = (ArrayList<String>) capabilities.get(browserName);
 
@@ -753,7 +839,8 @@ public class Commands {
         } catch (MalformedURLException e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         }
         return driver;
     }
@@ -858,7 +945,8 @@ public class Commands {
      *
      */
     public void getPageSource(WebDriver driver)  {
-        logger.stepLog(driver.getPageSource());
+        log.error(driver.getPageSource());
+        tesboLogger.stepLog(driver.getPageSource());
     }
 
     /**

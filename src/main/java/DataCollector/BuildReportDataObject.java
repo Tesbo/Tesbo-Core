@@ -335,6 +335,7 @@ public class BuildReportDataObject implements Runnable {
             e.printStackTrace();
         }
         while (TestExecutionBuilder.buildRunning) {
+
             pr.writeJsonFile(mainReportObject, TestExecutionBuilder.buildReportName);
 
             try {
