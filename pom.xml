@@ -64,6 +64,7 @@
 
 					</libs>
 					<options>
+						<option>-keep public class DataCollector.BuildReportDataObject{ public void run();}</option>
 						<option>-keep public class Execution.Tesbo{*;}</option>
 						<option>-keep public class reportAPI.Reporter{*;}</option>
 						<option>-keep public class UserConfig.GetUserConfiguration{*;}</option>
