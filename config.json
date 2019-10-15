@@ -1,7 +1,7 @@
 {
-  "projectDIR": "E:/Project/Tesbo/NewTB/tesbo-core",
+
   "run": {
-    "baseUrl": "https://google.in",
+    "baseUrl": "https://www.phptravels.net/admin",
     "seleniumAddress": "",
     "Environment":{
       "QA":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/QA",
@@ -9,7 +9,7 @@
       "Release":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/Release"
     },
     "by": {
-      "tag": ["T51"]
+      "tag": ["click1"]
     },
     "browser": {
       "name": [
