@@ -638,7 +638,7 @@ public class ReportBuilder implements Runnable {
                     "<div name=\"browserLogo\" align=\"center\" class=\"accordion\" role=\"tablist\"\n" +
                     "aria-multiselectable=\"true\">\n" +
                     "\n" +
-                    "<img src=\"../lib/Icon/" + browser + ".svg\"\n" +
+                    "<img src=\"../htmlReport/lib/Icon/" + browser + ".svg\"\n" +
                     "style=\"max-width: 100%;height: 20px;\">\n" +
                     "<h5>" + browser.toUpperCase() + "</h5>\n" +
                     "\n" +
@@ -763,11 +763,11 @@ public class ReportBuilder implements Runnable {
                             "<h4 class=\"panel-title\">\n" +
                             "<font color=\"#" + fontColor + "\"> " + testDetails.get("testName").toString() + "</font>\n" +
                             "<div class=\"nav navbar-right \">\n" +
-                            "<img src=\"../lib/Icon/" + browser + ".svg\"\n" +
+                            "<img src=\"../htmlReport/lib/Icon/" + browser + ".svg\"\n" +
                             "style=\"max-width: 100%;height: 20px;\"\n" +
                             "data-toggle=\"tooltip\" data-placement=\"left\"\n" +
                             "title=\"" + testDetails.get("browserVersion").toString() + "\">\n" +
-                            "<img src=\"../lib/Icon/" + osName + ".svg\"\n" +
+                            "<img src=\"../htmlReport/lib/Icon/" + osName + ".svg\"\n" +
                             "style=\"max-width: 100%;height: 25px;\"\n" +
                             "\n" +
                             "data-toggle=\"tooltip\" data-placement=\"left\"\n" +
