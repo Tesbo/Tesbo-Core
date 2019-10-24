@@ -479,6 +479,66 @@ public class Commands {
     }
 
     /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param driver
+     * @param step
+     * @param browser
+     * @Description : Close window tab using index.
+     */
+    public void closeWindowByIndex(WebDriver driver, String step,String browser) {
+
+        int startPoint = step.indexOf("<") + 1;
+        int endPoint = step.lastIndexOf(">");
+        String indexes = step.substring(startPoint, endPoint).trim();
+        String index[];
+        if(indexes.toLowerCase().contains("to")){
+            int startIndex=Integer.parseInt(indexes.toLowerCase().split("to")[0].trim());
+            int endIndex=Integer.parseInt(indexes.toLowerCase().split("to")[1].trim());
+            if(startIndex>endIndex) {
+                throw new TesboException("Starting index is greater than end index <" + indexes + ">");
+            }
+            int numberOfIndex=0;
+            for(int i=startIndex;i<=endIndex;i++){numberOfIndex++;}
+            index= new String[numberOfIndex];
+            for(int i=0;i<numberOfIndex;i++){ index[i]= String.valueOf(startIndex++); }
+        }else {
+            if (indexes.contains(",")) {
+                index = indexes.split(",");
+            } else {
+                index = new String[1];
+                index[0] = indexes;
+            }
+        }
+        ArrayList<String> tabs = new ArrayList<> (driver.getWindowHandles());
+        if(browser.equalsIgnoreCase("chrome")){
+            ArrayList<String> chromeTabs= new ArrayList<>();
+            chromeTabs.add(tabs.get(0));
+            for(int i=tabs.size()-1;i>0;i--){
+                chromeTabs.add(tabs.get(i));
+            }
+            tabs=new ArrayList<>();
+            tabs.addAll(chromeTabs);
+        }
+        int tabIndex;
+        for(int i=0; i<index.length;i++) {
+            try {
+                 tabIndex=Integer.parseInt(index[i]);
+            }catch (Exception e){
+                throw new TesboException("Enter numeric index value for close particular browser tab");
+            }
+            try {
+                driver.switchTo().window(tabs.get(tabIndex));
+                driver.close();
+                pause(5);
+            }catch (Exception e){
+                throw new TesboException("Browser tab index <"+tabIndex+"> is not found");
+            }
+        }
+
+    }
+
+    /**
      * @param driver
      * @Description : Navigate to back window.
      */
