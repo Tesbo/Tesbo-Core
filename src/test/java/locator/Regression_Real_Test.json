@@ -51,7 +51,7 @@
   "textOutOfIFrame":"//p[contains(text(),'Iframe 1 and 2')]",
   "IFrame2":"//iframe[@id='IF2']",
   "imgTitle":"//h5[contains(text(),'Very Flexible')]",
-  "NewWindow": "//button[@onclick='newBrwTab()']",
+  "NewWindow": "//button[contains(text(),'New Browser Tab')]",
   "emailTextBox": ".//*[@id='login-email']",
   "iframeXpath":"//iframe[@id='aswift_0']",
   "passwordTextBox": ".//*[@id='login-password']",

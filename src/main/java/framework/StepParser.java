@@ -269,9 +269,20 @@ public class StepParser {
         //Close Window
         if (step.toLowerCase().contains("close window")) {
             /**
-             * Step : close window.
+             * Step: close window.
              */
             cmd.closeWindow(driver);
+        }
+
+        //Close window using index
+        if (step.toLowerCase().contains("close <") && step.toLowerCase().contains("> window"))
+        {
+            /**
+             * Step: close <1> window
+             * Step: close <1,4> window
+             * Step: close <1 to 3> window
+             */
+            cmd.closeWindowByIndex(driver, step,test.get("browser").toString());
         }
 
         tesboLogger.testPassed("Passed");
