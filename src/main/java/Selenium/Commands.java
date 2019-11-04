@@ -530,7 +530,6 @@ public class Commands {
             try {
                 driver.switchTo().window(tabs.get(tabIndex));
                 driver.close();
-                pause(5);
             }catch (Exception e){
                 throw new TesboException("Browser tab index <"+tabIndex+"> is not found");
             }
