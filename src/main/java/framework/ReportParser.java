@@ -22,10 +22,10 @@ public class ReportParser {
      */
     public JSONArray getSuiteName() throws Exception {
         GetConfiguration configuration = new GetConfiguration();
-        SuiteParser suite = new SuiteParser();
-        String directoryPath = configuration.getSuitesDirectory();
+        TestsFileParser testsFileParser = new TestsFileParser();
+        String directoryPath = configuration.getTestsDirectory();
 
-        JSONArray suiteFileList = suite.getSuites(directoryPath);
+        JSONArray suiteFileList = testsFileParser.getTestFiles(directoryPath);
         JSONArray allSuite = new JSONArray();
 
         for (int i = 0; i < suiteFileList.size(); i++) {
@@ -98,7 +98,7 @@ public class ReportParser {
                     try {
                         String dataSet[]=headerName.split("\\.");
                         if(dataSet.length==3) {
-                            textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), dataSet[1], dataSet[2]);
+                            textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), dataSet[1], dataSet[2]);
                         }
                         else{
                             log.error("Please enter DataSet in: '"+step+"'");
@@ -122,7 +122,7 @@ public class ReportParser {
                 try {
                     if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
                         try {
-                            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
+                            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("testsFileName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
 
                         } catch (StringIndexOutOfBoundsException e) {
                             tesboLogger.stepLog(step);
@@ -137,7 +137,7 @@ public class ReportParser {
                 }
                 try {
                     if (test.get("dataType").toString().equalsIgnoreCase("global")) {
-                        textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
+                        textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(), headerName);
                     }
                 } catch (Exception e) {
                     log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");

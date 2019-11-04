@@ -44,7 +44,7 @@ public class IfStepParser {
             * If:: @element is displayed
             * If:: @element is present
             * */
-                if(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step,1))+"_IF").isDisplayed()){
+                if(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step,1))+"_IF").isDisplayed()){
                     isIfCondition=true;
                 }
             }
@@ -60,7 +60,7 @@ public class IfStepParser {
                     throw new TesboException("Please enter numeric value for verification in if condition");
                 }
 
-                try{elementNumber= Integer.parseInt(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step, 1))+"_IF").getText());}
+                try{elementNumber= Integer.parseInt(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step, 1))+"_IF").getText());}
                 catch (Exception e) {
                     isIfError=true;
                     throw new TesboException("Given element has not numeric value: "+parseElementName(step, 1));
@@ -94,8 +94,8 @@ public class IfStepParser {
             else if(step.toLowerCase().contains("text")){
                 if(step.toLowerCase().contains("equal")){
                     if(elementCountInStep(step)==2){
-                        String firstElementText=cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step, 1))+"_IF").getText();
-                        String SecondElementText=cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step, 2))+"_IF").getText();
+                        String firstElementText=cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step, 1))+"_IF").getText();
+                        String SecondElementText=cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step, 2))+"_IF").getText();
 
                         if (step.toLowerCase().contains("ignore case")) {
                         /*
@@ -119,14 +119,14 @@ public class IfStepParser {
                         /*
                         * If:: @element text is equal to ignore case 'any text'
                         * */
-                            if (cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step, 1))+"_IF").getText().equalsIgnoreCase(textOfStep)) {
+                            if (cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step, 1))+"_IF").getText().equalsIgnoreCase(textOfStep)) {
                                 isIfCondition = true;
                             }
                         } else {
                         /*
                         * If:: @element text is equal to 'any text'
                         * */
-                            if (cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step, 1)) + "_IF").getText().equals(textOfStep)) {
+                            if (cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step, 1)) + "_IF").getText().equals(textOfStep)) {
                                 isIfCondition = true;
                             }
                         }
@@ -137,7 +137,7 @@ public class IfStepParser {
                 /*
                 * If:: @element text contains is 'any text'
                 * */
-                    if (cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step, 1))+"_IF").getText().contains(textOfStep)) {
+                    if (cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step, 1))+"_IF").getText().contains(textOfStep)) {
                         isIfCondition = true;
                     }
                 }
@@ -147,7 +147,7 @@ public class IfStepParser {
                  * If:: @element is checked
                  * If:: @element is selected
                  * */
-                if(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step, 1))+"_IF").isSelected()){
+                if(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step, 1))+"_IF").isSelected()){
                     isIfCondition = true;
                 }
             }
@@ -155,7 +155,7 @@ public class IfStepParser {
                 /*
                  * If:: @element is enabled
                  * */
-                if(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step, 1))+"_IF").isEnabled()){
+                if(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step, 1))+"_IF").isEnabled()){
                     isIfCondition = true;
                 }
             }

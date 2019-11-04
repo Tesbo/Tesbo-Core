@@ -1,6 +1,5 @@
 package framework;
 
-import com.google.common.io.Files;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -29,8 +28,8 @@ public class DataDrivenParser {
      * @return
      */
     public String checkDataTypeIsExcelOrGlobleInDataset(String suiteName, String dataSetName,ArrayList<String> keyName) {
-        SuiteParser suiteParser = new SuiteParser();
-        StringBuffer suite = suiteParser.readSuiteFile(suiteName);
+        TestsFileParser testsFileParser = new TestsFileParser();
+        StringBuffer suite = testsFileParser.readTestsFile(suiteName);
         String allLines[] = suite.toString().split("[\\r\\n]+");
         boolean isExcel = false, isGlobal = false, isDataSetName = false;
         String type = null;
@@ -122,8 +121,8 @@ public class DataDrivenParser {
     }
 
     public String getExcelUrl(String suiteName,String dataSetName) {
-        SuiteParser suiteParser=new SuiteParser();
-        StringBuffer suite= suiteParser.readSuiteFile(suiteName);
+        TestsFileParser testsFileParser=new TestsFileParser();
+        StringBuffer suite= testsFileParser.readTestsFile(suiteName);
         String allLines[] = suite.toString().split("[\\r\\n]+");
         boolean flag=false;
         String filePath=null;
@@ -145,8 +144,8 @@ public class DataDrivenParser {
 
     public ArrayList<String> isDetaSetOfExcelIsUseInSuite(String suiteName) {
         ArrayList<String> excelHeaderList=new ArrayList<String>();
-        SuiteParser suiteParser=new SuiteParser();
-        StringBuffer suite= suiteParser.readSuiteFile(suiteName);
+        TestsFileParser testsFileParser=new TestsFileParser();
+        StringBuffer suite= testsFileParser.readTestsFile(suiteName);
         String allLines[] = suite.toString().split("[\\r\\n]+");
         boolean flag=false;
         for (int i = 0; i < allLines.length; i++) {
@@ -284,8 +283,8 @@ public class DataDrivenParser {
     }
 
     public String getGlobalDataValue(String suiteName, String dataSetName,String keyName) {
-        SuiteParser suiteParser=new SuiteParser();
-        StringBuffer suite= suiteParser.readSuiteFile(suiteName);
+        TestsFileParser testsFileParser=new TestsFileParser();
+        StringBuffer suite= testsFileParser.readTestsFile(suiteName);
         String allLines[] = suite.toString().split("[\\r\\n]+");
         boolean isDataSetName=false,isKeyName=false;
         String KeyValue=null;
@@ -319,8 +318,8 @@ public class DataDrivenParser {
     }
 
     public String SheetNumber(String suiteName,String testName){
-        SuiteParser suiteParser=new SuiteParser();
-        String dataSetName = suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName, testName).split(":")[1];
+        TestsFileParser testsFileParser=new TestsFileParser();
+        String dataSetName = testsFileParser.getTestDataSetBySuiteAndTestCaseName(suiteName, testName).split(":")[1];
         int startPoint = dataSetName.indexOf("[") + 1;
         int endPoint = dataSetName.lastIndexOf("]");
         String sheetNo = null;

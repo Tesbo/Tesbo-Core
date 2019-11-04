@@ -70,7 +70,7 @@ public class StepParser {
                 clickOnOffset(driver,test,step);
             }
             else {
-                cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).click();
+                cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).click();
             }
         }
 
@@ -81,7 +81,7 @@ public class StepParser {
              * And
              * Step: click @element1 and hold
              */
-            cmd.clickAndHold(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+            cmd.clickAndHold(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
         }
 
         // pause and Click
@@ -91,7 +91,7 @@ public class StepParser {
              * And
              * Step: pause to @element and click
              */
-            cmd.pauseAndClick(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+            cmd.pauseAndClick(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
         }
 
         // scroll and Click
@@ -101,19 +101,19 @@ public class StepParser {
              * And
              * Step: scroll to @element and click
              */
-            cmd.scrollAndClick(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+            cmd.scrollAndClick(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
         }
 
 
         //Right Click
         if (step.toLowerCase().contains("right click")) {
-            cmd.rightClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+            cmd.rightClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
         }
 
         //Double Click
         if (step.toLowerCase().contains("double click")) {
 
-            cmd.doubleClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+            cmd.doubleClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
         }
 
         //Print
@@ -132,7 +132,7 @@ public class StepParser {
              * Step: Capture Screenshot of @elementName
              */
             if(step.toLowerCase().contains("screenshot of") && step.toLowerCase().contains("@")) {
-                screenShotURL = cmd.screenshotElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))),test.get("suiteName").toString(), test.get("testName").toString());
+                screenShotURL = cmd.screenshotElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))),test.get("testsFileName").toString(), test.get("testName").toString());
                 tesboLogger.stepLog("Screenshot: " + screenShotURL);
                 log.info("Screenshot: " + screenShotURL);
             }
@@ -140,7 +140,7 @@ public class StepParser {
              * Step: capture screenshot
              */
             else if(step.toLowerCase().contains("screenshot")) {
-                screenShotURL = cmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
+                screenShotURL = cmd.captureScreenshot(driver, test.get("testsFileName").toString(), test.get("testName").toString());
                 tesboLogger.stepLog("Screenshot: " + screenShotURL);
                 log.info("Screenshot: " + screenShotURL);
             }
@@ -161,9 +161,9 @@ public class StepParser {
             if (step.toLowerCase().contains("random")) {step= randomStepParse(driver,test,step); }
             else {
                 if(step.toLowerCase().contains("clear")){
-                    cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
+                    cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).clear();
                 }
-                cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
+                cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
             }
         }
 
@@ -172,7 +172,7 @@ public class StepParser {
             /*
             Step: Upload File 'filePath' @element
             */
-            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
+            cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
         }
 
         //Get Page Source
@@ -203,12 +203,12 @@ public class StepParser {
 
         //scroll
         if (step.toLowerCase().contains("scroll") && !(step.toLowerCase().contains("and click"))) {
-            scrollFunction(driver, test.get("suiteName").toString(), step);
+            scrollFunction(driver, test.get("testsFileName").toString(), step);
         }
 
         //pause
         if (step.toLowerCase().contains("pause") && !(step.toLowerCase().contains("and click"))) {
-            pauseFunction(driver, test.get("suiteName").toString(), step);
+            pauseFunction(driver, test.get("testsFileName").toString(), step);
         }
 
         //select
@@ -243,7 +243,7 @@ public class StepParser {
             /**
              * Step: Mouse Hover @element
              */
-            cmd.mouseHover(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+            cmd.mouseHover(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
         }
 
         //Drag and Drop
@@ -263,7 +263,7 @@ public class StepParser {
             /*
             * Step: clear @ElementText
             * */
-            cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).clear();
+            cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).clear();
         }
 
         //Close Window
@@ -357,13 +357,13 @@ public class StepParser {
         if (step.toLowerCase().contains("cardtype")){textToEnter=randLibrary.cardname(); }
 
        /* if (step.toLowerCase().contains("number"))
-        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomNo()); }
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomNo()); }
 
         if (step.toLowerCase().contains("alpha"))
-        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomAlpha()); }
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomAlpha()); }
 
         if (step.toLowerCase().contains("numAlpha"))
-        { cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomNoAlpha()); }
+        { cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomNoAlpha()); }
 */
         String stepText="";
         if(!textToEnter.equals("")){
@@ -375,11 +375,11 @@ public class StepParser {
             log.info(step.replace(stepText, textToEnter).replace("@",""));
             tesboLogger.stepLog(step.replace(stepText, textToEnter).replace("@",""));
             if (step.toLowerCase().contains("birthday")){
-                cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys((CharSequence) textToEnter);
+                cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys((CharSequence) textToEnter);
 
             }
             else {
-                cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(textToEnter);
+                cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(textToEnter);
             }
         }
         if(!stepText.equals("")) {
@@ -475,7 +475,7 @@ public class StepParser {
                  */
                 else if (parseElementName(step) != null) {
                     try {
-                        cmd.switchFrameElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+                        cmd.switchFrameElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
                     } catch (NullPointerException e) {
                         log.info("No element found.");
                         tesboLogger.errorLog("No element found.");
@@ -654,28 +654,28 @@ public class StepParser {
              * Step : Deselect all from @element
              */
             if (step.toLowerCase().contains("all")) {
-                cmd.deselectAll(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))));
+                cmd.deselectAll(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
             }
             /**
              * 'text' identify.
              * Step : Deselect using text 'Text' from @element
              */
             else if (step.toLowerCase().contains("text")) {
-                cmd.deselectText(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))), parseTextToEnter(test, step));
+                cmd.deselectText(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))), parseTextToEnter(test, step));
             }
             /**
              * 'index' identify.
              * Step : Deselect using index 1 from @element
              */
             else if (step.toLowerCase().contains("index")) {
-                cmd.deselectIndex(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
+                cmd.deselectIndex(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
             }
             /**
              * 'value' identify.
              * Step : Deselect using value 'Text' from @element
              */
             else if (step.toLowerCase().contains("value")) {
-                cmd.deselectValue(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))), parseTextToEnter(test, step));
+                cmd.deselectValue(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))), parseTextToEnter(test, step));
             }
         } else {
             /**
@@ -683,21 +683,21 @@ public class StepParser {
              * Step : Select using text 'Text' from @element
              */
             if (step.toLowerCase().contains("text")) {
-                cmd.selectText(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))), parseTextToEnter(test, step));
+                cmd.selectText(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))), parseTextToEnter(test, step));
             }
             /**
              * 'index' identify.
              * Step : Select using index 1 from @element
              */
             else if (step.toLowerCase().contains("index")) {
-                cmd.selectIndex(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
+                cmd.selectIndex(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
             }
             /**
              * 'value' identify.
              * Step : Select using value 'Text' form @element
              */
             else if (step.toLowerCase().contains("value")) {
-                cmd.selectValue(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))), parseTextToEnter(test, step));
+                cmd.selectValue(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))), parseTextToEnter(test, step));
             }
         }
     }
@@ -740,7 +740,7 @@ public class StepParser {
                     try {
                         String dataSet[]=headerName.split("\\.");
                         if(dataSet.length==3) {
-                            textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), dataSet[1], dataSet[2]);
+                            textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), dataSet[1], dataSet[2]);
                             tesboLogger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
                             log.info(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
                         }
@@ -769,7 +769,7 @@ public class StepParser {
                 try {
                     if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
                         try {
-                            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
+                            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("testsFileName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
                             if (textToEnter != null) {
                                 log.info(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
                                 tesboLogger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
@@ -790,7 +790,7 @@ public class StepParser {
                 }
                 try {
                     if (test.get("dataType").toString().equalsIgnoreCase("global")) {
-                        textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
+                        textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(), headerName);
                         tesboLogger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
                         log.info(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
                     }
@@ -837,7 +837,7 @@ public class StepParser {
                     try {
                         String dataSet[]=headerName.split("\\.");
                         if(dataSet.length==3) {
-                            textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), dataSet[1], dataSet[2]);
+                            textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), dataSet[1], dataSet[2]);
                         }
                         else{
                             log.error("Please enter DataSet in: '"+step+"'");
@@ -864,7 +864,7 @@ public class StepParser {
                 try {
                     if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
                         try {
-                            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("suiteName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("suiteName").toString(), test.get("testName").toString())));
+                            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("testsFileName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
                         } catch (StringIndexOutOfBoundsException e) {
                             log.error("no string to enter. Create a separate exeception here");
                             tesboLogger.testFailed("no string to enter. Create a separate exeception here");
@@ -878,7 +878,7 @@ public class StepParser {
                 }
                 try {
                     if (test.get("dataType").toString().equalsIgnoreCase("global")) {
-                        textToEnter = dataDrivenParser.getGlobalDataValue(test.get("suiteName").toString(), test.get("dataSetName").toString(), headerName);
+                        textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(), headerName);
                     }
                 } catch (Exception e) {
                     log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
@@ -979,7 +979,7 @@ public class StepParser {
         Actions actions = new Actions(driver);
         if (step.toLowerCase().contains("enter")) {
             if (step.toLowerCase().contains("@")) {
-                cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(Keys.ENTER);
+                cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(Keys.ENTER);
             } else {
                 actions.sendKeys(Keys.ENTER).build().perform();
             }
@@ -996,7 +996,7 @@ public class StepParser {
                     if(!(Steps[i + 2].replaceAll("'", "").toLowerCase().equals("")) &  Steps[i + 2].contains("'")
                             & ( Steps[i + 2].replaceAll("'", "").toLowerCase().equals("a") | Steps[i + 2].replaceAll("'", "").toLowerCase().equals("c") | Steps[i + 2].replaceAll("'", "").toLowerCase().equals("v"))) {
                         //actions.keyDown(Keys.COMMAND).sendKeys(Steps[i + 2].replaceAll("'", "").toLowerCase()).keyUp(Keys.COMMAND).perform();
-                        cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).sendKeys(Keys.chord(Keys.CONTROL, Steps[i + 2].replaceAll("'", "").toLowerCase()));
+                        cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(Keys.chord(Keys.CONTROL, Steps[i + 2].replaceAll("'", "").toLowerCase()));
                     }
                     else {
                         log.error("Please enter valid key");
@@ -1137,7 +1137,7 @@ public class StepParser {
         }
         if(!(elementTo.equals("") && elementFrom.equals(""))){
             // Not working
-            cmd.dragAndDrop(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), elementFrom)), cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), elementTo)));
+            cmd.dragAndDrop(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), elementFrom)), cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), elementTo)));
         }
         else{
             log.error("Pleas enter valid step: '"+step+"'");
@@ -1158,7 +1158,7 @@ public class StepParser {
     public void clickOnElementFromList(WebDriver driver,JSONObject test,String step)throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
-        List<WebElement> listOfElements =cmd.findElements(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step)));
+        List<WebElement> listOfElements =cmd.findElements(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step)));
 
         //Click on first element from list
         if (step.toLowerCase().contains("first element")) {
@@ -1223,9 +1223,9 @@ public class StepParser {
      * @throws Exception
      */
     public boolean isSeverityOrPriority(JSONObject test) {
-        SuiteParser suiteParser=new SuiteParser();
+        TestsFileParser testsFileParser=new TestsFileParser();
         boolean isSeverityOrPriority=false;
-        JSONArray steps= suiteParser.getSeverityAndPriority(test);
+        JSONArray steps= testsFileParser.getSeverityAndPriority(test);
         if(steps.size()>0){
             isSeverityOrPriority=true;
         }
@@ -1246,7 +1246,7 @@ public class StepParser {
         GetLocator locator = new GetLocator();
         String printStep;
         if(step.toLowerCase().contains("@")){
-            printStep="Step: "+ cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step))).getText();
+            printStep="Step: "+ cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).getText();
         }
         else{
             int startPoint = 0;
@@ -1271,7 +1271,7 @@ public class StepParser {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
-        WebElement element =cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), parseElementName(step)));
+        WebElement element =cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step)));
         int startPoint = 0;
         int endPoint = 0;
         startPoint = step.indexOf("(") + 1;

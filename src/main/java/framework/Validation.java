@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class Validation {
 
-    SuiteParser suiteParser=new SuiteParser();
+    TestsFileParser testsFileParser=new TestsFileParser();
     GetConfiguration getCofig=new GetConfiguration();
     TesboLogger tesboLogger =new TesboLogger();
     private static final Logger log = LogManager.getLogger(Validation.class);
@@ -32,9 +32,9 @@ public class Validation {
         log.info("Validation for Project Directory Path is empty or not");
         projectDirectoryPathValidation();
 
-        log.info("Validation for SuiteDirectory Path is empty or not");
-        //Validation for SuiteDirectory Path
-        suiteDirectoryPathValidation();
+        log.info("Validation for TestsDirectory Path is empty or not");
+        //Validation for TestsDirectory Path
+        testsDirectoryPathValidation();
 
         log.info("Validation for locatorDirectory Path is empty or not");
         //Validation for locatorDirectory Path
@@ -62,29 +62,29 @@ public class Validation {
         locatorTypesValidation();
     }
 
-    public void suiteDirectoryPathValidation() {
+    public void testsDirectoryPathValidation() {
 
-        //Validation for SuiteDirectory Path is empty
-        String suiteDirectoryPath=null;
+        //Validation for TestesDirectory Path is empty
+        String testsDirectoryPath=null;
         try {
-            suiteDirectoryPath=getCofig.getSuitesDirectory();
+            testsDirectoryPath=getCofig.getTestsDirectory();
 
         }catch (Exception e){
             log.error("'config.json' file not found in projet");
             throw new TesboException("'config.json' file not found in project");
         }
-        File file = new File(suiteDirectoryPath);
-        if(suiteDirectoryPath.equals("")) {
-            log.error("Suite directory path is not define in config file.");
-            throw new TesboException("Suite directory path is not define in config file.");
+        File file = new File(testsDirectoryPath);
+        if(testsDirectoryPath.equals("")) {
+            log.error("Tests directory path is not define in config file.");
+            throw new TesboException("Tests directory path is not define in config file.");
         }
-        if(Files.notExists(Paths.get(suiteDirectoryPath))){
-            log.error("Please enter valid suite directory path.");
-            throw new TesboException("Please enter valid suite directory path.");
+        if(Files.notExists(Paths.get(testsDirectoryPath))){
+            log.error("Please enter valid tests directory path.");
+            throw new TesboException("Please enter valid tests directory path.");
         }
         if(file.list().length==0){
-            log.error("Suite directory is empty");
-            throw new TesboException("Suite directory is empty");
+            log.error("Tests directory is empty");
+            throw new TesboException("Tests directory is empty");
         }
 
     }
@@ -129,28 +129,28 @@ public class Validation {
         } else {
             int count=0;
             for (File aFile : files) {
-                if(aFile.getName().toString().equals("suite")){count++;}
-                if(aFile.getName().toString().equals("locator")){count++;}
-                if(aFile.getName().toString().equalsIgnoreCase("runner")){count++;}
+                if(aFile.getName().equals("tests")){count++;}
+                if(aFile.getName().equals("locator")){count++;}
+                if(aFile.getName().equalsIgnoreCase("runner")){count++;}
             }
             if(count != 3){
-                log.error("Project directory has not found 'suite' OR 'locator' OR 'runner' package");
-                throw new TesboException("Project directory has not found 'suite' OR 'locator' OR 'runner' package");
+                log.error("Project directory has not found 'tests' OR 'locator' OR 'runner' package");
+                throw new TesboException("Project directory has not found 'tests' OR 'locator' OR 'runner' package");
             }
         }
 
 
         if(projectDirectoryPath.equals("")) {
-            log.error("Suite directory path is not define in config file.");
-            throw new TesboException("Suite directory path is not define in config file.");
+            log.error("Project directory path is not define in config file.");
+            throw new TesboException("Project directory path is not define in config file.");
         }
         if(Files.notExists(Paths.get(projectDirectoryPath))){
-            log.error("Please enter valid suite directory path.");
-            throw new TesboException("Please enter valid suite directory path.");
+            log.error("Please enter valid project directory path.");
+            throw new TesboException("Please enter valid project directory path.");
         }
         if(file.list().length==0){
-            log.error("Suite directory is empty");
-            throw new TesboException("Suite directory is empty");
+            log.error("Project directory is empty");
+            throw new TesboException("Project directory is empty");
         }
 
     }
@@ -250,7 +250,7 @@ public class Validation {
         if(tagName!=null) {
             if (tagName.size() > 0) {
                 for (Object tag : tagName) {
-                    JSONObject testName = suiteParser.getTestNameByTag(tag.toString());
+                    JSONObject testName = testsFileParser.getTestNameByTag(tag.toString());
                     if (testName.size() == 0) {
                         log.error("Test not found for '" + tag.toString() + "' tag.");
                         throw new TesboException("Test not found for '" + tag.toString() + "' tag.");
@@ -265,7 +265,7 @@ public class Validation {
             if (suiteName.size() > 0) {
                 for (Object suite : suiteName) {
                     boolean isSuite=false;
-                    JSONArray SuiteList= suiteParser.getSuites(getCofig.getSuitesDirectory());
+                    JSONArray SuiteList= testsFileParser.getTestFiles(getCofig.getTestsDirectory());
                     for(Object suitePath : SuiteList){
                         File file=new File(suitePath.toString());
                         if(suite.toString().equalsIgnoreCase(file.getName().split("\\.")[0])){ isSuite=true; }
@@ -274,7 +274,7 @@ public class Validation {
                         log.error("'"+suite+ "' suite is not found in suite directory");
                         throw new TesboException("'"+suite+ "' suite is not found in suite directory");
                     }
-                    JSONObject testNameBySuite = suiteParser.getTestNameBySuite(suite.toString());
+                    JSONObject testNameBySuite = testsFileParser.getTestNameBySuite(suite.toString());
                     if (testNameBySuite.size() == 0) {
                         log.error("Test is not found in '" + suite.toString() + "' suite.");
                         throw new TesboException("Test is not found in '" + suite.toString() + "' suite.");
@@ -309,20 +309,20 @@ public class Validation {
 
     public void endStepValidation(JSONArray testExecutionQueue) {
 
-        SuiteParser suiteParser=new SuiteParser();
+        TestsFileParser testsFileParser=new TestsFileParser();
         JSONArray listOfSession;
         //Validation for end step
         if(testExecutionQueue.size()>0){
             for (int i = 0; i < testExecutionQueue.size(); i++) {
                 JSONObject test= (JSONObject) testExecutionQueue.get(i);
-                JSONArray steps= suiteParser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(),test.get("testName").toString());
-                listOfSession = suiteParser.getSessionListFromTest(test.get("suiteName").toString(), test.get("testName").toString());
+                JSONArray steps= testsFileParser.getTestStepBySuiteandTestCaseName(test.get("testsFileName").toString(),test.get("testName").toString());
+                listOfSession = testsFileParser.getSessionListFromTest(test.get("testsFileName").toString(), test.get("testName").toString());
                 if (listOfSession.size() > 0) {
-                    sessionDefineValidation(test.get("suiteName").toString(), test.get("testName").toString(),listOfSession);
+                    sessionDefineValidation(test.get("testsFileName").toString(), test.get("testName").toString(),listOfSession);
                     sessionNotDeclareOnTest(steps, listOfSession);
                     sessionNotDefineOnTest(steps, listOfSession);
                 }
-                collectionValidation(test.get("suiteName").toString(), test.get("testName").toString());
+                collectionValidation(test.get("testsFileName").toString(), test.get("testName").toString());
                 severityAndPriorityValidation(test);
             }
         }
@@ -365,9 +365,9 @@ public class Validation {
 
     }
 
-    public void sessionDefineValidation(String suiteName, String testName,JSONArray listOfSession) {
-        StringBuffer suiteDetails =suiteParser.readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+    public void sessionDefineValidation(String testsFileName, String testName,JSONArray listOfSession) {
+        StringBuffer testsFileNameDetails =testsFileParser.readTestsFile(testsFileName);
+        String allLines[] = testsFileNameDetails.toString().split("[\\r\\n]+");
         int testCount=0;
         int startPoint = 0;
         boolean testStarted = false;
@@ -441,10 +441,10 @@ public class Validation {
 
     }
 
-    public void collectionValidation(String suiteName, String testName) {
-        StringBuffer suiteDetails =suiteParser.readSuiteFile(suiteName);
+    public void collectionValidation(String testsFileName, String testName) {
+        StringBuffer testsFileNameDetails =testsFileParser.readTestsFile(testsFileName);
         StepParser stepParser=new StepParser();
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        String allLines[] = testsFileNameDetails.toString().split("[\\r\\n]+");
         int testCount=0;
         int startPoint = 0;
         boolean testStarted = false;
@@ -481,7 +481,7 @@ public class Validation {
                     log.error("Collection name not define properly on :"+allLines[j]);
                     throw new TesboException("Collection name not define properly on :"+allLines[j]);
                 }
-                suiteParser.getGroupTestStepBySuiteandTestCaseName(suiteName, collectionName);
+                testsFileParser.getGroupTestStepBySuiteandTestCaseName(testsFileName, collectionName);
             }
         }
 
@@ -505,8 +505,8 @@ public class Validation {
 
     public boolean severityAndPriorityValidation(JSONObject test) {
 
-        SuiteParser suiteParser=new SuiteParser();
-        JSONArray steps= suiteParser.getSeverityAndPriority(test);
+        TestsFileParser testsFileParser=new TestsFileParser();
+        JSONArray steps= testsFileParser.getSeverityAndPriority(test);
         if(steps.size()>0){
             for (int i = 0; i < steps.size(); i++) {
                 Object step = steps.get(i);
@@ -540,11 +540,7 @@ public class Validation {
             }
         }
 
-
-
-
-
-        StringBuffer suiteDetails = suiteParser.readSuiteFile(test.get("suiteName").toString());
+        StringBuffer suiteDetails = testsFileParser.readTestsFile(test.get("testsFileName").toString());
         String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
         boolean isSeverityOrPriority=false;
         int testCount=0;
