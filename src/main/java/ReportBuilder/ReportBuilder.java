@@ -589,7 +589,6 @@ public class ReportBuilder implements Runnable {
 
 
         JSONArray browserArray = data.getBrowserExecutionReport(buildHistory);
-        System.out.println("===>browserArray: "+browserArray);
 
         //array of all the browser
 

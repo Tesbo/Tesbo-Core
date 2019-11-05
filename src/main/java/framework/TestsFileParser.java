@@ -47,8 +47,8 @@ public class TestsFileParser {
                 }
             }
             if(flag==true){
-                log.error(file+" file not found");
-                tesboLogger.errorLog(file+" file not found");
+                log.error(file+" file found in tests directory");
+                tesboLogger.errorLog(file+" file not found in tests directory");
                 throw (new NoSuchFileException(""));
             }
         } catch (Exception e) {
