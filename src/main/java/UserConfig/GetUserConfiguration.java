@@ -266,10 +266,10 @@ public class GetUserConfiguration {
         return dataOfparallel;
     }
 
-    /* public String getSuitesDirectory()  {
+     public String getSuitesDirectory()  {
         String SuiteDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/suite";
         return SuiteDirectory;
-    }*/
+    }
 
     public String getTestsDirectory()  {
         String SuiteDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/tests";

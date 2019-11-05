@@ -161,9 +161,9 @@ public class TestExecutionBuilder {
         String newName;
         GetJsonData data = new GetJsonData();
         File buildHistory = new File("./htmlReport/Build History");
-        JSONArray suiteFileList = new JSONArray();
+        JSONArray testsFileList = new JSONArray();
         try (Stream<Path> paths = Files.walk(Paths.get(buildHistory.getAbsolutePath()))) {
-            suiteFileList.addAll(paths
+            testsFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
@@ -171,7 +171,7 @@ public class TestExecutionBuilder {
             logger.testFailed(sw.toString());
         }
 
-        if (suiteFileList.size() > 0) {
+        if (testsFileList.size() > 0) {
             File lastModifiedfile = data.getLastModifiedJsonFile(buildHistory.getAbsolutePath());
             String getFile = lastModifiedfile.getName();
             String getCount[] = getFile.split("_")[1].split(".json");
@@ -211,7 +211,6 @@ public class TestExecutionBuilder {
     public void buildExecution() throws Exception {
         Validation validation = new Validation();
         GetConfiguration config = new GetConfiguration();
-        int tagSuiteCount = 0;
 
         /**
          * @Discription : Run by tag method.
@@ -327,7 +326,7 @@ public class TestExecutionBuilder {
                         testsFileParser.getAnnotationDataSetByTestsFile(testsFileName.toString());
                     }
                     if(dataSetName==null) {
-                        dataSetName = testsFileParser.getTestDataSetBySuiteAndTestCaseName(testsFileName.toString(), testName.toString());
+                        dataSetName = testsFileParser.getTestDataSetByTestsFileAndTestCaseName(testsFileName.toString(), testName.toString());
                     }
                     if (dataSetName != null) {
                         ArrayList<String> columnNameList = new ArrayList<String>();
@@ -338,7 +337,7 @@ public class TestExecutionBuilder {
                             //columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepByTestsFile(testsFileName.toString(),"AfterTest"));
                         }
                         if(columnNameList.size() == 0) {
-                            columnNameList = dataDrivenParser.getColumnNameFromTest(testsFileParser.getTestStepBySuiteandTestCaseName(testsFileName.toString(), testName.toString()));
+                            columnNameList = dataDrivenParser.getColumnNameFromTest(testsFileParser.getTestStepByTestsFileandTestCaseName(testsFileName.toString(), testName.toString()));
                         }
                         if (columnNameList.size() == 0) {
                             throw new NullPointerException("Data set value is not use on 'Test: " + testName + "' steps");

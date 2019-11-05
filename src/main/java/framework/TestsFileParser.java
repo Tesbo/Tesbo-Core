@@ -34,15 +34,15 @@ public class TestsFileParser {
 
             testsFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
-            for(Object suitePath:testsFileList) {
-                String[] suite=suitePath.toString().split("\\.");
-                if (suite.length == 2) {
-                    if (!suite[1].equalsIgnoreCase("suite")) {
+            for(Object testsFilePath:testsFileList) {
+                String[] testsFile=testsFilePath.toString().split("\\.");
+                if (testsFile.length == 2) {
+                    if (!testsFile[1].equalsIgnoreCase("tests")) {
                         flag=true;
                         if(file==null)
-                            file="'."+suite[1]+"'";
+                            file="'."+testsFile[1]+"'";
                         else
-                            file+=", '."+suite[1]+"'";
+                            file+=", '."+testsFile[1]+"'";
                     }
                 }
             }
@@ -53,8 +53,8 @@ public class TestsFileParser {
             }
         } catch (Exception e) {
             if(flag==true){
-                log.error("Message : Please create only '.suite' file in suite directory.");
-                tesboLogger.testFailed("Message : Please create only '.suite' file in suite directory.");
+                log.error("Message : Please create only '.tests' file in tests directory.");
+                tesboLogger.testFailed("Message : Please create only '.tests' file in tests directory.");
             }
             else {
                 log.error("Message : Please Enter valid directory path.");
@@ -79,7 +79,7 @@ public class TestsFileParser {
     }
 
     /**
-     * @param fileName : File name with extension e.g. login.suite
+     * @param fileName : File name with extension e.g. login.tests
      * @return whole file content as String buffer
      */
     public StringBuffer readTestsFile(String fileName) {
@@ -126,7 +126,7 @@ public class TestsFileParser {
     /**
      * @param tagName
      * @param testsFile
-     * @return List of Test based on suite Data
+     * @return List of Test based on tests file Data
      */
     public JSONArray getTestNameByTag(String tagName, StringBuffer testsFile) {
 
@@ -161,7 +161,7 @@ public class TestsFileParser {
         }
         // When No Test Available
         if (testName.size() == 0) {
-            //throw new NoTestFoundException("No test found in suite file");
+            //throw new NoTestFoundException("No test found in tests file");
             return null;
         }
         return testName;
@@ -201,7 +201,7 @@ public class TestsFileParser {
      * @param TestsFileName
      * @return
      */
-    public JSONArray getTestStepBySuiteandTestCaseName(String TestsFileName, String testName) {
+    public JSONArray getTestStepByTestsFileandTestCaseName(String TestsFileName, String testName) {
         StringBuffer testsFileDetails = readTestsFile(TestsFileName);
         String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
         JSONArray testSteps = new JSONArray();
@@ -276,7 +276,7 @@ public class TestsFileParser {
      * @param testName
      * @return
      */
-    public String getTestDataSetBySuiteAndTestCaseName(String testsFileName, String testName) {
+    public String getTestDataSetByTestsFileAndTestCaseName(String testsFileName, String testName) {
         StringBuffer testsFileDetails = readTestsFile(testsFileName);
         String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
         String testDataSet = null;
@@ -318,7 +318,7 @@ public class TestsFileParser {
     }
 
 
-    public JSONArray getGroupTestStepBySuiteandTestCaseName(String testsFileName, String groupName) {
+    public JSONArray getGroupTestStepByTestFileandTestCaseName(String testsFileName, String groupName) {
         StringBuffer testsFileDetails = readTestsFile(testsFileName);
         String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
         Validation validation=new Validation();
@@ -352,8 +352,8 @@ public class TestsFileParser {
         }
         if(startPoint==0)
         {
-            log.error("Collection name "+ groupName +" is not found on suite");
-            throw new TesboException("Collection name "+ groupName +" is not found on suite");
+            log.error("Collection name "+ groupName +" is not found on tests file");
+            throw new TesboException("Collection name "+ groupName +" is not found on tests file");
         }
         if(groupCount>=2 || endpoint==0) {
             log.error("End Step is not found for '" + groupName + "' collection");
@@ -413,7 +413,7 @@ public class TestsFileParser {
         }
 
         for (Object testsFile : allTestsFile.keySet()) {
-            String testFileName[] = testsFile.toString().split(".suite");
+            String testFileName[] = testsFile.toString().split(".tests");
             if (testFileName[0].toLowerCase().equals(testsFileName.toLowerCase())) {
                 JSONArray testNames = getTestNameByTestsFile((StringBuffer) allTestsFile.get(testsFile));
                 if (testNames != null) {
@@ -452,7 +452,7 @@ public class TestsFileParser {
             }
         }   // When No Test Available
         if (testName.size() == 0) {
-            //throw new NoTestFoundException("No test found in suite file");
+            //throw new NoTestFoundException("No test found in tests file");
             return null;
         }
         return testName;
@@ -523,8 +523,8 @@ public class TestsFileParser {
      *
      */
     public JSONArray getSeverityAndPriority(JSONObject test) {
-        StringBuffer suiteDetails = readTestsFile(test.get("testsFileName").toString());
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        StringBuffer testsFileDetails = readTestsFile(test.get("testsFileName").toString());
+        String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
         JSONArray severityAndPriority = new JSONArray();
         int testCount=0;
         int startPoint = 0;
@@ -745,12 +745,12 @@ public class TestsFileParser {
     /**
      * Not completed need to work on this...
      * @lastModifiedBy: Ankit Mistry
-     * @param suiteName
+     * @param testFileName
      * @return
      */
-    public String isRetry(String suiteName, String testName) {
-        StringBuffer suiteDetails = readTestsFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+    public String isRetry(String testFileName, String testName) {
+        StringBuffer testFileDetails = readTestsFile(testFileName);
+        String allLines[] = testFileDetails.toString().split("[\\r\\n]+");
         int testCount=0;
         int startPoint = 0;
         boolean testStarted = false;

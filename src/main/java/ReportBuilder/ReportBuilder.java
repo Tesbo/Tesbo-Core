@@ -496,30 +496,30 @@ public class ReportBuilder implements Runnable {
     public StringBuffer generateModuleWiseSummary(StringBuffer sb) {
 
 
-        JSONArray chromeSuite = data.getModuleWiseData(buildHistory, "chrome");
-        JSONArray firefoxSuite = data.getModuleWiseData(buildHistory, "firefox");
-        JSONArray operaSuite = data.getModuleWiseData(buildHistory, "opera");
-        JSONArray ieSuite = data.getModuleWiseData(buildHistory, "ie");
-        JSONArray safariSuite = data.getModuleWiseData(buildHistory, "safari");
+        JSONArray chromeTestsFile = data.getModuleWiseData(buildHistory, "chrome");
+        JSONArray firefoxTestsFile = data.getModuleWiseData(buildHistory, "firefox");
+        JSONArray operaTestsFile = data.getModuleWiseData(buildHistory, "opera");
+        JSONArray ieTestsFile = data.getModuleWiseData(buildHistory, "ie");
+        JSONArray safariTestsFile = data.getModuleWiseData(buildHistory, "safari");
 
 
-        sb = generatePerModuleSummary(sb, chromeSuite, "Chrome");
-        sb = generatePerModuleSummary(sb, firefoxSuite, "Firefox");
-        sb = generatePerModuleSummary(sb, ieSuite, "IE");
-        sb = generatePerModuleSummary(sb, operaSuite, "Opera");
-        sb = generatePerModuleSummary(sb, safariSuite, "Safari");
+        sb = generatePerModuleSummary(sb, chromeTestsFile, "Chrome");
+        sb = generatePerModuleSummary(sb, firefoxTestsFile, "Firefox");
+        sb = generatePerModuleSummary(sb, ieTestsFile, "IE");
+        sb = generatePerModuleSummary(sb, operaTestsFile, "Opera");
+        sb = generatePerModuleSummary(sb, safariTestsFile, "Safari");
 
 
         return sb;
     }
 
 
-    public StringBuffer generatePerModuleSummary(StringBuffer sb, JSONArray suiteArray, String browserName) {
+    public StringBuffer generatePerModuleSummary(StringBuffer sb, JSONArray testsFileArray, String browserName) {
 
         try {
 
 
-            if (suiteArray.size() > 0) {
+            if (testsFileArray.size() > 0) {
 
                 sb.append("<div class=\"row\">\n" +
                         "\n" +
@@ -545,14 +545,14 @@ public class ReportBuilder implements Runnable {
                         "<tbody>\n");
 
 
-                for (int i = 0; i < suiteArray.size(); i++) {
+                for (int i = 0; i < testsFileArray.size(); i++) {
 
                     sb.append(" <tr>\n" +
                             " <th scope=\"row\">" + (i + 1) + "</th>\n" +
-                            " <td>" + ((JSONObject) suiteArray.get(i)).get("suiteName") + "</td>\n" +
-                            " <td>" + (Integer.parseInt(((JSONObject) suiteArray.get(i)).get("totalFailed").toString()) + Integer.parseInt(((JSONObject) suiteArray.get(i)).get("totalPassed").toString())) + "</td>\n" +
-                            " <td>" + ((JSONObject) suiteArray.get(i)).get("totalPassed") + "</td>\n" +
-                            " <td>" + ((JSONObject) suiteArray.get(i)).get("totalFailed") + "</td>\n" +
+                            " <td>" + ((JSONObject) testsFileArray.get(i)).get("testsFileName") + "</td>\n" +
+                            " <td>" + (Integer.parseInt(((JSONObject) testsFileArray.get(i)).get("totalFailed").toString()) + Integer.parseInt(((JSONObject) testsFileArray.get(i)).get("totalPassed").toString())) + "</td>\n" +
+                            " <td>" + ((JSONObject) testsFileArray.get(i)).get("totalPassed") + "</td>\n" +
+                            " <td>" + ((JSONObject) testsFileArray.get(i)).get("totalFailed") + "</td>\n" +
                             " </tr>");
                 }
 
@@ -589,7 +589,7 @@ public class ReportBuilder implements Runnable {
 
 
         JSONArray browserArray = data.getBrowserExecutionReport(buildHistory);
-
+        System.out.println("===>browserArray: "+browserArray);
 
         //array of all the browser
 
@@ -648,36 +648,36 @@ public class ReportBuilder implements Runnable {
                     "</a>\n");
 
 
-            //array of the all the suites
+            //array of the all the tests file
 
 
-            JSONArray suiteList = ((JSONArray) ((JSONObject) ((JSONObject) singleBrowser).get(browser)).get("suits"));
+            JSONArray testsFileList = ((JSONArray) ((JSONObject) ((JSONObject) singleBrowser).get(browser)).get("testsFile"));
 
 
             sb.append("<div id=\"" + browser + "\" class=\"panel-collapse collapse\">\n");
 
 
-            for (Object suite : suiteList)
+            for (Object testsFile : testsFileList)
 
             {
 
 
-                sb.append("<!-- Suite : " + ((JSONObject) suite).get("suiteName") + "-->");
+                sb.append("<!-- TestsFile : " + ((JSONObject) testsFile).get("testsFileName") + "-->");
 
 
-                JSONArray testList = (JSONArray) ((JSONObject) suite).get("tests");
+                JSONArray testList = (JSONArray) ((JSONObject) testsFile).get("tests");
                 sb.append(
 
                         "<div class=\"x_panel\" class=\"panel-collapse collapse\"\n" +
                                 "role=\"tabpanel\"\n" +
                                 "aria-labelledby=\"headingOne\">\n" +
                                 "<div class=\"x_title\">\n" +
-                                "<h2><i class=\"fa fa-align-left\"></i> " + ((JSONObject) suite).get("suiteName") + "\n" +
+                                "<h2><i class=\"fa fa-align-left\"></i> " + ((JSONObject) testsFile).get("testsFileName") + "\n" +
                                 "</h2>\n" +
                                 " <div class=\"nav navbar-right\" style=\"padding-top : 5px \">\n" +
-                                "<font>Total  : <b>" + (Double.parseDouble(((JSONObject) suite).get("totalPassed").toString()) + Double.parseDouble(((JSONObject) suite).get("totalFailed").toString())) + "</b> |</font>\n" +
-                                "<font>Passed : <b>" + ((JSONObject) suite).get("totalPassed") + "</b> |</font>\n" +
-                                "<font>Failed : <b>" + ((JSONObject) suite).get("totalFailed") + "</b>  |</font>\n" +
+                                "<font>Total  : <b>" + (Double.parseDouble(((JSONObject) testsFile).get("totalPassed").toString()) + Double.parseDouble(((JSONObject) testsFile).get("totalFailed").toString())) + "</b> |</font>\n" +
+                                "<font>Passed : <b>" + ((JSONObject) testsFile).get("totalPassed") + "</b> |</font>\n" +
+                                "<font>Failed : <b>" + ((JSONObject) testsFile).get("totalFailed") + "</b>  |</font>\n" +
                                 " </div>\n" +
                                 "  <div class=\"clearfix\"></div>\n" +
                                 " </div>\n" +

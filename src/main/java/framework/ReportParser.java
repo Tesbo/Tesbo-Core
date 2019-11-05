@@ -1,14 +1,11 @@
 package framework;
 
 import Execution.Tesbo;
-import Execution.TestExecutionBuilder;
 import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import Exception.TesboException;
@@ -18,22 +15,22 @@ public class ReportParser {
     /**
      * @return
      * @throws Exception
-     * @Description : Get suit Names.
+     * @Description : Get test file names.
      */
-    public JSONArray getSuiteName() throws Exception {
+    public JSONArray getSuiteName() {
         GetConfiguration configuration = new GetConfiguration();
         TestsFileParser testsFileParser = new TestsFileParser();
         String directoryPath = configuration.getTestsDirectory();
 
-        JSONArray suiteFileList = testsFileParser.getTestFiles(directoryPath);
-        JSONArray allSuite = new JSONArray();
+        JSONArray testsFileList = testsFileParser.getTestFiles(directoryPath);
+        JSONArray allTestFile = new JSONArray();
 
-        for (int i = 0; i < suiteFileList.size(); i++) {
-            File name = new File(suiteFileList.get(i).toString());
-            allSuite.add(name.getName());
+        for (int i = 0; i < testsFileList.size(); i++) {
+            File name = new File(testsFileList.get(i).toString());
+            allTestFile.add(name.getName());
         }
 
-        return allSuite;
+        return allTestFile;
     }
 
     /**

@@ -265,7 +265,7 @@ public class Validation {
             if (suiteName.size() > 0) {
                 for (Object suite : suiteName) {
                     boolean isSuite=false;
-                    JSONArray SuiteList= testsFileParser.getTestFiles(getCofig.getTestsDirectory());
+                    JSONArray SuiteList= testsFileParser.getTestFiles(getCofig.getSuitesDirectory());
                     for(Object suitePath : SuiteList){
                         File file=new File(suitePath.toString());
                         if(suite.toString().equalsIgnoreCase(file.getName().split("\\.")[0])){ isSuite=true; }
@@ -315,7 +315,7 @@ public class Validation {
         if(testExecutionQueue.size()>0){
             for (int i = 0; i < testExecutionQueue.size(); i++) {
                 JSONObject test= (JSONObject) testExecutionQueue.get(i);
-                JSONArray steps= testsFileParser.getTestStepBySuiteandTestCaseName(test.get("testsFileName").toString(),test.get("testName").toString());
+                JSONArray steps= testsFileParser.getTestStepByTestsFileandTestCaseName(test.get("testsFileName").toString(),test.get("testName").toString());
                 listOfSession = testsFileParser.getSessionListFromTest(test.get("testsFileName").toString(), test.get("testName").toString());
                 if (listOfSession.size() > 0) {
                     sessionDefineValidation(test.get("testsFileName").toString(), test.get("testName").toString(),listOfSession);
@@ -481,7 +481,7 @@ public class Validation {
                     log.error("Collection name not define properly on :"+allLines[j]);
                     throw new TesboException("Collection name not define properly on :"+allLines[j]);
                 }
-                testsFileParser.getGroupTestStepBySuiteandTestCaseName(testsFileName, collectionName);
+                testsFileParser.getGroupTestStepByTestFileandTestCaseName(testsFileName, collectionName);
             }
         }
 
@@ -540,8 +540,8 @@ public class Validation {
             }
         }
 
-        StringBuffer suiteDetails = testsFileParser.readTestsFile(test.get("testsFileName").toString());
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        StringBuffer testsFileDetails = testsFileParser.readTestsFile(test.get("testsFileName").toString());
+        String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
         boolean isSeverityOrPriority=false;
         int testCount=0;
         int startPoint = 0;

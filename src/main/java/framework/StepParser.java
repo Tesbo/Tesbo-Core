@@ -544,7 +544,7 @@ public class StepParser {
         }
     }
 
-    public void scrollFunction(WebDriver driver, String suiteName, String step) throws Exception {
+    public void scrollFunction(WebDriver driver, String testsFileName, String step) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
@@ -590,7 +590,7 @@ public class StepParser {
         else if (parseElementName(step) != "") {
             try {
 
-                cmd.scrollToElement(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
+                cmd.scrollToElement(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
             } catch (NullPointerException e) {
                 log.error("No element found");
                 tesboLogger.testFailed("No element found");
@@ -601,7 +601,7 @@ public class StepParser {
         }
     }
 
-    public void pauseFunction(WebDriver driver, String suiteName, String step) throws Exception {
+    public void pauseFunction(WebDriver driver, String testsFileName, String step) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
@@ -611,7 +611,7 @@ public class StepParser {
          */
         if (step.toLowerCase().contains("disappear")) {
             try {
-                cmd.pauseElementDisappear(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
+                cmd.pauseElementDisappear(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
             } catch (Exception e) {
             }
         }
@@ -621,7 +621,7 @@ public class StepParser {
          */
         else if (step.toLowerCase().contains("clickable")) {
             try {
-                cmd.pauseElementClickable(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
+                cmd.pauseElementClickable(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
             } catch (Exception e) {
             }
         }
@@ -631,7 +631,7 @@ public class StepParser {
          */
         else if (step.toLowerCase().contains("display")) {
             try {
-                cmd.pauseElementDisplay(driver, cmd.findElement(driver, locator.getLocatorValue(suiteName, parseElementName(step))));
+                cmd.pauseElementDisplay(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
             } catch (Exception e) {
             }
         }
