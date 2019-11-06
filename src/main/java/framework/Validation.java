@@ -277,8 +277,8 @@ public class Validation {
                     }
                     JSONArray testNameBySuite = suiteParser.getTestNameFromSuiteFile(suiteParser.readSuiteFile(suite.toString()));
                     if (testNameBySuite.size() == 0) {
-                        log.error("Test is not found in '" + suite.toString() + "' suite.");
-                        throw new TesboException("Test is not found in '" + suite.toString() + "' suite.");
+                        log.error("'" + suite.toString() + "' suite file is empty. There is no test defined in it");
+                        throw new TesboException("'" + suite.toString() + "' suite file is empty. There is no test defined in it");
                     }
                 }
             } else {

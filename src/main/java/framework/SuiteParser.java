@@ -76,7 +76,7 @@ public class SuiteParser {
 
         for (int i = 0; i < allLines.length; i++) {
             String comment=String.valueOf(allLines[i].charAt(0))+String.valueOf(allLines[i].charAt(1));
-            if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
+            if ((allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) & (!comment.equals("//")) ) {
                 if (allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")) {
                     log.error("Please write valid keyword for this \"" + allLines[i] + "\"");
                     throw new TesboException("Please write valid keyword for \"" + allLines[i] + "\" on suite file");
@@ -91,11 +91,21 @@ public class SuiteParser {
             }
 
         }
-        // When No Test Available
-        if (testName.size() == 0) {
-            return null;
-        }
+
+        validationForDuplicateTestInSuiteFile(testName);
         return testName;
+    }
+
+    public void validationForDuplicateTestInSuiteFile(JSONArray testNameList)
+    {
+        for(int i=0;i<testNameList.size();i++){
+            for(int j=i+1;j<testNameList.size();j++){
+                if(testNameList.get(i).equals(testNameList.get(j))){
+                    log.error("'"+testNameList.get(i)+"' test is define multiple time on same suite file");
+                    throw new TesboException("'"+testNameList.get(i)+"' test is define multiple time on same suite file");
+                }
+            }
+        }
     }
 
     /**
