@@ -277,6 +277,7 @@ public class TestExecutionBuilder {
      */
     public JSONArray buildExecutionQueue() {
         TestsFileParser testsFileParser = new TestsFileParser();
+        SuiteParser suiteParser=new SuiteParser();
         GetConfiguration config = new GetConfiguration();
         JSONArray completeTestObjectArray = new JSONArray();
 
@@ -302,7 +303,7 @@ public class TestExecutionBuilder {
 
             JSONObject testNameWithTestsFileName = null;
             if (isSuite) {
-                testNameWithTestsFileName = testsFileParser.getTestNameBySuite(suite);
+                testNameWithTestsFileName = suiteParser.getTestsFileNameUsingTestName(suite);
             }
             if (isTag) {
                 testNameWithTestsFileName = testsFileParser.getTestNameByTag(suite);

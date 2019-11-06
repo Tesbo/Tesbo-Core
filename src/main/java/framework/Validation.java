@@ -244,6 +244,7 @@ public class Validation {
 
     public void tagNameAndSuiteNameValidation() {
 
+        SuiteParser suiteParser=new SuiteParser();
         JSONArray tagName= (JSONArray) getCofig.getTags();
         JSONArray suiteName= (JSONArray) getCofig.getSuite();
 
@@ -265,7 +266,7 @@ public class Validation {
             if (suiteName.size() > 0) {
                 for (Object suite : suiteName) {
                     boolean isSuite=false;
-                    JSONArray SuiteList= testsFileParser.getTestFiles(getCofig.getSuitesDirectory());
+                    JSONArray SuiteList= suiteParser.getSuiteFiles(getCofig.getSuitesDirectory());
                     for(Object suitePath : SuiteList){
                         File file=new File(suitePath.toString());
                         if(suite.toString().equalsIgnoreCase(file.getName().split("\\.")[0])){ isSuite=true; }
@@ -274,7 +275,7 @@ public class Validation {
                         log.error("'"+suite+ "' suite is not found in suite directory");
                         throw new TesboException("'"+suite+ "' suite is not found in suite directory");
                     }
-                    JSONObject testNameBySuite = testsFileParser.getTestNameBySuite(suite.toString());
+                    JSONArray testNameBySuite = suiteParser.getTestNameFromSuiteFile(suiteParser.readSuiteFile(suite.toString()));
                     if (testNameBySuite.size() == 0) {
                         log.error("Test is not found in '" + suite.toString() + "' suite.");
                         throw new TesboException("Test is not found in '" + suite.toString() + "' suite.");

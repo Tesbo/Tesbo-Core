@@ -6,6 +6,13 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import Exception.*;
 import org.json.simple.JSONObject;
@@ -28,7 +35,7 @@ public class SuiteParser {
         StringBuffer tests = new StringBuffer();
 
         try {
-            fr = new FileReader(configuration.getSuitesDirectory() + "/" + fileName);
+            fr = new FileReader(configuration.getSuitesDirectory() + "/" + fileName+".suite");
             br = new BufferedReader(fr);
             String sCurrentLine;
             while ((sCurrentLine = br.readLine()) != null) {
@@ -91,9 +98,18 @@ public class SuiteParser {
         return testName;
     }
 
-    public JSONObject getTestsFileNameUsingTestName(JSONArray suiteTestNameList) {
+    /**
+     * @auther: Ankit Mistry
+     * @lastModifiedBy:
+     * @param fileName
+     * @return
+     */
+    public JSONObject getTestsFileNameUsingTestName(String fileName) {
 
         JSONArray tampSuiteTestNameList=new JSONArray();
+        StringBuffer suiteFile= readSuiteFile(fileName);
+        JSONArray suiteTestNameList=getTestNameFromSuiteFile(suiteFile);
+
         tampSuiteTestNameList.addAll(suiteTestNameList);
         JSONObject testNameWithTestsFileName=new JSONObject();
         TestsFileParser testsFileParser=new TestsFileParser();
@@ -108,7 +124,18 @@ public class SuiteParser {
             for(Object suiteTestName:suiteTestNameList){
                 for(Object test:testName) {
                     if(test.toString().equals(suiteTestName.toString().split(":")[1].trim())) {
-                        TestList.add(suiteTestName);
+                        boolean isExistInTampSuiteTestNameList=false;
+                        for(Object tampSuiteTest:tampSuiteTestNameList){
+                            if(suiteTestName.equals(tampSuiteTest)){
+                                isExistInTampSuiteTestNameList=true;
+                                break;
+                            }
+                        }
+                        if(!isExistInTampSuiteTestNameList){
+                            log.error("'"+suiteTestName+"' test is found multiple time on tests file");
+                            throw new TesboException("'"+suiteTestName+"' test is found multiple time on tests file");
+                        }
+                        TestList.add(test.toString().trim());
                         tampSuiteTestNameList.remove(suiteTestName);
                     }
                 }
@@ -130,14 +157,72 @@ public class SuiteParser {
         return testNameWithTestsFileName;
     }
 
+    /**
+     * @auther: Ankit Mistry
+     * @lastModifiedBy:
+     * @param directory
+     * @return give all the file inside a directory
+     */
+    public JSONArray getSuiteFiles(String directory)  {
+
+        JSONArray suiteFileList = new JSONArray();
+        boolean flag=false;
+        String file=null;
+        try (Stream<Path> paths = Files.walk(Paths.get(directory))) {
+
+            suiteFileList.addAll(paths
+                    .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
+            for(Object testsFilePath:suiteFileList) {
+                String[] testsFile=testsFilePath.toString().split("\\.");
+                if (testsFile.length == 2) {
+                    if (!testsFile[1].equalsIgnoreCase("suite")) {
+                        flag=true;
+                        if(file==null)
+                            file="'."+testsFile[1]+"'";
+                        else
+                            file+=", '."+testsFile[1]+"'";
+                    }
+                }
+            }
+            if(flag==true){
+                log.error(file+" file found in suite directory");
+                tesboLogger.errorLog(file+" file not found in suite directory");
+                throw (new NoSuchFileException(""));
+            }
+        } catch (Exception e) {
+            if(flag==true){
+                log.error("Message : Please create only '.suite' file in tests directory.");
+                tesboLogger.testFailed("Message : Please create only '.suite' file in tests directory.");
+            }
+            else {
+                log.error("Message : Please Enter valid directory path.");
+                log.error("'" + directory + "' no files found on your location.");
+                tesboLogger.testFailed("Message : Please Enter valid directory path.");
+                tesboLogger.testFailed("'" + directory + "' no files found on your location.");
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                tesboLogger.testFailed(sw.toString());
+                log.error(sw.toString());
+            }
+            try {
+                throw e;
+            } catch (IOException ie) {
+                StringWriter sw = new StringWriter();
+                ie.printStackTrace(new PrintWriter(sw));
+                tesboLogger.testFailed(sw.toString());
+                log.error(sw.toString());
+            }
+        }
+        return suiteFileList;
+    }
 
     public static void main(String[] args) {
         SuiteParser suiteParser=new SuiteParser();
-        StringBuffer suiteFile= suiteParser.readSuiteFile("smoke.suite");
+        //StringBuffer suiteFile= suiteParser.readSuiteFile("smoke.suite");
         System.out.println("====================================================================================");
 
-        System.out.println(suiteParser.getTestNameFromSuiteFile(suiteFile));
-        System.out.println(suiteParser.getTestsFileNameUsingTestName(suiteParser.getTestNameFromSuiteFile(suiteFile)));
+
+        System.out.println(suiteParser.getTestsFileNameUsingTestName("smoke"));
         System.out.println("====================================================================================");
 
         System.out.println("====================================================================================");
