@@ -73,20 +73,20 @@ public class SuiteParser {
 
         String allLines[] = testsFile.toString().split("[\\r\\n]+");
         JSONArray testName = new JSONArray();
-
         for (int i = 0; i < allLines.length; i++) {
-            String comment=String.valueOf(allLines[i].charAt(0))+String.valueOf(allLines[i].charAt(1));
-            if ((allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) & (!comment.equals("//")) ) {
-                if (allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")) {
-                    log.error("Please write valid keyword for this \"" + allLines[i] + "\"");
-                    throw new TesboException("Please write valid keyword for \"" + allLines[i] + "\" on suite file");
-                }
-                testName.add(allLines[i].trim());
-            }
-            else{
-                if(!comment.equals("//")) {
-                    log.error("Define only test name in '.suite' file");
-                    throw new TesboException("Define only test name in '.suite' file");
+            if(!allLines[i].equals("")) {
+                String comment = String.valueOf(allLines[i].charAt(0)) + String.valueOf(allLines[i].charAt(1));
+                if ((allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) & (!comment.equals("//"))) {
+                    if (allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")) {
+                        log.error("Please write valid keyword for this \"" + allLines[i] + "\"");
+                        throw new TesboException("Please write valid keyword for \"" + allLines[i] + "\" on suite file");
+                    }
+                    testName.add(allLines[i].trim());
+                } else {
+                    if (!comment.equals("//")) {
+                        log.error("Define only test name in '.suite' file");
+                        throw new TesboException("Define only test name in '.suite' file");
+                    }
                 }
             }
 
