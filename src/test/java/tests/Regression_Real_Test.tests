@@ -931,7 +931,7 @@ Step: print "Element is not selected"
 End
 
 Test: Verify click on particular element number from List functionality
-#All #click12
+#All #click1
 Step: Open URL 'https://www.mathsisfun.com/numbers/number-chart.php'
 Step: click on "Red" from List @NumberList
 Step: pause 5 sec
@@ -950,7 +950,7 @@ Step: pause 2 sec
 End
 
 Test: Verify switch to alert then enter text on alert
-#All #switch
+#All #switch1
 Step: Open URL 'https://www.seleniumeasy.com/test/javascript-alert-box-demo.html'
 Step: Scroll and Click on @ClickForPromptBox
 Step: pause 5 sec

@@ -22,7 +22,7 @@ public class GetLocator {
 
     TesboLogger tesboLogger = new TesboLogger();
     private static final Logger log = LogManager.getLogger(Tesbo.class);
-    public String getLocatorValue(String suiteName, String LocatorName) throws Exception {
+    public String getLocatorValue(String testsFileName, String LocatorName) throws Exception {
         if(LocatorName.equals("")) {
             log.error("Locator is not define.");
             throw new TesboException("Locator is not define.");
@@ -75,7 +75,7 @@ public class GetLocator {
                 throw e;
             }
 
-            main = parser.loadJsonFile(config.getLocatorDirectory() + "/" + suiteName.split(".suite")[0] + ".json");
+            main = parser.loadJsonFile(config.getLocatorDirectory() + "/" + testsFileName.split(".tests")[0] + ".json");
 
         }
 
@@ -91,7 +91,7 @@ public class GetLocator {
             File[] files = new File(config.getLocatorDirectory()).listFiles();
             boolean isLocator=false;
             for(File file1:files){
-                if(!(config.getLocatorDirectory() + "/" + suiteName.split(".suite")[0] + ".json").equalsIgnoreCase(file1.toString())){
+                if(!(config.getLocatorDirectory() + "/" + testsFileName.split(".tests")[0] + ".json").equalsIgnoreCase(file1.toString())){
                     main = parser.loadJsonFile(file1.toString());
                     try{
                         LocatorsName= main.get(LocatorName).toString();

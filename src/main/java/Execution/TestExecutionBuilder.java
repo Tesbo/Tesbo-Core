@@ -161,9 +161,9 @@ public class TestExecutionBuilder {
         String newName;
         GetJsonData data = new GetJsonData();
         File buildHistory = new File("./htmlReport/Build History");
-        JSONArray suiteFileList = new JSONArray();
+        JSONArray testsFileList = new JSONArray();
         try (Stream<Path> paths = Files.walk(Paths.get(buildHistory.getAbsolutePath()))) {
-            suiteFileList.addAll(paths
+            testsFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
@@ -171,7 +171,7 @@ public class TestExecutionBuilder {
             logger.testFailed(sw.toString());
         }
 
-        if (suiteFileList.size() > 0) {
+        if (testsFileList.size() > 0) {
             File lastModifiedfile = data.getLastModifiedJsonFile(buildHistory.getAbsolutePath());
             String getFile = lastModifiedfile.getName();
             String getCount[] = getFile.split("_")[1].split(".json");
@@ -211,7 +211,6 @@ public class TestExecutionBuilder {
     public void buildExecution() throws Exception {
         Validation validation = new Validation();
         GetConfiguration config = new GetConfiguration();
-        int tagSuiteCount = 0;
 
         /**
          * @Discription : Run by tag method.
@@ -277,15 +276,14 @@ public class TestExecutionBuilder {
      * @lastModifiedBy: Ankit Mistry
      */
     public JSONArray buildExecutionQueue() {
-        SuiteParser suiteParser = new SuiteParser();
+        TestsFileParser testsFileParser = new TestsFileParser();
+        SuiteParser suiteParser=new SuiteParser();
         GetConfiguration config = new GetConfiguration();
         JSONArray completeTestObjectArray = new JSONArray();
-        int tagSuiteCount = 0;
 
         ArrayList<String> suiteOrTaglist = null;
         boolean isTag = false;
         boolean isSuite = false;
-
 
         if (config.getRunBy().equals("tag")) {
             suiteOrTaglist = config.getTags();
@@ -303,52 +301,56 @@ public class TestExecutionBuilder {
 
         for (String suite : suiteOrTaglist) {
 
-            JSONObject testNameWithSuites = null;
+            JSONObject testNameWithTestsFileName = null;
+            String suiteName="";
+            String tagName="";
             if (isSuite) {
-                testNameWithSuites = suiteParser.getTestNameBySuite(suite);
+                suiteName=suite;
+                testNameWithTestsFileName = suiteParser.getTestsFileNameUsingTestName(suite);
             }
             if (isTag) {
-                testNameWithSuites = suiteParser.getTestNameByTag(suite);
+                tagName=suite;
+                testNameWithTestsFileName = testsFileParser.getTestNameByTag(suite);
             }
 
-            for (Object suiteName : testNameWithSuites.keySet()) {
+            for (Object testsFileName : testNameWithTestsFileName.keySet()) {
                 boolean isBeforeTest = false;
                 boolean isAfterTest = false;
-                if(suiteParser.isBeforeTestInSuite(suiteName.toString())){
+                if(testsFileParser.isBeforeTestInTestsFile(testsFileName.toString())){
                     isBeforeTest=true;
                 }
-                if(suiteParser.isAfterTestInSuite(suiteName.toString())){
+                if(testsFileParser.isAfterTestInTestsFile(testsFileName.toString())){
                     isAfterTest=true;
                 }
 
-                for (Object testName : ((JSONArray) testNameWithSuites.get(suiteName))) {
+                for (Object testName : ((JSONArray) testNameWithTestsFileName.get(testsFileName))) {
                     String dataSetName = null;
                     int dataSize = 0;
                     String dataType = null;
                     if(isBeforeTest || isAfterTest){
-                        suiteParser.getAnnotationDataSetBySuite(suiteName.toString());
+                        testsFileParser.getAnnotationDataSetByTestsFile(testsFileName.toString());
                     }
                     if(dataSetName==null) {
-                        dataSetName = suiteParser.getTestDataSetBySuiteAndTestCaseName(suiteName.toString(), testName.toString());
+                        dataSetName = testsFileParser.getTestDataSetByTestsFileAndTestCaseName(testsFileName.toString(), testName.toString());
                     }
                     if (dataSetName != null) {
                         ArrayList<String> columnNameList = new ArrayList<String>();
                         if(isBeforeTest){
-                           // columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepBySuite(suiteName.toString(),"BeforeTest"));
+                           // columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepByTestsFile(testsFileName.toString(),"BeforeTest"));
                         }
                         if(isAfterTest && columnNameList.size() == 0){
-                            //columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepBySuite(suiteName.toString(),"AfterTest"));
+                            //columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepByTestsFile(testsFileName.toString(),"AfterTest"));
                         }
                         if(columnNameList.size() == 0) {
-                            columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getTestStepBySuiteandTestCaseName(suiteName.toString(), testName.toString()));
+                            columnNameList = dataDrivenParser.getColumnNameFromTest(testsFileParser.getTestStepByTestsFileandTestCaseName(testsFileName.toString(), testName.toString()));
                         }
                         if (columnNameList.size() == 0) {
                             throw new NullPointerException("Data set value is not use on 'Test: " + testName + "' steps");
                         }
-                        dataType = dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1], columnNameList);
+                        dataType = dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(testsFileName.toString(), dataSetName.replace(" ", "").split(":")[1], columnNameList);
 
                         if (dataType.equalsIgnoreCase("excel")) {
-                            dataSize = dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(suiteName.toString(), dataSetName.replace(" ", "").split(":")[1]), columnNameList,Integer.parseInt(dataDrivenParser.SheetNumber(suiteName.toString(), testName.toString()))).size();
+                            dataSize = dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(testsFileName.toString(), dataSetName.replace(" ", "").split(":")[1]), columnNameList,Integer.parseInt(dataDrivenParser.SheetNumber(testsFileName.toString(), testName.toString()))).size();
                         }
                     }
                     if (dataSize != 0) {
@@ -356,10 +358,12 @@ public class TestExecutionBuilder {
                             for (String browser : config.getBrowsers()) {
                                 JSONObject completestTestObject = new JSONObject();
                                 completestTestObject.put("testName", testName);
-                                completestTestObject.put("suiteName", suiteName);
+                                completestTestObject.put("testsFileName", testsFileName);
                                 completestTestObject.put("browser", browser);
                                 completestTestObject.put("dataType", dataType);
                                 completestTestObject.put("row", i);
+                                completestTestObject.put("suiteName", suiteName);
+                                completestTestObject.put("tagName", tagName);
                                 completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
                                 if(isBeforeTest){completestTestObject.put("BeforeTest", true);}
                                 if(isAfterTest){completestTestObject.put("afterTest", true);}
@@ -370,8 +374,10 @@ public class TestExecutionBuilder {
                         for (String browser : config.getBrowsers()) {
                             JSONObject completestTestObject = new JSONObject();
                             completestTestObject.put("testName", testName);
-                            completestTestObject.put("suiteName", suiteName);
+                            completestTestObject.put("testsFileName", testsFileName);
                             completestTestObject.put("browser", browser);
+                            completestTestObject.put("suiteName", suiteName);
+                            completestTestObject.put("tagName", tagName);
                             if(isBeforeTest){completestTestObject.put("BeforeTest", true);}
                             if(isAfterTest){completestTestObject.put("afterTest", true);}
                             try {

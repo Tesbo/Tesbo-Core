@@ -72,17 +72,17 @@ public class GetJsonData {
 
     public int getTotalBuildCount(String directory) {
 
-        JSONArray suiteFileList = new JSONArray();
+        JSONArray testsFileList = new JSONArray();
 
         try (Stream<Path> paths = Files.walk(Paths.get(directory))) {
 
-            suiteFileList.addAll(paths
+            testsFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return suiteFileList.size();
+        return testsFileList.size();
 
     }
 
@@ -104,11 +104,11 @@ public class GetJsonData {
 
     public String getAvaerageTimeoftheBuild(String directory) {
 
-        JSONArray suiteFileList = new JSONArray();
+        JSONArray testsFileList = new JSONArray();
 
         try (Stream<Path> paths = Files.walk(Paths.get(directory))) {
 
-            suiteFileList.addAll(paths
+            testsFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,23 +116,23 @@ public class GetJsonData {
 
         int totalTime = 0;
 
-        for (Object a : suiteFileList) {
+        for (Object a : testsFileList) {
             JSONObject parser = readJsonFile(new File(a.toString()).getAbsolutePath());
             totalTime = totalTime + Integer.parseInt(parser.get("totalTimeTaken").toString());
         }
 
-        int totalAvgTimeInMillis = totalTime / suiteFileList.size();
+        int totalAvgTimeInMillis = totalTime / testsFileList.size();
 
         return parseTime(totalAvgTimeInMillis);
     }
 
     public int getTotalTestOfTheBuild(String directory) {
 
-        JSONArray suiteFileList = new JSONArray();
+        JSONArray testsFileList = new JSONArray();
 
         try (Stream<Path> paths = Files.walk(Paths.get(directory))) {
 
-            suiteFileList.addAll(paths
+            testsFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
             e.printStackTrace();
@@ -140,7 +140,7 @@ public class GetJsonData {
 
         int totalTests = 0;
 
-        for (Object a : suiteFileList) {
+        for (Object a : testsFileList) {
             JSONObject parser = readJsonFile(new File(a.toString()).getAbsolutePath());
             try {
                 totalTests = totalTests + Integer.parseInt(parser.get("totalPassed").toString()) + Integer.parseInt(parser.get("totalFailed").toString());
@@ -292,7 +292,7 @@ public class GetJsonData {
         JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
 
 
-        JSONArray suiteArray = (JSONArray) parser.get("browser");
+        JSONArray testsFileArray = (JSONArray) parser.get("browser");
 
 
         int totalPass = 0;
@@ -301,14 +301,14 @@ public class GetJsonData {
         JSONObject passFailData = new JSONObject();
 
 
-        for (int i = 0; i < suiteArray.size(); i++) {
+        for (int i = 0; i < testsFileArray.size(); i++) {
 
 
-            JSONObject browser = (JSONObject) suiteArray.get(i);
+            JSONObject browser = (JSONObject) testsFileArray.get(i);
 
             try {
-                JSONObject chromeSuite = (JSONObject) browser.get(browserName);
-                JSONArray suiteList = (JSONArray) chromeSuite.get("suits");
+                JSONObject chromeTestsFile = (JSONObject) browser.get(browserName);
+                JSONArray suiteList = (JSONArray) chromeTestsFile.get("testsFile");
 
                 for (Object suiteDetails : suiteList) {
                     JSONObject suite = (JSONObject) suiteDetails;
@@ -348,7 +348,7 @@ public class GetJsonData {
 
             try {
                 JSONObject chromeSuite = (JSONObject) browser.get(browserName);
-                suiteList = (JSONArray) chromeSuite.get("suits");
+                suiteList = (JSONArray) chromeSuite.get("testsFileName");
 
 
             } catch (Exception e) {

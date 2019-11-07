@@ -37,15 +37,15 @@ public class ExternalCode  {
         String arguments[]=null;
         try {
 
-            tagVal=step.toString().split(":")[1].trim();
+            tagVal=step.split(":")[1].trim();
             if(tagVal.split("\\(").length>1) {
-                if (tagVal.toString().contains("{") && tagVal.toString().contains("}")) {
+                if (tagVal.contains("{") && tagVal.contains("}")) {
                     String[] args = tagVal.split("\\(")[1].trim().replaceAll("[()]", "").split(",");
                     int i=0;
                     String argument=null;
                     for(String arg:args){
 
-                        if (arg.toString().contains("{") && arg.toString().contains("}")) {
+                        if (arg.contains("{") && arg.contains("}")) {
                             if(i==0){argument=stepParser.passArgsToCode(test,arg);i++;}
                             else {argument+=","+stepParser.passArgsToCode(test,arg);i++;}
                         }
