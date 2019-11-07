@@ -302,10 +302,14 @@ public class TestExecutionBuilder {
         for (String suite : suiteOrTaglist) {
 
             JSONObject testNameWithTestsFileName = null;
+            String suiteName="";
+            String tagName="";
             if (isSuite) {
+                suiteName=suite;
                 testNameWithTestsFileName = suiteParser.getTestsFileNameUsingTestName(suite);
             }
             if (isTag) {
+                tagName=suite;
                 testNameWithTestsFileName = testsFileParser.getTestNameByTag(suite);
             }
 
@@ -358,6 +362,8 @@ public class TestExecutionBuilder {
                                 completestTestObject.put("browser", browser);
                                 completestTestObject.put("dataType", dataType);
                                 completestTestObject.put("row", i);
+                                completestTestObject.put("suiteName", suiteName);
+                                completestTestObject.put("tagName", tagName);
                                 completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
                                 if(isBeforeTest){completestTestObject.put("BeforeTest", true);}
                                 if(isAfterTest){completestTestObject.put("afterTest", true);}
@@ -370,6 +376,8 @@ public class TestExecutionBuilder {
                             completestTestObject.put("testName", testName);
                             completestTestObject.put("testsFileName", testsFileName);
                             completestTestObject.put("browser", browser);
+                            completestTestObject.put("suiteName", suiteName);
+                            completestTestObject.put("tagName", tagName);
                             if(isBeforeTest){completestTestObject.put("BeforeTest", true);}
                             if(isAfterTest){completestTestObject.put("afterTest", true);}
                             try {

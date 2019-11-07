@@ -746,7 +746,17 @@ public class ReportBuilder implements Runnable {
 
                         }
                     }
-
+                    String suiteOrTagName="";
+                    if(!testDetails.get("suiteName").toString().equals("")){
+                        suiteOrTagName="<font color=\"#fff\" data-toggle=\"tooltip\" title=\"Suite File\" class=\"nev navbar-right\" style=\"margin-right:1%;font-size: 12px;padding: 5px 10px;background: #007bff;border-radius: 7px;\">\n" +
+                                testDetails.get("suiteName").toString() +
+                                "</font>\n";
+                    }
+                    if(!testDetails.get("tagName").toString().equals("")){
+                        suiteOrTagName="<font color=\"#fff\" data-toggle=\"tooltip\" title=\"Tag Name\" class=\"nev navbar-right\" style=\"margin-right:1%;font-size: 12px;padding: 5px 10px;background: #17a2b8;border-radius: 7px;\">\n" +
+                                testDetails.get("tagName").toString() +
+                                "</font>\n";
+                    }
 
                     Random rand = new Random();
                     int randomNumber = rand.nextInt();
@@ -772,6 +782,7 @@ public class ReportBuilder implements Runnable {
                             "data-toggle=\"tooltip\" data-placement=\"left\"\n" +
                             "title=\"" + osName + "\">\n" +
                             "</div>\n" +
+                            suiteOrTagName+
                             "</h4>\n" +
 
                             "</a>\n" +
@@ -823,7 +834,7 @@ public class ReportBuilder implements Runnable {
                                         "<p><strong>ScreenShot</strong>\n" +
                                         "</p>\n" +
                                         "\n" +
-                                        "<img src=\"./../"+ screenShotpath + "\" \n" +
+                                        "<img src=\""+ screenShotpath + "\" \n" +
                                         "style=\"max-width: 100%;height: auto;\">\n" +
 
                                         " </div>\n" +

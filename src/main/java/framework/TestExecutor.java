@@ -136,6 +136,8 @@ public class TestExecutor implements Runnable {
         testReportObject.put("browserName", test.get("browser"));
         testReportObject.put("testName", test.get("testName").toString());
         testReportObject.put("testsFileName", test.get("testsFileName").toString());
+        testReportObject.put("suiteName", test.get("suiteName").toString());
+        testReportObject.put("tagName", test.get("tagName").toString());
         tesboLogger.testLog("Test: "+test.get("testName").toString());
         log.info("Test: "+test.get("testName").toString());
 
