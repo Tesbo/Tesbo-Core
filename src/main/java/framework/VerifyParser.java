@@ -28,7 +28,7 @@ public class VerifyParser {
         WebElement element=null;
         String textOfStep=null;
         if(verify.contains("@")) {
-            element = cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify)));
+            element = cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(verify)));
         }
         if(verify.contains("'")) {
              textOfStep = stepParser.parseTextToEnter(test, verify);
@@ -40,7 +40,7 @@ public class VerifyParser {
                  * Verify: @element has size of '10'
                  */
 
-                if(cmd.findElements(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).size()!= Integer.parseInt(stepParser.parseTextToEnter(test,verify))) {
+                if(cmd.findElements(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(verify))).size()!= Integer.parseInt(stepParser.parseTextToEnter(test,verify))) {
                     log.error("Element list size not equal to '"+stepParser.parseTextToEnter(test,verify)+"'");
                     throw new AssertException("Element list size not equal to '"+stepParser.parseTextToEnter(test,verify)+"'");
                 }
@@ -132,7 +132,7 @@ public class VerifyParser {
                     /**
                      * Verify: @element text is end with 'Text'.
                      */
-                    //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("suiteName").toString(), stepParser.parseElementName(verify))).getText()).endsWith(stepParser.parseTextToEnter(test,verify));
+                    //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(verify))).getText()).endsWith(stepParser.parseTextToEnter(test,verify));
 
                     if(!element.getText().endsWith(textOfStep)){
                         log.error("Expecting:<\""+element.getText()+"\"> to end with: <\""+textOfStep+"\">");

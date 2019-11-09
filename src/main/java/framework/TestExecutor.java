@@ -56,17 +56,14 @@ public class TestExecutor implements Runnable {
     public static void main(String[] args) throws Exception {
         TestExecutionBuilder builder = new TestExecutionBuilder();
         ReportParser report = new ReportParser();
-        long startTimeSuite = System.currentTimeMillis();
+        long startTimeTestFile = System.currentTimeMillis();
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
 
         builder.buildExecution();
 
-        long stopTimeSuite = System.currentTimeMillis();
-        long elapsedTimeSuite = stopTimeSuite - startTimeSuite;
-
-
-        DateTimeFormatter dtf1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        long stopTimeTestFile = System.currentTimeMillis();
+        long elapsedTimeTestFile = stopTimeTestFile - startTimeTestFile;
 
         report.generateReportDir();
         //report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
@@ -80,8 +77,8 @@ public class TestExecutor implements Runnable {
      * @lastModifiedBy: Ankit Mistry
      */
     public void beforeTest(String browserName) {
-        SuiteParser suiteParser = new SuiteParser();
-        listOfSession = suiteParser.getSessionListFromTest(test.get("suiteName").toString(), test.get("testName").toString());
+        TestsFileParser testsFileParser = new TestsFileParser();
+        listOfSession = testsFileParser.getSessionListFromTest(test.get("testsFileName").toString(), test.get("testName").toString());
         if (listOfSession.size() > 0) {
             isSession = true;
             log.info("Test is run with multiple session");
@@ -120,9 +117,8 @@ public class TestExecutor implements Runnable {
 
 
     public JSONObject runTest() {
-        SuiteParser parser = new SuiteParser();
         StepParser stepParser = new StepParser();
-        SuiteParser suiteParser = new SuiteParser();
+        TestsFileParser testsFileParser = new TestsFileParser();
         ExternalCode externalCode=new ExternalCode();
         ReportParser reportParser = new ReportParser();
         BuildReportDataObject buildReport = new BuildReportDataObject();
@@ -139,7 +135,9 @@ public class TestExecutor implements Runnable {
         testReportObject.put("startTime", startTime);
         testReportObject.put("browserName", test.get("browser"));
         testReportObject.put("testName", test.get("testName").toString());
+        testReportObject.put("testsFileName", test.get("testsFileName").toString());
         testReportObject.put("suiteName", test.get("suiteName").toString());
+        testReportObject.put("tagName", test.get("tagName").toString());
         tesboLogger.testLog("Test: "+test.get("testName").toString());
         log.info("Test: "+test.get("testName").toString());
 
@@ -159,7 +157,7 @@ public class TestExecutor implements Runnable {
 
         log.info("Get severity and priority for test is: "+stepParser.isSeverityOrPriority(test));
         if(stepParser.isSeverityOrPriority(test)){
-            JSONArray severityAndPrioritySteps=suiteParser.getSeverityAndPriority(test);
+            JSONArray severityAndPrioritySteps=testsFileParser.getSeverityAndPriority(test);
             for (int i = 0; i < severityAndPrioritySteps.size(); i++) {
                 Object step = severityAndPrioritySteps.get(i);
                 if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority:")) {
@@ -175,9 +173,9 @@ public class TestExecutor implements Runnable {
             }
         }
 
-        log.info("Before test functionality is exist or not in suite: "+suiteParser.isBeforeTestInSuite(test.get("suiteName").toString()));
-        if(suiteParser.isBeforeTestInSuite(test.get("suiteName").toString())){
-            JSONArray annotationSteps = parser.getBeforeAndAfterTestStepBySuite(test.get("suiteName").toString(), "BeforeTest");
+        log.info("Before test functionality is exist or not in tests file: "+testsFileParser.isBeforeTestInTestsFile(test.get("testsFileName").toString()));
+        if(testsFileParser.isBeforeTestInTestsFile(test.get("testsFileName").toString())){
+            JSONArray annotationSteps = testsFileParser.getBeforeAndAfterTestStepByTestsFile(test.get("testsFileName").toString(), "BeforeTest");
             for (int i = 0; i < annotationSteps.size(); i++) {
 
                 JSONObject stepReportObject = new JSONObject();
@@ -209,9 +207,9 @@ public class TestExecutor implements Runnable {
             }
         }
 
-        /*Getting step using SuiteName and Testcase Name*/
-        log.info("Get steps for "+test.get("testName").toString()+" test from "+test.get("suiteName").toString()+" suite file");
-        JSONArray steps = parser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), test.get("testName").toString());
+        /*Getting step using testsFileName and Testcase Name*/
+        log.info("Get steps for "+test.get("testName").toString()+" test from "+test.get("testsFileName").toString()+" tests file");
+        JSONArray steps = testsFileParser.getTestStepByTestsFileandTestCaseName(test.get("testsFileName").toString(), test.get("testName").toString());
 
         int J = 0;
         log.info(test.get("testName").toString()+" test has "+steps.size()+" steps");
@@ -436,7 +434,7 @@ public class TestExecutor implements Runnable {
                     JSONArray groupSteps = new JSONArray();
                     try {
                         log.info("Get steps for "+step.toString());
-                        groupSteps = suiteParser.getGroupTestStepBySuiteandTestCaseName(test.get("suiteName").toString(), stepParser.getCollectionName(step.toString()));
+                        groupSteps = testsFileParser.getGroupTestStepByTestFileandTestCaseName(test.get("testsFileName").toString(), stepParser.getCollectionName(step.toString()));
                     } catch (Exception e) {
                         if (groupSteps.size() == 0)
                             throw e;
@@ -547,21 +545,10 @@ public class TestExecutor implements Runnable {
                 }
 
             }
-            /*else{
-                if(step.toString().contains("Else::")){
-                    elseCondition="Passed";
-                    ifCondition="fail";
-                }
-                if(step.toString().contains("End::")){
-                    elseCondition=null;
-                    ifCondition=null;
-                }
-
-            }*/
 
         }
-        if (suiteParser.isAfterTestInSuite(test.get("suiteName").toString())) {
-            JSONArray annotationSteps = parser.getBeforeAndAfterTestStepBySuite(test.get("suiteName").toString(), "AfterTest");
+        if (testsFileParser.isAfterTestInTestsFile(test.get("testsFileName").toString())) {
+            JSONArray annotationSteps = testsFileParser.getBeforeAndAfterTestStepByTestsFile(test.get("testsFileName").toString(), "AfterTest");
             for (int i = 0; i < annotationSteps.size(); i++) {
 
                 JSONObject stepReportObject = new JSONObject();
@@ -605,17 +592,16 @@ public class TestExecutor implements Runnable {
             testReportObject.put("fullStackTrace", exceptionAsString);
             testReportObject.put("screenShot", screenShotPath);
         }
-        long stopTimeSuite = System.currentTimeMillis();
         testReportObject.put("totalTime", stopTimeTest - startTime);
         testReportObject.put("status", testResult);
 
-        buildReport.addDataInMainObject(test.get("browser").toString(), test.get("suiteName").toString(), test.get("testName").toString(), testReportObject);
+        buildReport.addDataInMainObject(test.get("browser").toString(), test.get("testsFileName").toString(), test.get("testName").toString(), testReportObject);
 
         ReportAPIConfig reportAPIConfig = new ReportAPIConfig();
         if(config.getIsCloudIntegration()) {
             boolean isAddOnCloud=false;
-            if(suiteParser.isRetry(test.get("suiteName").toString(), test.get("testName").toString()).toLowerCase().equals("null") || suiteParser.isRetry(test.get("suiteName").toString(), test.get("testName").toString()).toLowerCase().equals("false")){
-                if(!(Integer.parseInt(config.getRetryAnalyser())>0) || suiteParser.isRetry(test.get("suiteName").toString(), test.get("testName").toString()).toLowerCase().equals("false")){
+            if(testsFileParser.isRetry(test.get("testsFileName").toString(), test.get("testName").toString()).toLowerCase().equals("null") || testsFileParser.isRetry(test.get("testsFileName").toString(), test.get("testName").toString()).toLowerCase().equals("false")){
+                if(!(Integer.parseInt(config.getRetryAnalyser())>0) || testsFileParser.isRetry(test.get("testsFileName").toString(), test.get("testName").toString()).toLowerCase().equals("false")){
                     isAddOnCloud=true;
                 }
                 else {
@@ -638,7 +624,7 @@ public class TestExecutor implements Runnable {
             if (isAddOnCloud) {reportAPIConfig.organiazeDataForCloudReport(testReportObject);}
         }
         if(testResult.toLowerCase().equals("failed")){
-            if(suiteParser.isRetry(test.get("suiteName").toString(), test.get("testName").toString()).toLowerCase().equals("null")){
+            if(testsFileParser.isRetry(test.get("testsFileName").toString(), test.get("testName").toString()).toLowerCase().equals("null")){
                 testExecutionBuilder.failTestExecutionQueue(test);
             }
         }
@@ -862,7 +848,7 @@ public class TestExecutor implements Runnable {
             if (!stepPassed) {
                 stepReportObject.put("status", "failed");
                 testResult = "failed";
-                screenShotPath = cmd.captureScreenshot(driver, test.get("suiteName").toString(), test.get("testName").toString());
+                screenShotPath = cmd.captureScreenshot(driver, test.get("testsFileName").toString(), test.get("testName").toString());
                 log.error("Capture screenshot: "+screenShotPath);
             } else {
                 testResult = "passed";
@@ -889,12 +875,12 @@ public class TestExecutor implements Runnable {
 
         boolean stepPassed = true;
 
-        if (!(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("print") && step.toString().contains("random")))  {
-            stepReportObject.put("steps", step.toString().replace("@",""));
+        if (!(step.contains("{") && step.contains("}") && step.contains("print") && step.contains("random")))  {
+            stepReportObject.put("steps", step.replace("@",""));
         }
-        if (step.toString().contains("print"))  {
+        if (step.contains("print"))  {
             try {
-                stepReportObject.put("steps",stepParser.printStep(driver,step.toString(),test));
+                stepReportObject.put("steps",stepParser.printStep(driver,step,test));
             } catch (Exception e) {
                 e.printStackTrace(new PrintWriter(sw));
                 tesboLogger.testFailed(sw.toString());
@@ -903,26 +889,26 @@ public class TestExecutor implements Runnable {
         }
 
         try {
-            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
-                if (step.toString().contains("{") && step.toString().contains("}")) {
+            if (step.replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
+                if (step.contains("{") && step.contains("}")) {
 
-                    stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
+                    stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step));
                 }
-                String Step=stepParser.parseStep(driver, test, step.toString());
+                String Step=stepParser.parseStep(driver, test, step);
 
-                if (step.toString().toLowerCase().contains("random")) {
+                if (step.toLowerCase().contains("random")) {
                     stepReportObject.put("steps",Step.replace("@",""));
                 }
             }
 
-            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
+            if (step.replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
                 //verifyParser.parseVerify(driver, test, step.toString());
-                sendVerifyStep(step.toString());
+                sendVerifyStep(step);
 
             }
         } catch (Exception ae) {
-            if (step.toString().contains("{") && step.toString().contains("}")) {
-                stepReportObject.put("steps", step.toString().replaceAll("[{,}]","'").replace("@",""));
+            if (step.contains("{") && step.contains("}")) {
+                stepReportObject.put("steps", step.replaceAll("[{,}]","'").replace("@",""));
             }
             ae.printStackTrace(new PrintWriter(sw));
             exceptionAsString = sw.toString();

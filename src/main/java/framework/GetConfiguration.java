@@ -266,6 +266,10 @@ public class GetConfiguration {
         return SuiteDirectory;
     }
 
+    public String getTestsDirectory()  {
+        String testsFileDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/tests";
+        return testsFileDirectory;
+    }
 
     public String getLocatorDirectory() {
         String locatorDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/locator";
