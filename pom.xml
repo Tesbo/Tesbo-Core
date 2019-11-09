@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>Tesbo</groupId>
-	<artifactId>Tesbo-Dev</artifactId>
+	<artifactId>Tesbo-Beta</artifactId>
 	<version>0.0.5</version>
 	<packaging>jar</packaging>
 
