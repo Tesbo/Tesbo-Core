@@ -1,5 +1,8 @@
 package framework;
 
+import Execution.TestExecutionBuilder;
+import Selenium.Commands;
+import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -12,13 +15,16 @@ import org.json.simple.JSONObject;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
-import Exception.TesboException;
+import java.util.Set;
 
+import Exception.TesboException;
+import org.openqa.selenium.WebDriver;
 
 
 public class DataDrivenParser {
 
     private static final Logger log = LogManager.getLogger(DataDrivenParser.class);
+     TesboLogger tesboLogger = new TesboLogger();
 
     /**
      *
@@ -292,6 +298,106 @@ public class DataDrivenParser {
             sheetNo="0";
         }
         return sheetNo;
+    }
+
+    public void setValueInDataSetVariable(WebDriver driver, JSONObject test, String step) throws Exception {
+        Commands cmd = new Commands();
+        StepParser stepParser=new StepParser();
+        GetLocator locator = new GetLocator();
+
+
+        int startPoint = 0;
+        int endPoint = 0;
+
+        if (step.contains("{") && step.contains("}")) {
+            startPoint = step.indexOf("{") + 1;
+            endPoint = step.lastIndexOf("}");
+            String headerName = step.substring(startPoint, endPoint);
+            boolean isDetaSet=false;
+            try {
+                if (headerName.contains("DataSet.")) {
+                    isDetaSet=true;
+                    try {
+                        String dataSet[]=headerName.split("\\.");
+                        if(dataSet.length==3) {
+                            String elementText= cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(step))).getText();
+                            //getGlobalDataValue(test.get("testsFileName").toString(), dataSet[1],dataSet[2]);
+                            setVariableValue(test.get("testsFileName").toString(), dataSet[1], dataSet[2], elementText);
+                        }
+                        else{
+                            log.info("Please enter DataSet in: '"+step+"'");
+                            throw new TesboException("Please enter DataSet in: '"+step+"'");
+                        }
+                    } catch (StringIndexOutOfBoundsException e) {
+                        throw e;
+                    }
+                }
+                else if(headerName.contains("Dataset.") || headerName.contains("dataSet.") || headerName.contains("dataset.")){
+                    log.error("Please enter valid DataSet in: '"+step+"'");
+                    throw new TesboException("Please enter valid DataSet in: '"+step+"'");
+                }
+            } catch (Exception e) {
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                tesboLogger.testFailed(sw.toString());
+                log.error(sw.toString());
+                throw e;
+            }
+
+            if(!isDetaSet) {
+                try {
+                    if (test.get("dataType").toString().equalsIgnoreCase("global")) {
+                        String elementText= cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(step))).getText();
+                        //getGlobalDataValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(),headerName);
+                        setVariableValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(),headerName, elementText);
+                    }
+                } catch (Exception e) {
+                    log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
+                    throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
+                }
+            }
+        }
+    }
+
+    public void setVariableValue(String testsFileName, String dataSetName,String keyName,String elementText){
+        JSONObject variables=new JSONObject();
+        JSONObject dataSetNames=new JSONObject();
+        JSONObject testDataSet=new JSONObject();
+
+        if(TestExecutionBuilder.dataSetVariable.size()==0) {
+            variables.put(keyName, elementText);
+            dataSetNames.put(dataSetName, variables);
+            TestExecutionBuilder.dataSetVariable.put(testsFileName, dataSetNames);
+        }
+        else {
+            if(TestExecutionBuilder.dataSetVariable.containsKey(testsFileName)){
+                testDataSet= (JSONObject) TestExecutionBuilder.dataSetVariable.get(testsFileName);
+                if(testDataSet.containsKey(dataSetName)){
+                    dataSetNames= (JSONObject) testDataSet.get(dataSetName);
+                    if(dataSetNames.containsKey(elementText)){
+
+                    }
+                    else{
+                        dataSetNames.put(keyName, elementText);
+                        testDataSet.put(dataSetName, dataSetNames);
+                        TestExecutionBuilder.dataSetVariable.put(testsFileName, testDataSet);
+                    }
+
+                }else{
+                    variables.put(keyName, elementText);
+                    dataSetNames.put(dataSetName, variables);
+                    TestExecutionBuilder.dataSetVariable.put(testsFileName, dataSetNames);
+
+                }
+
+            }
+            else{
+                variables.put(keyName, elementText);
+                dataSetNames.put(dataSetName, variables);
+                TestExecutionBuilder.dataSetVariable.put(testsFileName, dataSetNames);
+            }
+        }
+
     }
 
 }

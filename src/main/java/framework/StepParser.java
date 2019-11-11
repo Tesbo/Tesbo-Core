@@ -1,6 +1,7 @@
 package framework;
 
 import Execution.Tesbo;
+import Execution.TestExecutionBuilder;
 import RandomLibrary.RandLibrary;
 import Selenium.Commands;
 import logger.TesboLogger;
@@ -165,6 +166,19 @@ public class StepParser {
                 }
                 cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
             }
+        }
+
+        if(step.toLowerCase().contains("get ") && (step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign "))){
+           /*
+            Step: Get text of @element and set / put / assign in to {DataSet variable}
+            Step: Get size of @element and set / put / assign in to {DataSet variable}
+            */
+           DataDrivenParser dataDrivenParser=new DataDrivenParser();
+           if(step.toLowerCase().contains(" text ")){
+              String elementText= cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).getText();
+               dataDrivenParser.setValueInDataSetVariable(driver,test,step);
+               System.out.println("====>: "+ TestExecutionBuilder.dataSetVariable);
+           }
         }
 
         //Upload File
