@@ -13,12 +13,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import java.io.*;
+import java.nio.file.WatchEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import Exception.TesboException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 
 public class DataDrivenParser {
@@ -254,7 +257,7 @@ public class DataDrivenParser {
         TestsFileParser testsFileParser=new TestsFileParser();
         StringBuffer testsFile= testsFileParser.readTestsFile(testsFileName);
         String allLines[] = testsFile.toString().split("[\\r\\n]+");
-        boolean isDataSetName=false,isKeyName=false;
+        boolean isDataSetName=false;
         String KeyValue=null;
 
         for (int i = 0; i < allLines.length; i++) {
@@ -264,10 +267,14 @@ public class DataDrivenParser {
             if(isDataSetName) {
                 if (allLines[i].contains("\""+keyName+"\":")) {
                     try{
-
-                        KeyValue=allLines[i].replaceAll("[\"|,]","").split(":")[1].trim();
-                        isKeyName=true;
-                        break;
+                        if(allLines[i].replaceAll(",","").split(":")[1].equals("\"\"")) {
+                            KeyValue = "true";
+                            break;
+                        }
+                        else{
+                            KeyValue = allLines[i].replaceAll("[\"|,]", "").split(":")[1].trim();
+                            break;
+                        }
                     }catch (Exception E){
                         throw new TesboException("Key value is not found in dataSet");
                     }
@@ -276,7 +283,7 @@ public class DataDrivenParser {
                     break;
             }
         }
-        if(KeyValue.equals(null)){
+        if(KeyValue==null){
             log.error("Key name " + keyName + " is not found in " + dataSetName + " data set");
             throw new TesboException("Key name " + keyName + " is not found in " + dataSetName + " data set");
         }
@@ -300,7 +307,7 @@ public class DataDrivenParser {
         return sheetNo;
     }
 
-    public void setValueInDataSetVariable(WebDriver driver, JSONObject test, String step) throws Exception {
+    public void setValueInDataSetVariable(WebDriver driver, JSONObject test, String step, String variableType) throws Exception {
         Commands cmd = new Commands();
         StepParser stepParser=new StepParser();
         GetLocator locator = new GetLocator();
@@ -314,15 +321,41 @@ public class DataDrivenParser {
             endPoint = step.lastIndexOf("}");
             String headerName = step.substring(startPoint, endPoint);
             boolean isDetaSet=false;
+
+            JSONArray elementText=new JSONArray();
+            if(variableType.equals("text")) {
+                elementText.add(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(step))).getText());
+            }
+            else if(variableType.equals("size")){
+                elementText.add(cmd.findElements(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(step))).size());
+            }
+            else if(variableType.equals("list")){
+                List<WebElement> elementList=cmd.findElements(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(step)));
+                for(WebElement element:elementList){
+                    elementText.add(element.getText());
+                }
+            }
+            else if(variableType.equals("page title")){
+                elementText.add(driver.getTitle());
+            }
+            else if(variableType.equals("current url")){
+                elementText.add(driver.getCurrentUrl());
+            }
+            else if(variableType.equals("attribute")){
+                elementText.add(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(step))).getAttribute(stepParser.parseTextToEnter(test, step)));
+            }
+            else if(variableType.equals("css value")){
+                elementText.add(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(step))).getCssValue(stepParser.parseTextToEnter(test, step)));
+            }
+
             try {
                 if (headerName.contains("DataSet.")) {
                     isDetaSet=true;
                     try {
                         String dataSet[]=headerName.split("\\.");
                         if(dataSet.length==3) {
-                            String elementText= cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(step))).getText();
-                            //getGlobalDataValue(test.get("testsFileName").toString(), dataSet[1],dataSet[2]);
-                            setVariableValue(test.get("testsFileName").toString(), dataSet[1], dataSet[2], elementText);
+                            getGlobalDataValue(test.get("testsFileName").toString(), dataSet[1],dataSet[2]);
+                            setVariableValue(test.get("testsFileName").toString(), dataSet[1], dataSet[2], elementText, variableType);
                         }
                         else{
                             log.info("Please enter DataSet in: '"+step+"'");
@@ -347,9 +380,8 @@ public class DataDrivenParser {
             if(!isDetaSet) {
                 try {
                     if (test.get("dataType").toString().equalsIgnoreCase("global")) {
-                        String elementText= cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(step))).getText();
-                        //getGlobalDataValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(),headerName);
-                        setVariableValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(),headerName, elementText);
+                        getGlobalDataValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(),headerName);
+                        setVariableValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(),headerName, elementText,variableType);
                     }
                 } catch (Exception e) {
                     log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
@@ -359,13 +391,14 @@ public class DataDrivenParser {
         }
     }
 
-    public void setVariableValue(String testsFileName, String dataSetName,String keyName,String elementText){
+    public void setVariableValue(String testsFileName, String dataSetName,String keyName,JSONArray elementText, String variableType){
         JSONObject variables=new JSONObject();
         JSONObject dataSetNames=new JSONObject();
         JSONObject testDataSet=new JSONObject();
 
         if(TestExecutionBuilder.dataSetVariable.size()==0) {
-            variables.put(keyName, elementText);
+            if(variableType.equals("list")){ variables.put(keyName, elementText); }
+            else{variables.put(keyName, elementText.get(0));}
             dataSetNames.put(dataSetName, variables);
             TestExecutionBuilder.dataSetVariable.put(testsFileName, dataSetNames);
         }
@@ -374,25 +407,22 @@ public class DataDrivenParser {
                 testDataSet= (JSONObject) TestExecutionBuilder.dataSetVariable.get(testsFileName);
                 if(testDataSet.containsKey(dataSetName)){
                     dataSetNames= (JSONObject) testDataSet.get(dataSetName);
-                    if(dataSetNames.containsKey(elementText)){
 
-                    }
-                    else{
-                        dataSetNames.put(keyName, elementText);
-                        testDataSet.put(dataSetName, dataSetNames);
-                        TestExecutionBuilder.dataSetVariable.put(testsFileName, testDataSet);
-                    }
-
+                    if(variableType.equals("list")){ variables.put(keyName, elementText); }
+                    else{variables.put(keyName, elementText.get(0));}
+                    testDataSet.put(dataSetName, dataSetNames);
+                    TestExecutionBuilder.dataSetVariable.put(testsFileName, testDataSet);
                 }else{
-                    variables.put(keyName, elementText);
-                    dataSetNames.put(dataSetName, variables);
-                    TestExecutionBuilder.dataSetVariable.put(testsFileName, dataSetNames);
+                    if(variableType.equals("list")){ variables.put(keyName, elementText); }
+                    else{variables.put(keyName, elementText.get(0));}
+                    testDataSet.put(dataSetName, variables);
+                    TestExecutionBuilder.dataSetVariable.put(testsFileName, testDataSet);
 
                 }
-
             }
             else{
-                variables.put(keyName, elementText);
+                if(variableType.equals("list")){ variables.put(keyName, elementText); }
+                else{variables.put(keyName, elementText.get(0));}
                 dataSetNames.put(dataSetName, variables);
                 TestExecutionBuilder.dataSetVariable.put(testsFileName, dataSetNames);
             }

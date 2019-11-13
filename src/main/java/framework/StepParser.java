@@ -29,6 +29,7 @@ public class StepParser {
     private static final Logger log = LogManager.getLogger(StepParser.class);
     TesboLogger tesboLogger = new TesboLogger();
     DataDrivenParser dataDrivenParser = new DataDrivenParser();
+    ReportParser reportParser=new ReportParser();
     public static String screenShotURL=null;
 
     public String parseStep(WebDriver driver, JSONObject test, String step) throws Exception {
@@ -172,13 +173,41 @@ public class StepParser {
            /*
             Step: Get text of @element and set / put / assign in to {DataSet variable}
             Step: Get size of @element and set / put / assign in to {DataSet variable}
+            Step: Get list of @element text and set / put / assign in to {DataSet variable}
+            Step: Get page title and set / put / assign in to {DataSet variable}
+            Step: Get current url and set / put / assign in to {DataSet variable}
+            Step: Get attribute 'attribute name' of @element text and set / put / assign in to {DataSet variable}
+            Step: Get css value 'css value' of @element text and set / put / assign in to {DataSet variable}
             */
            DataDrivenParser dataDrivenParser=new DataDrivenParser();
-           if(step.toLowerCase().contains(" text ")){
-              String elementText= cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).getText();
-               dataDrivenParser.setValueInDataSetVariable(driver,test,step);
-               System.out.println("====>: "+ TestExecutionBuilder.dataSetVariable);
-           }
+           String printStep= reportParser.dataSetStepReplaceValue(test,step);
+            tesboLogger.stepLog(printStep);
+            log.info(printStep);
+
+            if(step.toLowerCase().contains(" text ")){
+                if(step.toLowerCase().contains(" list ")){
+                    dataDrivenParser.setValueInDataSetVariable(driver,test,step,"list");
+                }
+                else{
+                    dataDrivenParser.setValueInDataSetVariable(driver,test,step,"text");
+                }
+            }
+            else if(step.toLowerCase().contains(" size ")){
+               dataDrivenParser.setValueInDataSetVariable(driver,test,step,"size");
+            }
+            else if(step.toLowerCase().contains(" page title ")){
+                dataDrivenParser.setValueInDataSetVariable(driver,test,step,"page title");
+            }
+            else if(step.toLowerCase().contains(" current url ")){
+                dataDrivenParser.setValueInDataSetVariable(driver,test,step,"current url");
+            }
+            else if(step.toLowerCase().contains(" attribute ")){
+                dataDrivenParser.setValueInDataSetVariable(driver,test,step,"attribute value");
+            }
+            else if(step.toLowerCase().contains(" css value ")){
+                dataDrivenParser.setValueInDataSetVariable(driver,test,step,"css value");
+            }
+
         }
 
         //Upload File

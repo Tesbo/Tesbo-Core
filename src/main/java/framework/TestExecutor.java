@@ -366,7 +366,7 @@ public class TestExecutor implements Runnable {
                     if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
                         if (step.toString().contains("{") && step.toString().contains("}")) {
 
-                            //stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
+                            stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
                         }
                         String Step = stepParser.parseStep(driver, test, step.toString());
 
