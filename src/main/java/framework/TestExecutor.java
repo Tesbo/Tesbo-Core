@@ -47,6 +47,7 @@ public class TestExecutor implements Runnable {
     Commands cmd=new Commands();
     String exceptionAsString = null;
     GetConfiguration config=new GetConfiguration();
+    static JSONObject localVariable=new JSONObject();
     private static final Logger log = LogManager.getLogger(TestExecutor.class);
 
     public TestExecutor() { }
@@ -125,6 +126,7 @@ public class TestExecutor implements Runnable {
         BuildReportDataObject buildReport = new BuildReportDataObject();
         TesboLogger tesboLogger =new TesboLogger();
         StringWriter sw = new StringWriter();
+
         testResult = "";
         int stepNumber = 0;
         boolean isTestFail=false;
@@ -364,7 +366,7 @@ public class TestExecutor implements Runnable {
                 try {
 
                     if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
-                        if (step.toString().contains("{") && step.toString().contains("}")) {
+                        if (step.toString().contains("{") && step.toString().contains("}") && !step.toString().toLowerCase().contains(" define ")) {
 
                             stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
                         }
