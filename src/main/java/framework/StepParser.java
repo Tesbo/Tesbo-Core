@@ -34,7 +34,7 @@ public class StepParser {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
 
-        if (!step.toLowerCase().contains("{") && !step.toLowerCase().contains("}") && !step.toLowerCase().contains("print") && !step.toString().contains("random")) {
+        if (!step.toLowerCase().contains("{") && !step.toLowerCase().contains("}") && !step.toLowerCase().contains("print") && !step.contains("random")) {
             if(step.contains("@")){
                 String removeContent=null;
                 String[] stepsWord=step.split(" ");
@@ -167,6 +167,7 @@ public class StepParser {
             }
         }
 
+        //Variables
         if((step.toLowerCase().contains("get ") | step.toLowerCase().contains("define "))){
             if(step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign ")) {
                 /**
@@ -760,7 +761,11 @@ public class StepParser {
             String headerName = step.substring(startPoint, endPoint);
             boolean isDetaSet=false;
             if(TestExecutor.localVariable.containsKey(headerName)){
-                return step.replaceAll("[{,},']", "");
+                textToEnter = TestExecutor.localVariable.get(headerName).toString();
+                String newStep=step.replace("{" + headerName + "}", textToEnter).replaceAll("[{,}]", "'").replace("@", "");
+                tesboLogger.stepLog(newStep);
+                log.info(newStep);
+                return textToEnter;
             }
             else {
                 try {
@@ -826,6 +831,7 @@ public class StepParser {
                         throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
                     }
                 }
+
             }
         }
         else {

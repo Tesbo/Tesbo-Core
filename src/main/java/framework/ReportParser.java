@@ -89,8 +89,13 @@ public class ReportParser {
             headerName = step.substring(startPoint, endPoint);
 
             boolean isDetaSet=false;
-            if(TestExecutor.localVariable.containsKey(headerName)){
-                return step.replaceAll("[{,},']", "");
+            if(TestExecutor.localVariable.containsKey(headerName) | step.toLowerCase().contains("define")){
+                if(step.toLowerCase().contains("define")){
+                    return step.replaceAll("[{,},']", "");
+                }else {
+                    textToEnter = TestExecutor.localVariable.get(headerName).toString();
+                    return step.replace("{" + headerName + "}", textToEnter).replaceAll("[{,}]", "'").replace("@", "");
+                }
             }
             else {
                 try {
@@ -110,8 +115,8 @@ public class ReportParser {
                             }
 
                         } catch (StringIndexOutOfBoundsException e) {
-                            throw e;
-
+                            log.error("'"+headerName+"' Variable is not define.");
+                            throw new TesboException("'"+headerName+"' Variable is not define.");
                         }
                     } else if (headerName.contains("Dataset.") || headerName.contains("dataSet.") || headerName.contains("dataset.")) {
                         log.error("Please enter valid DataSet in: '" + step + "'");
@@ -136,7 +141,8 @@ public class ReportParser {
                             }
                         }
                     } catch (Exception e) {
-                        throw e;
+                        log.error("'"+headerName+"' Variable is not define.");
+                        throw new TesboException("'"+headerName+"' Variable is not define.");
                     }
                     try {
                         if (test.get("dataType").toString().equalsIgnoreCase("global")) {

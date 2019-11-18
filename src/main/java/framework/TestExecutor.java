@@ -126,7 +126,7 @@ public class TestExecutor implements Runnable {
         BuildReportDataObject buildReport = new BuildReportDataObject();
         TesboLogger tesboLogger =new TesboLogger();
         StringWriter sw = new StringWriter();
-
+        localVariable=new JSONObject();
         testResult = "";
         int stepNumber = 0;
         boolean isTestFail=false;
@@ -362,12 +362,10 @@ public class TestExecutor implements Runnable {
                     log.info("Start session for "+step);
                     initializeSessionRunTime(step);
                 }
-
                 try {
 
                     if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
-                        if (step.toString().contains("{") && step.toString().contains("}") && !step.toString().toLowerCase().contains(" define ")) {
-
+                        if (step.toString().contains("{") && step.toString().contains("}")) {
                             stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
                         }
                         String Step = stepParser.parseStep(driver, test, step.toString());

@@ -459,7 +459,6 @@ public class DataDrivenParser {
                 TestExecutionBuilder.dataSetVariable.put(testsFileName, dataSetNames);
             }
         }
-        System.out.println("=====>: "+TestExecutionBuilder.dataSetVariable);
     }
 
     public void setLocalVariableValue(String keyName,JSONArray elementText){
@@ -479,26 +478,25 @@ public class DataDrivenParser {
         }
 
         if(!isVariableExist){
-
             TestsFileParser testsFileParser=new TestsFileParser();
             StringBuffer testsFile= testsFileParser.readTestsFile(testsFileName);
             String[] allLines = testsFile.toString().split("[\\r\\n]+");
+            boolean isDataSetName=false;
             for (int i = 0; i < allLines.length; i++) {
-                boolean isDataSetName=false;
                 if (allLines[i].contains("DataSet:")) {
                     isDataSetName = true;
                 }
                 if(isDataSetName) {
-                    if (allLines[i].contains("\"" + keyName + "\":")) {
+
+                    if(allLines[i].contains("\"" + keyName + "\":")) {
                         isVariableExist = true;
                         break;
                     }
-                    if (allLines[i].contains("Test:"))
+                    if(allLines[i].contains("Test:"))
                         break;
                 }
             }
         }
-
         return isVariableExist;
     }
 }
