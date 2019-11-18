@@ -225,17 +225,4 @@ public class SuiteParser {
         }
         return suiteFileList;
     }
-
-    public static void main(String[] args) {
-        SuiteParser suiteParser=new SuiteParser();
-        //StringBuffer suiteFile= suiteParser.readSuiteFile("smoke.suite");
-        System.out.println("====================================================================================");
-
-
-        System.out.println(suiteParser.getTestsFileNameUsingTestName("smoke"));
-        System.out.println("====================================================================================");
-
-        System.out.println("====================================================================================");
-
-    }
 }

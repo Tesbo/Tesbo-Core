@@ -35,6 +35,7 @@ public class TestExecutionBuilder {
     public static long buildEndTime;
     public static int failTest=0;
     public static boolean repotFileGenerated = false;
+    public static JSONObject dataSetVariable=new JSONObject();
     DataDrivenParser dataDrivenParser = new DataDrivenParser();
     TesboLogger logger = new TesboLogger();
 
