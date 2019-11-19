@@ -61,7 +61,7 @@ public class StepParser {
 
         //Clicks
 
-        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("pause") && step.toLowerCase().contains("and click")) && !(step.toLowerCase().contains("scroll") && step.toLowerCase().contains("and click")) && !(step.toLowerCase().contains("right") || step.toLowerCase().contains("double") || step.toLowerCase().contains("and hold")) ) {
+        if(step.toLowerCase().contains("click") && !(step.toLowerCase().contains("pause") && step.toLowerCase().contains("and click")) && !(step.toLowerCase().contains("scroll") && step.toLowerCase().contains("and click")) && !(step.toLowerCase().contains("right") || step.toLowerCase().contains("double") || step.toLowerCase().contains("and hold")) ) {
 
             if (step.toLowerCase().contains("from list")) {
                 clickOnElementFromList(driver,test,step);
@@ -73,9 +73,9 @@ public class StepParser {
                 cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).click();
             }
         }
+        else if(step.toLowerCase().contains("click") && step.toLowerCase().contains("and hold")) {
+            // Click And Hold
 
-        // Click And Hold
-        if (step.toLowerCase().contains("click") && step.toLowerCase().contains("and hold")) {
             /**
              * Step: click and hold @element1
              * And
@@ -83,9 +83,9 @@ public class StepParser {
              */
             cmd.clickAndHold(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
         }
+        else if (step.toLowerCase().contains("pause") && step.toLowerCase().contains("and click")) {
+            // pause and Click
 
-        // pause and Click
-        if (step.toLowerCase().contains("pause") && step.toLowerCase().contains("and click")) {
             /**
              * Step: pause and click on @element
              * And
@@ -93,9 +93,9 @@ public class StepParser {
              */
             cmd.pauseAndClick(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
         }
+        else if (step.toLowerCase().contains("scroll") && step.toLowerCase().contains("and click")) {
+            // scroll and Click
 
-        // scroll and Click
-        if (step.toLowerCase().contains("scroll") && step.toLowerCase().contains("and click")) {
             /**
              * Step: scroll and click on @element1
              * And
@@ -103,21 +103,19 @@ public class StepParser {
              */
             cmd.scrollAndClick(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
         }
+        else if (step.toLowerCase().contains("right click")) {
+            //Right Click
 
-
-        //Right Click
-        if (step.toLowerCase().contains("right click")) {
             cmd.rightClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
         }
-
-        //Double Click
-        if (step.toLowerCase().contains("double click")) {
+        else if (step.toLowerCase().contains("double click")) {
+            //Double Click
 
             cmd.doubleClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
         }
+        else if (step.toLowerCase().contains("print")) {
+            //Print
 
-        //Print
-        if (step.toLowerCase().contains("print")) {
             /**
              * Step: print "User should redirect into the login page "
              * Step: print @elementName
@@ -125,9 +123,9 @@ public class StepParser {
             tesboLogger.stepLog(printStep(driver,step,test));
             log.info(printStep(driver,step,test));
         }
+        else if (step.toLowerCase().contains("capture screenshot")) {
+            //Capture Screenshot
 
-        //Capture Screenshot
-        if (step.toLowerCase().contains("capture screenshot")) {
             /**
              * Step: Capture Screenshot of @elementName
              */
@@ -145,19 +143,19 @@ public class StepParser {
                 log.info("Screenshot: " + screenShotURL);
             }
         }
+        else if (step.toLowerCase().contains("clear cookies") || step.toLowerCase().contains("clear cache")) {
+            //clear cookies and cache
 
-        //clear cookies and cache
-        if (step.toLowerCase().contains("clear cookies") || step.toLowerCase().contains("clear cache")) {
             cmd.deleteAllCookies(driver);
         }
+        else if (step.toLowerCase().contains("press")) {
+            //Press Key
 
-        //Press Key
-        if (step.toLowerCase().contains("press")) {
             pressKey(driver, test, step);
         }
+        else if (step.toLowerCase().contains("enter") && !(step.toLowerCase().contains("press") | step.toLowerCase().contains("switch"))) {
+            //Sendkeys
 
-        //Sendkeys
-        if (step.toLowerCase().contains("enter") && !(step.toLowerCase().contains("press") | step.toLowerCase().contains("switch"))) {
             if (step.toLowerCase().contains("random")) {step= randomStepParse(driver,test,step); }
             else {
                 if(step.toLowerCase().contains("clear")){
@@ -166,10 +164,10 @@ public class StepParser {
                 cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
             }
         }
+        else if((step.toLowerCase().contains("get ") | step.toLowerCase().contains("define "))){
+            //Variables
 
-        //Variables
-        if((step.toLowerCase().contains("get ") | step.toLowerCase().contains("define "))){
-            if(step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign ")) {
+            if(step.toLowerCase().contains("define ") | step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign ")) {
                 /**
                  Step: Get text of @element and set / put / assign in to {DataSet variable}
                  Step: Get size of @element and set / put / assign in to {DataSet variable}
@@ -191,89 +189,88 @@ public class StepParser {
                 log.info(printStep);
             }
         }
+        else if (step.toLowerCase().contains("upload") && step.toLowerCase().contains("file")) {
+            //Upload File
 
-
-        //Upload File
-        if (step.toLowerCase().contains("upload") && step.toLowerCase().contains("file")) {
-            /*
+            /**
             Step: Upload File 'filePath' @element
             */
             cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
         }
+        else if (step.toLowerCase().contains("get page") && step.toLowerCase().contains("source")) {
+            //Get Page Source
 
-        //Get Page Source
-        if (step.toLowerCase().contains("get page") && step.toLowerCase().contains("source")) {
-            /*
+            /**
             Step: Get Page Source
             */
             cmd.getPageSource(driver);
         }
+        else if (step.toLowerCase().contains("url")) {
+            // Open URL
 
-        // Open URL
-        if (step.toLowerCase().contains("url")) {
-            /*
+            /**
             Step: Open URL 'http://demo.guru99.com/test/upload/'
             */
             driver.get(parseTextToEnter(test, step));
         }
+        else if (step.toLowerCase().contains("switch")) {
+            //Switch
 
-        //Switch
-        if (step.toLowerCase().contains("switch")) {
             switchFunction(driver, test, step);
         }
+        else if (step.toLowerCase().contains("navigate") | (step.toLowerCase().contains("refresh") && step.toLowerCase().contains("page"))) {
+            //navigate
 
-        //navigate
-        if (step.toLowerCase().contains("navigate") | (step.toLowerCase().contains("refresh") && step.toLowerCase().contains("page"))) {
             navigateFunction(driver, step);
         }
+        else if (step.toLowerCase().contains("scroll") && !(step.toLowerCase().contains("and click"))) {
+            //scroll
 
-        //scroll
-        if (step.toLowerCase().contains("scroll") && !(step.toLowerCase().contains("and click"))) {
             scrollFunction(driver, test.get("testsFileName").toString(), step);
         }
+        else if (step.toLowerCase().contains("pause") && !(step.toLowerCase().contains("and click"))) {
+            //pause
 
-        //pause
-        if (step.toLowerCase().contains("pause") && !(step.toLowerCase().contains("and click"))) {
             pauseFunction(driver, test.get("testsFileName").toString(), step);
         }
+        else if (step.toLowerCase().contains("select")) {
+            //select
 
-        //select
-        if (step.toLowerCase().contains("select")) {
             selectFunction(driver, test, step);
         }
+        else if (step.toLowerCase().contains("window") && !(step.toLowerCase().contains("close"))) {
+            //Window Minimize, maximize and resize
 
-        //Window Minimize, maximize and resize
-        if (step.toLowerCase().contains("window") && !(step.toLowerCase().contains("close"))) {
             if (step.toLowerCase().contains("resize")) {
-                /*
+                /**
                 * Step: Window Resize (x, y)
-                * */
+                 */
                 windowResize(step,driver);
             }
             if (step.toLowerCase().contains("minimize")) {
-                 /*
+                /**
                 * Step: Window Minimize
-                * */
+                */
                 windowMinimize(driver);
             }
             if (step.toLowerCase().contains("maximize")) {
-                 /*
+                /**
                 * Step: Window Maximize
-                * */
+                */
                 windowMaximize(driver);
             }
         }
+        else if (step.toLowerCase().contains("mouse hover")) {
+            //Mouse Hover
 
-        //Mouse Hover
-        if (step.toLowerCase().contains("mouse hover")) {
             /**
              * Step: Mouse Hover @element
              */
             cmd.mouseHover(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
         }
+        else if (step.toLowerCase().contains("drag") && step.toLowerCase().contains("and drop")) {
+            //Drag and Drop
 
-        //Drag and Drop
-        if (step.toLowerCase().contains("drag") && step.toLowerCase().contains("and drop")) {
             /**
              * Step: Drag and Drop @Element_1 to @element_2 ,
              * Step: Drag and Drop @ele1 to ele2
@@ -283,26 +280,26 @@ public class StepParser {
             // Not working
             dragAndDropElement(driver,test,step);
         }
+        else if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache") | step.toLowerCase().contains("enter"))) {
+            //Clear
 
-        //Clear
-        if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache") | step.toLowerCase().contains("enter"))) {
-            /*
+            /**
             * Step: clear @ElementText
-            * */
+             */
             cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).clear();
         }
+        else if (step.toLowerCase().contains("close window")) {
+            //Close Window
 
-        //Close Window
-        if (step.toLowerCase().contains("close window")) {
             /**
              * Step: close window.
              */
             cmd.closeWindow(driver);
         }
-
-        //Close window using index
-        if (step.toLowerCase().contains("close <") && step.toLowerCase().contains("> window"))
+        else if (step.toLowerCase().contains("close <") && step.toLowerCase().contains("> window"))
         {
+            //Close window using index
+
             /**
              * Step: close <1> window
              * Step: close <1,4> window

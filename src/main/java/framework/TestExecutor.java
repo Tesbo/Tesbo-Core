@@ -332,17 +332,20 @@ public class TestExecutor implements Runnable {
                             if(step.toString().contains("@")){
                                 String removeContent=null;
                                 String[] stepsWord=step.toString().split(" ");
+                                boolean flag=false;
                                 for(String word:stepsWord){
                                     if(word.contains("@") && !(word.contains("'"))){
                                         removeContent= word.trim().replace("@","");
                                     }
+                                    if(word.contains("@") && word.contains("'")){flag=true;}
                                 }
                                 //String removeContent=step.split("@")[1].trim().split(" ")[0].replace("@","");
-                                if(removeContent.contains(".")){
-                                    stepReportObject.put("steps", step.toString().replace("@"+removeContent,removeContent.split("\\.")[1]));
-                                }
-                                else {
-                                    stepReportObject.put("steps", step.toString().replace("@"+removeContent, removeContent));
+                                if(removeContent!=null && !flag) {
+                                    if (removeContent.contains(".")) {
+                                        stepReportObject.put("steps", step.toString().replace("@" + removeContent, removeContent.split("\\.")[1]));
+                                    } else {
+                                        stepReportObject.put("steps", step.toString().replace("@" + removeContent, removeContent));
+                                    }
                                 }
 
                             }
