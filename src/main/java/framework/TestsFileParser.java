@@ -350,7 +350,7 @@ public class TestsFileParser {
                 }
             }
         }
-        if(startPoint==0)
+        if(startPoint==0 && endpoint==0)
         {
             log.error("Collection name "+ groupName +" is not found on tests file");
             throw new TesboException("Collection name "+ groupName +" is not found on tests file");

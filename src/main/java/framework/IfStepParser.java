@@ -67,26 +67,26 @@ public class IfStepParser {
                 }
 
                 /*
-                * If:: @element text number is grater then equal to 'any number'
+                * If:: @element text number is greater than equal to 'any number'
                 * */
-                if(step.toLowerCase().contains("grater then") && step.toLowerCase().contains("equal to")){
+                if(step.toLowerCase().contains("greater than") && step.toLowerCase().contains("equal to")){
                     if(elementNumber>=number){isIfCondition=true;}
                 }
-                else if(step.toLowerCase().contains("grater then")){
+                else if(step.toLowerCase().contains("greater than")){
                     /*
-                    * If:: @element text number is grater then 'any number'
+                    * If:: @element text number is greater than 'any number'
                     * */
                     if(elementNumber>number){isIfCondition=true;}
                 }
-                else if(step.toLowerCase().contains("less then") && step.toLowerCase().contains("equal to")){
+                else if(step.toLowerCase().contains("less than") && step.toLowerCase().contains("equal to")){
                         /*
-                    * If:: @element text number is less then equal to 'any number'
+                    * If:: @element text number is less than equal to 'any number'
                     * */
                     if(elementNumber<=number){isIfCondition=true;}
                 }
-                else if(step.toLowerCase().contains("less then")){
+                else if(step.toLowerCase().contains("less than")){
                     /*
-                    * If:: @element text number is less then 'any number'
+                    * If:: @element text number is less than 'any number'
                     * */
                     if(elementNumber<number){isIfCondition=true;}
                 }

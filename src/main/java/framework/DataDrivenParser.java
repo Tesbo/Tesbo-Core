@@ -108,23 +108,41 @@ public class DataDrivenParser {
     public ArrayList<String> getColumnNameFromTest(ArrayList<String> testSteps){
 
         ArrayList<String> columnNameList=new ArrayList<String>();
+        JSONArray defineList=new JSONArray();
         for(String step:testSteps)
         {
             String[] splitStep;
-            if(step.contains("{")&& step.contains("}")){
-                if(step.contains("Code:")){
-                    splitStep = step.split("\\(")[1].split(",");
-                }else {
-                    splitStep = step.split("\\s");
-                }
-
-                for (String calName : splitStep) {
-                    if (calName.contains("{") && calName.contains("}")) {
-                        columnNameList.add(calName.replaceAll("[{}()]", "").trim());
-                    }
-                }
-
+            boolean isDefine=false;
+            if(step.toLowerCase().contains("define")) {
+                isDefine=true;
             }
+            if (step.contains("{") && step.contains("}")) {
+                    if (step.contains("Code:")) {
+                        splitStep = step.split("\\(")[1].split(",");
+                    } else {
+                        splitStep = step.split("\\s");
+                    }
+
+                    for (String calName : splitStep) {
+                        if (calName.contains("{") && calName.contains("}")) {
+                            if(isDefine){
+                                defineList.add(calName.replaceAll("[{}()]", "").trim());
+                            }else {
+                                boolean flag=false;
+                                for(int i=0;i<defineList.size();i++){
+                                    if(calName.toLowerCase().contains(defineList.get(i).toString().toLowerCase())){
+                                        flag=true;
+                                    }
+                                }
+                                if(!flag) {
+                                    columnNameList.add(calName.replaceAll("[{}()]", "").trim());
+                                }
+                            }
+                        }
+                    }
+
+                }
+
         }
         return columnNameList;
     }
@@ -307,7 +325,6 @@ public class DataDrivenParser {
             log.error("Key name " + keyName + " is not found in " + dataSetName + " data set");
             throw new TesboException("Key name " + keyName + " is not found in " + dataSetName + " data set");
         }
-
         return KeyValue;
 
     }

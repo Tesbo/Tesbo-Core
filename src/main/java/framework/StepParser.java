@@ -178,7 +178,9 @@ public class StepParser {
                  Step: Get css value 'css value' of @element text and set / put / assign in to {DataSet variable}
 
                  Define local variable
-                 Step: define {Variable} and set / put / assign 'value'
+                 Step: define {local Variable} and set / put / assign 'value'
+                 Step: define {local Variable}
+                 Step: Get text of @element and set / put / assign in to {local variable}
                  */
                 DataDrivenParser dataDrivenParser = new DataDrivenParser();
 
