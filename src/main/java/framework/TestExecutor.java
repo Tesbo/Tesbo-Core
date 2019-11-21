@@ -219,7 +219,7 @@ public class TestExecutor implements Runnable {
         String ifCondition="";
         String elseCondition="";
         String elseIfCondition="";
-        Boolean isIf=false;
+        boolean isIf=false;
         for(int i = 0; i < steps.size(); i++) {
             boolean stepPassed = true;
 
@@ -228,12 +228,15 @@ public class TestExecutor implements Runnable {
             Object step = steps.get(i);
             IfStepParser ifStepParser=new IfStepParser();
 
-            if(step.toString().contains("Else If::")){
-                if(ifCondition.equals("Fail")) {
-                    try {
 
+
+
+            if(step.toString().contains("Else If::")){
+                if(ifCondition.equals("Fail") && !isIf) {
+                    try {
                         if (ifStepParser.parseIfStep(driver, test, step.toString())) {
                             elseIfCondition = "Passed";
+                            isIf=true;
                             //tesboLogger.testLog(step.toString());
                         } else {
                             elseIfCondition = "Fail";
@@ -254,16 +257,20 @@ public class TestExecutor implements Runnable {
                     }
                     continue;
                 }
-                else if(ifCondition.equals("Passed")){
+                else if(ifCondition.equals("Passed") | elseIfCondition.equals("Passed")){
                     elseIfCondition = "Fail";
                     ifCondition = "Fail";
                     isIf=true;
-                    continue;
                 }
-
+                continue;
             }
 
-            if(step.toString().contains("If::")){
+            if(step.toString().contains("If::") && !(step.toString().contains("Else If::"))){
+                if(ifCondition.equals("Passed")){
+                    ifCondition = "";
+                    elseIfCondition = "";
+                    isIf=false;
+                }
                 try {
                     if (ifStepParser.parseIfStep(driver, test, step.toString())) {
                         ifCondition = "Passed";

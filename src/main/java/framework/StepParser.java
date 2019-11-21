@@ -174,7 +174,7 @@ public class StepParser {
                  Step: Get list of @element text and set / put / assign in to {DataSet variable}
                  Step: Get page title and set / put / assign in to {DataSet variable}
                  Step: Get current url and set / put / assign in to {DataSet variable}
-                 Step: Get attribute 'attribute name' of @element text and set / put / assign in to {DataSet variable}
+                 Step: Get attribute 'attribute name' of @element and set / put / assign in to {DataSet variable}
                  Step: Get css value 'css value' of @element text and set / put / assign in to {DataSet variable}
 
                  Define local variable
@@ -754,7 +754,7 @@ public class StepParser {
         int startPoint = 0;
         int endPoint = 0;
 
-        if (step.contains("{") && step.contains("}") && !step.toLowerCase().contains(" define ")) {
+        if (step.contains("{") && step.contains("}") && !step.toLowerCase().contains(" define ") && !step.toLowerCase().contains(" attribute ") && !step.toLowerCase().contains(" css value ")) {
             startPoint = step.indexOf("{") + 1;
             endPoint = step.lastIndexOf("}");
             String headerName = step.substring(startPoint, endPoint);

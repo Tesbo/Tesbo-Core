@@ -398,7 +398,12 @@ public class DataDrivenParser {
                     elementText.add(driver.getCurrentUrl());
                 }
                 else if(step.toLowerCase().contains(" attribute ")){
-                    elementText.add(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(step))).getAttribute(stepParser.parseTextToEnter(test, step)));
+                    WebElement element=cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(step)));
+                    if(element.getAttribute(stepParser.parseTextToEnter(test, step))==null){
+                        log.info("'"+stepParser.parseTextToEnter(test, step)+"' attribute is not fount.");
+                        throw new TesboException("'"+stepParser.parseTextToEnter(test, step)+"' attribute is not fount.");
+                    }
+                    elementText.add(element.getAttribute(stepParser.parseTextToEnter(test, step)));
                 }
                 else if(step.toLowerCase().contains(" css value ")){
                     elementText.add(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(step))).getCssValue(stepParser.parseTextToEnter(test, step)));

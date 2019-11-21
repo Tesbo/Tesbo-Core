@@ -210,7 +210,6 @@ public class TestsFileParser {
         int startPoint = 0;
         boolean testStarted = false;
         int endpoint = 0;
-        boolean isIf=false;
         for (int i = 0; i < allLines.length; i++) {
 
             if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
@@ -225,8 +224,6 @@ public class TestsFileParser {
                 }
             }
             if (testStarted) {
-
-                if(allLines[i].contains("If::") && isIf==true){isIf=true;}
 
                 if (allLines[i].contains("End") && !(allLines[i].contains("End::"))) {
                     endpoint = i;

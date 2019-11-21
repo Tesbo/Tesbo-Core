@@ -1,7 +1,7 @@
 {
 
   "run": {
-    "baseUrl": "https://www.phptravels.net/admin",
+    "baseUrl": "https://accounts.google.com/signup",
     "seleniumAddress": "",
     "Environment":{
       "QA":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/QA",
@@ -9,7 +9,7 @@
       "Release":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/Release"
     },
     "by": {
-      "tag": ["click1"]
+      "tag": ["vr"]
     },
     "browser": {
       "name": [
@@ -17,7 +17,7 @@
       ]
     },
     "parallel": {
-      "status": true,
+      "status": false,
       "count": "3"
     },
     "retryAnalyser":{
@@ -32,6 +32,7 @@
         "platform" : ""
       }
     },
+
     "pause":false,
     "SingleWindowRun": false,
     "highlightElement": true,
@@ -39,8 +40,8 @@
   },
   "cloudIntegration" : {
     "report": false,
-    "apiKey": "89063e42aeb019f608d4d3127c626200",
-    "projectKey" : "5c88a06adfbbad0c046e333f",
-    "buildName":"QAble004"
+    "apiKey": "d31129abe90e5e2086e56a26995cc1cc",
+    "projectKey" : "5cb6f522e7beb15573cd34a3",
+    "buildName":"QAbleTest001"
   }
 }
