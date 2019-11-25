@@ -187,7 +187,7 @@ public class TestExecutor implements Runnable {
 
                 if(step.toString().toLowerCase().contains("pause") )
                 {
-                    if(config.getPauseStepDisplay()==true){ stepReportObject.put("stepIndex", ++stepIndex); }
+                    if(config.getPauseStepDisplay()){ stepReportObject.put("stepIndex", ++stepIndex); }
                 }
                 else{ stepReportObject.put("stepIndex", ++stepIndex); }
 
@@ -198,7 +198,7 @@ public class TestExecutor implements Runnable {
                 if(stepReportObject.size()!=0) {
                     if(step.toString().toLowerCase().contains("pause") )
                     {
-                        if(config.getPauseStepDisplay()==true){ testStepArray.add(stepReportObject); }
+                        if(config.getPauseStepDisplay()){ testStepArray.add(stepReportObject); }
                     }
                     else { testStepArray.add(stepReportObject); }
                 }
@@ -216,6 +216,8 @@ public class TestExecutor implements Runnable {
 
         int J = 0;
         log.info(test.get("testName").toString()+" test has "+steps.size()+" steps");
+        IfStepParser ifStepParser=new IfStepParser();
+
         String ifCondition="";
         String elseCondition="";
         String elseIfCondition="";
@@ -226,12 +228,15 @@ public class TestExecutor implements Runnable {
             JSONObject stepReportObject = new JSONObject();
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
-            IfStepParser ifStepParser=new IfStepParser();
+
+            if(step.toString().contains("If::")){
+               steps= ifStepParser.getStepsOfTestWhoHasIfCondition(driver,test,steps);
+                step = steps.get(i);
+            }
 
 
 
-
-            if(step.toString().contains("Else If::")){
+            /*if(step.toString().contains("Else If::")){
                 if(ifCondition.equals("Fail") && !isIf) {
                     try {
                         if (ifStepParser.parseIfStep(driver, test, step.toString())) {
@@ -312,14 +317,14 @@ public class TestExecutor implements Runnable {
                 ifCondition = "";
                 elseIfCondition = "";
                 //tesboLogger.testLog(step.toString());
-            }
+            }*/
 
-            if(ifCondition.equals("Passed") | elseIfCondition.equals("Passed") | elseCondition.equals("Passed") | (ifCondition.equals("") && elseCondition.equals("") && elseIfCondition.equals("")) ){
-
+           /* if(ifCondition.equals("Passed") | elseIfCondition.equals("Passed") | elseCondition.equals("Passed") | (ifCondition.equals("") && elseCondition.equals("") && elseIfCondition.equals("")) ){
+*/
                 if (!step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
                     if(step.toString().toLowerCase().contains("pause") )
                     {
-                        if(config.getPauseStepDisplay()==true){ stepReportObject.put("stepIndex", ++stepIndex); }
+                        if(config.getPauseStepDisplay()){ stepReportObject.put("stepIndex", ++stepIndex); }
                     }
                     else{
                         stepReportObject.put("stepIndex", ++stepIndex);
@@ -330,7 +335,7 @@ public class TestExecutor implements Runnable {
                     if ( !(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("print") && step.toString().contains("random"))) {
                         if(step.toString().toLowerCase().contains("pause") )
                         {
-                            if(config.getPauseStepDisplay()==true){stepReportObject.put("steps", step.toString().replace("@", "")); }
+                            if(config.getPauseStepDisplay()){stepReportObject.put("steps", step.toString().replace("@", "")); }
                         }
                         else if(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("Code")){
                             stepReportObject.put("steps", stepParser.replaceArgsOfCodeStep(test,step.toString()));
@@ -531,7 +536,7 @@ public class TestExecutor implements Runnable {
 
                     if(step.toString().toLowerCase().contains("pause") )
                     {
-                        if(config.getPauseStepDisplay()==true){ testStepArray.add(stepReportObject); }
+                        if(config.getPauseStepDisplay()){ testStepArray.add(stepReportObject); }
                     }
                     else { testStepArray.add(stepReportObject); }
                 }
@@ -555,8 +560,6 @@ public class TestExecutor implements Runnable {
                     Reporter.printStepReportObject = new JSONArray();
                 }
 
-            }
-
         }
         if (testsFileParser.isAfterTestInTestsFile(test.get("testsFileName").toString())) {
             JSONArray annotationSteps = testsFileParser.getBeforeAndAfterTestStepByTestsFile(test.get("testsFileName").toString(), "AfterTest");
@@ -568,7 +571,7 @@ public class TestExecutor implements Runnable {
 
                 if(step.toString().toLowerCase().contains("pause") )
                 {
-                    if(config.getPauseStepDisplay()==true){ stepReportObject.put("stepIndex", ++stepIndex); }
+                    if(config.getPauseStepDisplay()){ stepReportObject.put("stepIndex", ++stepIndex); }
                 }
                 else{ stepReportObject.put("stepIndex", ++stepIndex); }
                 stepReportObject.put("startTime", startTimeStep);
@@ -578,7 +581,7 @@ public class TestExecutor implements Runnable {
                 if (stepReportObject.size() != 0) {
                     if(step.toString().toLowerCase().contains("pause") )
                     {
-                        if(config.getPauseStepDisplay()==true){ testStepArray.add(stepReportObject); }
+                        if(config.getPauseStepDisplay()){ testStepArray.add(stepReportObject); }
                     }
                     else { testStepArray.add(stepReportObject); }
                 }

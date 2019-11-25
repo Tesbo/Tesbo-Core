@@ -175,7 +175,7 @@ public class StepParser {
                  Step: Get page title and set / put / assign in to {DataSet variable}
                  Step: Get current url and set / put / assign in to {DataSet variable}
                  Step: Get attribute 'attribute name' of @element and set / put / assign in to {DataSet variable}
-                 Step: Get css value 'css value' of @element text and set / put / assign in to {DataSet variable}
+                 Step: Get css value 'css value' of @element and set / put / assign in to {DataSet variable}
 
                  Define local variable
                  Step: define {local Variable} and set / put / assign 'value'
