@@ -273,11 +273,15 @@ public class IfStepParser {
         }
     }
 
+    String ifCondition = "";
+    String elseCondition="";
+    String elseIFCondition="";
+
     public JSONArray getStepsOfTestWhoHasIfCondition(WebDriver driver, JSONObject test, JSONArray steps) {
         JSONArray newStep = new JSONArray();
-        String ifCondition = "";
-        String elseCondition="";
-        String elseIFCondition="";
+        ifCondition = "";
+        elseCondition="";
+        elseIFCondition="";
         boolean nestedIf=false;
         for (int i = 0; i < steps.size(); i++) {
             if (steps.get(i).toString().contains("If::") && !(steps.get(i).toString().contains("Else If::"))) {
@@ -289,12 +293,12 @@ public class IfStepParser {
                         for (int j = i + 1; j < steps.size(); j++) {
 
                             if(nestedIf){
-                                nestedIf=isNestedIF(steps.get(j).toString());
+                                nestedIf=isNestedIF(steps.get(j).toString(),nestedIf);
                                 newStep.add(steps.get(j));
                                 continue;
                             }
                             else{
-                                nestedIf=isNestedIF(steps.get(j).toString());
+                                nestedIf=isNestedIF(steps.get(j).toString(),nestedIf);
                                 if(nestedIf) {
                                     newStep.add(steps.get(j));
                                     continue;
@@ -309,7 +313,11 @@ public class IfStepParser {
                             }
                         }
                     }
-                    else{ifCondition = "fail";}
+                    else{
+                        ifCondition = "fail";
+                        i=skipIfConditionStep(steps,i+1);
+                        continue;
+                    }
                 } catch (Exception e) {
                     ifCondition = "fail";
                     if (isIfError) {
@@ -323,6 +331,8 @@ public class IfStepParser {
                         log.error(exceptionAsString);
                         break;
                     }
+                    i=skipIfConditionStep(steps,i+1);
+                    continue;
                 }
 
             }
@@ -332,6 +342,20 @@ public class IfStepParser {
                         elseIFCondition = "pass";
                         elseCondition="fail";
                         for (int j = i + 1; j < steps.size(); j++) {
+
+                            if(nestedIf){
+                                nestedIf=isNestedIF(steps.get(j).toString(),nestedIf);
+                                newStep.add(steps.get(j));
+                                continue;
+                            }
+                            else{
+                                nestedIf=isNestedIF(steps.get(j).toString(),nestedIf);
+                                if(nestedIf) {
+                                    newStep.add(steps.get(j));
+                                    continue;
+                                }
+                            }
+
                             if (!(steps.get(j).toString().contains("End::") | steps.get(j).toString().contains("Else::") | steps.get(j).toString().contains("Else If::"))) {
                                 newStep.add(steps.get(j));
                             } else {
@@ -340,7 +364,11 @@ public class IfStepParser {
                             }
                         }
                     }
-                    else{elseIFCondition = "fail";}
+                    else{
+                        elseIFCondition = "fail";
+                        i=skipIfConditionStep(steps,i+1);
+                        continue;
+                    }
                 } catch (Exception e) {
                     elseIFCondition = "fail";
                     if (isIfError) {
@@ -354,6 +382,8 @@ public class IfStepParser {
                         log.error(exceptionAsString);
                         break;
                     }
+                    i=skipIfConditionStep(steps,i+1);
+                    continue;
                 }
             }
 
@@ -383,13 +413,13 @@ public class IfStepParser {
                 newStep.add(steps.get(i));
             }
         }
-        System.out.println("=====> "+newStep);
+        //System.out.println("=====> "+newStep);
         return newStep;
     }
+    int countif=0;
+    public boolean isNestedIF(String step, boolean nestedIf){
+        //boolean nestedIf=false;
 
-    public boolean isNestedIF(String step){
-        boolean nestedIf=false;
-        int countif=0;
         if(step.contains("If::") && !(step.contains("Else If::")))
         {
             nestedIf= true;
@@ -406,6 +436,33 @@ public class IfStepParser {
 
         }
         return nestedIf;
+    }
+
+    public int skipIfConditionStep(JSONArray steps, int startingStep){
+        int countIf=0;
+        for (int j = startingStep; j < steps.size(); j++) {
+            if(steps.get(j).toString().contains("If::") && !(steps.get(j).toString().contains("Else If::"))){
+                countIf++;
+                continue;
+            }
+            if(steps.get(j).toString().contains("End::")){
+                if(countIf==0) {
+                    ifCondition ="";
+                    elseCondition="";
+                    elseIFCondition="";
+                    startingStep = j;
+                    break;
+                }
+                else {
+                    countIf--;
+                }
+                continue;
+            }
+            if(steps.get(j).toString().contains("Else::") | steps.get(j).toString().contains("Else If::")){
+                if(countIf==0) { startingStep = j-1; break; }
+            }
+        }
+        return startingStep;
     }
 
 
