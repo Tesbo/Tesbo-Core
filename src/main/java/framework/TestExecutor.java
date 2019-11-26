@@ -231,7 +231,13 @@ public class TestExecutor implements Runnable {
 
             if(step.toString().contains("If::")){
                steps= ifStepParser.getStepsOfTestWhoHasIfCondition(driver,test,steps);
-                step = steps.get(i);
+               try {
+                   step = steps.get(i);
+                   if (step.toString().contains("If::")) {
+                       i--;
+                       continue;
+                   }
+               }catch (Exception e){ continue; }
             }
 
 

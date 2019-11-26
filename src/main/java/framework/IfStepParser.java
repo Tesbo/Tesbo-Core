@@ -278,6 +278,7 @@ public class IfStepParser {
         String ifCondition = "";
         String elseCondition="";
         String elseIFCondition="";
+        boolean nestedIf=false;
         for (int i = 0; i < steps.size(); i++) {
             if (steps.get(i).toString().contains("If::") && !(steps.get(i).toString().contains("Else If::"))) {
                 try {
@@ -286,6 +287,20 @@ public class IfStepParser {
                         elseCondition="fail";
                         elseIFCondition="fail";
                         for (int j = i + 1; j < steps.size(); j++) {
+
+                            if(nestedIf){
+                                nestedIf=isNestedIF(steps.get(j).toString());
+                                newStep.add(steps.get(j));
+                                continue;
+                            }
+                            else{
+                                nestedIf=isNestedIF(steps.get(j).toString());
+                                if(nestedIf) {
+                                    newStep.add(steps.get(j));
+                                    continue;
+                                }
+                            }
+
                             if (!(steps.get(j).toString().contains("End::") | steps.get(j).toString().contains("Else::") | steps.get(j).toString().contains("Else If::"))) {
                                 newStep.add(steps.get(j));
                             } else {
@@ -342,7 +357,7 @@ public class IfStepParser {
                 }
             }
 
-            if (steps.get(i).toString().contains("Else::") && !(steps.get(i).toString().contains("Else If::")) && ifCondition.equals("fail") && elseIFCondition.equals("fail")) {
+            if (steps.get(i).toString().contains("Else::") && !(steps.get(i).toString().contains("Else If::")) && (ifCondition.equals("fail") | elseIFCondition.equals("fail"))) {
                 elseCondition = "pass";
                 for (int j = i + 1; j < steps.size(); j++) {
                     if (!steps.get(j).toString().contains("End::")) {
@@ -358,7 +373,10 @@ public class IfStepParser {
                 ifCondition ="";
                 elseCondition="";
                 elseIFCondition="";
-                continue;
+                for (int j = i + 1; j < steps.size(); j++) {
+                    newStep.add(steps.get(j));
+                }
+                break;
             }
 
             if (!(ifCondition.equals("fail") | elseCondition.equals("fail") | elseIFCondition.equals("fail"))) {
@@ -368,6 +386,28 @@ public class IfStepParser {
         System.out.println("=====> "+newStep);
         return newStep;
     }
+
+    public boolean isNestedIF(String step){
+        boolean nestedIf=false;
+        int countif=0;
+        if(step.contains("If::") && !(step.contains("Else If::")))
+        {
+            nestedIf= true;
+            countif++;
+        }
+        if(nestedIf){
+            if(step.contains("End::"))
+            {
+                countif--;
+                if(countif==0) {
+                    nestedIf = false;
+                }
+            }
+
+        }
+        return nestedIf;
+    }
+
 
     public int getEndStepForCondition ( int startIndex, int endIndex, JSONArray steps){
             int endStepCondition=0;
