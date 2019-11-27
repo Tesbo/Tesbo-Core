@@ -429,7 +429,6 @@ public class IfStepParser {
                 newStep.add(steps.get(i));
             }
         }
-        System.out.println("=====> "+newStep);
         return newStep;
     }
     int countif=0;
