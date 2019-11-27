@@ -291,7 +291,7 @@ public class IfStepParser {
                         elseCondition="fail";
                         elseIFCondition="fail";
                         for (int j = i + 1; j < steps.size(); j++) {
-
+                            if(j==steps.size()-1){ i=j; }
                             if(nestedIf){
                                 nestedIf=isNestedIF(steps.get(j).toString(),nestedIf);
                                 newStep.add(steps.get(j));
@@ -316,6 +316,7 @@ public class IfStepParser {
                     else{
                         ifCondition = "fail";
                         i=skipIfConditionStep(steps,i+1);
+                        nestedIf=false;
                         continue;
                     }
                 } catch (Exception e) {
@@ -332,6 +333,7 @@ public class IfStepParser {
                         break;
                     }
                     i=skipIfConditionStep(steps,i+1);
+                    nestedIf=false;
                     continue;
                 }
 
@@ -342,7 +344,7 @@ public class IfStepParser {
                         elseIFCondition = "pass";
                         elseCondition="fail";
                         for (int j = i + 1; j < steps.size(); j++) {
-
+                            if(j==steps.size()-1){ i=j; }
                             if(nestedIf){
                                 nestedIf=isNestedIF(steps.get(j).toString(),nestedIf);
                                 newStep.add(steps.get(j));
@@ -387,9 +389,23 @@ public class IfStepParser {
                 }
             }
 
-            if (steps.get(i).toString().contains("Else::") && !(steps.get(i).toString().contains("Else If::")) && (ifCondition.equals("fail") | elseIFCondition.equals("fail"))) {
+            if (steps.get(i).toString().contains("Else::") && !(steps.get(i).toString().contains("Else If::")) && !(elseCondition.equals("fail"))) {
                 elseCondition = "pass";
                 for (int j = i + 1; j < steps.size(); j++) {
+                    if(j==steps.size()-1){ i=j; }
+
+                    if(nestedIf){
+                        nestedIf=isNestedIF(steps.get(j).toString(),nestedIf);
+                        newStep.add(steps.get(j));
+                        continue;
+                    }
+                    else{
+                        nestedIf=isNestedIF(steps.get(j).toString(),nestedIf);
+                        if(nestedIf) {
+                            newStep.add(steps.get(j));
+                            continue;
+                        }
+                    }
                     if (!steps.get(j).toString().contains("End::")) {
                         newStep.add(steps.get(j));
                     } else {
@@ -413,7 +429,7 @@ public class IfStepParser {
                 newStep.add(steps.get(i));
             }
         }
-        //System.out.println("=====> "+newStep);
+        System.out.println("=====> "+newStep);
         return newStep;
     }
     int countif=0;
