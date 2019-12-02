@@ -311,6 +311,7 @@ public class Validation {
     public void endStepValidation(JSONArray testExecutionQueue) {
 
         TestsFileParser testsFileParser=new TestsFileParser();
+        IfStepParser ifStepParser=new IfStepParser();
         JSONArray listOfSession;
         //Validation for end step
         if(testExecutionQueue.size()>0){
@@ -322,6 +323,9 @@ public class Validation {
                     sessionDefineValidation(test.get("testsFileName").toString(), test.get("testName").toString(),listOfSession);
                     sessionNotDeclareOnTest(steps, listOfSession);
                     sessionNotDefineOnTest(steps, listOfSession);
+                }
+                if(ifStepParser.isTestsHasIFCondition(steps)){
+                    ifStepParser.isEndStepForIfCondition(steps,test.get("testName").toString());
                 }
                 collectionValidation(test.get("testsFileName").toString(), test.get("testName").toString());
                 severityAndPriorityValidation(test);

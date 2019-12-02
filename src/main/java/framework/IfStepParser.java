@@ -60,12 +60,11 @@ public class IfStepParser {
                 if (cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step, 1)) + "_IF").isDisplayed()) {
                     isIfCondition = true;
                 }
-            } else if (step.toLowerCase().contains("grater then") || step.toLowerCase().contains("less then")) {
+            }
+            else if (step.toLowerCase().contains("greater than") || step.toLowerCase().contains("less than")) {
                 int number;
                 int elementNumber;
-
                 String textOfStep = stepParser.parseTextToEnter(test, step);
-
                 try {
                     number = Integer.parseInt(textOfStep);
                 } catch (Exception e) {
@@ -109,12 +108,12 @@ public class IfStepParser {
                         isIfCondition = true;
                     }
                 }
-            } else if (step.toLowerCase().contains("text")) {
+            }
+            else if (step.toLowerCase().contains("text")) {
                 if (step.toLowerCase().contains("equal")) {
                     if (elementCountInStep(step) == 2) {
                         String firstElementText = cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step, 1)) + "_IF").getText();
                         String SecondElementText = cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step, 2)) + "_IF").getText();
-
                         if (step.toLowerCase().contains("ignore case")) {
                             /*
                              * If:: @element text is equal to ignore case @element2 text
@@ -256,20 +255,22 @@ public class IfStepParser {
         return false;
     }
 
-    public void isEndStepForIfCondition(JSONArray steps) {
+    public void isEndStepForIfCondition(JSONArray steps, String test) {
         int countForIf = 0;
         int countForEnd = 0;
         for (Object step : steps) {
             if (step.toString().contains("If::") && !step.toString().contains("Else If::")) {
                 countForIf++;
             }
-            if (step.toString().contains("End::") && !step.toString().contains("End")) {
+            if (step.toString().contains("End::")) {
                 countForEnd++;
             }
         }
-        if (countForIf != countForEnd) {
-            log.info("End:: step is not found for If:: condition.");
-            throw new TesboException("End:: step is not found for If:: condition.");
+        if(countForIf>1) {
+            if ((countForIf != countForEnd - 1) | (countForIf == countForEnd)) {
+                log.info("End:: step not found for If:: condition of 'Test: "+test+"'");
+                throw new TesboException("End:: step not found for If:: condition of 'Test: "+test+"'");
+            }
         }
     }
 
@@ -285,6 +286,10 @@ public class IfStepParser {
         boolean nestedIf=false;
         for (int i = 0; i < steps.size(); i++) {
             if (steps.get(i).toString().contains("If::") && !(steps.get(i).toString().contains("Else If::"))) {
+                if(steps.get(i).toString().trim().split("::").length != 2){
+                    log.info("Condition is not found for If:: step");
+                    throw new TesboException("Condition is not found for If:: step");
+                }
                 try {
                     if (parseIfStep(driver, test, steps.get(i).toString())) {
                         ifCondition = "pass";
@@ -339,6 +344,10 @@ public class IfStepParser {
 
             }
             if (steps.get(i).toString().contains("Else If::") && ifCondition.equals("fail") && !(elseIFCondition.equals("pass"))) {
+                if(steps.get(i).toString().trim().split("::").length != 2){
+                    log.info("Condition is not found for Else If:: step");
+                    throw new TesboException("Condition is not found for Else If:: step");
+                }
                 try {
                     if (parseIfStep(driver, test, steps.get(i).toString())) {
                         elseIFCondition = "pass";
