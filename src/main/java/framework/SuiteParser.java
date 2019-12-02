@@ -77,9 +77,9 @@ public class SuiteParser {
             if(!allLines[i].equals("")) {
                 String comment = String.valueOf(allLines[i].charAt(0)) + String.valueOf(allLines[i].charAt(1));
                 if ((allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) & (!comment.equals("//"))) {
-                    if (allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")) {
-                        log.error("Please write valid keyword for this \"" + allLines[i] + "\"");
-                        throw new TesboException("Please write valid keyword for \"" + allLines[i] + "\" on suite file");
+                    if (!allLines[i].trim().startsWith("Test: ")) {
+                        log.error("Please write valid keyword or step for this \"" + allLines[i] + "\" on suite file");
+                        throw new TesboException("Please write valid keyword or step for \"" + allLines[i] + "\" on suite file");
                     }
                     testName.add(allLines[i].trim());
                 } else {

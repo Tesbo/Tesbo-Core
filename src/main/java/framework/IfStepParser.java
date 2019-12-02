@@ -489,28 +489,4 @@ public class IfStepParser {
         return startingStep;
     }
 
-
-    public int getEndStepForCondition ( int startIndex, int endIndex, JSONArray steps){
-            int endStepCondition=0;
-            //JSONArray newStep=new JSONArray();
-            boolean flag = false;
-            int ifCount = 0;
-            int endCount = 0;
-
-            for (int i = startIndex; i <= endIndex; i++) {
-                if (steps.get(i).toString().contains("If::")) {
-                    ifCount++;
-                }
-                if (steps.get(i).toString().contains("End::")) {
-                    endCount++;
-                    //if(endCount>ifCount)
-                }
-
-
-            }
-
-            return endStepCondition;
-        }
-
-
 }

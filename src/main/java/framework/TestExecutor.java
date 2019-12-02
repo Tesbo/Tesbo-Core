@@ -219,7 +219,7 @@ public class TestExecutor implements Runnable {
         IfStepParser ifStepParser=new IfStepParser();
 
         for(int i = 0; i < steps.size(); i++) {
-                        boolean stepPassed = true;
+            boolean stepPassed = true;
             JSONObject stepReportObject = new JSONObject();
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
@@ -257,7 +257,8 @@ public class TestExecutor implements Runnable {
 
                 stepReportObject.put("startTime", startTimeStep);
 
-                if ( !(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("print") && step.toString().contains("random"))) {
+                if ( !(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("print") && step.toString().contains("random")))
+                {
                     if(step.toString().toLowerCase().contains("pause") )
                     {
                         if(config.getPauseStepDisplay()){stepReportObject.put("steps", step.toString().replace("@", "")); }
@@ -316,6 +317,9 @@ public class TestExecutor implements Runnable {
                 }
 
                 if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
+                    if (step.toString().contains("{") && step.toString().contains("}")) {
+                        stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
+                    }
                     //verifyParser.parseVerify(driver, test, step.toString());
                     sendVerifyStep(step.toString());
 

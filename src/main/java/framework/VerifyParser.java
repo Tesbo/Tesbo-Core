@@ -22,15 +22,16 @@ public class VerifyParser {
         StepParser stepParser = new StepParser();
         TesboLogger tesboLogger = new TesboLogger();
         boolean flag=false;
-        tesboLogger.stepLog(verify.replace("@",""));
-        log.info(verify.replace("@",""));
-
+        if(!(verify.contains("{") && verify.contains("}"))) {
+            tesboLogger.stepLog(verify.replace("@", ""));
+            log.info(verify.replace("@", ""));
+        }
         WebElement element=null;
         String textOfStep=null;
         if(verify.contains("@")) {
             element = cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(verify)));
         }
-        if(verify.contains("'")) {
+        if(verify.contains("'") | (verify.contains("{") && verify.contains("}"))) {
              textOfStep = stepParser.parseTextToEnter(test, verify);
         }
         //Is list size

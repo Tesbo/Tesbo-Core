@@ -142,9 +142,10 @@ public class TestsFileParser {
                 {
                     if(!tag.equals("")) {
                         if (tag.toLowerCase().trim().equals(tagName.toLowerCase())) {
-                            if (allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")) {
-                                log.error("Please write valid keyword for this \"" + allLines[i] + "\"");
-                                throw new TesboException("Please write valid keyword for this \"" + allLines[i] + "\"");
+                            //allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")
+                            if (!allLines[i].trim().startsWith("Test: ")) {
+                                log.error("Please write valid keyword or step for this \"" + allLines[i] + "\"");
+                                throw new TesboException("Please write valid keyword or step for this \"" + allLines[i] + "\"");
                             }
                             String testNameArray[] = allLines[i].split(":");
                             if(testNameArray.length<2){
