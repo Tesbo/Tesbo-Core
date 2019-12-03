@@ -267,7 +267,7 @@ public class IfStepParser {
             }
         }
         if(countForIf>1) {
-            if ((countForIf != countForEnd - 1) | (countForIf == countForEnd)) {
+            if (!(countForIf-1 == countForEnd || countForIf == countForEnd)) {
                 log.info("End:: step not found for If:: condition of 'Test: "+test+"'");
                 throw new TesboException("End:: step not found for If:: condition of 'Test: "+test+"'");
             }

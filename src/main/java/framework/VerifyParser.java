@@ -37,7 +37,7 @@ public class VerifyParser {
         //Is list size
         if (verify.toLowerCase().contains("size")) {
             try {
-                /**
+                /*
                  * Verify: @element has size of '10'
                  */
 
@@ -57,7 +57,7 @@ public class VerifyParser {
             try {
                 //equal
                 if (verify.toLowerCase().contains("not equal")) {
-                    /**
+                    /*
                      * Verify: @element text is not equal 'Text'
                      */
                     //assertThat(element.getText()).isNotEqualTo(textOfStep);
@@ -68,7 +68,7 @@ public class VerifyParser {
                     flag=true;
                 }
                 else if(verify.toLowerCase().contains("equal")) {
-                    /**
+                    /*
                      * Verify: @element text is equal ignore case 'Text'
                      */
                     if (verify.toLowerCase().contains("ignore case")) {
@@ -79,7 +79,7 @@ public class VerifyParser {
                         }
                         flag=true;
                     }
-                    /**
+                    /*
                      * Verify: @element text is equal 'Text'
                      */
                     else {
@@ -93,7 +93,7 @@ public class VerifyParser {
                 }
                 //contains
                 else if (verify.toLowerCase().contains("contains")) {
-                    /**
+                    /*
                      * Verify: @element text is contains ignore case 'Text'.
                      */
                     if (verify.toLowerCase().contains("ignore case")) {
@@ -104,7 +104,7 @@ public class VerifyParser {
                         }
                         flag=true;
                     }
-                    /**
+                    /*
                      * Verify: @element text is contains 'Text'.
                      */
                     else {
@@ -118,7 +118,7 @@ public class VerifyParser {
                     }
                 }
                 else if(verify.toLowerCase().contains("start with")){
-                    /**
+                    /*
                      * Verify: @element text is start with 'Text'.
                      */
 
@@ -130,7 +130,7 @@ public class VerifyParser {
                     flag=true;
                 }
                 else if(verify.toLowerCase().contains("end with")){
-                    /**
+                    /*
                      * Verify: @element text is end with 'Text'.
                      */
                     //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(verify))).getText()).endsWith(stepParser.parseTextToEnter(test,verify));
@@ -143,7 +143,7 @@ public class VerifyParser {
 
                 }
                 else if(verify.toLowerCase().contains("number")){
-                    /**
+                    /*
                      * Verify: @element text should be number.
                      */
                     //assertThat(isNumeric(element.getText())).isTrue();
@@ -155,7 +155,7 @@ public class VerifyParser {
 
                 }
                 else if(verify.toLowerCase().contains("alphanumeric")){
-                    /**
+                    /*
                      * Verify: @element text should be Alphanumeric.
                      */
                     if(!element.getText().matches("[a-zA-Z0-9 ]+")) {
@@ -173,7 +173,7 @@ public class VerifyParser {
         //Is displayed
         if (verify.toLowerCase().contains("displayed") || verify.toLowerCase().contains("present")) {
             try {
-                /**
+                /*
                  * Verify: @element is displayed
                  * Verify: @element should displayed
                  * Verify: @element is present
@@ -193,7 +193,7 @@ public class VerifyParser {
         //Is Visible
         if (verify.toLowerCase().contains("visible")) {
             try {
-                /**
+                /*
                  * Verify: @element is Visible
                  */
                 if(!isVisibleInViewport(element)) {
@@ -212,7 +212,7 @@ public class VerifyParser {
             //equal
             try {
                 if (verify.toLowerCase().contains("equal")) {
-                    /**
+                    /*
                      * Verify : Page Title is equal to ignore case 'Google search'
                      */
                     if (verify.toLowerCase().contains("ignore case")) {
@@ -223,7 +223,7 @@ public class VerifyParser {
                         }
                         flag=true;
                     }
-                    /**
+                    /*
                      * Verify : Page Title is equal to 'Google search'
                      */
                     else {
@@ -243,7 +243,7 @@ public class VerifyParser {
 
             if(verify.toLowerCase().contains("check") && verify.toLowerCase().contains("is available")) {
 
-                /**
+                /*
                  * Step: Get cookies and check 'any cookie name' is available
                  */
                 if (!cmd.isCookieAvailable(driver, stepParser.parseTextToEnter(test, verify))) {
@@ -257,7 +257,7 @@ public class VerifyParser {
 
             if(verify.toLowerCase().contains("is equal to")) {
 
-                /**
+                /*
                  * Verify: current url is equal to 'https://tesbo10.atlassian.net'
                  */
                 if (!cmd.getCurrentUrl(driver,stepParser.parseTextToEnter(test, verify))) {
@@ -268,7 +268,7 @@ public class VerifyParser {
             }
             if(verify.toLowerCase().contains("is contains")) {
 
-                /**
+                /*
                  * Verify: current url is contains 'https://tesbo10.atlassian.net'
                  */
                 if (!cmd.verifyCurrentUrlContains(driver,stepParser.parseTextToEnter(test, verify))) {
