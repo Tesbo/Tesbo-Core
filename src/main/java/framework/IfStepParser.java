@@ -330,12 +330,8 @@ public class IfStepParser {
                         tesboLogger.testLog(steps.get(i).toString());
                         e.printStackTrace(new PrintWriter(sw));
                         exceptionAsString = sw.toString();
-                        tesboLogger.testFailed("Failed");
-                        tesboLogger.testFailed(exceptionAsString);
                         log.error(steps.get(i).toString());
-                        log.error("Failed");
-                        log.error(exceptionAsString);
-                        break;
+                        throw new TesboException(exceptionAsString.split("\\n")[0].replaceAll("Exception.TesboException: ",""));
                     }
                     i=skipIfConditionStep(steps,i+1);
                     nestedIf=false;
@@ -381,17 +377,14 @@ public class IfStepParser {
                         continue;
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
                     elseIFCondition = "fail";
                     if (isIfError) {
                         tesboLogger.testLog(steps.get(i).toString());
                         e.printStackTrace(new PrintWriter(sw));
                         exceptionAsString = sw.toString();
-                        tesboLogger.testFailed("Failed");
-                        tesboLogger.testFailed(exceptionAsString);
                         log.error(steps.get(i).toString());
-                        log.error("Failed");
-                        log.error(exceptionAsString);
-                        break;
+                        throw new TesboException(exceptionAsString.split("\\n")[0].replaceAll("Exception.TesboException: ",""));
                     }
                     i=skipIfConditionStep(steps,i+1);
                     continue;
