@@ -507,7 +507,6 @@ public class Validation {
             log.error("Please write valid keyword for this step \"" +step+"\"");
             throw new TesboException("Please write valid keyword for this step \"" +step+"\"");
         }
-
     }
 
     public boolean severityAndPriorityValidation(JSONObject test) {

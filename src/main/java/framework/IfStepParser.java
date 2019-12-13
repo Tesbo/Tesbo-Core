@@ -36,6 +36,11 @@ public class IfStepParser {
                 try {
                     isIf = parseIfStep(driver, test, newStep);
                 } catch (Exception e) {
+                    if (isIfError) {
+                        e.printStackTrace(new PrintWriter(sw));
+                        exceptionAsString = sw.toString();
+                        throw new TesboException(exceptionAsString.split("\\n")[0].replaceAll("Exception.TesboException: ",""));
+                    }
                 }
                 if (conditionType.equals("and")) {
                     if (isIf) {
@@ -47,7 +52,7 @@ public class IfStepParser {
                 } else {
                     if (isIf) {
                         isIfCondition = isIf;
-                        break;
+                        //break;
                     }
                 }
             }

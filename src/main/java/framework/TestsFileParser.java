@@ -217,7 +217,7 @@ public class TestsFileParser {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
-                    startPoint = i;
+                    startPoint = i+1;
                     testStarted = true;
                 }
                 if (testStarted) {

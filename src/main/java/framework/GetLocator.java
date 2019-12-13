@@ -85,7 +85,9 @@ public class GetLocator {
             if(LocatorName.contains(".")) {
                 LocatorsName= main.get(LocatorName.split("\\.")[1]).toString();
             }
-            else {LocatorsName= main.get(LocatorName).toString();}
+            else {
+                LocatorsName= main.get(LocatorName).toString();
+            }
 
         }catch (NullPointerException e)
         {
@@ -113,7 +115,11 @@ public class GetLocator {
             }
 
         }
-        
+        if(LocatorsName.trim().equals("")){
+            IfStepParser.isIfError=true;
+            log.error("Locator '"+LocatorName + "' is Empty.");
+            throw new TesboException("Locator '"+LocatorName + "' is Empty.");
+        }
         return LocatorsName;
     }
 

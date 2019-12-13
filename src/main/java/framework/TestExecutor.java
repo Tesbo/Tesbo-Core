@@ -224,7 +224,23 @@ public class TestExecutor implements Runnable {
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
 
-            if(step.toString().contains("If::")){
+            if((step.toString().toLowerCase().contains("else::") | step.toString().toLowerCase().contains("else if::") | step.toString().toLowerCase().contains("end::")))
+            {
+                try {
+                    log.error("If condition is not found for '" + step.toString() + "' step.");
+                    throw new TesboException("If condition is not found for '" + step.toString() + "' step.");
+                }catch (Exception e){
+                    e.printStackTrace(new PrintWriter(sw));
+                    exceptionAsString = sw.toString();
+                    tesboLogger.testFailed("Failed");
+                    tesboLogger.testFailed(exceptionAsString);
+                    stepPassed = false;
+                    log.error("Failed");
+                    log.error(exceptionAsString);
+                }
+            }
+
+            if(step.toString().contains("If::") & !(step.toString().toLowerCase().contains("else if::"))){
                 try{
                     steps= ifStepParser.getStepsOfTestWhoHasIfCondition(driver,test,steps);
                     try {
@@ -233,7 +249,7 @@ public class TestExecutor implements Runnable {
                             i--;
                             continue;
                         }
-                    }catch (Exception e){ continue; }
+                    }catch (Exception e1){ continue; }
                 } catch (Exception e) {
                     e.printStackTrace(new PrintWriter(sw));
                     exceptionAsString = sw.toString();
@@ -324,7 +340,8 @@ public class TestExecutor implements Runnable {
                     sendVerifyStep(step.toString());
 
                 }
-            } catch (Exception ae) {
+            } catch (Exception ae)
+            {
                 if (step.toString().contains("{") && step.toString().contains("}")) {
                     stepReportObject.put("steps", step.toString().replaceAll("[{,}]", "'").replace("@", ""));
                 }
@@ -337,8 +354,8 @@ public class TestExecutor implements Runnable {
                 log.error(exceptionAsString);
             }
 
-            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Close:")) {
-
+            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Close:"))
+            {
                 String sessionName = step.toString().split(":")[1].trim().replace("]", "");
                 boolean isSession = false;
                 for (Map.Entry session : sessionList.entrySet()) {
@@ -352,8 +369,8 @@ public class TestExecutor implements Runnable {
                     log.info(sessionName+" session is closed");
                 }
 
-            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Code:")) {
-
+            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Code:"))
+            {
                 try {
                     if (step.toString().contains("{") && step.toString().contains("}")) {
                         tesboLogger.stepLog(stepParser.replaceArgsOfCodeStep(test,step.toString()));
@@ -380,7 +397,8 @@ public class TestExecutor implements Runnable {
                 try {
                     log.info("Get steps for "+step.toString());
                     groupSteps = testsFileParser.getGroupTestStepByTestFileandTestCaseName(test.get("testsFileName").toString(), stepParser.getCollectionName(step.toString()));
-                } catch (Exception e) {
+                } catch (Exception e)
+                {
                     if (groupSteps.size() == 0)
                         throw e;
                     J++;
@@ -460,6 +478,7 @@ public class TestExecutor implements Runnable {
             }
 
             reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
+
             if (stepReportObject.size() != 0) {
                 stepReportObject = addStepResultInReport(driver, stepReportObject, test, stepPassed);
 
@@ -490,6 +509,7 @@ public class TestExecutor implements Runnable {
             }
 
         }
+
         if (testsFileParser.isAfterTestInTestsFile(test.get("testsFileName").toString())) {
             JSONArray annotationSteps = testsFileParser.getBeforeAndAfterTestStepByTestsFile(test.get("testsFileName").toString(), "AfterTest");
             for (int i = 0; i < annotationSteps.size(); i++) {
@@ -832,7 +852,13 @@ public class TestExecutor implements Runnable {
         }
 
         try {
+
             if (step.replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
+                if (step.toLowerCase().contains("print")) {
+                    try {
+                        stepReportObject.put("steps", stepParser.printStep(driver, step, test));
+                    } catch (Exception e) {}
+                }
                 if (step.contains("{") && step.contains("}")) {
 
                     stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step));
