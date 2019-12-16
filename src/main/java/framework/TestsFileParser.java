@@ -226,7 +226,7 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("End") && !(allLines[i].contains("End::"))) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
                     endpoint = i;
                     break;
                 }
@@ -290,7 +290,7 @@ public class TestsFileParser {
                 }
             }
             if (testStarted) {
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }
@@ -342,7 +342,7 @@ public class TestsFileParser {
                 }
             }
             if (groupStarted) {
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     groupStarted = false;
                 }
@@ -483,7 +483,7 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }
@@ -663,7 +663,7 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }
@@ -720,7 +720,7 @@ public class TestsFileParser {
                 testStarted = true;
             }
             if (testStarted) {
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }
@@ -767,7 +767,7 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }

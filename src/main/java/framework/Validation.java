@@ -390,7 +390,7 @@ public class Validation {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }
@@ -467,7 +467,7 @@ public class Validation {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }

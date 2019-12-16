@@ -292,8 +292,8 @@ public class IfStepParser {
         for (int i = 0; i < steps.size(); i++) {
             if (steps.get(i).toString().contains("If::") && !(steps.get(i).toString().contains("Else If::"))) {
                 if(steps.get(i).toString().trim().split("::").length != 2){
-                    log.info("Condition is not found for If:: step");
-                    throw new TesboException("Condition is not found for If:: step");
+                    log.info("Condition is not found for If:: step OR something wrong in If condition");
+                    throw new TesboException("Condition is not found for If:: step OR something wrong in If condition");
                 }
                 try {
                     if (parseIfStep(driver, test, steps.get(i).toString())) {
@@ -346,8 +346,8 @@ public class IfStepParser {
             }
             if (steps.get(i).toString().contains("Else If::") && ifCondition.equals("fail") && !(elseIFCondition.equals("pass"))) {
                 if(steps.get(i).toString().trim().split("::").length != 2){
-                    log.info("Condition is not found for Else If:: step");
-                    throw new TesboException("Condition is not found for Else If:: step");
+                    log.info("Condition is not found for Else If:: step OR something wrong in Else If condition");
+                    throw new TesboException("Condition is not found for Else If:: step OR something wrong in Else If condition");
                 }
                 try {
                     if (parseIfStep(driver, test, steps.get(i).toString())) {
