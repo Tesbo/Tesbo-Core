@@ -1,3 +1,35 @@
+DataSet:
+{
+     "GmailCredentials": {
+
+          "travelUser": "admin@phptravels.com",
+          "travelPass": "",
+     }
+     "DataNew": {
+           "linkedin1": "",
+           "password1": "tesbo@2018",
+     }
+     "GmailUsers": {
+     "excelFile": "E:/Project/Tesbo/NewTB/tesbo-core/src/test/Resources/GmailData.xlsx"
+     }
+      "LinkedinUsers[2]": {
+          "excelFile": "E:/Project/New_Tesbo/tesbo-core/src/test/Resources/GmailData.xlsx"
+          }
+}
+
+
+Test: Set Variable value for gmail
+#vr1
+Step: Click on @Next
+Step: Get text of @FirstNameError and put it on {DataSet.GmailCredentials.travelUser}
+Step: Get text of @LastNameError and set it on {DataSet.GmailCredentials.travelPass}
+Step: Get text of @UserNameError and assign it on {DataSet.DataNew.password1}
+Step: Get text of @UserNameError and put it on {DataSet.DataNew.linkedin1}
+
+End
+
+
+
 Test: Verify click functionality
 #All #click1
 Step: Click on @ForgotPassword
@@ -73,3 +105,29 @@ Test: Verify click on offset functionality
 Step: Click on @LoginBtn offset (38, 20)
 Step: pause 5 sec
 End
+
+
+Test: Define and set Local variable functionality
+#All #variable
+Step: Open URL 'https://www.phptravels.net/admin'
+Step: Pause until @Email_Box is display
+Step: Define {userEmail} variable
+Step: Define {userPassword} variable and set 'demoadmin' value in it
+Step: Get text of @LoginBtn variable and set in to {userEmail}
+Step: Enter {userEmail} in to @Email_Box
+Step: Enter {userPassword} in @Password_Box
+Step: Click on @LoginBtn
+End
+
+Test: Local variable functionality1
+#All #variable
+Step: Open URL 'https://www.phptravels.net/admin'
+Step: Pause until @Email_Box is display
+Step: Define {userEmail} variable and set value 'admin@phptravels.com' on it
+Step: Define {userPassword} variable and set 'demoadmin' value in it
+Step: Enter {userEmail} in to @Email_Box
+Step: Enter {userPassword} in @Password_Box
+Step: Click on @LoginBtn
+End
+
+

@@ -120,5 +120,7 @@
   "ClickForPromptBox": "//button[contains(text(),'Click for Prompt Box')]",
 
   "CheckBox": "//input[@id='isAgeSelected']",
-  "CheckMessage": "//div[@id='txtAge']"
+  "CheckMessage": "//div[@id='txtAge']",
+  "textBoxes": "//input[@type='text']",
+  "AlgebraTab": "(//a[contains(text(),'Algebra')])[1]/.."
 }

@@ -142,9 +142,10 @@ public class TestsFileParser {
                 {
                     if(!tag.equals("")) {
                         if (tag.toLowerCase().trim().equals(tagName.toLowerCase())) {
-                            if (allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")) {
-                                log.error("Please write valid keyword for this \"" + allLines[i] + "\"");
-                                throw new TesboException("Please write valid keyword for this \"" + allLines[i] + "\"");
+                            //allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")
+                            if (!allLines[i].trim().startsWith("Test: ")) {
+                                log.error("Please write valid keyword or step for this \"" + allLines[i] + "\"");
+                                throw new TesboException("Please write valid keyword or step for this \"" + allLines[i] + "\"");
                             }
                             String testNameArray[] = allLines[i].split(":");
                             if(testNameArray.length<2){
@@ -210,14 +211,13 @@ public class TestsFileParser {
         int startPoint = 0;
         boolean testStarted = false;
         int endpoint = 0;
-        boolean isIf=false;
         for (int i = 0; i < allLines.length; i++) {
 
             if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
-                    startPoint = i;
+                    startPoint = i+1;
                     testStarted = true;
                 }
                 if (testStarted) {
@@ -226,9 +226,7 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if(allLines[i].contains("If::") && isIf==true){isIf=true;}
-
-                if (allLines[i].contains("End") && !(allLines[i].contains("End::"))) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
                     endpoint = i;
                     break;
                 }
@@ -292,7 +290,7 @@ public class TestsFileParser {
                 }
             }
             if (testStarted) {
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }
@@ -318,7 +316,8 @@ public class TestsFileParser {
     }
 
 
-    public JSONArray getGroupTestStepByTestFileandTestCaseName(String testsFileName, String groupName) {
+    public JSONArray getGroupTestStepByTestFileandTestCaseName(String groupName) {
+        String testsFileName=getTestsFileNameWhoHasCollection(groupName);
         StringBuffer testsFileDetails = readTestsFile(testsFileName);
         String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
         Validation validation=new Validation();
@@ -334,7 +333,7 @@ public class TestsFileParser {
                 }
             }
             if (allLines[i].contains("Collection Name:")) {
-                String testNameArray[] = allLines[i].split(":");
+                String[] testNameArray = allLines[i].split(":");
                 if (testNameArray[1].trim().toLowerCase().equalsIgnoreCase(groupName)) {
                     startPoint = i;
                     groupStarted = true;
@@ -344,13 +343,13 @@ public class TestsFileParser {
                 }
             }
             if (groupStarted) {
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     groupStarted = false;
                 }
             }
         }
-        if(startPoint==0)
+        if(startPoint==0 && endpoint==0)
         {
             log.error("Collection name "+ groupName +" is not found on tests file");
             throw new TesboException("Collection name "+ groupName +" is not found on tests file");
@@ -485,7 +484,7 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }
@@ -665,7 +664,7 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }
@@ -722,7 +721,7 @@ public class TestsFileParser {
                 testStarted = true;
             }
             if (testStarted) {
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }
@@ -769,7 +768,7 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }
@@ -796,6 +795,46 @@ public class TestsFileParser {
         }
 
         return retry.trim();
+    }
+
+    /**
+     * Find Collection name from all tests file
+     * @auther: Ankit Mistry
+     * @lastModifiedBy:
+     * @param collectionName
+     * @return
+     */
+    public String getTestsFileNameWhoHasCollection(String collectionName){
+        GetConfiguration configuration = new GetConfiguration();
+        String directoryPath = configuration.getTestsDirectory();
+        JSONArray testsFileList = getTestFiles(directoryPath);
+        String testsFileName="";
+        int numberOfCollectionFound=0;
+        for(Object testsFile:testsFileList){
+            File name = new File(testsFile.toString());
+            StringBuffer testsFileDetails = readTestsFile(name.getName());
+            String[] allLines = testsFileDetails.toString().split("[\\r\\n]+");
+
+            for (int i = 0; i < allLines.length; i++) {
+                if (allLines[i].contains("Collection Name:")) {
+                    String CollectionNameArray[] = allLines[i].split(":");
+                    if (CollectionNameArray[1].trim().equals(collectionName)) {
+                        numberOfCollectionFound++;
+                        if(numberOfCollectionFound>=2){
+                            log.info("Multiple '"+CollectionNameArray[1].trim()+"' collection name found in tests file");
+                            throw new TesboException("Multiple '"+CollectionNameArray[1].trim()+"' collection name found in tests file");
+                        }
+                        testsFileName=name.getName();
+                    }
+                }
+            }
+
+        }
+        if(testsFileName.equals("")){
+            log.info("'"+collectionName+"' collection name not found in any tests file");
+            throw new TesboException("'"+collectionName+"' collection name not found in any tests file");
+        }
+        return testsFileName;
     }
 
 }

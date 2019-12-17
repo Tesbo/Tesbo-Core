@@ -90,8 +90,8 @@ public class ReportParser {
 
             boolean isDetaSet=false;
             if(TestExecutor.localVariable.containsKey(headerName) | step.toLowerCase().contains("define")){
-                if(step.toLowerCase().contains("define")){
-                    return step.replaceAll("[{,},']", "");
+                if(step.toLowerCase().contains("define") | step.toLowerCase().contains("set")){
+                    return step.replaceAll("[{,}'@]", "");
                 }else {
                     textToEnter = TestExecutor.localVariable.get(headerName).toString();
                     return step.replace("{" + headerName + "}", textToEnter).replaceAll("[{,}]", "'").replace("@", "");
@@ -141,8 +141,8 @@ public class ReportParser {
                             }
                         }
                     } catch (Exception e) {
-                        log.error("'"+headerName+"' Variable is not define.");
-                        throw new TesboException("'"+headerName+"' Variable is not define.");
+                        log.error("'"+headerName+"' Variable is not define or DataSet is not define in test.");
+                        throw new TesboException("'"+headerName+"' Variable is not define or DataSet is not define in test.");
                     }
                     try {
                         if (test.get("dataType").toString().equalsIgnoreCase("global")) {

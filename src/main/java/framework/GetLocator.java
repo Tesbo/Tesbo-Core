@@ -54,13 +54,13 @@ public class GetLocator {
                         }
                     }
                 }
-                if(flag==true){
+                if(flag){
                     log.error(file+" file found");
                     tesboLogger.errorLog(file+" file found");
                     throw (new NoSuchFieldException());
                 }
             } catch (Exception e) {
-                if(flag==true) {
+                if(flag) {
                     log.error("Message : Please create only '.json' file in Locator directory.");
                     tesboLogger.errorLog("Message : Please create only '.json' file in Locator directory.");
                 }
@@ -73,6 +73,7 @@ public class GetLocator {
                     log.error(sw.toString());
                 }
                 throw e;
+
             }
 
             main = parser.loadJsonFile(config.getLocatorDirectory() + "/" + testsFileName.split(".tests")[0] + ".json");
@@ -84,7 +85,9 @@ public class GetLocator {
             if(LocatorName.contains(".")) {
                 LocatorsName= main.get(LocatorName.split("\\.")[1]).toString();
             }
-            else {LocatorsName= main.get(LocatorName).toString();}
+            else {
+                LocatorsName= main.get(LocatorName).toString();
+            }
 
         }catch (NullPointerException e)
         {
@@ -106,12 +109,17 @@ public class GetLocator {
                 }
             }
             if(LocatorsName==null){
+                IfStepParser.isIfError=true;
                 log.error("Locator '"+LocatorName + "' is not found.");
                 throw new TesboException("Locator '"+LocatorName + "' is not found.");
             }
 
         }
-        
+        if(LocatorsName.trim().equals("")){
+            IfStepParser.isIfError=true;
+            log.error("Locator '"+LocatorName + "' is Empty.");
+            throw new TesboException("Locator '"+LocatorName + "' is Empty.");
+        }
         return LocatorsName;
     }
 

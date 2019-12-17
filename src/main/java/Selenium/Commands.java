@@ -95,9 +95,8 @@ public class Commands {
                                             element = driver.findElement(By.partialLinkText(elementvalue));
                                         } catch (NoSuchElementException e) {
                                             if(isIf) {
-                                                log.error("Please enter valid locator value");
-                                                tesboLogger.testFailed("Please enter valid locator value");
-                                                throw e;
+                                                tesboLogger.testFailed("Element Not found With Locator '"+elementvalue+"'");
+                                                throw new TesboException("Element Not found With Locator '"+elementvalue+"'");
                                             }
                                         }
                                     }
@@ -134,12 +133,11 @@ public class Commands {
                 try {
                     element = driver.findElement(By.cssSelector(elementvalue));
                     break;
-                } catch (NoSuchElementException css) {
+                } catch (Exception css) {
                     if(locatorCount==locatorTypesSize) {
                         if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw css;
+                            tesboLogger.testFailed("Element Not found With Locator '"+elementvalue+"'");
+                            throw new TesboException("Element Not found With Locator '"+elementvalue+"'");
                         }
                     }
                 }
@@ -148,13 +146,12 @@ public class Commands {
                 try {
                     element = driver.findElement(By.id(elementvalue));
                     break;
-                } catch (NoSuchElementException id) {
+                } catch (Exception id) {
                     if(locatorCount==locatorTypesSize) {
                         {
                             if(isIf){
-                                log.error("Please enter valid locator value");
-                                tesboLogger.testFailed("Please enter valid locator value");
-                                throw id;
+                                tesboLogger.testFailed("Element Not found With Locator '"+elementvalue+"'");
+                                throw new TesboException("Element Not found With Locator '"+elementvalue+"'");
                             }
                         }
                     }
@@ -167,9 +164,8 @@ public class Commands {
                 } catch (Exception xpath) {
                     if(locatorCount==locatorTypesSize) {
                         if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw xpath;
+                            tesboLogger.testFailed("Element Not found With Locator '"+elementvalue+"'");
+                            throw new TesboException("Element Not found With Locator '"+elementvalue+"'");
                         }
                     }
                 }
@@ -181,9 +177,8 @@ public class Commands {
                 } catch (Exception className) {
                     if(locatorCount==locatorTypesSize) {
                         if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw className;
+                            tesboLogger.testFailed("Element Not found With Locator '"+elementvalue+"'");
+                            throw new TesboException("Element Not found With Locator '"+elementvalue+"'");
                         }
                     }
                 }
@@ -195,9 +190,8 @@ public class Commands {
                 } catch (Exception name) {
                     if(locatorCount==locatorTypesSize) {
                         if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw name;
+                            tesboLogger.testFailed("Element Not found With Locator '"+elementvalue+"'");
+                            throw new TesboException("Element Not found With Locator '"+elementvalue+"'");
                         }
                     }
                 }
@@ -209,9 +203,8 @@ public class Commands {
                 } catch (Exception tagName) {
                     if(locatorCount==locatorTypesSize) {
                         if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw tagName;
+                            tesboLogger.testFailed("Element Not found With Locator '"+elementvalue+"'");
+                            throw new TesboException("Element Not found With Locator '"+elementvalue+"'");
                         }
                     }
                 }
@@ -223,9 +216,8 @@ public class Commands {
                 } catch (Exception linkText) {
                     if(locatorCount==locatorTypesSize) {
                         if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw linkText;
+                            tesboLogger.testFailed("Element Not found With Locator '"+elementvalue+"'");
+                            throw new TesboException("Element Not found With Locator '"+elementvalue+"'");
                         }
                     }
                 }
@@ -234,12 +226,11 @@ public class Commands {
                 try {
                     element = driver.findElement(By.partialLinkText(elementvalue));
                     break;
-                } catch (NoSuchElementException e) {
+                } catch (Exception e) {
                     if(locatorCount==locatorTypesSize) {
                         if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw e;
+                            tesboLogger.testFailed("Element Not found With Locator '"+elementvalue+"'");
+                            throw new TesboException("Element Not found With Locator '"+elementvalue+"'");
                         }
                     }
                 }
@@ -293,9 +284,8 @@ public class Commands {
                                         listOfElements = driver.findElements(By.partialLinkText(elementvalue));
                                     } catch (NoSuchElementException e) {
                                         if(isIf) {
-                                            log.error("Please enter valid locator value");
-                                            tesboLogger.testFailed("Please enter valid locator value");
-                                            throw e;
+                                            tesboLogger.testFailed("Element Not found With Locator '"+elementvalue+"'");
+                                            throw new TesboException("Element Not found With Locator '"+elementvalue+"'");
                                         }
                                     }
                                 }

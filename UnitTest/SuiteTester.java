@@ -1,5 +1,4 @@
 import com.google.gson.JsonArray;
-import framework.SuiteParser;
 import org.apache.xalan.lib.sql.ObjectArray;
 import org.junit.Assert;
 import org.json.simple.JSONArray;

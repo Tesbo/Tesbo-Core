@@ -1,7 +1,5 @@
 package framework;
 
-
-
 import Execution.SetCommandLineArgument;
 import Execution.Tesbo;
 import logger.TesboLogger;
@@ -311,6 +309,7 @@ public class Validation {
     public void endStepValidation(JSONArray testExecutionQueue) {
 
         TestsFileParser testsFileParser=new TestsFileParser();
+        IfStepParser ifStepParser=new IfStepParser();
         JSONArray listOfSession;
         //Validation for end step
         if(testExecutionQueue.size()>0){
@@ -322,6 +321,9 @@ public class Validation {
                     sessionDefineValidation(test.get("testsFileName").toString(), test.get("testName").toString(),listOfSession);
                     sessionNotDeclareOnTest(steps, listOfSession);
                     sessionNotDefineOnTest(steps, listOfSession);
+                }
+                if(ifStepParser.isTestsHasIFCondition(steps)){
+                    ifStepParser.isEndStepForIfCondition(steps,test.get("testName").toString());
                 }
                 collectionValidation(test.get("testsFileName").toString(), test.get("testName").toString());
                 severityAndPriorityValidation(test);
@@ -368,14 +370,14 @@ public class Validation {
 
     public void sessionDefineValidation(String testsFileName, String testName,JSONArray listOfSession) {
         StringBuffer testsFileNameDetails =testsFileParser.readTestsFile(testsFileName);
-        String allLines[] = testsFileNameDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testsFileNameDetails.toString().split("[\\r\\n]+");
         int testCount=0;
         int startPoint = 0;
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
             if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
+                String[] testNameArray = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
                     startPoint = i;
@@ -386,7 +388,7 @@ public class Validation {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }
@@ -463,7 +465,7 @@ public class Validation {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("End")) {
+                if (allLines[i].trim().equals("End")) {
                     endpoint = i;
                     break;
                 }
@@ -482,7 +484,7 @@ public class Validation {
                     log.error("Collection name not define properly on :"+allLines[j]);
                     throw new TesboException("Collection name not define properly on :"+allLines[j]);
                 }
-                testsFileParser.getGroupTestStepByTestFileandTestCaseName(testsFileName, collectionName);
+                testsFileParser.getGroupTestStepByTestFileandTestCaseName(collectionName);
             }
         }
 
@@ -492,6 +494,8 @@ public class Validation {
         if(step.replaceAll("\\s{2,}", " ").trim().contains("Step :") | step.replaceAll("\\s{2,}", " ").trim().contains("step:") | step.replaceAll("\\s{2,}", " ").trim().contains("step :")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("Verify :") | step.replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.replaceAll("\\s{2,}", " ").trim().contains("verify :")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("Collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.replaceAll("\\s{2,}", " ").trim().contains("collection :")
+                | step.replaceAll("\\s{2,}", " ").trim().contains("if::") | step.replaceAll("\\s{2,}", " ").trim().contains("IF::") | step.replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("if ::") | step.replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("if:") | step.replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("if :")
+                | step.replaceAll("\\s{2,}", " ").trim().contains("else if::") | step.replaceAll("\\s{2,}", " ").trim().contains("ELSE IF::") | step.replaceAll("\\s{2,}", " ").trim().contains("ELSE::") | step.replaceAll("\\s{2,}", " ").trim().contains("Else ::") | step.replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("else:") | step.replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("else :")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("End :") | step.replaceAll("\\s{2,}", " ").trim().contains("End:") | step.replaceAll("\\s{2,}", " ").trim().contains("End ::") | step.replaceAll("\\s{2,}", " ").trim().contains("end ::") | step.replaceAll("\\s{2,}", " ").trim().contains("end::") | step.replaceAll("\\s{2,}", " ").trim().contains("END ::") | step.replaceAll("\\s{2,}", " ").trim().contains("END::")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("Code :") | step.replaceAll("\\s{2,}", " ").trim().contains("code :") | step.replaceAll("\\s{2,}", " ").trim().contains("code:") | step.replaceAll("\\s{2,}", " ").trim().contains("ExtCode :") | step.replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("[Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("[close:") | step.replaceAll("\\s{2,}", " ").trim().contains("[close :")
@@ -501,7 +505,6 @@ public class Validation {
             log.error("Please write valid keyword for this step \"" +step+"\"");
             throw new TesboException("Please write valid keyword for this step \"" +step+"\"");
         }
-
     }
 
     public boolean severityAndPriorityValidation(JSONObject test) {
@@ -509,7 +512,7 @@ public class Validation {
         TestsFileParser testsFileParser=new TestsFileParser();
         JSONArray steps= testsFileParser.getSeverityAndPriority(test);
         if(steps.size()>0){
-            for (int i = 0; i < steps.size(); i++) {
+            for(int i = 0; i < steps.size(); i++) {
                 Object step = steps.get(i);
 
                 try{
@@ -542,7 +545,7 @@ public class Validation {
         }
 
         StringBuffer testsFileDetails = testsFileParser.readTestsFile(test.get("testsFileName").toString());
-        String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testsFileDetails.toString().split("[\\r\\n]+");
         boolean isSeverityOrPriority=false;
         int testCount=0;
         int startPoint = 0;
@@ -550,7 +553,7 @@ public class Validation {
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
             if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
+                String[] testNameArray = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(test.get("testName").toString())) {
                     startPoint = i;
