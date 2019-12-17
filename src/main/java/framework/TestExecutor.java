@@ -396,7 +396,7 @@ public class TestExecutor implements Runnable {
                 JSONArray groupSteps = new JSONArray();
                 try {
                     log.info("Get steps for "+step.toString());
-                    groupSteps = testsFileParser.getGroupTestStepByTestFileandTestCaseName(test.get("testsFileName").toString(), stepParser.getCollectionName(step.toString()));
+                    groupSteps = testsFileParser.getGroupTestStepByTestFileandTestCaseName(stepParser.getCollectionName(step.toString()));
                 } catch (Exception e)
                 {
                     if (groupSteps.size() == 0)

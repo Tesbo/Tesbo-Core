@@ -316,7 +316,8 @@ public class TestsFileParser {
     }
 
 
-    public JSONArray getGroupTestStepByTestFileandTestCaseName(String testsFileName, String groupName) {
+    public JSONArray getGroupTestStepByTestFileandTestCaseName(String groupName) {
+        String testsFileName=getTestsFileNameWhoHasCollection(groupName);
         StringBuffer testsFileDetails = readTestsFile(testsFileName);
         String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
         Validation validation=new Validation();
@@ -332,7 +333,7 @@ public class TestsFileParser {
                 }
             }
             if (allLines[i].contains("Collection Name:")) {
-                String testNameArray[] = allLines[i].split(":");
+                String[] testNameArray = allLines[i].split(":");
                 if (testNameArray[1].trim().toLowerCase().equalsIgnoreCase(groupName)) {
                     startPoint = i;
                     groupStarted = true;
@@ -794,6 +795,46 @@ public class TestsFileParser {
         }
 
         return retry.trim();
+    }
+
+    /**
+     * Find Collection name from all tests file
+     * @auther: Ankit Mistry
+     * @lastModifiedBy:
+     * @param collectionName
+     * @return
+     */
+    public String getTestsFileNameWhoHasCollection(String collectionName){
+        GetConfiguration configuration = new GetConfiguration();
+        String directoryPath = configuration.getTestsDirectory();
+        JSONArray testsFileList = getTestFiles(directoryPath);
+        String testsFileName="";
+        int numberOfCollectionFound=0;
+        for(Object testsFile:testsFileList){
+            File name = new File(testsFile.toString());
+            StringBuffer testsFileDetails = readTestsFile(name.getName());
+            String[] allLines = testsFileDetails.toString().split("[\\r\\n]+");
+
+            for (int i = 0; i < allLines.length; i++) {
+                if (allLines[i].contains("Collection Name:")) {
+                    String CollectionNameArray[] = allLines[i].split(":");
+                    if (CollectionNameArray[1].trim().equals(collectionName)) {
+                        numberOfCollectionFound++;
+                        if(numberOfCollectionFound>=2){
+                            log.info("Multiple '"+CollectionNameArray[1].trim()+"' collection name found in tests file");
+                            throw new TesboException("Multiple '"+CollectionNameArray[1].trim()+"' collection name found in tests file");
+                        }
+                        testsFileName=name.getName();
+                    }
+                }
+            }
+
+        }
+        if(testsFileName.equals("")){
+            log.info("'"+collectionName+"' collection name not found in any tests file");
+            throw new TesboException("'"+collectionName+"' collection name not found in any tests file");
+        }
+        return testsFileName;
     }
 
 }
