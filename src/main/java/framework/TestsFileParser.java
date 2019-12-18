@@ -246,7 +246,7 @@ public class TestsFileParser {
                 throw new TesboException("Step is blank '"+allLines[j]+"'");
             }
             if (allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Step: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Verify: ") |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("If:: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().equals("Else::") | allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("If Else:: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().equals("End::") |
+                    allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("If:: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().equals("Else::") | allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Else If:: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().equals("End::") |
                     allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Collection: ") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
                     allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Code: ") |
                     ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
@@ -556,8 +556,8 @@ public class TestsFileParser {
 
         for (int j = startPoint; j < endpoint; j++) {
 
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Priority:")
-                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Priority: ")
+                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Severity: ")) {
                 severityAndPriority.add(allLines[j]);
             }
         }

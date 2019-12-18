@@ -529,7 +529,7 @@ public class Validation {
                 try{
                     if(step.toString().replaceAll("\\s{2,}", " ").trim().split(":").length==2) {
 
-                        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority:")) {
+                        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority: ")) {
                             String priority=step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1];
                             if (!(priority.trim().equalsIgnoreCase("high")
                                     || priority.trim().equalsIgnoreCase("medium")
@@ -538,7 +538,7 @@ public class Validation {
                                 throw new TesboException("Enter valid priority name: '"+step+"'");
                             }
                         }
-                        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+                        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity: ")) {
                             String severity=step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1];
                             if (!(severity.trim().equalsIgnoreCase("critical") || severity.trim().equalsIgnoreCase("major")
                                     || severity.trim().equalsIgnoreCase("medium") || severity.trim().equalsIgnoreCase("minor"))) {
@@ -589,8 +589,8 @@ public class Validation {
 
         for (int j = startPoint; j < endpoint; j++) {
 
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Priority:")
-                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Priority: ")
+                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Severity: ")) {
                 isSeverityOrPriority=true;
                 break;
             }

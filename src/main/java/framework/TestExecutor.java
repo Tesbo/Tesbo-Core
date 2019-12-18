@@ -163,12 +163,12 @@ public class TestExecutor implements Runnable {
             JSONArray severityAndPrioritySteps=testsFileParser.getSeverityAndPriority(test);
             for (int i = 0; i < severityAndPrioritySteps.size(); i++) {
                 Object step = severityAndPrioritySteps.get(i);
-                if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority:")) {
+                if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority: ")) {
                     tesboLogger.stepLog(step.toString());
                     log.info(step.toString());
                     testReportObject.put("Priority", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
                 }
-                if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+                if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity: ")) {
                     tesboLogger.stepLog(step.toString());
                     log.info(step.toString());
                     testReportObject.put("Severity", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
@@ -224,7 +224,7 @@ public class TestExecutor implements Runnable {
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
 
-            if((step.toString().toLowerCase().contains("else::") | step.toString().toLowerCase().contains("else if::") | step.toString().toLowerCase().contains("end::")))
+            if((step.toString().toLowerCase().startsWith("else::") | step.toString().toLowerCase().startsWith("else if:: ") | step.toString().toLowerCase().startsWith("end::")))
             {
                 try {
                     log.error("If condition is not found for '" + step.toString() + "' step.");
@@ -240,12 +240,12 @@ public class TestExecutor implements Runnable {
                 }
             }
 
-            if(step.toString().contains("If::") & !(step.toString().toLowerCase().contains("else if::"))){
+            if(step.toString().startsWith("If:: ") & !(step.toString().toLowerCase().startsWith("else if:: "))){
                 try{
                     steps= ifStepParser.getStepsOfTestWhoHasIfCondition(driver,test,steps);
                     try {
                         step = steps.get(i);
-                        if (step.toString().contains("If::")) {
+                        if (step.toString().startsWith("If:: ")) {
                             i--;
                             continue;
                         }
