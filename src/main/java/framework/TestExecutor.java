@@ -262,7 +262,7 @@ public class TestExecutor implements Runnable {
 
             }
 
-            if (!step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
+            if (!step.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Collection: ")) {
                 if(step.toString().toLowerCase().contains("pause") )
                 {
                     if(config.getPauseStepDisplay()){ stepReportObject.put("stepIndex", ++stepIndex); }
@@ -321,7 +321,7 @@ public class TestExecutor implements Runnable {
             }
             try {
 
-                if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
+                if (step.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Step: ")) {
                     if (step.toString().contains("{") && step.toString().contains("}")) {
                         stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
                     }
@@ -332,7 +332,7 @@ public class TestExecutor implements Runnable {
                     }
                 }
 
-                if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
+                if (step.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Verify: ")) {
                     if (step.toString().contains("{") && step.toString().contains("}")) {
                         stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
                     }
@@ -369,7 +369,7 @@ public class TestExecutor implements Runnable {
                     log.info(sessionName+" session is closed");
                 }
 
-            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Code:"))
+            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Code: "))
             {
                 try {
                     if (step.toString().contains("{") && step.toString().contains("}")) {
@@ -391,7 +391,7 @@ public class TestExecutor implements Runnable {
 
                 }
 
-            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Collection:")) {
+            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Collection: ")) {
                 log.info("Start "+step.toString());
                 JSONArray groupSteps = new JSONArray();
                 try {
@@ -420,7 +420,7 @@ public class TestExecutor implements Runnable {
                     stepReportObject.put("startTime", startTimeStep);
                     stepReportObject.put("steps", groupStep.toString().replace("@", ""));
 
-                    if (groupStep.toString().contains("Step:")) {
+                    if (groupStep.toString().startsWith("Step: ")) {
                         try {
                             stepParser.parseStep(driver, test, groupStep.toString());
                         } catch (Exception ae) {
@@ -433,7 +433,7 @@ public class TestExecutor implements Runnable {
                             log.error(sw.toString());
                             stepPassed = false;
                         }
-                    } else if (groupStep.toString().contains("Verify:")) {
+                    } else if (groupStep.toString().startsWith("Verify: ")) {
                         try {
                             //verifyParser.parseVerify(driver, test, groupStep.toString());
                             sendVerifyStep(groupStep.toString());
@@ -448,7 +448,7 @@ public class TestExecutor implements Runnable {
                             stepPassed = false;
                         }
                     }
-                    else if (groupStep.toString().replaceAll("\\s{2,}", " ").trim().contains("Code:")) {
+                    else if (groupStep.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Code: ")) {
 
                         try {
                             if (step.toString().contains("{") && step.toString().contains("}")) {
@@ -492,7 +492,7 @@ public class TestExecutor implements Runnable {
                 break;
             }
 
-            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Code:") && Reporter.printStepReportObject.size()!=0) {
+            if (step.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Code: ") && Reporter.printStepReportObject.size()!=0) {
                 for (int j = 0; j < Reporter.printStepReportObject.size(); j++){
                     JSONObject ExtStep = new JSONObject();
                     JSONObject printExtStep = new JSONObject();
@@ -853,7 +853,7 @@ public class TestExecutor implements Runnable {
 
         try {
 
-            if (step.replaceAll("\\s{2,}", " ").trim().contains("Step:")) {
+            if (step.replaceAll("\\s{2,}", " ").trim().startsWith("Step: ")) {
                 if (step.toLowerCase().contains("print")) {
                     try {
                         stepReportObject.put("steps", stepParser.printStep(driver, step, test));
@@ -870,7 +870,7 @@ public class TestExecutor implements Runnable {
                 }
             }
 
-            if (step.replaceAll("\\s{2,}", " ").trim().contains("Verify:")) {
+            if (step.replaceAll("\\s{2,}", " ").trim().startsWith("Verify: ")) {
                 //verifyParser.parseVerify(driver, test, step.toString());
                 sendVerifyStep(step);
 
@@ -888,7 +888,7 @@ public class TestExecutor implements Runnable {
             stepPassed = false;
         }
 
-        if (step.replaceAll("\\s{2,}", " ").trim().contains("Code:")) {
+        if (step.replaceAll("\\s{2,}", " ").trim().startsWith("Code: ")) {
             try {
                 externalCode.runAllAnnotatedWith(Step.class, step,test, driver);
             }catch (Exception e){

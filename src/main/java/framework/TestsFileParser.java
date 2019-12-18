@@ -135,7 +135,7 @@ public class TestsFileParser {
 
 
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
+            if (allLines[i].toLowerCase().startsWith("test: ") | allLines[i].toLowerCase().startsWith("test")) {
                 String tagLine = allLines[i + 1].toLowerCase();
                 String[] tagArray = tagLine.replaceAll("\\s+","").split("#");
                 for(String  tag : tagArray)
@@ -213,7 +213,7 @@ public class TestsFileParser {
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
 
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
@@ -245,10 +245,10 @@ public class TestsFileParser {
                 log.error("Step is blank '"+allLines[j]+"'");
                 throw new TesboException("Step is blank '"+allLines[j]+"'");
             }
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("If::") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Else::") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("If Else::") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("End::") |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
-                    (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Code:") && !allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("extcode:")) |
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Step: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Verify: ") |
+                    allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("If:: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().equals("Else::") | allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("If Else:: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().equals("End::") |
+                    allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Collection: ") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
+                    allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Code: ") |
                     ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
 
                 testSteps.add(allLines[j]);
@@ -282,7 +282,7 @@ public class TestsFileParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
                 String testNameArray[] = allLines[i].split(":");
                 if(testNameArray[1].trim().contains(testName)) {
                     startPoint = i;
@@ -290,7 +290,7 @@ public class TestsFileParser {
                 }
             }
             if (testStarted) {
-                if (allLines[i].trim().equals("End")) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
                     endpoint = i;
                     break;
                 }
@@ -328,11 +328,11 @@ public class TestsFileParser {
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
             if(groupStarted){
-                if (allLines[i].contains("Test:")) {
+                if (allLines[i].startsWith("Test: ")) {
                     groupCount++;
                 }
             }
-            if (allLines[i].contains("Collection Name:")) {
+            if (allLines[i].startsWith("Collection Name: ")) {
                 String[] testNameArray = allLines[i].split(":");
                 if (testNameArray[1].trim().toLowerCase().equalsIgnoreCase(groupName)) {
                     startPoint = i;
@@ -343,7 +343,7 @@ public class TestsFileParser {
                 }
             }
             if (groupStarted) {
-                if (allLines[i].trim().equals("End")) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
                     endpoint = i;
                     groupStarted = false;
                 }
@@ -359,7 +359,7 @@ public class TestsFileParser {
             throw new TesboException("End Step is not found for '" + groupName + "' collection");
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].contains("Step:") | allLines[j].contains("Verify:") | (allLines[j].contains("Code:") & !allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("extcode:"))) {
+            if (allLines[j].startsWith("Step: ") | allLines[j].startsWith("Verify: ") | allLines[j].startsWith("Code: ")) {
                 testSteps.add(allLines[j]);
             }
             else{
@@ -381,7 +381,7 @@ public class TestsFileParser {
         String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
         JSONArray testName = new JSONArray();
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Collection Name:")) {
+            if (allLines[i].startsWith("Collection Name: ")) {
                 String testNameArray[] = allLines[i].split(":");
                 testName.add(testNameArray[1].trim());
             }
@@ -434,7 +434,7 @@ public class TestsFileParser {
         JSONArray testName = new JSONArray();
 
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
 
                 String testNameArray[] = allLines[i].split(":");
                 if(testNameArray.length<2){
@@ -444,7 +444,7 @@ public class TestsFileParser {
                 testName.add(testNameArray[1].trim());
             }
             else {
-                if(allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")){
+                if(allLines[i].trim().toLowerCase().startsWith("test")){
                     log.error("Please write valid keyword for this \"" +allLines[i]+"\"");
                     throw new TesboException("Please write valid keyword for this \"" +allLines[i]+"\"");
                 }
@@ -473,7 +473,7 @@ public class TestsFileParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
@@ -484,7 +484,7 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].trim().equals("End")) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
                     endpoint = i;
                     break;
                 }
@@ -497,7 +497,7 @@ public class TestsFileParser {
         }
 
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Session:") ) {
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Session: ") ) {
                 String[] SessionStep=allLines[j].split("[:|,]");
                 for (String session:SessionStep)
                 {
@@ -507,7 +507,7 @@ public class TestsFileParser {
                     }
                 }
             }
-            else if(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("session:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("session :") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Session :")){
+            else if(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().startsWith("session")){
                 log.error("Please write valid keyword for this step \"" +allLines[j]+"\"");
                 throw new TesboException("Please write valid keyword for this step \"" +allLines[j]+"\"");
             }
@@ -530,7 +530,7 @@ public class TestsFileParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(test.get("testName").toString())) {
@@ -543,7 +543,7 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("Step:")) {
+                if (allLines[i].startsWith("Step: ")) {
                     endpoint = i;
                     break;
                 }
@@ -580,19 +580,17 @@ public class TestsFileParser {
                 isBeforeTest=true;
             }
             if(isBeforeTest) {
-                if (allLines[i].trim().equals("End")) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
                     break;
                 }
-                if (allLines[i].contains("Test:") && allLines[i].contains("Collection Name:")) {
+                if (allLines[i].startsWith("Test: ") && allLines[i].startsWith("Collection Name: ")) {
                     log.error("End Step is not found for BeforeTest");
                     throw new TesboException("End Step is not found for BeforeTest");
                 }
 
             }
 
-            if (allLines[i].trim().equals("BeforeTest :") || allLines[i].trim().equals("beforeTest:") || allLines[i].trim().equals("beforeTest :")
-                    || allLines[i].trim().equals("beforetest:") || allLines[i].trim().equals("beforetest :")
-                    || allLines[i].trim().equals("Beforetest:") || allLines[i].trim().equals("Beforetest :")) {
+            if(allLines[i].trim().toLowerCase().equals("beforetest") && !(allLines[i].trim().toLowerCase().equals("BeforeTest:"))) {
                 log.error("Please write valid keyword for this step \"" +allLines[i]+"\"");
                 throw new TesboException("Please write valid keyword for this step \"" +allLines[i]+"\"");
             }
@@ -617,17 +615,15 @@ public class TestsFileParser {
                 isAfterTest=true;
             }
             if(isAfterTest) {
-                if (allLines[i].trim().equals("End")) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
                     break;
                 }
-                if (allLines[i].contains("Test:") && allLines[i].contains("Collection Name:")) {
+                if (allLines[i].startsWith("Test: ") && allLines[i].startsWith("Collection Name: ")) {
                     log.error("End Step is not found for BeforeTest");
                     throw new TesboException("End Step is not found for BeforeTest");
                 }
             }
-            if (allLines[i].trim().equals("AfterTest :") || allLines[i].trim().equals("afterTest:") || allLines[i].trim().equals("afterTest :")
-                    || allLines[i].trim().equals("aftertest:") || allLines[i].trim().equals("aftertest :")
-                    || allLines[i].trim().equals("Aftertest:") || allLines[i].trim().equals("Aftertest :")) {
+            if(allLines[i].trim().toLowerCase().equals("aftertest") && !(allLines[i].trim().toLowerCase().equals("AfterTest:"))){
                 log.error("Please write valid keyword for this step \"" +allLines[i]+"\"");
                 throw new TesboException("Please write valid keyword for this step \"" +allLines[i]+"\"");
 
@@ -679,13 +675,13 @@ public class TestsFileParser {
             throw new TesboException("End Step is not found for '" + annotationName + "' test");
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].toString().replaceAll("\\s{2,}", " ").contains("Step:")){
+            if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].replaceAll("\\s{2,}", " ").startsWith("Step: ")){
                 log.error("Step is blank '"+allLines[j]+"'");
                 throw new TesboException("Step is blank '"+allLines[j]+"'");
             }
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Code:") |
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Step: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Verify: ") |
+                    allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Collection: ") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
+                    allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Code: ") |
                     ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
 
                 annotationSteps.add(allLines[j]);
@@ -716,12 +712,12 @@ public class TestsFileParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:")) {
+            if (allLines[i].equals("BeforeTest:") || allLines[i].equals("AfterTest:")) {
                 startPoint = i;
                 testStarted = true;
             }
             if (testStarted) {
-                if (allLines[i].trim().equals("End")) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
                     endpoint = i;
                     break;
                 }
@@ -755,7 +751,7 @@ public class TestsFileParser {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
@@ -768,7 +764,7 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].trim().equals("End")) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
                     endpoint = i;
                     break;
                 }
@@ -816,7 +812,7 @@ public class TestsFileParser {
             String[] allLines = testsFileDetails.toString().split("[\\r\\n]+");
 
             for (int i = 0; i < allLines.length; i++) {
-                if (allLines[i].contains("Collection Name:")) {
+                if (allLines[i].startsWith("Collection Name: ")) {
                     String CollectionNameArray[] = allLines[i].split(":");
                     if (CollectionNameArray[1].trim().equals(collectionName)) {
                         numberOfCollectionFound++;
