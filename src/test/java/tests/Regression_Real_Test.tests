@@ -985,3 +985,29 @@ Step: Switch to alert then enter 'Testing Demo'
 Step: pause 15 sec
 End
 
+
+Test: Verify click on particular element number from List functionality
+#All #click1
+Step: Open URL 'https://www.mathsisfun.com/numbers/number-chart.php'
+Step: click on <15> from List @NumberList
+Step: pause 5 sec
+End
+
+Test: Verify click on particular element text from List functionality
+#All #click1
+Step: Open URL 'https://www.mathsisfun.com/numbers/number-chart.php'
+Step: click on "Red" from List @ColorList
+Step: pause 5 sec
+End
+
+Test: Define and set Local variable functionality
+#All #variable
+Step: Open URL 'https://www.phptravels.net/admin'
+Step: Pause until @Email_Box is display
+Step: Define {userEmail} variable
+Step: Define {userPassword} variable and set 'demoadmin' value in it
+Step: Get text of @LoginBtn variable and set in to {userEmail}
+Step: Enter {userEmail} in to @Email_Box
+Step: Enter {userPassword} in @Password_Box
+Step: Click on @LoginBtn
+End

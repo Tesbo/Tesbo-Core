@@ -52,53 +52,40 @@ Step: pause 2 sec
 End
 
 Test: Verify scroll and click functionality
-#All #click
+#All #click1
 Step: Open URL 'https://www.mathsisfun.com/numbers/counting.html'
 Step: scroll and click on @FindingBugsLink
 Step: pause 2 sec
 End
 
 Test: Verify double click functionality
-#All #click
+#All #click1
 Step: Open URL 'https://unixpapa.com/js/testmouse.html'
 Step: double click on @clickHereLink
 Step: pause 2 sec
 End
 
 Test: Verify click and hold functionality
-#All #click
+#All #click1
 Step: Open URL 'https://www.onlinemictest.com/mouse-test/'
 Step: click and hold on @textLink element
 Step: pause 5 sec
 End
 
 Test: Verify click on first element from List functionality
-#All #click
+#All #click1
 Step: Open URL 'https://www.mathsisfun.com/numbers/number-chart.php'
 Step: Click on first element from List @NumberList
 Step: pause 5 sec
 End
 
 Test: Verify click on last element from List functionality
-#All #click
+#All #click1
 Step: Open URL 'https://www.mathsisfun.com/numbers/number-chart.php'
 Step: Click on last element from List @NumberList
 Step: pause 5 sec
 End
 
-Test: Verify click on particular element number from List functionality
-#All #click
-Step: Open URL 'https://www.mathsisfun.com/numbers/number-chart.php'
-Step: click on <15> from List @NumberList
-Step: pause 5 sec
-End
-
-Test: Verify click on particular element text from List functionality
-#All #click12
-Step: Open URL 'https://www.mathsisfun.com/numbers/number-chart.php'
-Step: click on "Red" from List @ColorList
-Step: pause 5 sec
-End
 
 Test: Verify click on offset functionality
 #All #click
@@ -106,18 +93,6 @@ Step: Click on @LoginBtn offset (38, 20)
 Step: pause 5 sec
 End
 
-
-Test: Define and set Local variable functionality
-#All #variable
-Step: Open URL 'https://www.phptravels.net/admin'
-Step: Pause until @Email_Box is display
-Step: Define {userEmail} variable
-Step: Define {userPassword} variable and set 'demoadmin' value in it
-Step: Get text of @LoginBtn variable and set in to {userEmail}
-Step: Enter {userEmail} in to @Email_Box
-Step: Enter {userPassword} in @Password_Box
-Step: Click on @LoginBtn
-End
 
 Test: Local variable functionality1
 #All #variable
