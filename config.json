@@ -9,7 +9,7 @@
       "Release":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/Release"
     },
     "by": {
-      "tag": ["vr"]
+      "suite": ["smoke","NewSmoke"]
     },
     "browser": {
       "name": [

@@ -2,5 +2,22 @@ Test: Verify click on first element from List functionality
 
 Test: Verify switch to alert then enter text on alert
 
+Test: V3 Verify Enter Functionality without single quotes
 Test: Verify scroll and click functionality
 
+Test: Verify click functionality
+
+Test: T56 verify is selected or is checked functionality in if condition
+
+Test: Verify switch to alert then close functionality
+Test: T54 verify And condition
+
+Test: Set Variable value
+
+Test: Verify click on last element from List functionality
+
+Test: V1 Verify Open Url without single quotes
+
+Test: T1 login on phptravels DataSet global Credentials
+
+Test: Verify click on offset functionality

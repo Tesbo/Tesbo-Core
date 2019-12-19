@@ -111,13 +111,13 @@ public class SuiteParser {
     /**
      * @auther: Ankit Mistry
      * @lastModifiedBy:
-     * @param fileName
+     * @param suiteFileName
      * @return
      */
-    public JSONObject getTestsFileNameUsingTestName(String fileName) {
+    public JSONObject getTestsFileNameUsingTestName(String suiteFileName) {
 
         JSONArray tampSuiteTestNameList=new JSONArray();
-        StringBuffer suiteFile= readSuiteFile(fileName);
+        StringBuffer suiteFile= readSuiteFile(suiteFileName);
         JSONArray suiteTestNameList=getTestNameFromSuiteFile(suiteFile);
 
         tampSuiteTestNameList.addAll(suiteTestNameList);
@@ -126,7 +126,7 @@ public class SuiteParser {
         GetConfiguration getConfiguration=new GetConfiguration();
         JSONArray testsFileNameList= testsFileParser.getTestFiles(getConfiguration.getTestsDirectory());
 
-        for(Object testsFileName:testsFileNameList){
+        /*for(Object testsFileName:testsFileNameList){
             File name = new File(testsFileName.toString());
             StringBuffer testsFileDetails = testsFileParser.readTestsFile(name.getName());
             JSONArray testName= testsFileParser.getTestNameByTestsFile(testsFileDetails);
@@ -153,7 +153,47 @@ public class SuiteParser {
             if(!TestList.isEmpty()) {
                 testNameWithTestsFileName.put(name.getName(), TestList);
             }
+        }*/
+
+
+        //=======================================================================
+        //tampSuiteTestNameList.addAll(suiteTestNameList);
+        int i=1;
+        for(Object suiteTestName:suiteTestNameList){
+            JSONArray TestList=new JSONArray();
+            String testFileName = "";
+            for(Object testsFileName:testsFileNameList){
+                File name = new File(testsFileName.toString());
+                StringBuffer testsFileDetails = testsFileParser.readTestsFile(name.getName());
+                JSONArray testName= testsFileParser.getTestNameByTestsFile(testsFileDetails);
+                for(Object test:testName) {
+                    if(test.toString().equals(suiteTestName.toString().split(":")[1].trim())) {
+                        boolean isExistInTampSuiteTestNameList=false;
+                        for(Object tampSuiteTest:tampSuiteTestNameList){
+                            if(suiteTestName.equals(tampSuiteTest)){
+                                isExistInTampSuiteTestNameList=true;
+                                break;
+                            }
+                        }
+                        if(!isExistInTampSuiteTestNameList){
+                            log.error("'"+suiteTestName+"' test is found multiple time on tests file");
+                            throw new TesboException("'"+suiteTestName+"' test is found multiple time on tests file");
+                        }
+                        testFileName=name.getName()+"_"+i++;
+                        TestList.add(test.toString().trim());
+                        tampSuiteTestNameList.remove(suiteTestName);
+                    }
+
+                }
+
+            }
+            if(!TestList.isEmpty()) {
+                testNameWithTestsFileName.put(testFileName, TestList);
+            }
         }
+
+        //=======================================================================
+
         if(tampSuiteTestNameList.size()!=0){
             String testList="";
             for(Object test:tampSuiteTestNameList){
@@ -163,7 +203,6 @@ public class SuiteParser {
             log.error("'"+testList+"' test is not found in any tests file");
             throw new TesboException("'"+testList+"' test is not found in any tests file");
         }
-
         return testNameWithTestsFileName;
     }
 

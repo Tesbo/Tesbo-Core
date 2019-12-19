@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -305,6 +306,7 @@ public class TestExecutionBuilder {
             JSONObject testNameWithTestsFileName = null;
             String suiteName="";
             String tagName="";
+            int suiteTestNumber=1;
             if (isSuite) {
                 suiteName=suite;
                 testNameWithTestsFileName = suiteParser.getTestsFileNameUsingTestName(suite);
@@ -315,16 +317,37 @@ public class TestExecutionBuilder {
             }
 
             for (Object testsFileName : testNameWithTestsFileName.keySet()) {
+                if(isSuite){
+                    Set testsFileNameForSuite=testNameWithTestsFileName.keySet();
+                    for(Object test:testsFileNameForSuite){
+                        if(test.toString().endsWith("_"+suiteTestNumber)){
+                            testsFileName=test;
+                            break;
+                        }
+                    }
+                }
                 boolean isBeforeTest = false;
                 boolean isAfterTest = false;
-                if(testsFileParser.isBeforeTestInTestsFile(testsFileName.toString())){
+                String testsFileNAME;
+                if(isSuite){
+                    testsFileNAME=testsFileName.toString().substring(0, testsFileName.toString().length() - (String.valueOf(suiteTestNumber).length()+1));
+                }else
+                {
+                    testsFileNAME=testsFileName.toString();
+                }
+
+                if(testsFileParser.isBeforeTestInTestsFile(testsFileNAME)){
                     isBeforeTest=true;
                 }
-                if(testsFileParser.isAfterTestInTestsFile(testsFileName.toString())){
+                if(testsFileParser.isAfterTestInTestsFile(testsFileNAME)){
                     isAfterTest=true;
                 }
 
                 for (Object testName : ((JSONArray) testNameWithTestsFileName.get(testsFileName))) {
+                    if(isSuite){
+                        testsFileName=testsFileName.toString().substring(0, testsFileName.toString().length() - (String.valueOf(suiteTestNumber).length()+1));
+                        suiteTestNumber++;
+                    }
                     String dataSetName = null;
                     int dataSize = 0;
                     String dataType = null;
