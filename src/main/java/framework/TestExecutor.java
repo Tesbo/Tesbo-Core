@@ -301,6 +301,11 @@ public class TestExecutor implements Runnable {
                                     stepReportObject.put("steps", step.toString().replace("@" + removeContent, removeContent));
                                 }
                             }
+                            else{
+                                if(flag){
+                                    stepReportObject.put("steps", step.toString().replace("@" + removeContent, removeContent));
+                                }
+                            }
 
                         }
                         else {

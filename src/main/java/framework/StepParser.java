@@ -761,7 +761,7 @@ public class StepParser {
             boolean isDetaSet=false;
             if(TestExecutor.localVariable.containsKey(headerName)){
                 textToEnter = TestExecutor.localVariable.get(headerName).toString();
-                String newStep=step.replace("{" + headerName + "}", textToEnter).replaceAll("[{,}]", "'").replace("@", "");
+                String newStep=step.replace( headerName, textToEnter).replaceAll("[{,}]", "'").replace("@", "");
                 tesboLogger.stepLog(newStep);
                 log.info(newStep);
                 return textToEnter;
@@ -774,8 +774,9 @@ public class StepParser {
                             String dataSet[] = headerName.split("\\.");
                             if (dataSet.length == 3) {
                                 textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), dataSet[1], dataSet[2]).get(dataSet[2]).toString();
-                                tesboLogger.stepLog(step.replace("{" + headerName + "}", textToEnter).replaceAll("[{,}]", "'").replace("@", ""));
-                                log.info(step.replace("{" + headerName + "}", textToEnter).replaceAll("[{,}]", "'").replace("@", ""));
+                                step=step.replace("@","");
+                                tesboLogger.stepLog(step.replace(headerName, textToEnter).replaceAll("[{,}]", "'"));
+                                log.info(step.replace(headerName , textToEnter).replaceAll("[{,}]", "'"));
                             } else {
                                 log.info("Please enter DataSet in: '" + step + "'");
                                 throw new TesboException("Please enter DataSet in: '" + step + "'");
@@ -802,8 +803,9 @@ public class StepParser {
                             try {
                                 textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("testsFileName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
                                 if (textToEnter != null) {
-                                    log.info(step.replace("{" + headerName + "}", textToEnter).replaceAll("[{,}]", "'").replace("@", ""));
-                                    tesboLogger.stepLog(step.replace("{" + headerName + "}", textToEnter).replaceAll("[{,}]", "'").replace("@", ""));
+                                    step=step.replace("@","");
+                                    log.info(step.replace( headerName, textToEnter).replaceAll("[{,}]", "'"));
+                                    tesboLogger.stepLog(step.replace(headerName, textToEnter).replaceAll("[{,}]", "'"));
                                 }
 
                             } catch (StringIndexOutOfBoundsException e) {
@@ -822,8 +824,9 @@ public class StepParser {
                     try {
                         if (test.get("dataType").toString().equalsIgnoreCase("global")) {
                             textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(), headerName).get(headerName).toString();
-                            tesboLogger.stepLog(step.replace("{" + headerName + "}", textToEnter).replaceAll("[{,}]", "'").replace("@", ""));
-                            log.info(step.replace("{" + headerName + "}", textToEnter).replaceAll("[{,}]", "'").replace("@", ""));
+                            step=step.replace("@","");
+                            tesboLogger.stepLog(step.replace(headerName, textToEnter).replaceAll("[{,}]", "'"));
+                            log.info(step.replace(headerName, textToEnter).replaceAll("[{,}]", "'"));
                         }
                     } catch (Exception e) {
                         log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");

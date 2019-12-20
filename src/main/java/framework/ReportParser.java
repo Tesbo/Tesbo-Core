@@ -94,7 +94,8 @@ public class ReportParser {
                     return step.replaceAll("[{,}'@]", "");
                 }else {
                     textToEnter = TestExecutor.localVariable.get(headerName).toString();
-                    return step.replace("{" + headerName + "}", textToEnter).replaceAll("[{,}]", "'").replace("@", "");
+                    step=step.replace("@","");
+                    return step.replace(headerName, textToEnter).replaceAll("[{,}]", "'");
                 }
             }
             else {
@@ -170,7 +171,8 @@ public class ReportParser {
                 throw new TesboException("No string found to enter.");
             }
         }
-        return step.replace("{"+headerName+"}", textToEnter).replace("@","").replaceAll("[{,}]","'");
+        step=step.replace("@","");
+        return step.replace(headerName, textToEnter).replaceAll("[{,}]","'");
     }
 
     /**
