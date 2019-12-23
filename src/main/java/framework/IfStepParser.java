@@ -249,11 +249,11 @@ public class IfStepParser {
     public boolean isTestsHasIFCondition(JSONArray steps) {
 
         for (Object step : steps) {
-            if (step.toString().contains("Else If::") && !step.toString().contains("If::")) {
+            if (step.toString().startsWith("Else If:: ") && !step.toString().startsWith("If:: ")) {
                 log.info("If:: condition is not found for '" + step + "' step.");
                 throw new TesboException("If:: condition is not found for '" + step + "' step.");
             }
-            if (step.toString().contains("If::")) {
+            if (step.toString().startsWith("If:: ")) {
                 return true;
             }
         }
@@ -264,7 +264,7 @@ public class IfStepParser {
         int countForIf = 0;
         int countForEnd = 0;
         for (Object step : steps) {
-            if (step.toString().contains("If::") && !step.toString().contains("Else If::")) {
+            if (step.toString().startsWith("If:: ") && !step.toString().startsWith("Else If:: ")) {
                 countForIf++;
             }
             if (step.toString().contains("End::")) {
@@ -290,7 +290,7 @@ public class IfStepParser {
         elseIFCondition="";
         boolean nestedIf=false;
         for (int i = 0; i < steps.size(); i++) {
-            if (steps.get(i).toString().contains("If::") && !(steps.get(i).toString().contains("Else If::"))) {
+            if (steps.get(i).toString().startsWith("If:: ") && !(steps.get(i).toString().startsWith("Else If:: "))) {
                 if(steps.get(i).toString().trim().split("::").length != 2){
                     log.info("Condition is not found for If:: step OR something wrong in If condition");
                     throw new TesboException("Condition is not found for If:: step OR something wrong in If condition");
@@ -315,7 +315,7 @@ public class IfStepParser {
                                 }
                             }
 
-                            if (!(steps.get(j).toString().contains("End::") | steps.get(j).toString().contains("Else::") | steps.get(j).toString().contains("Else If::"))) {
+                            if (!(steps.get(j).toString().startsWith("End::") | steps.get(j).toString().startsWith("Else::") | steps.get(j).toString().startsWith("Else If:: "))) {
                                 newStep.add(steps.get(j));
                             } else {
                                 i = j;
@@ -344,7 +344,7 @@ public class IfStepParser {
                 }
 
             }
-            if (steps.get(i).toString().contains("Else If::") && ifCondition.equals("fail") && !(elseIFCondition.equals("pass"))) {
+            if (steps.get(i).toString().startsWith("Else If:: ") && ifCondition.equals("fail") && !(elseIFCondition.equals("pass"))) {
                 if(steps.get(i).toString().trim().split("::").length != 2){
                     log.info("Condition is not found for Else If:: step OR something wrong in Else If condition");
                     throw new TesboException("Condition is not found for Else If:: step OR something wrong in Else If condition");
@@ -368,7 +368,7 @@ public class IfStepParser {
                                 }
                             }
 
-                            if (!(steps.get(j).toString().contains("End::") | steps.get(j).toString().contains("Else::") | steps.get(j).toString().contains("Else If::"))) {
+                            if (!(steps.get(j).toString().startsWith("End::") | steps.get(j).toString().startsWith("Else::") | steps.get(j).toString().startsWith("Else If:: "))) {
                                 newStep.add(steps.get(j));
                             } else {
                                 i = j;
@@ -396,7 +396,7 @@ public class IfStepParser {
                 }
             }
 
-            if (steps.get(i).toString().contains("Else::") && !(steps.get(i).toString().contains("Else If::")) && !(elseCondition.equals("fail"))) {
+            if (steps.get(i).toString().startsWith("Else::") && !(steps.get(i).toString().startsWith("Else If:: ")) && !(elseCondition.equals("fail"))) {
                 elseCondition = "pass";
                 for (int j = i + 1; j < steps.size(); j++) {
                     if(j==steps.size()-1){ i=j; }
@@ -442,7 +442,7 @@ public class IfStepParser {
     public boolean isNestedIF(String step, boolean nestedIf){
         //boolean nestedIf=false;
 
-        if(step.contains("If::") && !(step.contains("Else If::")))
+        if(step.startsWith("If:: ") && !(step.startsWith("Else If:: ")))
         {
             nestedIf= true;
             countif++;
@@ -463,7 +463,7 @@ public class IfStepParser {
     public int skipIfConditionStep(JSONArray steps, int startingStep){
         int countIf=0;
         for (int j = startingStep; j < steps.size(); j++) {
-            if(steps.get(j).toString().contains("If::") && !(steps.get(j).toString().contains("Else If::"))){
+            if(steps.get(j).toString().startsWith("If:: ") && !(steps.get(j).toString().startsWith("Else If:: "))){
                 countIf++;
                 continue;
             }
@@ -480,7 +480,7 @@ public class IfStepParser {
                 }
                 continue;
             }
-            if(steps.get(j).toString().contains("Else::") | steps.get(j).toString().contains("Else If::")){
+            if(steps.get(j).toString().startsWith("Else:: ") | steps.get(j).toString().startsWith("Else If:: ")){
                 if(countIf==0) { startingStep = j-1; break; }
             }
         }

@@ -117,7 +117,7 @@ public class DataDrivenParser {
                 isDefine=true;
             }
             if (step.contains("{") && step.contains("}")) {
-                    if (step.contains("Code:")) {
+                    if (step.startsWith("Code: ")) {
                         splitStep = step.split("\\(")[1].split(",");
                     } else {
                         splitStep = step.split("\\s");
@@ -533,7 +533,7 @@ public class DataDrivenParser {
                         isVariableExist = true;
                         break;
                     }
-                    if(allLines[i].contains("Test:"))
+                    if(allLines[i].startsWith("Test: "))
                         break;
                 }
             }

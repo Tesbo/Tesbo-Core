@@ -1087,7 +1087,7 @@ public class StepParser {
      */
     public String removeStepKeywordFromStep(String step) {
         String finalStep = "";
-        if (step.contains("Step:")) {
+        if (step.startsWith("Step: ")) {
             finalStep = step.split("Step:")[1];
         }
         return finalStep;
@@ -1429,7 +1429,7 @@ public class StepParser {
                     numberOfStep++;
                 }
                 else {
-                    stepList.add("Verify:"+newStep);
+                    stepList.add("Verify: "+newStep);
                     newStep="";
                 }
             }

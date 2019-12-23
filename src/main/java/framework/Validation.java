@@ -376,7 +376,7 @@ public class Validation {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
                 String[] testNameArray = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
@@ -388,7 +388,7 @@ public class Validation {
             }
             if (testStarted) {
 
-                if (allLines[i].trim().equals("End")) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].trim().equals("End::"))) {
                     endpoint = i;
                     break;
                 }
@@ -453,7 +453,7 @@ public class Validation {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
                 String testNameArray[] = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
@@ -465,7 +465,7 @@ public class Validation {
             }
             if (testStarted) {
 
-                if (allLines[i].trim().equals("End")) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].trim().equals("End::"))) {
                     endpoint = i;
                     break;
                 }
@@ -478,9 +478,9 @@ public class Validation {
 
         for (int j = startPoint; j < endpoint; j++) {
 
-            if(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:")){
-                String collectionName=stepParser.getCollectionName(allLines[j].toString());
-                if(collectionName.contains("'") |collectionName.contains("\"")){
+            if(allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Collection: ")){
+                String collectionName=stepParser.getCollectionName(allLines[j]);
+                if(collectionName.contains("'") | collectionName.contains("\"")){
                     log.error("Collection name not define properly on :"+allLines[j]);
                     throw new TesboException("Collection name not define properly on :"+allLines[j]);
                 }
@@ -491,12 +491,23 @@ public class Validation {
     }
 
     public void keyWordValidation(String step) {
+        String newStep=step.replaceAll("\\s{2,}", " ").trim().toLowerCase();
+        if(newStep.startsWith("step") | newStep.startsWith("verify") | newStep.startsWith("code") | newStep.startsWith("collection")
+                | newStep.startsWith("if") | newStep.startsWith("else if") | newStep.startsWith("end")
+                | newStep.startsWith("[close") | newStep.startsWith("close")
+                | ( step.replaceAll("\\s{2,}", " ").trim().contains("[Close:") && !(step.replaceAll("\\s{2,}", " ").trim().contains("]"))) ){
+            log.error("Please write valid keyword for this step \"" +step+"\"");
+            throw new TesboException("Please write valid keyword for this step \"" +step+"\"");
+        }
+    }
+
+   /* public void keyWordValidation(String step) {
         if(step.replaceAll("\\s{2,}", " ").trim().contains("Step :") | step.replaceAll("\\s{2,}", " ").trim().contains("step:") | step.replaceAll("\\s{2,}", " ").trim().contains("step :")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("Verify :") | step.replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.replaceAll("\\s{2,}", " ").trim().contains("verify :")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("Collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.replaceAll("\\s{2,}", " ").trim().contains("collection :")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("if::") | step.replaceAll("\\s{2,}", " ").trim().contains("IF::") | step.replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("if ::") | step.replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("if:") | step.replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("if :")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("else if::") | step.replaceAll("\\s{2,}", " ").trim().contains("ELSE IF::") | step.replaceAll("\\s{2,}", " ").trim().contains("ELSE::") | step.replaceAll("\\s{2,}", " ").trim().contains("Else ::") | step.replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("else:") | step.replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("else :")
-                | step.replaceAll("\\s{2,}", " ").trim().contains("End :") | step.replaceAll("\\s{2,}", " ").trim().contains("End:") | step.replaceAll("\\s{2,}", " ").trim().contains("End ::") | step.replaceAll("\\s{2,}", " ").trim().contains("end ::") | step.replaceAll("\\s{2,}", " ").trim().contains("end::") | step.replaceAll("\\s{2,}", " ").trim().contains("END ::") | step.replaceAll("\\s{2,}", " ").trim().contains("END::")
+                | step.replaceAll("\\s{2,}", " ").trim().toLowerCase().startsWith("end") | step.replaceAll("\\s{2,}", " ").trim().contains("End :") | step.replaceAll("\\s{2,}", " ").trim().contains("End:") | step.replaceAll("\\s{2,}", " ").trim().contains("End ::") | step.replaceAll("\\s{2,}", " ").trim().contains("end ::") | step.replaceAll("\\s{2,}", " ").trim().contains("end::") | step.replaceAll("\\s{2,}", " ").trim().contains("END ::") | step.replaceAll("\\s{2,}", " ").trim().contains("END::")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("Code :") | step.replaceAll("\\s{2,}", " ").trim().contains("code :") | step.replaceAll("\\s{2,}", " ").trim().contains("code:") | step.replaceAll("\\s{2,}", " ").trim().contains("ExtCode :") | step.replaceAll("\\s{2,}", " ").trim().contains("ExtCode:")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("[Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("[close:") | step.replaceAll("\\s{2,}", " ").trim().contains("[close :")
                 | step.replaceAll("\\s{2,}", " ").trim().contains("Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("close:") | step.replaceAll("\\s{2,}", " ").trim().contains("close :")
@@ -505,7 +516,7 @@ public class Validation {
             log.error("Please write valid keyword for this step \"" +step+"\"");
             throw new TesboException("Please write valid keyword for this step \"" +step+"\"");
         }
-    }
+    }*/
 
     public boolean severityAndPriorityValidation(JSONObject test) {
 
@@ -518,7 +529,7 @@ public class Validation {
                 try{
                     if(step.toString().replaceAll("\\s{2,}", " ").trim().split(":").length==2) {
 
-                        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority:")) {
+                        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority: ")) {
                             String priority=step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1];
                             if (!(priority.trim().equalsIgnoreCase("high")
                                     || priority.trim().equalsIgnoreCase("medium")
@@ -527,7 +538,7 @@ public class Validation {
                                 throw new TesboException("Enter valid priority name: '"+step+"'");
                             }
                         }
-                        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+                        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity: ")) {
                             String severity=step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1];
                             if (!(severity.trim().equalsIgnoreCase("critical") || severity.trim().equalsIgnoreCase("major")
                                     || severity.trim().equalsIgnoreCase("medium") || severity.trim().equalsIgnoreCase("minor"))) {
@@ -552,7 +563,7 @@ public class Validation {
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
+            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
                 String[] testNameArray = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(test.get("testName").toString())) {
@@ -565,7 +576,7 @@ public class Validation {
             }
             if (testStarted) {
 
-                if (allLines[i].contains("Step:")) {
+                if (allLines[i].startsWith("Step: ")) {
                     endpoint = i;
                     break;
                 }
@@ -578,8 +589,8 @@ public class Validation {
 
         for (int j = startPoint; j < endpoint; j++) {
 
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Priority:")
-                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Priority: ")
+                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Severity: ")) {
                 isSeverityOrPriority=true;
                 break;
             }
