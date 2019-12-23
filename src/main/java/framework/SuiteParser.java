@@ -126,7 +126,7 @@ public class SuiteParser {
         GetConfiguration getConfiguration=new GetConfiguration();
         JSONArray testsFileNameList= testsFileParser.getTestFiles(getConfiguration.getTestsDirectory());
 
-         /*for(Object testsFileName:testsFileNameList){
+        /*for(Object testsFileName:testsFileNameList){
             File name = new File(testsFileName.toString());
             StringBuffer testsFileDetails = testsFileParser.readTestsFile(name.getName());
             JSONArray testName= testsFileParser.getTestNameByTestsFile(testsFileDetails);
