@@ -335,6 +335,7 @@ public class TestExecutionBuilder {
                 {
                     testsFileNAME=testsFileName.toString();
                 }
+                
                 if(testsFileParser.isBeforeTestInTestsFile(testsFileNAME)){
                     isBeforeTest=true;
                 }
