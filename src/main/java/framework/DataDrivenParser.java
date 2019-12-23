@@ -13,11 +13,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import Exception.TesboException;
 import org.openqa.selenium.WebDriver;
@@ -29,15 +34,59 @@ public class DataDrivenParser {
     private static final Logger log = LogManager.getLogger(DataDrivenParser.class);
      TesboLogger tesboLogger = new TesboLogger();
 
-    /**
-     *
-     * @param testsFileName
-     * @param dataSetName
-     * @param keyName
-     * @return
-     */
-    public String checkDataTypeIsExcelOrGlobleInDataset(String testsFileName, String dataSetName,ArrayList<String> keyName) {
-        TestsFileParser testsFileParser = new TestsFileParser();
+    public static void main(String[] args) {
+        DataDrivenParser dataDrivenParser=new DataDrivenParser();
+        System.out.println("================> : "+dataDrivenParser.getExcelUrl("Users"));
+    }
+
+        /**
+         *
+         * @param dataSetName
+         * @param keyName
+         * @return
+         */
+    public String checkDataTypeIsExcelOrGlobleInDataset(String dataSetName,ArrayList<String> keyName) {
+
+        boolean isGlobal = false, isDataSetName = false;
+        String type = null;
+        JSONArray dataSetFileList=getDataSetFileList();
+
+        for (Object dataSetFile : dataSetFileList) {
+            JSONObject main = null;
+            main = Utility.loadJsonFile(dataSetFile.toString());
+
+            if(main.containsKey(dataSetName)){
+                if(((JSONObject) main.get(dataSetName)).containsKey("excelFile")){
+                    isDataSetName=true;
+                    type = "excel";
+                    break;
+                }
+
+                JSONObject DataSetList= (JSONObject) main.get(dataSetName);
+                for(String key: keyName){
+                    if(DataSetList.containsKey(key)){
+                        isDataSetName=true;
+                        type = "global";
+                        isGlobal = true;
+                    }
+                    else{
+                        log.error(key+" is not found in " + dataSetName + " Data Set");
+                        throw new TesboException(key+" is not found in " + dataSetName + " Data Set");
+                    }
+                }
+            }
+            if(isGlobal){
+                break;
+            }
+        }
+
+        if(!isDataSetName) {
+            log.error("'" + dataSetName + "' is not found in any Data Set file");
+            throw new TesboException("'" + dataSetName + "' is not found in any Data Set file");
+        }
+
+        // Old Data Set logic
+        /*TestsFileParser testsFileParser = new TestsFileParser();
         StringBuffer testsFile = testsFileParser.readTestsFile(testsFileName);
         String allLines[] = testsFile.toString().split("[\\r\\n]+");
         boolean isExcel = false, isGlobal = false, isDataSetName = false;
@@ -100,9 +149,32 @@ public class DataDrivenParser {
         }
 
         if (!isExcel && !isGlobal){ throw new TesboException("Excel File url is not found in " + dataSetName + " Data Set");}
-
+*/
         return type;
+    }
 
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy :
+     * @return : List of data set file list
+     */
+    public JSONArray getDataSetFileList() {
+        GetConfiguration getConfiguration = new GetConfiguration();
+        JSONArray dataSetFileList = new JSONArray();
+
+        File dataSetDirectory =new File(getConfiguration.getDataSetDirectory());
+
+        try (Stream<Path> paths = Files.walk(Paths.get(dataSetDirectory.getAbsolutePath()))) {
+
+            dataSetFileList.addAll(paths
+                    .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
+        } catch (Exception e) {
+            log.error("DataSet directory is not found in project: '"+ dataSetDirectory.getAbsolutePath()+"'");
+            throw new TesboException("DataSet directory is not found in project: '"+ dataSetDirectory.getAbsolutePath()+"'");
+        }
+
+
+        return dataSetFileList;
     }
 
     public ArrayList<String> getColumnNameFromTest(ArrayList<String> testSteps){
@@ -147,12 +219,33 @@ public class DataDrivenParser {
         return columnNameList;
     }
 
-    public String getExcelUrl(String testsFileName,String dataSetName) {
-        TestsFileParser testsFileParser=new TestsFileParser();
+    public String getExcelUrl(String dataSetName) {
+
+        JSONArray dataSetFileList=getDataSetFileList();
+        String filePath=null;
+
+        for (Object dataSetFile : dataSetFileList) {
+            JSONObject main = Utility.loadJsonFile(dataSetFile.toString());
+            if (main.get(dataSetName) != null) {
+                if (((JSONObject) main.get(dataSetName)).get("excelFile") == null) {
+                    log.error("'excelFile' is not found in " + dataSetName + " Data Set");
+                    throw new TesboException("'excelFile' is not found in " + dataSetName + " Data Set");
+                }
+                filePath = ((JSONObject) main.get(dataSetName)).get("excelFile").toString();
+                if(filePath.equals("")){
+                    log.error("Excel File url is not found in " + dataSetName + " Data Set");
+                    throw new TesboException("Excel File url is not found in " + dataSetName + " Data Set");
+                }
+                break;
+            }
+        }
+
+        // old DataSet Logic
+       /* TestsFileParser testsFileParser=new TestsFileParser();
         StringBuffer testsFile= testsFileParser.readTestsFile(testsFileName);
         String allLines[] = testsFile.toString().split("[\\r\\n]+");
         boolean flag=false;
-        String filePath=null;
+        //String filePath=null;
         for (int i = 0; i < allLines.length; i++) {
             if (allLines[i].contains("\"" + dataSetName + "\""))
                 flag = true;
@@ -164,8 +257,8 @@ public class DataDrivenParser {
                     break;
                 }
             }
-        }
-        return filePath.trim();
+        }*/
+        return filePath;
     }
 
     public JSONArray getHeaderValuefromExcel(String url,ArrayList<String> dataSetValues,int sheetNo)
@@ -296,7 +389,29 @@ public class DataDrivenParser {
         }
 
         if(!isVariable) {
-            for (int i = 0; i < allLines.length; i++) {
+            JSONArray dataSetFileList=getDataSetFileList();
+
+            for (Object dataSetFile : dataSetFileList) {
+                JSONObject main = Utility.loadJsonFile(dataSetFile.toString());
+                if (main.get(dataSetName) != null) {
+                    if (((JSONObject) main.get(dataSetName)).get(keyName) == null) {
+                        log.error("'"+keyName+"' is not found in " + dataSetName + " Data Set");
+                        throw new TesboException("'"+keyName+"' is not found in " + dataSetName + " Data Set");
+                    }
+                    if(((JSONObject) main.get(dataSetName)).get(keyName).toString().equals("")){
+                        KeyValue.put(keyName,"true");
+                        break;
+                    }
+                    else{
+                        KeyValue.put(keyName,((JSONObject) main.get(dataSetName)).get(keyName));
+                        break;
+                    }
+
+                }
+            }
+
+            // Old data set value
+           /* for (int i = 0; i < allLines.length; i++) {
                 if (allLines[i].contains("\"" + dataSetName + "\":")) {
                     isDataSetName = true;
                 }
@@ -319,7 +434,7 @@ public class DataDrivenParser {
                     if (allLines[i].contains("}"))
                         break;
                 }
-            }
+            }*/
         }
         if(KeyValue.size()<=0){
             log.error("Key name " + keyName + " is not found in " + dataSetName + " data set");

@@ -276,6 +276,10 @@ public class GetConfiguration {
         return locatorDirectory;
     }
 
+    public String getDataSetDirectory() {
+        return Paths.get("").toAbsolutePath().toString()+"/src/test/java/DataSet";
+    }
+
     /**
      * @Description : get suite name from config file.
      * @return : suite names.
