@@ -100,7 +100,8 @@ public class ReportParser {
             }
             else {
                 try {
-                    if (headerName.contains("DataSet.")) {
+                    //if (headerName.contains("DataSet.")) {
+                    if (headerName.split("\\.").length==3) {
                         isDetaSet = true;
                         try {
                             String dataSet[] = headerName.split("\\.");
@@ -108,7 +109,7 @@ public class ReportParser {
                                 if ((step.toLowerCase().contains("get ") && (step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign ")))) {
                                     textToEnter = dataSet[2];
                                 } else {
-                                    textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), dataSet[1], dataSet[2]).get(dataSet[2]).toString();
+                                    textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), dataSet[0], dataSet[1], dataSet[2]).get(dataSet[2]).toString();
                                 }
                             } else {
                                 log.error("Please enter DataSet in: '" + step + "'");
@@ -119,9 +120,6 @@ public class ReportParser {
                             log.error("'"+headerName+"' Variable is not define.");
                             throw new TesboException("'"+headerName+"' Variable is not define.");
                         }
-                    } else if (headerName.contains("Dataset.") || headerName.contains("dataSet.") || headerName.contains("dataset.")) {
-                        log.error("Please enter valid DataSet in: '" + step + "'");
-                        throw new TesboException("Please enter valid DataSet in: '" + step + "'");
                     }
                 } catch (Exception e) {
                     throw e;
@@ -129,6 +127,7 @@ public class ReportParser {
 
                 if (!isDetaSet) {
                     try {
+
                         if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
                             try {
                                 textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
@@ -150,7 +149,7 @@ public class ReportParser {
                             if (step.toLowerCase().contains("get ") && (step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign "))) {
                                 textToEnter = headerName;
                             } else {
-                                textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(), headerName).get(headerName).toString();
+                                textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), null, test.get("dataSetName").toString(), headerName).get(headerName).toString();
                             }
                         }
                     } catch (Exception e) {
