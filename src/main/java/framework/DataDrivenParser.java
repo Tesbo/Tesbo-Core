@@ -51,23 +51,114 @@ public class DataDrivenParser {
             main = Utility.loadJsonFile(dataSetFile.toString());
 
             if(main.containsKey(dataSetName)){
-                if(((JSONObject) main.get(dataSetName)).containsKey("excelFile")){
-                    isDataSetName=true;
-                    type = "excel";
-                    break;
+                boolean isJSONArray=false;
+                if(main.get(dataSetName) instanceof JSONArray){
+                    isJSONArray=true;
+                    System.out.println("=======> isJSONArray: "+isJSONArray);
+                }
+                else if(main.get(dataSetName) instanceof JSONObject){
+
+                    if(((JSONObject) main.get(dataSetName)).containsKey("excelFile")){
+                        isDataSetName=true;
+                        type = "excel";
+                        break;
+                    }
+
+                    JSONObject DataSetList= (JSONObject) main.get(dataSetName);
+                    for(String key: keyName){
+                        if(DataSetList.get(key) instanceof JSONArray){
+                            isJSONArray=true;
+                            System.out.println("=====> isJSONArray: "+isJSONArray);
+                            break;
+                        }
+                    }
+
+                    if(!isJSONArray){
+                        for(String key: keyName){
+                            if(!(DataSetList.get(key) instanceof JSONArray)){
+                                if(DataSetList.containsKey(key)){
+                                    isDataSetName=true;
+                                    type = "global";
+                                    isGlobal = true;
+                                }
+                                else{
+                                    if(key.split("\\.").length!=3) {
+                                        log.error("'"+key + "' is not found in '" + dataSetName + "' Data Set");
+                                        throw new TesboException("'"+key + "' is not found in '" + dataSetName + "' Data Set");
+                                    }
+                                }
+                            }
+                            else{
+                                log.error("'"+key + "' key has JSONArray value.");
+                                throw new TesboException("'"+key + "' key has JSONArray value.");
+                            }
+                        }
+                    }
                 }
 
-                JSONObject DataSetList= (JSONObject) main.get(dataSetName);
-                for(String key: keyName){
-                    if(DataSetList.containsKey(key)){
-                        isDataSetName=true;
-                        type = "global";
-                        isGlobal = true;
+                if(isJSONArray){
+                    if(main.get(dataSetName) instanceof JSONArray){
+                        JSONArray DataSetList= (JSONArray) main.get(dataSetName);
+                        int arraySize=0;
+                        for(String key: keyName){
+                            for(Object DataSet: DataSetList){
+                                if(arraySize==0){
+                                    arraySize=((JSONObject)DataSet).entrySet().size();
+                                }
+                                else {
+                                    if(arraySize!=((JSONObject)DataSet).entrySet().size()){
+                                        log.error("All JSONArray must have same number of key.");
+                                        throw new TesboException("All JSONArray must have same number of key.");
+                                    }
+                                }
+                                System.out.println("+++++> : "+((JSONObject)DataSet).keySet());
+                                if(((JSONObject)DataSet).containsKey(key)){
+                                    isDataSetName=true;
+                                    type = "list";
+                                    isGlobal = true;
+                                }
+                                else{
+                                    if(key.split("\\.").length!=3) {
+                                        log.error("'"+key + "' is not found in '" + dataSetName + "' Data Set'");
+                                        throw new TesboException("'"+key + "' is not found in '" + dataSetName + "' Data Set");
+                                    }
+                                }
+                            }
+                        }
                     }
                     else{
-                        if(key.split("\\.").length!=3) {
-                            log.error(key + " is not found in " + dataSetName + " Data Set");
-                            throw new TesboException(key + " is not found in " + dataSetName + " Data Set");
+                        int arraySize=0;
+                        for(String key: keyName) {
+                            JSONObject DataSetList = (JSONObject) main.get(dataSetName);
+                            System.out.println("------->> DataSetList: "+DataSetList);
+                            if (DataSetList.containsKey(key)) {
+                                if (((JSONObject) main.get(dataSetName)).get(key) instanceof JSONArray){
+                                    System.out.println("------->> DataSet: "+((JSONObject) main.get(dataSetName)).get(key));
+                                    if(arraySize==0){
+                                        JSONArray arrayList=((JSONArray) ((JSONObject) main.get(dataSetName)).get(key));
+                                        arraySize=arrayList.size();
+                                    }
+                                    else {
+                                        JSONArray arrayList=((JSONArray) ((JSONObject) main.get(dataSetName)).get(key));
+                                        if(arraySize != arrayList.size()){
+                                            log.error("'"+key + "' key JSONArray size is different then others.");
+                                            throw new TesboException("'"+key + "' key JSONArray size is different then others.");
+                                        }
+                                    }
+                                    isDataSetName = true;
+                                    type = "list";
+                                    isGlobal = true;
+                                }
+                                else {
+                                    log.error("'"+key + "' key has not JSONArray value.");
+                                    throw new TesboException("'"+key + "' key has not JSONArray value.");
+                                }
+                            } else {
+                                if (key.split("\\.").length != 3) {
+                                    log.error("'"+key + "' is not found in '" + dataSetName + "' Data Set");
+                                    throw new TesboException("'"+key + "' is not found in '" + dataSetName + "' Data Set");
+                                }
+                            }
                         }
                     }
                 }
