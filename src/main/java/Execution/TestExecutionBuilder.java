@@ -371,9 +371,11 @@ public class TestExecutionBuilder {
                             throw new NullPointerException("Data set value is not use on 'Test: " + testName + "' steps");
                         }
                         dataType = dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(dataSetName.replace(" ", "").split(":")[1], columnNameList);
-
                         if (dataType.equalsIgnoreCase("excel")) {
                             dataSize = dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(dataSetName.replace(" ", "").split(":")[1]), columnNameList,Integer.parseInt(dataDrivenParser.SheetNumber(testsFileName.toString(), testName.toString()))).size();
+                        }
+                        else if(dataType.equalsIgnoreCase("list")){
+                            dataSize=dataDrivenParser.getDataSetListSize(dataSetName.replace(" ", "").split(":")[1]);
                         }
                     }
                     if (dataSize != 0) {

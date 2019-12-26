@@ -54,7 +54,6 @@ public class DataDrivenParser {
                 boolean isJSONArray=false;
                 if(main.get(dataSetName) instanceof JSONArray){
                     isJSONArray=true;
-                    System.out.println("=======> isJSONArray: "+isJSONArray);
                 }
                 else if(main.get(dataSetName) instanceof JSONObject){
 
@@ -68,7 +67,6 @@ public class DataDrivenParser {
                     for(String key: keyName){
                         if(DataSetList.get(key) instanceof JSONArray){
                             isJSONArray=true;
-                            System.out.println("=====> isJSONArray: "+isJSONArray);
                             break;
                         }
                     }
@@ -89,8 +87,8 @@ public class DataDrivenParser {
                                 }
                             }
                             else{
-                                log.error("'"+key + "' key has JSONArray value.");
-                                throw new TesboException("'"+key + "' key has JSONArray value.");
+                                log.error("'"+key + "' key has array list value.");
+                                throw new TesboException("'"+key + "' key has array list value.");
                             }
                         }
                     }
@@ -107,11 +105,10 @@ public class DataDrivenParser {
                                 }
                                 else {
                                     if(arraySize!=((JSONObject)DataSet).entrySet().size()){
-                                        log.error("All JSONArray must have same number of key.");
-                                        throw new TesboException("All JSONArray must have same number of key.");
+                                        log.error("'"+dataSetName+"' data set has not same number of value in all array list.");
+                                        throw new TesboException("'"+dataSetName+"' data set has not same number of value in all array list.");
                                     }
                                 }
-                                System.out.println("+++++> : "+((JSONObject)DataSet).keySet());
                                 if(((JSONObject)DataSet).containsKey(key)){
                                     isDataSetName=true;
                                     type = "list";
@@ -130,10 +127,8 @@ public class DataDrivenParser {
                         int arraySize=0;
                         for(String key: keyName) {
                             JSONObject DataSetList = (JSONObject) main.get(dataSetName);
-                            System.out.println("------->> DataSetList: "+DataSetList);
                             if (DataSetList.containsKey(key)) {
                                 if (((JSONObject) main.get(dataSetName)).get(key) instanceof JSONArray){
-                                    System.out.println("------->> DataSet: "+((JSONObject) main.get(dataSetName)).get(key));
                                     if(arraySize==0){
                                         JSONArray arrayList=((JSONArray) ((JSONObject) main.get(dataSetName)).get(key));
                                         arraySize=arrayList.size();
@@ -141,8 +136,8 @@ public class DataDrivenParser {
                                     else {
                                         JSONArray arrayList=((JSONArray) ((JSONObject) main.get(dataSetName)).get(key));
                                         if(arraySize != arrayList.size()){
-                                            log.error("'"+key + "' key JSONArray size is different then others.");
-                                            throw new TesboException("'"+key + "' key JSONArray size is different then others.");
+                                            log.error("'"+key + "' key array size is different then others.");
+                                            throw new TesboException("'"+key + "' key array size is different then others.");
                                         }
                                     }
                                     isDataSetName = true;
@@ -150,8 +145,8 @@ public class DataDrivenParser {
                                     isGlobal = true;
                                 }
                                 else {
-                                    log.error("'"+key + "' key has not JSONArray value.");
-                                    throw new TesboException("'"+key + "' key has not JSONArray value.");
+                                    log.error("'"+key + "' key has not JSONArray value, Please enter array list in it.");
+                                    throw new TesboException("'"+key + "' key has not JSONArray value, Please enter array list in it.");
                                 }
                             } else {
                                 if (key.split("\\.").length != 3) {
@@ -758,4 +753,55 @@ public class DataDrivenParser {
         }
         return isVariableExist;
     }
+
+    public int getDataSetListSize(String dataSetName){
+        int dataSetListSize=0;
+        JSONArray dataSetFileList=getDataSetFileList();
+
+        for (Object dataSetFile : dataSetFileList) {
+            JSONObject main = Utility.loadJsonFile(dataSetFile.toString());
+            if (main.containsKey(dataSetName)) {
+                if (main.get(dataSetName) instanceof JSONArray) {
+                    JSONArray DataSetList = (JSONArray) main.get(dataSetName);
+                    dataSetListSize = DataSetList.size();
+                } else {
+                    JSONObject DataSetList = (JSONObject) main.get(dataSetName);
+                    for (Object key : DataSetList.keySet()) {
+                        dataSetListSize = ((JSONArray) DataSetList.get(key)).size();
+                        break;
+                    }
+
+                }
+            }
+        }
+        return dataSetListSize;
+    }
+
+    public String getDataSetListValue(String dataSetName, String keyName, int row){
+        String keyValue=null;
+        JSONArray dataSetFileList=getDataSetFileList();
+
+        for (Object dataSetFile : dataSetFileList) {
+            JSONObject main = Utility.loadJsonFile(dataSetFile.toString());
+            if (main.containsKey(dataSetName)) {
+                if (main.get(dataSetName) instanceof JSONArray) {
+                    JSONArray dataSetList = (JSONArray) main.get(dataSetName);
+                    JSONObject dataSet=(JSONObject)dataSetList.get(row-1);
+                    keyValue=dataSet.get(keyName).toString();
+                    break;
+                }
+                else {
+                    JSONObject dataSet = (JSONObject) main.get(dataSetName);
+                    JSONArray dataSetList = (JSONArray)dataSet.get(keyName);
+                    keyValue=dataSetList.get(row-1).toString();
+                    break;
+                }
+            }
+
+        }
+
+        return keyValue;
+    }
+
+
 }

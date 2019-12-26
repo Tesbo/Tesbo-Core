@@ -8,6 +8,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.*;
+import java.util.ArrayList;
+
 import Exception.TesboException;
 
 public class ReportParser {
@@ -106,6 +108,12 @@ public class ReportParser {
                         try {
                             String dataSet[] = headerName.split("\\.");
                             if (dataSet.length == 3) {
+                                ArrayList<String> keyName = new ArrayList<>();
+                                keyName.add(dataSet[2]);
+                                String DataSetType= dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(dataSet[1],keyName);
+                                if(DataSetType.equals("list")){
+                                    // throw error for inline dataset
+                                }
                                 if ((step.toLowerCase().contains("get ") && (step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign ")))) {
                                     textToEnter = dataSet[2];
                                 } else {
@@ -155,6 +163,9 @@ public class ReportParser {
                     } catch (Exception e) {
                         log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
                         throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
+                    }
+                    if(test.get("dataType").toString().equalsIgnoreCase("list")){
+                        textToEnter=dataDrivenParser.getDataSetListValue(test.get("dataSetName").toString(), headerName,Integer.parseInt(test.get("row").toString()));
                     }
                 }
             }

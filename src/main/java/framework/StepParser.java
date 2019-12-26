@@ -830,6 +830,13 @@ public class StepParser {
                         log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
                         throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
                     }
+
+                    if(test.get("dataType").toString().equalsIgnoreCase("list")){
+                        textToEnter=dataDrivenParser.getDataSetListValue(test.get("dataSetName").toString(), headerName,Integer.parseInt(test.get("row").toString()));
+                        step=step.replace("@","");
+                        tesboLogger.stepLog(step.replace(headerName, textToEnter).replaceAll("[{,}]", "'"));
+                        log.info(step.replace(headerName, textToEnter).replaceAll("[{,}]", "'"));
+                    }
                 }
 
             }
@@ -915,6 +922,9 @@ public class StepParser {
                 } catch (Exception e) {
                     log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
                     throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
+                }
+                if(test.get("dataType").toString().equalsIgnoreCase("list")){
+                    textToEnter=dataDrivenParser.getDataSetListValue(test.get("dataSetName").toString(), headerName,Integer.parseInt(test.get("row").toString()));
                 }
             }
         } else {
