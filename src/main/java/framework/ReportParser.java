@@ -106,13 +106,14 @@ public class ReportParser {
                     if (headerName.split("\\.").length==3) {
                         isDetaSet = true;
                         try {
-                            String dataSet[] = headerName.split("\\.");
+                            String[] dataSet = headerName.split("\\.");
                             if (dataSet.length == 3) {
                                 ArrayList<String> keyName = new ArrayList<>();
                                 keyName.add(dataSet[2]);
                                 String DataSetType= dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(dataSet[1],keyName);
-                                if(DataSetType.equals("list")){
-                                    // throw error for inline dataset
+                                if(DataSetType.equals("list") || DataSetType.equals("excel")){
+                                    log.error("Array list and Excel data set can't be use in inline data set '"+ headerName +"'.");
+                                    throw new TesboException("Array list and Excel data set can't be use in inline data set '"+ headerName +"'.");
                                 }
                                 if ((step.toLowerCase().contains("get ") && (step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign ")))) {
                                     textToEnter = dataSet[2];

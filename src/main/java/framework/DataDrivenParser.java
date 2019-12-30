@@ -47,8 +47,7 @@ public class DataDrivenParser {
         JSONArray dataSetFileList=getDataSetFileList();
 
         for (Object dataSetFile : dataSetFileList) {
-            JSONObject main = null;
-            main = Utility.loadJsonFile(dataSetFile.toString());
+            JSONObject main = Utility.loadJsonFile(dataSetFile.toString());
 
             if(main.containsKey(dataSetName)){
                 boolean isJSONArray=false;
@@ -70,7 +69,6 @@ public class DataDrivenParser {
                             break;
                         }
                     }
-
                     if(!isJSONArray){
                         for(String key: keyName){
                             if(!(DataSetList.get(key) instanceof JSONArray)){
@@ -573,6 +571,7 @@ public class DataDrivenParser {
             startPoint = step.indexOf("{") + 1;
             endPoint = step.lastIndexOf("}");
             String headerName = step.substring(startPoint, endPoint);
+
             boolean isDetaSet=false;
 
             JSONArray elementText=new JSONArray();
@@ -591,6 +590,11 @@ public class DataDrivenParser {
                 setLocalVariableValue(headerName,elementText);
             }
             else {
+
+                if(test.get("dataType").toString().equals("excel") | test.get("dataType").toString().equals("list")){
+                    log.error("Array list and Excel DataSet can't be use in set variable '"+ step +"'");
+                    throw new TesboException("Array list and Excel DataSet can't be use in set variable '"+ step +"'");
+                }
 
                 if(step.toLowerCase().contains(" text ")){
                     if(step.toLowerCase().contains(" list ")){

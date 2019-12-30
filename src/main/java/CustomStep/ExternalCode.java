@@ -44,7 +44,6 @@ public class ExternalCode  {
                     int i=0;
                     String argument=null;
                     for(String arg:args){
-
                         if (arg.contains("{") && arg.contains("}")) {
                             if(i==0){argument=stepParser.passArgsToCode(test,arg);i++;}
                             else {argument+=","+stepParser.passArgsToCode(test,arg);i++;}
