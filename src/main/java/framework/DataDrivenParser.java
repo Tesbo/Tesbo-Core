@@ -46,6 +46,11 @@ public class DataDrivenParser {
         String type = null;
         JSONArray dataSetFileList=getDataSetFileList();
 
+        if(dataSetFileList.size()==0){
+            log.error("DataSet directory is empty.");
+            throw new TesboException("DataSet directory is empty.");
+        }
+
         for (Object dataSetFile : dataSetFileList) {
             JSONObject main = Utility.loadJsonFile(dataSetFile.toString());
 
@@ -134,8 +139,8 @@ public class DataDrivenParser {
                                     else {
                                         JSONArray arrayList=((JSONArray) ((JSONObject) main.get(dataSetName)).get(key));
                                         if(arraySize != arrayList.size()){
-                                            log.error("'"+key + "' key array size is different then others.");
-                                            throw new TesboException("'"+key + "' key array size is different then others.");
+                                            log.error("'"+key + "' key array size is different than others.");
+                                            throw new TesboException("'"+key + "' key array size is different than others.");
                                         }
                                     }
                                     isDataSetName = true;
@@ -244,7 +249,12 @@ public class DataDrivenParser {
         JSONArray dataSetFileList = new JSONArray();
 
         File dataSetDirectory =new File(getConfiguration.getDataSetDirectory());
-
+        System.out.println("=====> dataSetDirectory: "+dataSetDirectory);
+        System.out.println("=====> dataSetDirectory.exists(): "+dataSetDirectory.exists());
+        if(!dataSetDirectory.exists()){
+            log.error("DataSet directory is not found in project: '"+ dataSetDirectory.getAbsolutePath()+"'");
+            throw new TesboException("DataSet directory is not found in project: '"+ dataSetDirectory.getAbsolutePath()+"'");
+        }
         try (Stream<Path> paths = Files.walk(Paths.get(dataSetDirectory.getAbsolutePath()))) {
 
             dataSetFileList.addAll(paths
