@@ -93,7 +93,8 @@ public class ReportParser {
             boolean isDetaSet=false;
             if(TestExecutor.localVariable.containsKey(headerName) | step.toLowerCase().contains("define")){
                 if(step.toLowerCase().contains("define") | step.toLowerCase().contains("set")){
-                    return step.replaceAll("[{,}'@]", "");
+                    step=step.replace("@","");
+                    return step.replaceAll("[{,}]", "'");
                 }else {
                     textToEnter = TestExecutor.localVariable.get(headerName).toString();
                     step=step.replace("@","");

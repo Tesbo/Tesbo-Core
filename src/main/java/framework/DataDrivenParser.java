@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -249,8 +250,6 @@ public class DataDrivenParser {
         JSONArray dataSetFileList = new JSONArray();
 
         File dataSetDirectory =new File(getConfiguration.getDataSetDirectory());
-        System.out.println("=====> dataSetDirectory: "+dataSetDirectory);
-        System.out.println("=====> dataSetDirectory.exists(): "+dataSetDirectory.exists());
         if(!dataSetDirectory.exists()){
             log.error("DataSet directory is not found in project: '"+ dataSetDirectory.getAbsolutePath()+"'");
             throw new TesboException("DataSet directory is not found in project: '"+ dataSetDirectory.getAbsolutePath()+"'");
@@ -483,8 +482,9 @@ public class DataDrivenParser {
 
                 if(dataSetFileName!=null){
                     isGlobal=false;
-                    int size=dataSetFile.toString().split("\\\\").length;
-                   String fileName= dataSetFile.toString().split("\\\\")[size-1];
+                    String pattern = Pattern.quote(System.getProperty("file.separator"));
+                    int size=dataSetFile.toString().split(pattern).length;
+                   String fileName= dataSetFile.toString().split(pattern)[size-1];
                     if(dataSetFileName.equals(fileName.split("\\.")[0])){
                         isInline=true;
                     }
@@ -600,10 +600,11 @@ public class DataDrivenParser {
                 setLocalVariableValue(headerName,elementText);
             }
             else {
-
-                if(test.get("dataType").toString().equals("excel") | test.get("dataType").toString().equals("list")){
-                    log.error("Array list and Excel DataSet can't be use in set variable '"+ step +"'");
-                    throw new TesboException("Array list and Excel DataSet can't be use in set variable '"+ step +"'");
+                if(test.containsKey("dataType")) {
+                    if (test.get("dataType").toString().equals("excel") | test.get("dataType").toString().equals("list")) {
+                        log.error("Array list and Excel DataSet can't be use in set variable '" + step + "'");
+                        throw new TesboException("Array list and Excel DataSet can't be use in set variable '" + step + "'");
+                    }
                 }
 
                 if(step.toLowerCase().contains(" text ")){

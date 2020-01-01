@@ -291,7 +291,7 @@ public class TestExecutor implements Runnable {
                                 if(word.contains("@") && !(word.contains("'"))){
                                     removeContent= word.trim().replace("@","");
                                 }
-                                if(word.contains("@") && word.contains("'")){flag=true;}
+                                if(word.contains("@") && !(word.contains("'"))){flag=true;}
                             }
                             //String removeContent=step.split("@")[1].trim().split(" ")[0].replace("@","");
                             if(removeContent!=null && !flag) {
