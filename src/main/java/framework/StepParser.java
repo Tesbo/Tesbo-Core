@@ -802,8 +802,8 @@ public class StepParser {
                                 textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
                                 if (textToEnter != null) {
                                     step=step.replace("@","");
-                                    log.info(step.replace( headerName, textToEnter).replaceAll("[{,}]", "'"));
-                                    tesboLogger.stepLog(step.replace(headerName, textToEnter).replaceAll("[{,}]", "'"));
+                                    log.info(step.replace( "{"+headerName+"}", "{"+textToEnter+"}").replaceAll("[{,}]", "'"));
+                                    tesboLogger.stepLog(step.replace("{"+headerName+"}", "{"+textToEnter+"}").replaceAll("[{,}]", "'"));
                                 }
 
                             } catch (StringIndexOutOfBoundsException e) {

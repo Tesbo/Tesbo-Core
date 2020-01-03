@@ -249,7 +249,7 @@ public class TestsFileParser {
                     allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("If:: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().equals("Else::") | allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Else If:: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().equals("End::") |
                     allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Collection: ") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
                     allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Code: ") |
-                    ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
+                    ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")) & !(allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("DataSet: ")))) {
 
                 testSteps.add(allLines[j]);
             }

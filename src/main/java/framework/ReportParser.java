@@ -184,7 +184,7 @@ public class ReportParser {
             }
         }
         step=step.replace("@","");
-        return step.replace(headerName, textToEnter).replaceAll("[{,}]","'");
+        return step.replace("{"+headerName+"}", "{"+textToEnter+"}").replaceAll("[{,}]","'");
     }
 
     /**
