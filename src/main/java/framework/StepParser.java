@@ -754,7 +754,8 @@ public class StepParser {
         int startPoint = 0;
         int endPoint = 0;
 
-        if (step.contains("{") && step.contains("}") && !step.toLowerCase().contains(" define ") && !step.toLowerCase().contains(" attribute ") && !step.toLowerCase().contains(" css value ")) {
+        if (step.contains("{") && step.contains("}")
+                && !step.toLowerCase().contains(" define ") && !step.toLowerCase().contains(" attribute ") && !step.toLowerCase().contains(" css value ")) {
             startPoint = step.indexOf("{") + 1;
             endPoint = step.lastIndexOf("}");
             String headerName = step.substring(startPoint, endPoint);

@@ -278,6 +278,78 @@ public class VerifyParser {
                 flag = true;
             }
         }
+
+
+
+
+
+        // verify attribute value
+        if(verify.toLowerCase().contains(" get attribute ")){
+            element=cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(verify)));
+
+            if(element.getAttribute(getAttributeAndCSS_NameAndVerifyText(verify,"attributeOrCSS"))==null){
+                log.info("'"+getAttributeAndCSS_NameAndVerifyText(verify,"attributeOrCSS")+"' attribute is not fount.");
+                throw new TesboException("'"+getAttributeAndCSS_NameAndVerifyText(verify,"attributeOrCSS")+"' attribute is not fount.");
+            }
+            String attributeValue=element.getAttribute(getAttributeAndCSS_NameAndVerifyText(verify,"attributeOrCSS"));
+            String verifyText=null;
+            if(verify.contains("{") && verify.contains("}")){
+                String[] stepWord=verify.split(" ");
+                for(String word:stepWord){
+                    if(word.toLowerCase().equals("attribute")){
+                        verifyText=stepParser.parseTextToEnter(test, verify.replace(" "+word+" "," "));
+                        break;
+                    }
+                }
+
+            }
+            else{
+                verifyText=getAttributeAndCSS_NameAndVerifyText(verify,"text") ;
+            }
+
+            if(verify.toLowerCase().contains(" not equal to ")){
+                if(attributeValue.equals(verifyText)){
+                    log.error("Expecting:<\""+attributeValue+"\"> not to be equal to:<\""+verifyText+"\">");
+                    throw new AssertException("Expecting:<\""+attributeValue+"\"> not to be equal to:<\""+verifyText+"\">");
+                }
+                flag=true;
+            }
+            else if(verify.toLowerCase().contains(" is equal to ")){
+
+                if(verify.toLowerCase().contains(" is equal to ignore case ")){
+                    if(!attributeValue.equalsIgnoreCase(verifyText)){
+                        log.error("Expecting:<\""+attributeValue+"\"> to be equal to: <\""+verifyText+"\">");
+                        throw new AssertException("Expecting:<\""+attributeValue+"\"> to be equal to: <\""+verifyText+"\">");
+                    }
+                    flag=true;
+                }
+                else{
+                    if(!attributeValue.equals(verifyText)){
+                        log.error("ComparisonFailure: expected:<\""+attributeValue+"\"> but was:<\""+verifyText+"\">");
+                        throw new AssertException("ComparisonFailure: expected:<\""+attributeValue+"\"> but was:<\""+verifyText+"\">");
+                    }
+                    flag=true;
+                }
+            }
+            else if(verify.toLowerCase().contains(" contains ")){
+                if(!attributeValue.contains(verifyText)){
+                    log.error("Expecting:<\""+attributeValue+"\"> to contain: <\""+verifyText+"\">");
+                    throw new AssertException("Expecting:<\""+attributeValue+"\"> to contain: <\""+verifyText+"\">");
+                }
+                flag=true;
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+
         if(!flag) {
             log.error("'"+verify+"' Step is not define properly.");
             throw new TesboException("'"+verify+"' Step is not define properly.");
@@ -309,6 +381,27 @@ public class VerifyParser {
                         "}                                        " +
                         "return false;                            "
                 , element);
+    }
+
+    public String getAttributeAndCSS_NameAndVerifyText(String step, String attributeOrText){
+        String attributeNameOrText=null;
+        String[] stepsWord=step.split(" ");
+        boolean attribute=false;
+        for(String word:stepsWord)
+        {
+            if(word.contains("'") && attributeOrText.equals("attributeOrCSS")){
+                attributeNameOrText=word.trim().replace("'","");
+                break;
+            }
+            else if(word.contains("'") && attributeOrText.equals("text")){
+               if(attribute){
+                   attributeNameOrText=word.trim().replace("'","");
+                   break;
+               }
+               attribute=true;
+            }
+        }
+        return attributeNameOrText;
     }
 }
 
