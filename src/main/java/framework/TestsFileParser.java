@@ -249,7 +249,7 @@ public class TestsFileParser {
                     allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("If:: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().equals("Else::") | allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Else If:: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().equals("End::") |
                     allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Collection: ") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
                     allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Code: ") |
-                    ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
+                    ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")) & !(allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("DataSet: ")))) {
 
                 testSteps.add(allLines[j]);
             }
@@ -297,8 +297,8 @@ public class TestsFileParser {
             }
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) {
-                if (!(allLines[j].contains("DataSet:"))) {
+            if (allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("DataSet: ")) {
+                if (!(allLines[j].contains("DataSet: "))) {
                     log.error("Write 'DataSet' keyword in test");
                     throw new TesboException("Write 'DataSet' keyword in test");
                 }
@@ -306,7 +306,7 @@ public class TestsFileParser {
                 break;
             }
             else{
-                if(allLines[j].toLowerCase().contains("dataset:") || allLines[j].toLowerCase().contains("dataset :")){
+                if(allLines[j].toLowerCase().startsWith("dataset")){
                     log.error("Please add valid key word for: '"+allLines[j]+"'");
                     throw new TesboException("Please add valid key word for: '"+allLines[j]+"'");
                 }

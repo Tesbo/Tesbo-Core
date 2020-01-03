@@ -8,6 +8,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.*;
+import java.util.ArrayList;
+
 import Exception.TesboException;
 
 public class ReportParser {
@@ -91,23 +93,33 @@ public class ReportParser {
             boolean isDetaSet=false;
             if(TestExecutor.localVariable.containsKey(headerName) | step.toLowerCase().contains("define")){
                 if(step.toLowerCase().contains("define") | step.toLowerCase().contains("set")){
-                    return step.replaceAll("[{,}'@]", "");
+                    step=step.replace("@","");
+                    return step.replaceAll("[{,}]", "'");
                 }else {
                     textToEnter = TestExecutor.localVariable.get(headerName).toString();
-                    return step.replace("{" + headerName + "}", textToEnter).replaceAll("[{,}]", "'").replace("@", "");
+                    step=step.replace("@","");
+                    return step.replace(headerName, textToEnter).replaceAll("[{,}]", "'");
                 }
             }
             else {
                 try {
-                    if (headerName.contains("DataSet.")) {
+                    //if (headerName.contains("DataSet.")) {
+                    if (headerName.split("\\.").length==3) {
                         isDetaSet = true;
                         try {
-                            String dataSet[] = headerName.split("\\.");
+                            String[] dataSet = headerName.split("\\.");
                             if (dataSet.length == 3) {
+                                ArrayList<String> keyName = new ArrayList<>();
+                                keyName.add(dataSet[2]);
+                                String DataSetType= dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(dataSet[1],keyName);
+                                if(DataSetType.equals("list") || DataSetType.equals("excel")){
+                                    log.error("Array list and Excel data set can't be use in inline data set '"+ headerName +"'.");
+                                    throw new TesboException("Array list and Excel data set can't be use in inline data set '"+ headerName +"'.");
+                                }
                                 if ((step.toLowerCase().contains("get ") && (step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign ")))) {
                                     textToEnter = dataSet[2];
                                 } else {
-                                    textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), dataSet[1], dataSet[2]).get(dataSet[2]).toString();
+                                    textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), dataSet[0], dataSet[1], dataSet[2]).get(dataSet[2]).toString();
                                 }
                             } else {
                                 log.error("Please enter DataSet in: '" + step + "'");
@@ -118,9 +130,6 @@ public class ReportParser {
                             log.error("'"+headerName+"' Variable is not define.");
                             throw new TesboException("'"+headerName+"' Variable is not define.");
                         }
-                    } else if (headerName.contains("Dataset.") || headerName.contains("dataSet.") || headerName.contains("dataset.")) {
-                        log.error("Please enter valid DataSet in: '" + step + "'");
-                        throw new TesboException("Please enter valid DataSet in: '" + step + "'");
                     }
                 } catch (Exception e) {
                     throw e;
@@ -128,9 +137,10 @@ public class ReportParser {
 
                 if (!isDetaSet) {
                     try {
+
                         if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
                             try {
-                                textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("testsFileName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
+                                textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
 
                             } catch (StringIndexOutOfBoundsException e) {
                                 tesboLogger.stepLog(step);
@@ -149,12 +159,15 @@ public class ReportParser {
                             if (step.toLowerCase().contains("get ") && (step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign "))) {
                                 textToEnter = headerName;
                             } else {
-                                textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(), headerName).get(headerName).toString();
+                                textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), null, test.get("dataSetName").toString(), headerName).get(headerName).toString();
                             }
                         }
                     } catch (Exception e) {
                         log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
                         throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
+                    }
+                    if(test.get("dataType").toString().equalsIgnoreCase("list")){
+                        textToEnter=dataDrivenParser.getDataSetListValue(test.get("dataSetName").toString(), headerName,Integer.parseInt(test.get("row").toString()));
                     }
                 }
             }
@@ -170,7 +183,8 @@ public class ReportParser {
                 throw new TesboException("No string found to enter.");
             }
         }
-        return step.replace("{"+headerName+"}", textToEnter).replace("@","").replaceAll("[{,}]","'");
+        step=step.replace("@","");
+        return step.replace("{"+headerName+"}", "{"+textToEnter+"}").replaceAll("[{,}]","'");
     }
 
     /**
