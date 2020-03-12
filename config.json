@@ -1,7 +1,7 @@
 {
 
   "run": {
-    "baseUrl": "https://accounts.google.com/signup",
+    "baseUrl": "https://www.phptravels.net/admin",
     "seleniumAddress": "",
     "Environment":{
       "QA":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/QA",
@@ -9,7 +9,7 @@
       "Release":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/Release"
     },
     "by": {
-      "suite": ["smoke","NewSmoke"]
+      "tag": ["click12"]
     },
     "browser": {
       "name": [
@@ -39,9 +39,9 @@
     "locatorPreference": ["xpath","id"]
   },
   "cloudIntegration" : {
-    "report": false,
-    "apiKey": "d31129abe90e5e2086e56a26995cc1cc",
-    "projectKey" : "5cb6f522e7beb15573cd34a3",
-    "buildName":"QAbleTest001"
+    "report": true,
+    "apiKey": "5e6a20f3aaab0b70c13f2a3c",
+    "projectKey" : "5e6a2140aaab0b70c13f2a3d",
+    "buildName":"QAbleTest005"
   }
 }

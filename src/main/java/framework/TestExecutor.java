@@ -589,7 +589,7 @@ public class TestExecutor implements Runnable {
                     isAddOnCloud=true;
                 }
             }
-            if (isAddOnCloud) {reportAPIConfig.organiazeDataForCloudReport(testReportObject);}
+            if (isAddOnCloud) {reportAPIConfig.createTests(testReportObject);}
         }
         if(testResult.toLowerCase().equals("failed")){
             if(testsFileParser.isRetry(test.get("testsFileName").toString(), test.get("testName").toString()).toLowerCase().equals("null")){

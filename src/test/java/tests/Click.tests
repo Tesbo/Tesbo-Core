@@ -31,7 +31,7 @@ End
 
 
 Test: Verify click functionality
-#All #click1
+#All #click12
 Step: Click on @ForgotPassword
 Step: pause 2 sec
 Step: Click on @BackButton
@@ -39,7 +39,7 @@ Step: pause 2 sec
 End
 
 Test: Verify pause and click functionality
-#All #click1
+#All #click12
 Step: Click on @ForgotPassword
 Step: pause and click on @BackButton
 Step: pause 2 sec
@@ -52,7 +52,7 @@ Step: pause 2 sec
 End
 
 Test: Verify scroll and click functionality
-#All #click1
+#All #click12
 Step: Open URL 'https://www.mathsisfun.com/numbers/counting.html'
 Step: scroll and click on @FindingBugsLink
 Step: pause 2 sec

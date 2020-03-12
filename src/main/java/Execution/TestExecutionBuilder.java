@@ -82,7 +82,7 @@ public class TestExecutionBuilder {
         validation.configFilePathValidation();
         if(getConfig.getIsCloudIntegration() ) {
             log.info("Get cloud integration build key");
-            config.getBuildKey();
+            config.createBuild();
         }
 
         BuildReportDataObject brdo = new BuildReportDataObject();
@@ -123,7 +123,7 @@ public class TestExecutionBuilder {
         logger.titleLog("-----------------------------------------------------------------------\n");
 
         if(getConfig.getIsCloudIntegration()) {
-            config.updateEndTime();
+            config.updateBuild();
         }
 
         while(!repotFileGenerated) {
