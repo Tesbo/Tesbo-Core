@@ -233,14 +233,11 @@ public class ReportAPIConfig {
                 else{fullStackTrace=fullStackTrace+","+stack.trim();}
             }
         }
-
-        String data="{\n\t\"buildKey\": \""+buildID+"\",\n\t\"tesboTestKey\" : \""+null+"\",\n\t\"testFile\":\""+testObject.get("testsFileName")+"\",\n\t\"tags\" : [\"ABC\"],\n\t\"userKey\":\""+userDetails.get("apiKey")+"\",\n\t\"browser\":\""+testObject.get("browserName")+"\",\n\t\"browserVersion\":\""+testObject.get("browserVersion")+"\",\n\t\"startTime\":\""+testObject.get("startTime")+"\",\n\t\"endTime\":\"1582202003473\",\n\t\"osName\":\""+testObject.get("osName")+"\",\n\t\"testName\":\""+testObject.get("testName")+"\",\n\t\"status\":\""+testObject.get("status")+"\",\n\t\"screenShot\":\""+testObject.get("screenShot")+"\",\n\t\"fullStackTrace\" :\""+fullStackTrace+"\",\n\t\"steps\" : "+testObject.get("testStep")+"\n\t\n}";
-        System.out.println("======> Data: "+data);
-        try {
+       try {
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .build();
             MediaType mediaType = MediaType.parse("application/json");
-            RequestBody body = RequestBody.create(mediaType, "{\n\t\"buildKey\": \""+buildID+"\",\n\t\"tesboTestKey\" : \""+null+"\",\n\t\"testFile\":\""+testObject.get("testsFileName")+"\",\n\t\"tags\" : [\"ABC\"],\n\t\"userKey\":\""+userDetails.get("apiKey")+"\",\n\t\"browser\":\""+testObject.get("browserName")+"\",\n\t\"browserVersion\":\""+testObject.get("browserVersion")+"\",\n\t\"startTime\":\""+testObject.get("startTime")+"\",\n\t\"endTime\":\"1582202003473\",\n\t\"osName\":\""+testObject.get("osName")+"\",\n\t\"testName\":\""+testObject.get("testName")+"\",\n\t\"status\":\""+testObject.get("status")+"\",\n\t\"screenShot\":\""+testObject.get("screenShot")+"\",\n\t\"fullStackTrace\" :\""+fullStackTrace+"\",\n\t\"steps\" : "+testObject.get("testStep")+"\n\t\n}");
+            RequestBody body = RequestBody.create(mediaType, "{\n\t\"buildKey\": \""+buildID+"\",\n\t\"tesboTestKey\" : \""+null+"\",\n\t\"testFile\":\""+(testObject.get("testsFileName").toString()).split(".tests")[0]+"\",\n\t\"tags\" : [\"ABC\"],\n\t\"userKey\":\""+userDetails.get("apiKey")+"\",\n\t\"browser\":\""+testObject.get("browserName")+"\",\n\t\"browserVersion\":\""+testObject.get("browserVersion")+"\",\n\t\"startTime\":\""+testObject.get("startTime")+"\",\n\t\"endTime\":\"1582202003473\",\n\t\"osName\":\""+testObject.get("osName")+"\",\n\t\"testName\":\""+testObject.get("testName")+"\",\n\t\"status\":\""+testObject.get("status")+"\",\n\t\"screenShot\":\""+testObject.get("screenShot")+"\",\n\t\"fullStackTrace\" :\""+fullStackTrace+"\",\n\t\"steps\" : "+testObject.get("testStep")+"\n\t\n}");
             Request request = new Request.Builder()
                     .url(URL+"/createTests")
                     .method("POST", body)
