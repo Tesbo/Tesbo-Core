@@ -30,9 +30,7 @@ public class ReportAPIConfig {
     public static String URL="http://v2.tesbo.io:7000";
     public static String buildID;
 
-    public static void main(String[] args) {
-        ReportAPIConfig reportAPIConfig=new ReportAPIConfig();
-    }
+    public static void main(String[] args) { ReportAPIConfig reportAPIConfig=new ReportAPIConfig(); }
 
 
     public void createBuild() {
@@ -51,7 +49,7 @@ public class ReportAPIConfig {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\n\t\"buildName\": \""+buildName+"\",\n\t\"projectID\" : \""+userDetails.get("projectKey")+"\",\n\t\"userID\" : \""+userDetails.get("apiKey")+"\"\n}");
+        RequestBody body = RequestBody.create(mediaType, "{\n\t\"buildName\": \""+buildName+"\",\n\t\"projectID\" : \""+userDetails.get("projectKey")+"\",\n\t\"userID\" : \""+userDetails.get("userKey")+"\"\n}");
         Request request = new Request.Builder()
                 .url(URL+"/createBuild")
                 .method("POST", body)
@@ -239,7 +237,7 @@ public class ReportAPIConfig {
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .build();
             MediaType mediaType = MediaType.parse("application/json");
-            RequestBody body = RequestBody.create(mediaType, "{\n\t\"buildKey\": \""+buildID+"\",\n\t\"tesboTestKey\" : \""+null+"\",\n\t\"testFile\":\""+(testObject.get("testsFileName").toString()).split(".tests")[0]+"\",\n\t\"tags\" : [\""+userDetails.get("tagName")+"\"],\n\t\"userKey\":\""+userDetails.get("apiKey")+"\",\n\t\"browser\":\""+testObject.get("browserName")+"\",\n\t\"browserVersion\":\""+testObject.get("browserVersion")+"\",\n\t\"startTime\":\""+testObject.get("startTime")+"\",\n\t\"endTime\":\""+testObject.get("endTime")+"\",\n\t\"osName\":\""+testObject.get("osName")+"\",\n\t\"testName\":\""+testObject.get("testName")+"\",\n\t\"status\":\""+testObject.get("status")+"\",\n\t\"screenShot\":\""+testObject.get("screenShot")+"\",\n\t\"fullStackTrace\" :\""+fullStackTrace+"\",\n\t\"steps\" : "+testObject.get("testStep")+"\n\t\n}");
+            RequestBody body = RequestBody.create(mediaType, "{\n\t\"buildKey\": \""+buildID+"\",\n\t\"tesboTestKey\" : \""+null+"\",\n\t\"testFile\":\""+(testObject.get("testsFileName").toString()).split(".tests")[0]+"\",\n\t\"tags\" : [\""+userDetails.get("tagName")+"\"],\n\t\"userKey\":\""+userDetails.get("userKey")+"\",\n\t\"browser\":\""+testObject.get("browserName")+"\",\n\t\"browserVersion\":\""+testObject.get("browserVersion")+"\",\n\t\"startTime\":\""+testObject.get("startTime")+"\",\n\t\"endTime\":\""+testObject.get("endTime")+"\",\n\t\"osName\":\""+testObject.get("osName")+"\",\n\t\"testName\":\""+testObject.get("testName")+"\",\n\t\"status\":\""+testObject.get("status")+"\",\n\t\"screenShot\":\""+testObject.get("screenShot")+"\",\n\t\"fullStackTrace\" :\""+fullStackTrace+"\",\n\t\"steps\" : "+testObject.get("testStep")+"\n\t\n}");
             Request request = new Request.Builder()
                     .url(URL+"/createTests")
                     .method("POST", body)

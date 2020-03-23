@@ -10,6 +10,7 @@ import framework.*;
 import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.formula.functions.T;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
@@ -282,6 +283,7 @@ public class TestExecutionBuilder {
         SuiteParser suiteParser=new SuiteParser();
         GetConfiguration config = new GetConfiguration();
         JSONArray completeTestObjectArray = new JSONArray();
+        TestKeyParser testKeyParser=new TestKeyParser();
 
         ArrayList<String> suiteOrTaglist = null;
         boolean isTag = false;
@@ -316,7 +318,10 @@ public class TestExecutionBuilder {
                 testNameWithTestsFileName = testsFileParser.getTestNameByTag(suite);
             }
 
+
             for (Object testsFileName : testNameWithTestsFileName.keySet()) {
+                System.out.println("=====> "+testsFileName);
+                testKeyParser.addTestKeyNumberOnTest(testsFileName.toString(),testKeyParser.getListOfTestWhoHasTestKey(testsFileName.toString()));
                 if(isSuite){
                     Set testsFileNameForSuite=testNameWithTestsFileName.keySet();
                     for(Object test:testsFileNameForSuite){
