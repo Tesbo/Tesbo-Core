@@ -320,8 +320,9 @@ public class TestExecutionBuilder {
 
 
             for (Object testsFileName : testNameWithTestsFileName.keySet()) {
-                System.out.println("=====> "+testsFileName);
-                testKeyParser.addTestKeyNumberOnTest(testsFileName.toString(),testKeyParser.getListOfTestWhoHasTestKey(testsFileName.toString()));
+
+                JSONObject testNameWithTestKey= testKeyParser.addTestKeyNumberOnTest(testsFileName.toString(),testKeyParser.getListOfTestWhoHasTestKey(testsFileName.toString()));
+
                 if(isSuite){
                     Set testsFileNameForSuite=testNameWithTestsFileName.keySet();
                     for(Object test:testsFileNameForSuite){
@@ -349,6 +350,7 @@ public class TestExecutionBuilder {
                 }
 
                 for (Object testName : ((JSONArray) testNameWithTestsFileName.get(testsFileName))) {
+                    String testKeyName= testNameWithTestKey.get(testName).toString();
                     if(isSuite){
                         testsFileName=testsFileName.toString().substring(0, testsFileName.toString().length() - (String.valueOf(suiteTestNumber).length()+1));
                         suiteTestNumber++;
@@ -395,6 +397,7 @@ public class TestExecutionBuilder {
                                 completestTestObject.put("row", i);
                                 completestTestObject.put("suiteName", suiteName);
                                 completestTestObject.put("tagName", tagName);
+                                completestTestObject.put("testKey", testKeyName);
                                 completestTestObject.put("dataSetName", dataSetName.replace(" ", "").split(":")[1]);
                                 if(isBeforeTest){completestTestObject.put("BeforeTest", true);}
                                 if(isAfterTest){completestTestObject.put("afterTest", true);}
@@ -409,6 +412,7 @@ public class TestExecutionBuilder {
                             completestTestObject.put("browser", browser);
                             completestTestObject.put("suiteName", suiteName);
                             completestTestObject.put("tagName", tagName);
+                            completestTestObject.put("testKey", testKeyName);
                             if(isBeforeTest){completestTestObject.put("BeforeTest", true);}
                             if(isAfterTest){completestTestObject.put("afterTest", true);}
                             try {

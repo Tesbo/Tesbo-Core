@@ -50,15 +50,15 @@ public class TestKeyParser {
         return testNameWithTestKey;
     }
 
-    public void addTestKeyNumberOnTest(String testsFileName, JSONObject testNameWithTestKey){
+    public JSONObject addTestKeyNumberOnTest(String testsFileName, JSONObject testNameWithTestKey){
 
         GetConfiguration configuration = new GetConfiguration();
+        JSONObject listOfTestNameWithTestKey=new JSONObject();
         int testNum=1;
         String testKeyName=testsFileName.split("\\.")[0].trim()+"_";
 
-        if(Integer.parseInt(testNameWithTestKey.get("TotalTest").toString()) != Integer.parseInt(testNameWithTestKey.get("TotalKey").toString())) {
-
-            System.out.println("========================================================================================================");
+       /* if(Integer.parseInt(testNameWithTestKey.get("TotalTest").toString()) != Integer.parseInt(testNameWithTestKey.get("TotalKey").toString())) {
+*/
             Path path = Paths.get(configuration.getTestsDirectory() + "/" + testsFileName);
 
             try {
@@ -74,16 +74,22 @@ public class TestKeyParser {
                     }
 
                     if (steps.get(i).startsWith("Test: ")) {
-                        System.out.println("======> "+steps.get(i));
                         if (i == 0) {
+                            listOfTestNameWithTestKey.put(steps.get(i).split("Test:")[1].trim(),testKeyName + testNum);
                             steps.add(i, "TestID: " + testKeyName + testNum);
                             testNum++;
                             i++;
                         } else {
                             if (!steps.get(i - 1).startsWith("TestID: ")) {
+                                listOfTestNameWithTestKey.put(steps.get(i).split("Test:")[1].trim(),testKeyName + testNum);
                                 steps.add(i, "TestID: " + testKeyName + testNum);
                                 testNum++;
                                 i++;
+                            }
+                            else{
+
+                                listOfTestNameWithTestKey.put(steps.get(i).split("Test:")[1].trim(),steps.get(i - 1).split("TestID:")[1].trim());
+
                             }
                         }
                     }
@@ -92,14 +98,10 @@ public class TestKeyParser {
 
                 Files.write(path, steps, StandardCharsets.UTF_8);
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println("========================================================================================================");
+            } catch (IOException e) { e.printStackTrace(); }
 
-        }
-
-
+       /* }*/
+        return listOfTestNameWithTestKey;
     }
 
     public boolean isTestKeyExist(JSONArray TestKey, String newKey){

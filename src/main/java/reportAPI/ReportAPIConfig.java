@@ -57,18 +57,15 @@ public class ReportAPIConfig {
                 .build();
         try {
             Response response = client.newCall(request).execute();
-            System.out.println("response: ======> "+response);
 
             JSONParser parser = new JSONParser();
             JSONObject object = null;
             try {
                 object = (JSONObject) parser.parse(response.body().string());
-                System.out.println("======> : "+object);
                 if(object.get("errors")!= null){
                     throw new TesboException(object.get("message").toString());
                 }
                 buildID = (object.get("buildID")).toString();
-                System.out.println("buildID ====> "+buildID);
                 response.close();
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -162,7 +159,6 @@ public class ReportAPIConfig {
 
         try {
             Response response = client.newCall(request).execute();
-            System.out.println("response: ======> "+response);
             response.close();
 
         } catch (IOException e) {
@@ -215,8 +211,6 @@ public class ReportAPIConfig {
         GetConfiguration config = new GetConfiguration();
         JSONObject userDetails = config.getCloudIntegration();
 
-        System.out.println("========>> testObject: "+testObject);
-
         try {
             String screenShotUrl = cloudinaryScreenshotUpload(testObject.get("screenShot").toString());
             testObject.remove("screenShot");
@@ -237,14 +231,13 @@ public class ReportAPIConfig {
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .build();
             MediaType mediaType = MediaType.parse("application/json");
-            RequestBody body = RequestBody.create(mediaType, "{\n\t\"buildKey\": \""+buildID+"\",\n\t\"tesboTestKey\" : \""+null+"\",\n\t\"testFile\":\""+(testObject.get("testsFileName").toString()).split(".tests")[0]+"\",\n\t\"tags\" : [\""+userDetails.get("tagName")+"\"],\n\t\"userKey\":\""+userDetails.get("userKey")+"\",\n\t\"browser\":\""+testObject.get("browserName")+"\",\n\t\"browserVersion\":\""+testObject.get("browserVersion")+"\",\n\t\"startTime\":\""+testObject.get("startTime")+"\",\n\t\"endTime\":\""+testObject.get("endTime")+"\",\n\t\"osName\":\""+testObject.get("osName")+"\",\n\t\"testName\":\""+testObject.get("testName")+"\",\n\t\"status\":\""+testObject.get("status")+"\",\n\t\"screenShot\":\""+testObject.get("screenShot")+"\",\n\t\"fullStackTrace\" :\""+fullStackTrace+"\",\n\t\"steps\" : "+testObject.get("testStep")+"\n\t\n}");
+            RequestBody body = RequestBody.create(mediaType, "{\n\t\"buildKey\": \""+buildID+"\",\n\t\"tesboTestKey\" : \""+testObject.get("testKey")+"\",\n\t\"testFile\":\""+(testObject.get("testsFileName").toString()).split(".tests")[0]+"\",\n\t\"tags\" : [\""+userDetails.get("tagName")+"\"],\n\t\"userKey\":\""+userDetails.get("userKey")+"\",\n\t\"browser\":\""+testObject.get("browserName")+"\",\n\t\"browserVersion\":\""+testObject.get("browserVersion")+"\",\n\t\"startTime\":\""+testObject.get("startTime")+"\",\n\t\"endTime\":\""+testObject.get("endTime")+"\",\n\t\"osName\":\""+testObject.get("osName")+"\",\n\t\"testName\":\""+testObject.get("testName")+"\",\n\t\"status\":\""+testObject.get("status")+"\",\n\t\"screenShot\":\""+testObject.get("screenShot")+"\",\n\t\"fullStackTrace\" :\""+fullStackTrace+"\",\n\t\"steps\" : "+testObject.get("testStep")+"\n\t\n}");
             Request request = new Request.Builder()
                     .url(URL+"/createTests")
                     .method("POST", body)
                     .addHeader("Content-Type", "application/json")
                     .build();
             Response response = client.newCall(request).execute();
-            System.out.println("response: ======> "+response);
             response.close();
         } catch (Exception e) {
             e.printStackTrace();

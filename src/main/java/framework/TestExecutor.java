@@ -133,11 +133,11 @@ public class TestExecutor implements Runnable {
 
         JSONObject testReportObject = new JSONObject();
         long startTime = System.currentTimeMillis();
-
         /*Adding data into the report*/
         testReportObject.put("startTime", startTime);
         testReportObject.put("browserName", test.get("browser"));
         testReportObject.put("testName", test.get("testName").toString());
+        testReportObject.put("testKey", test.get("testKey").toString());
         testReportObject.put("testsFileName", test.get("testsFileName").toString());
         testReportObject.put("suiteName", test.get("suiteName").toString());
         testReportObject.put("tagName", test.get("tagName").toString());
