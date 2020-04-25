@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>Tesbo</groupId>
-	<artifactId>Tesbo-Pro</artifactId>
-	<version>0.0.10</version>
+	<artifactId>Tesbo-Dev</artifactId>
+	<version>0.0.6</version>
 	<packaging>jar</packaging>
 
 
@@ -36,9 +36,6 @@
 	</distributionManagement>
 
 
-
-
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -62,15 +59,18 @@
 					<injar>${project.build.finalName}.${project.packaging}</injar>
 					<outjar>${project.build.finalName}-proguard.${project.packaging}</outjar>
 					<libs>
-	
+						<!-- <lib>${java.home}/jmods/java.base.jmod(!**.jar;!module-info.class)</lib>
+						<lib>${java.bootstrap.classes}</lib> -->
+
 					</libs>
 					<options>
+						<option>-keep public class DataCollector.BuildReportDataObject{ public void run();}</option>
 						<option>-keep public class Execution.Tesbo{*;}</option>
 						<option>-keep public class reportAPI.Reporter{*;}</option>
 						<option>-keep public class UserConfig.GetUserConfiguration{*;}</option>
 						<option>-keep public class Execution.SetCommandLineArgument{*;}</option>
 						<option>-keep class Selenium.ExtendTesboDriver{ *; }</option>
-						<option>-keep class ExtCode.ExtCode{ *; }</option>
+						<option>-keep class CustomStep.Step{ *; }</option>
 						<option>-keepattributes RuntimeVisibleAnnotations</option>
 						<option>-keep class Exception.*</option>
 						<option>-keep @javax.persistence.* class * { *; }</option>
@@ -314,7 +314,7 @@
 		<dependency>
 			<groupId>io.github.bonigarcia</groupId>
 			<artifactId>webdrivermanager</artifactId>
-			<version>3.3.0</version>
+			<version>3.7.0</version>
 		</dependency>
 
 		<dependency>
@@ -342,6 +342,18 @@
 			<artifactId>rest-assured</artifactId>
 			<version>2.9.0</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.11.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.11.2</version>
 		</dependency>
 
 	</dependencies>
