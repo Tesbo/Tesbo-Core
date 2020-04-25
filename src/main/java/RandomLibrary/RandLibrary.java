@@ -244,6 +244,23 @@ public class RandLibrary {
         String saltStr = salt.toString();
         return saltStr;
     }
+    // Random Mailinator Mail
+    public String RandomEmailWithMailinator() {
+        Faker faker = new Faker(new Locale("en-IND"));
+        String fname = faker.name().firstName();
+        String mailinator = fname+"@mailinator.com";
+        return mailinator;
+
+    }
+
+    // Random Yopmail Mail
+    public String RandomEmailWithYopmail() {
+        Faker faker = new Faker(new Locale("en-IND"));
+        String fname = faker.name().firstName();
+        String yopmail = fname+"@yopmail.com";
+        return yopmail;
+
+    }
 
 
 }

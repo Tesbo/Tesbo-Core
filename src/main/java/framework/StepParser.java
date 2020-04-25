@@ -381,6 +381,10 @@ public class StepParser {
 
         if (step.toLowerCase().contains("cardtype")){textToEnter=randLibrary.cardname(); }
 
+        if (step.toLowerCase().contains("mail.mailinator")) {textToEnter=randLibrary.RandomEmailWithMailinator(); }
+
+        if (step.toLowerCase().contains("mail.yopmail")) {textToEnter=randLibrary.RandomEmailWithYopmail(); }
+
        /* if (step.toLowerCase().contains("number"))
         { cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomNo()); }
 
