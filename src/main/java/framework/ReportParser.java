@@ -1,6 +1,5 @@
 package framework;
 
-import Execution.Tesbo;
 import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 import Exception.TesboException;
 
 public class ReportParser {
-    private static final Logger log = LogManager.getLogger(Tesbo.class);
+    private static final Logger log = LogManager.getLogger(ReportParser.class);
     /**
      * @return
      * @throws Exception
@@ -46,11 +45,9 @@ public class ReportParser {
             FileWriter file = new FileWriter("./htmlReport/Build History/" + fileName + ".json");
 
             file.write(obj.toJSONString());
-            //  file.flush();
 
             file.close();
         } catch (Exception e) {
-            e.printStackTrace();
         }
 
     }
@@ -85,25 +82,29 @@ public class ReportParser {
         int startPoint = 0;
         int endPoint = 0;
         String headerName="";
+        String regex="[{,}]";
+        String testsFileName=test.get("testsFileName").toString();
+        String dataType=test.get("dataType").toString();
+        String dataSetName=test.get("dataSetName").toString();
+
         if (step.contains("{") && step.contains("}")) {
-            startPoint = step.indexOf("{") + 1;
-            endPoint = step.lastIndexOf("}");
+            startPoint = step.indexOf('{') + 1;
+            endPoint = step.lastIndexOf('}');
             headerName = step.substring(startPoint, endPoint);
 
             boolean isDetaSet=false;
-            if(TestExecutor.localVariable.containsKey(headerName) | step.toLowerCase().contains("define")){
-                if(step.toLowerCase().contains("define") | step.toLowerCase().contains("set")){
+            if(TestExecutor.localVariable.containsKey(headerName) || step.toLowerCase().contains("define")){
+                if(step.toLowerCase().contains("define") || step.toLowerCase().contains("set")){
                     step=step.replace("@","");
-                    return step.replaceAll("[{,}]", "'");
+                    return step.replaceAll(regex, "'");
                 }else {
                     textToEnter = TestExecutor.localVariable.get(headerName).toString();
                     step=step.replace("@","");
-                    return step.replace(headerName, textToEnter).replaceAll("[{,}]", "'");
+                    return step.replace(headerName, textToEnter).replaceAll(regex, "'");
                 }
             }
             else {
                 try {
-                    //if (headerName.contains("DataSet.")) {
                     if (headerName.split("\\.").length==3) {
                         isDetaSet = true;
                         try {
@@ -111,24 +112,27 @@ public class ReportParser {
                             if (dataSet.length == 3) {
                                 ArrayList<String> keyName = new ArrayList<>();
                                 keyName.add(dataSet[2]);
-                                String DataSetType= dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(dataSet[1],keyName);
-                                if(DataSetType.equals("list") || DataSetType.equals("excel")){
-                                    log.error("Array list and Excel data set can't be use in inline data set '"+ headerName +"'.");
-                                    throw new TesboException("Array list and Excel data set can't be use in inline data set '"+ headerName +"'.");
+                                String dataSetType= dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(dataSet[1],keyName);
+                                if(dataSetType.equals("list") || dataSetType.equals("excel")){
+                                    String errorMsg="Array list and Excel data set can't be use in inline data set '"+ headerName +"'.";
+                                    log.error(errorMsg);
+                                    throw new TesboException(errorMsg);
                                 }
-                                if ((step.toLowerCase().contains("get ") && (step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign ")))) {
+                                if ((step.toLowerCase().contains("get ") && (step.toLowerCase().contains(" set ") || step.toLowerCase().contains(" put ") || step.toLowerCase().contains(" assign ")))) {
                                     textToEnter = dataSet[2];
                                 } else {
-                                    textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), dataSet[0], dataSet[1], dataSet[2]).get(dataSet[2]).toString();
+                                    textToEnter = dataDrivenParser.getGlobalDataValue(testsFileName, dataSet[0], dataSet[1], dataSet[2]).get(dataSet[2]).toString();
                                 }
                             } else {
-                                log.error("Please enter DataSet in: '" + step + "'");
-                                throw new TesboException("Please enter DataSet in: '" + step + "'");
+                                String errorMsg="Please enter DataSet in: '" + step + "'";
+                                log.error(errorMsg);
+                                throw new TesboException(errorMsg);
                             }
 
                         } catch (StringIndexOutOfBoundsException e) {
-                            log.error("'"+headerName+"' Variable is not define.");
-                            throw new TesboException("'"+headerName+"' Variable is not define.");
+                            String errorMsg="'"+headerName+"' Variable is not define.";
+                            log.error(errorMsg);
+                            throw new TesboException(errorMsg);
                         }
                     }
                 } catch (Exception e) {
@@ -138,9 +142,9 @@ public class ReportParser {
                 if (!isDetaSet) {
                     try {
 
-                        if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
+                        if (dataType.equalsIgnoreCase("excel")) {
                             try {
-                                textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
+                                textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(dataSetName), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.sheetNumber(testsFileName, test.get("testName").toString())));
 
                             } catch (StringIndexOutOfBoundsException e) {
                                 tesboLogger.stepLog(step);
@@ -151,29 +155,32 @@ public class ReportParser {
                             }
                         }
                     } catch (Exception e) {
-                        log.error("'"+headerName+"' Variable is not define or DataSet is not define in test.");
-                        throw new TesboException("'"+headerName+"' Variable is not define or DataSet is not define in test.");
+                        String errorMsg="'"+headerName+"' Variable is not define or DataSet is not define in test.";
+                        log.error(errorMsg);
+                        throw new TesboException(errorMsg);
                     }
                     try {
-                        if (test.get("dataType").toString().equalsIgnoreCase("global")) {
-                            if (step.toLowerCase().contains("get ") && (step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign "))) {
+                        if (dataType.equalsIgnoreCase("global")) {
+                            boolean isStep= (step.toLowerCase().contains(" set ") || step.toLowerCase().contains(" put ") || step.toLowerCase().contains(" assign "));
+                            if (step.toLowerCase().contains("get ") && isStep) {
                                 textToEnter = headerName;
                             } else {
-                                textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), null, test.get("dataSetName").toString(), headerName).get(headerName).toString();
+                                textToEnter = dataDrivenParser.getGlobalDataValue(testsFileName, null, dataSetName, headerName).get(headerName).toString();
                             }
                         }
                     } catch (Exception e) {
-                        log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
-                        throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
+                        String errorMsg="Key name " + headerName + " is not found in " + dataSetName + " data set";
+                        log.error(errorMsg);
+                        throw new TesboException(errorMsg);
                     }
-                    if(test.get("dataType").toString().equalsIgnoreCase("list")){
-                        textToEnter=dataDrivenParser.getDataSetListValue(test.get("dataSetName").toString(), headerName,Integer.parseInt(test.get("row").toString()));
+                    if(dataType.equalsIgnoreCase("list")){
+                        textToEnter=dataDrivenParser.getDataSetListValue(dataSetName, headerName,Integer.parseInt(test.get("row").toString()));
                     }
                 }
             }
         } else {
-            startPoint = step.indexOf("'") + 1;
-            endPoint = step.lastIndexOf("'");
+            startPoint = step.indexOf('\'') + 1;
+            endPoint = step.lastIndexOf('\'');
             try {
 
                 textToEnter = step.substring(startPoint, endPoint);
@@ -184,7 +191,7 @@ public class ReportParser {
             }
         }
         step=step.replace("@","");
-        return step.replace("{"+headerName+"}", "{"+textToEnter+"}").replaceAll("[{,}]","'");
+        return step.replace("{"+headerName+"}", "{"+textToEnter+"}").replaceAll(regex,"'");
     }
 
     /**
@@ -194,12 +201,9 @@ public class ReportParser {
      * @return
      */
     public JSONObject addScreenshotUrlInReport(JSONObject stepReportObject, String step)  {
-        StepParser stepParser=new StepParser();
-        if (step.toString().toLowerCase().contains("capture screenshot")) {
-            if(stepParser.screenShotURL !=null){
-                stepReportObject.remove("steps");
-                stepReportObject.put("steps", "Screenshot: <a href=\"../"+stepParser.screenShotURL+"\" target=\"_blank\">/"+stepParser.screenShotURL+"</a>");
-            }
+        if (step.toLowerCase().contains("capture screenshot") && StepParser.screenShotURL !=null) {
+            stepReportObject.remove("steps");
+            stepReportObject.put("steps", "Screenshot: <a href=\"../"+StepParser.screenShotURL+"\" target=\"_blank\">/"+StepParser.screenShotURL+"</a>");
         }
         return stepReportObject;
     }

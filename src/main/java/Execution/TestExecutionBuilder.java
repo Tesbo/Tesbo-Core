@@ -373,7 +373,7 @@ public class TestExecutionBuilder {
                         }
                         dataType = dataDrivenParser.checkDataTypeIsExcelOrGlobleInDataset(dataSetName.replace(" ", "").split(":")[1], columnNameList);
                         if (dataType.equalsIgnoreCase("excel")) {
-                            dataSize = dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(dataSetName.replace(" ", "").split(":")[1]), columnNameList,Integer.parseInt(dataDrivenParser.SheetNumber(testsFileName.toString(), testName.toString()))).size();
+                            dataSize = dataDrivenParser.getHeaderValuefromExcel(dataDrivenParser.getExcelUrl(dataSetName.replace(" ", "").split(":")[1]), columnNameList,Integer.parseInt(dataDrivenParser.sheetNumber(testsFileName.toString(), testName.toString()))).size();
                         }
                         else if(dataType.equalsIgnoreCase("list")){
                             dataSize=dataDrivenParser.getDataSetListSize(dataSetName.replace(" ", "").split(":")[1]);

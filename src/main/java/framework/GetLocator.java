@@ -21,9 +21,12 @@ import java.util.stream.Stream;
 public class GetLocator {
 
     TesboLogger tesboLogger = new TesboLogger();
-    private static final Logger log = LogManager.getLogger(Tesbo.class);
-    public String getLocatorValue(String testsFileName, String LocatorName) throws Exception {
-        if(LocatorName.equals("")) {
+    String json=".json";
+    String locator="Locator '";
+
+    private static final Logger log = LogManager.getLogger(GetLocator.class);
+    public String getLocatorValue(String testsFileName, String locatorName) throws Exception {
+        if(locatorName.equals("")) {
             log.error("Locator is not define.");
             throw new TesboException("Locator is not define.");
         }
@@ -31,11 +34,10 @@ public class GetLocator {
         JSONArray locatorFileList = new JSONArray();
         boolean flag=false;
         String file=null;
-        Utility parser = new Utility();
         JSONObject main=null;
-        if(LocatorName.contains(".")){
-            String fileName=LocatorName.split("\\.")[0];
-             main = parser.loadJsonFile(config.getLocatorDirectory() + "/" + fileName + ".json");
+        if(locatorName.contains(".")){
+            String fileName=locatorName.split("\\.")[0];
+             main = Utility.loadJsonFile(config.getLocatorDirectory() + "/" + fileName + json);
         }
         else {
             try (Stream<Path> paths = Files.walk(Paths.get(config.getLocatorDirectory()))) {
@@ -43,20 +45,19 @@ public class GetLocator {
                 locatorFileList.addAll(paths
                         .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
                 for(Object locatorPath:locatorFileList) {
-                    String[] locator=locatorPath.toString().split("\\.");
-                    if (locator.length == 2) {
-                        if (!locator[1].equalsIgnoreCase("json")) {
-                            flag=true;
-                            if(file==null)
-                                file="'."+locator[1]+"'";
-                            else
-                                file+=", '."+locator[1]+"'";
-                        }
+                    String[] locators=locatorPath.toString().split("\\.");
+                    if (locators.length == 2 && (!locators[1].equalsIgnoreCase("json"))) {
+                        flag=true;
+                        if(file==null)
+                            file="'."+locators[1]+"'";
+                        else
+                            file+=", '."+locators[1]+"'";
                     }
                 }
                 if(flag){
-                    log.error(file+" file found");
-                    tesboLogger.errorLog(file+" file found");
+                    String errorMsg=file+" file found";
+                    log.error(errorMsg);
+                    tesboLogger.errorLog(errorMsg);
                     throw (new NoSuchFieldException());
                 }
             } catch (Exception e) {
@@ -76,17 +77,17 @@ public class GetLocator {
 
             }
 
-            main = parser.loadJsonFile(config.getLocatorDirectory() + "/" + testsFileName.split(".tests")[0] + ".json");
+            main = Utility.loadJsonFile(config.getLocatorDirectory() + "/" + testsFileName.split(".tests")[0] + json);
 
         }
 
-        String LocatorsName = null;
+        String locatorsName = null;
         try{
-            if(LocatorName.contains(".")) {
-                LocatorsName= main.get(LocatorName.split("\\.")[1]).toString();
+            if(locatorName.contains(".")) {
+                locatorsName= main.get(locatorName.split("\\.")[1]).toString();
             }
             else {
-                LocatorsName= main.get(LocatorName).toString();
+                locatorsName= main.get(locatorName).toString();
             }
 
         }catch (NullPointerException e)
@@ -94,33 +95,36 @@ public class GetLocator {
             File[] files = new File(config.getLocatorDirectory()).listFiles();
             boolean isLocator=false;
             for(File file1:files){
-                if(!(config.getLocatorDirectory() + "/" + testsFileName.split(".tests")[0] + ".json").equalsIgnoreCase(file1.toString())){
-                    main = parser.loadJsonFile(file1.toString());
+                if(!(config.getLocatorDirectory() + "/" + testsFileName.split(".tests")[0] + json).equalsIgnoreCase(file1.toString())){
+                    main = Utility.loadJsonFile(file1.toString());
                     try{
-                        LocatorsName= main.get(LocatorName).toString();
-                        if(isLocator==false){
+                        locatorsName= main.get(locatorName).toString();
+                        if(!isLocator){
                             isLocator=true;
                         }
                         else{
-                            log.error("Multiple Locator is found '"+LocatorName + "'.");
-                            throw new TesboException("Multiple Locator is found '"+LocatorName + "'.");
+                            String errorMsg="Multiple Locator is found '"+locatorName + "'.";
+                            log.error(errorMsg);
+                            throw new TesboException(errorMsg);
                         }
                     }catch (NullPointerException ex) {}
                 }
             }
-            if(LocatorsName==null){
+            if(locatorsName==null){
                 IfStepParser.isIfError=true;
-                log.error("Locator '"+LocatorName + "' is not found.");
-                throw new TesboException("Locator '"+LocatorName + "' is not found.");
+                String errorMsg=locator+locatorName + "' is not found.";
+                log.error(errorMsg);
+                throw new TesboException(errorMsg);
             }
 
         }
-        if(LocatorsName.trim().equals("")){
+        if(locatorsName.trim().equals("")){
             IfStepParser.isIfError=true;
-            log.error("Locator '"+LocatorName + "' is Empty.");
-            throw new TesboException("Locator '"+LocatorName + "' is Empty.");
+            String errorMsg=locator+locatorName + "' is Empty.";
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
-        return LocatorsName;
+        return locatorsName;
     }
 
 }

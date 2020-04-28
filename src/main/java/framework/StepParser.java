@@ -153,7 +153,7 @@ public class StepParser {
 
             pressKey(driver, test, step);
         }
-        else if (step.toLowerCase().contains("enter") && !(step.toLowerCase().contains("press") | step.toLowerCase().contains("switch"))) {
+        else if (step.toLowerCase().contains("enter") && !(step.toLowerCase().contains("press") || step.toLowerCase().contains("switch"))) {
             //Sendkeys
 
             if (step.toLowerCase().contains("random")) {step= randomStepParse(driver,test,step); }
@@ -164,10 +164,10 @@ public class StepParser {
                 cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
             }
         }
-        else if((step.toLowerCase().contains("get ") | step.toLowerCase().contains("define "))){
+        else if((step.toLowerCase().contains("get ") || step.toLowerCase().contains("define "))){
             //Variables
 
-            if(step.toLowerCase().contains("define ") | step.toLowerCase().contains(" set ") | step.toLowerCase().contains(" put ") | step.toLowerCase().contains(" assign ")) {
+            if(step.toLowerCase().contains("define ") || step.toLowerCase().contains(" set ") || step.toLowerCase().contains(" put ") || step.toLowerCase().contains(" assign ")) {
                 /**
                  Step: Get text of @element and set / put / assign in to {DataSet variable}
                  Step: Get size of @element and set / put / assign in to {DataSet variable}
@@ -220,7 +220,7 @@ public class StepParser {
 
             switchFunction(driver, test, step);
         }
-        else if (step.toLowerCase().contains("navigate") | (step.toLowerCase().contains("refresh") && step.toLowerCase().contains("page"))) {
+        else if (step.toLowerCase().contains("navigate") || (step.toLowerCase().contains("refresh") && step.toLowerCase().contains("page"))) {
             //navigate
 
             navigateFunction(driver, step);
@@ -282,7 +282,7 @@ public class StepParser {
             // Not working
             dragAndDropElement(driver,test,step);
         }
-        else if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache") | step.toLowerCase().contains("enter"))) {
+        else if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") || step.toLowerCase().contains("cache") || step.toLowerCase().contains("enter"))) {
             //Clear
 
             /**
@@ -804,7 +804,7 @@ public class StepParser {
                     try {
                         if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
                             try {
-                                textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
+                                textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.sheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
                                 if (textToEnter != null) {
                                     step=step.replace("@","");
                                     log.info(step.replace( "{"+headerName+"}", "{"+textToEnter+"}").replaceAll("[{,}]", "'"));
@@ -908,7 +908,7 @@ public class StepParser {
                 try {
                     if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
                         try {
-                            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
+                            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.sheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
                         } catch (StringIndexOutOfBoundsException e) {
                             log.error("no string to enter. Create a separate exception here");
                             tesboLogger.testFailed("no string to enter. Create a separate exception here");
@@ -1040,10 +1040,9 @@ public class StepParser {
 
                 if (Steps[i].equalsIgnoreCase("'ctrl'")) {
                     flag=true;
-                    if(!(Steps[i + 2].replaceAll("'", "").toLowerCase().equals("")) &  Steps[i + 2].contains("'")
-                            & ( Steps[i + 2].replaceAll("'", "").toLowerCase().equals("a") | Steps[i + 2].replaceAll("'", "").toLowerCase().equals("c") | Steps[i + 2].replaceAll("'", "").toLowerCase().equals("v"))) {
-                        //actions.keyDown(Keys.COMMAND).sendKeys(Steps[i + 2].replaceAll("'", "").toLowerCase()).keyUp(Keys.COMMAND).perform();
-                        cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(Keys.chord(Keys.CONTROL, Steps[i + 2].replaceAll("'", "").toLowerCase()));
+                    if(!(Steps[i + 2].replace("'", "").toLowerCase().equals("")) &&  Steps[i + 2].contains("'")
+                            && ( Steps[i + 2].replace("'", "").toLowerCase().equals("a") || Steps[i + 2].replace("'", "").toLowerCase().equals("c") || Steps[i + 2].replaceAll("'", "").toLowerCase().equals("v"))) {
+                        cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(Keys.chord(Keys.CONTROL, Steps[i + 2].replace("'", "").toLowerCase()));
                     }
                     else {
                         log.error("Please enter valid key");
@@ -1369,7 +1368,7 @@ public class StepParser {
         for(String element:listOfElement){
             String newStep="";
             for (String word : stepWordList) {
-                if (!(word.contains("@") | word.toLowerCase().contains("verify") | word.toLowerCase().contains("and"))) {
+                if (!(word.contains("@") || word.toLowerCase().contains("verify") || word.toLowerCase().contains("and"))) {
                     if(newStep.equals("")){
                         newStep=word.trim();
                     }else {
@@ -1435,7 +1434,7 @@ public class StepParser {
                 newStep=newStep+" "+ regexMatcher.group();
             }
 
-            if(regexMatcher.group().toLowerCase().equals(condition.toLowerCase()) | regexMatcher.end()==endStep) {
+            if(regexMatcher.group().toLowerCase().equals(condition.toLowerCase()) || regexMatcher.end()==endStep) {
                 if(numberOfStep==0){
                     stepList.add(newStep.trim());
                     newStep="";
