@@ -50,38 +50,55 @@ public class TestExecutor implements Runnable {
     static JSONObject localVariable=new JSONObject();
     private static final Logger log = LogManager.getLogger(TestExecutor.class);
 
+    String testsFileName;
+    String testName;
+    String browser;
+    String stepsText="steps";
+    String browserNameText="browserName";
+    String startTimeText="startTime";
+    String stepIndexText="stepIndex";
+    String statusText="status";
+    String passedText="passed";
+    String failedText="failed";
+    String failedTextMsg="Failed";
+    String printText="print";
+    String pauseText="pause";
+    String randomText="random";
+    String stepText="Step: ";
+    String verifyText="Verify: ";
+    String codeText="Code: ";
+    String firefoxText="firefox";
+    String chromeText="chrome";
+
+    String whiteSpace="\\s{2,}";
+
+
     public TestExecutor() { }
     public TestExecutor(JSONObject test) {
         this.test = test;
+        testsFileName=test.get("testsFileName").toString();
+        testName=test.get("testName").toString();
+        browser=test.get("browser").toString();
     }
 
     public static void main(String[] args) throws Exception {
         TestExecutionBuilder builder = new TestExecutionBuilder();
         ReportParser report = new ReportParser();
-        long startTimeTestFile = System.currentTimeMillis();
-
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy|MM|dd HH:mm:ss");
 
         builder.buildExecution();
 
-        long stopTimeTestFile = System.currentTimeMillis();
-        long elapsedTimeTestFile = stopTimeTestFile - startTimeTestFile;
-
         report.generateReportDir();
-        //report.writeJsonFile(builder.reportObj, builder.getbuildReportName());
     }
 
 
     /**
-     * @param browserName
-     * @param browserName
      * @auther :
      * @lastModifiedBy: Ankit Mistry
      */
-    public void beforeTest(String browserName) {
+    public void beforeTest() {
         TestsFileParser testsFileParser = new TestsFileParser();
-        listOfSession = testsFileParser.getSessionListFromTest(test.get("testsFileName").toString(), test.get("testName").toString());
-        if (listOfSession.size() > 0) {
+        listOfSession = testsFileParser.getSessionListFromTest(testsFileName, testName);
+        if (!listOfSession.isEmpty()) {
             isSession = true;
             log.info("Test is run with multiple session");
         } else {
@@ -95,7 +112,8 @@ public class TestExecutor implements Runnable {
         if (sessionName != null) {
             for (Map.Entry session : sessionList.entrySet()) {
                 if (sessionName.equals(session.getKey().toString())) {
-                    log.info("Close browser for "+sessionName+" session");
+                    String logInfoText="Close browser for "+sessionName+" session";
+                    log.info(logInfoText);
                     driver = (WebDriver) session.getValue();
                     driver.quit();
                     sessionList.remove(session.getKey());
@@ -122,88 +140,90 @@ public class TestExecutor implements Runnable {
         StepParser stepParser = new StepParser();
         TestsFileParser testsFileParser = new TestsFileParser();
         ExternalCode externalCode=new ExternalCode();
-        ReportParser reportParser = new ReportParser();
         BuildReportDataObject buildReport = new BuildReportDataObject();
         TesboLogger tesboLogger =new TesboLogger();
         StringWriter sw = new StringWriter();
         localVariable=new JSONObject();
         testResult = "";
         int stepNumber = 0;
-        boolean isTestFail=false;
 
         JSONObject testReportObject = new JSONObject();
         long startTime = System.currentTimeMillis();
 
         /*Adding data into the report*/
-        testReportObject.put("startTime", startTime);
-        testReportObject.put("browserName", test.get("browser"));
-        testReportObject.put("testName", test.get("testName").toString());
-        testReportObject.put("testsFileName", test.get("testsFileName").toString());
+        testReportObject.put(startTimeText, startTime);
+        testReportObject.put(browserNameText, browser);
+        testReportObject.put("testName", testName);
+        testReportObject.put("testsFileName", testsFileName);
         testReportObject.put("suiteName", test.get("suiteName").toString());
         testReportObject.put("tagName", test.get("tagName").toString());
-        tesboLogger.testLog("Test: "+test.get("testName").toString());
-        log.info("Test: "+test.get("testName").toString());
+        String logInfoMsg="Test: "+testName;
+        tesboLogger.testLog(logInfoMsg);
+        log.info(logInfoMsg);
+
 
         int stepIndex=0;
         JSONArray testStepArray = new JSONArray();
         if(stepIndex==0){
             JSONObject stepReportObject = new JSONObject();
-            tesboLogger.testLog("Step: Open "+config.getBaseUrl());
-            log.info("Step: Open "+config.getBaseUrl());
-            stepReportObject.put("stepIndex", ++stepIndex);
-            stepReportObject.put("steps", "Step: Open "+config.getBaseUrl());
-            stepReportObject.put("status", "passed");
+            String logStepInfoMsg="Step: Open "+config.getBaseUrl();
+            tesboLogger.testLog(logStepInfoMsg);
+            log.info(logStepInfoMsg);
+            stepReportObject.put(stepIndexText, ++stepIndex);
+            stepReportObject.put(stepsText, logStepInfoMsg);
+            stepReportObject.put(statusText, passedText);
             testStepArray.add(stepReportObject);
 
         }
         screenShotPath = null;
 
-        log.info("Get severity and priority for test is: "+stepParser.isSeverityOrPriority(test));
+        String msgLogText="Get severity and priority for test is: "+stepParser.isSeverityOrPriority(test);
+        log.info(msgLogText);
         if(stepParser.isSeverityOrPriority(test)){
             JSONArray severityAndPrioritySteps=testsFileParser.getSeverityAndPriority(test);
             for (int i = 0; i < severityAndPrioritySteps.size(); i++) {
                 Object step = severityAndPrioritySteps.get(i);
-                if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority: ")) {
+                if(step.toString().replaceAll(whiteSpace, " ").trim().contains("Priority: ")) {
                     tesboLogger.stepLog(step.toString());
                     log.info(step.toString());
-                    testReportObject.put("Priority", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
+                    testReportObject.put("Priority", step.toString().replaceAll(whiteSpace, " ").trim().split(":")[1].trim());
                 }
-                if(step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity: ")) {
+                if(step.toString().replaceAll(whiteSpace, " ").trim().contains("Severity: ")) {
                     tesboLogger.stepLog(step.toString());
                     log.info(step.toString());
-                    testReportObject.put("Severity", step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1].trim());
+                    testReportObject.put("Severity", step.toString().replaceAll(whiteSpace, " ").trim().split(":")[1].trim());
                 }
             }
         }
 
-        log.info("Before test functionality is exist or not in tests file: "+testsFileParser.isBeforeTestInTestsFile(test.get("testsFileName").toString()));
-        if(testsFileParser.isBeforeTestInTestsFile(test.get("testsFileName").toString())){
-            JSONArray annotationSteps = testsFileParser.getBeforeAndAfterTestStepByTestsFile(test.get("testsFileName").toString(), "BeforeTest");
+        String beforeTextMsg="Before test functionality is exist or not in tests file: "+testsFileParser.isBeforeTestInTestsFile(testsFileName);
+        log.info(beforeTextMsg);
+        if(testsFileParser.isBeforeTestInTestsFile(testsFileName)){
+            JSONArray annotationSteps = testsFileParser.getBeforeAndAfterTestStepByTestsFile(testsFileName, "BeforeTest");
             for (int i = 0; i < annotationSteps.size(); i++) {
 
                 JSONObject stepReportObject = new JSONObject();
                 long startTimeStep = System.currentTimeMillis();
                 Object step = annotationSteps.get(i);
 
-                if(step.toString().toLowerCase().contains("pause") )
+                if(step.toString().toLowerCase().contains(pauseText) )
                 {
-                    if(config.getPauseStepDisplay()){ stepReportObject.put("stepIndex", ++stepIndex); }
+                    if(config.getPauseStepDisplay()){ stepReportObject.put(stepIndexText, ++stepIndex); }
                 }
-                else{ stepReportObject.put("stepIndex", ++stepIndex); }
+                else{ stepReportObject.put(stepIndexText, ++stepIndex); }
 
-                stepReportObject.put("startTime", startTimeStep);
+                stepReportObject.put(startTimeText, startTimeStep);
 
                 stepReportObject=addStepExecutonOfannotation(driver,stepReportObject,step.toString());
 
                 if(stepReportObject.size()!=0) {
-                    if(step.toString().toLowerCase().contains("pause") )
+                    if(step.toString().toLowerCase().contains(pauseText) )
                     {
                         if(config.getPauseStepDisplay()){ testStepArray.add(stepReportObject); }
                     }
                     else { testStepArray.add(stepReportObject); }
                 }
-                if (stepReportObject.get("status").equals("failed")) {
-                    isTestFail=true;
+                if (stepReportObject.get(statusText).equals(failedText)) {
                     break;
                 }
 
@@ -211,11 +231,13 @@ public class TestExecutor implements Runnable {
         }
 
         /*Getting step using testsFileName and Testcase Name*/
-        log.info("Get steps for "+test.get("testName").toString()+" test from "+test.get("testsFileName").toString()+" tests file");
-        JSONArray steps = testsFileParser.getTestStepByTestsFileandTestCaseName(test.get("testsFileName").toString(), test.get("testName").toString());
+        String stepLogInfo="Get steps for "+testName+" test from "+testsFileName+" tests file";
+        log.info(stepLogInfo);
+        JSONArray steps = testsFileParser.getTestStepByTestsFileandTestCaseName(testsFileName, testName);
 
-        int J = 0;
-        log.info(test.get("testName").toString()+" test has "+steps.size()+" steps");
+        int j = 0;
+        String testInfoMsg=testName+" test has "+steps.size()+" steps";
+        log.info(testInfoMsg);
         IfStepParser ifStepParser=new IfStepParser();
 
         for(int i = 0; i < steps.size(); i++) {
@@ -224,7 +246,7 @@ public class TestExecutor implements Runnable {
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
 
-            if((step.toString().toLowerCase().startsWith("else::") | step.toString().toLowerCase().startsWith("else if:: ") | step.toString().toLowerCase().startsWith("end::")))
+            if((step.toString().toLowerCase().startsWith("else::") || step.toString().toLowerCase().startsWith("else if:: ") || step.toString().toLowerCase().startsWith("end::")))
             {
                 try {
                     log.error("If condition is not found for '" + step.toString() + "' step.");
@@ -232,15 +254,15 @@ public class TestExecutor implements Runnable {
                 }catch (Exception e){
                     e.printStackTrace(new PrintWriter(sw));
                     exceptionAsString = sw.toString();
-                    tesboLogger.testFailed("Failed");
+                    tesboLogger.testFailed(failedTextMsg);
                     tesboLogger.testFailed(exceptionAsString);
                     stepPassed = false;
-                    log.error("Failed");
+                    log.error(failedTextMsg);
                     log.error(exceptionAsString);
                 }
             }
 
-            if(step.toString().startsWith("If:: ") & !(step.toString().toLowerCase().startsWith("else if:: "))){
+            if(step.toString().startsWith("If:: ") && !(step.toString().toLowerCase().startsWith("else if:: "))){
                 try{
                     steps= ifStepParser.getStepsOfTestWhoHasIfCondition(driver,test,steps);
                     try {
@@ -253,34 +275,34 @@ public class TestExecutor implements Runnable {
                 } catch (Exception e) {
                     e.printStackTrace(new PrintWriter(sw));
                     exceptionAsString = sw.toString();
-                    tesboLogger.testFailed("Failed");
+                    tesboLogger.testFailed(failedTextMsg);
                     tesboLogger.testFailed(exceptionAsString);
                     stepPassed = false;
-                    log.error("Failed");
+                    log.error(failedTextMsg);
                     log.error(exceptionAsString);
                 }
 
             }
 
-            if (!step.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Collection: ")) {
-                if(step.toString().toLowerCase().contains("pause") )
+            if (!step.toString().replaceAll(whiteSpace, " ").trim().startsWith("Collection: ")) {
+                if(step.toString().toLowerCase().contains(pauseText) )
                 {
-                    if(config.getPauseStepDisplay()){ stepReportObject.put("stepIndex", ++stepIndex); }
+                    if(config.getPauseStepDisplay()){ stepReportObject.put(stepIndexText, ++stepIndex); }
                 }
                 else{
-                    stepReportObject.put("stepIndex", ++stepIndex);
+                    stepReportObject.put(stepIndexText, ++stepIndex);
                 }
 
-                stepReportObject.put("startTime", startTimeStep);
+                stepReportObject.put(startTimeText, startTimeStep);
 
-                if ( !(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("print") && step.toString().contains("random")))
+                if ( !(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains(printText) && step.toString().contains(randomText)))
                 {
-                    if(step.toString().toLowerCase().contains("pause") )
+                    if(step.toString().toLowerCase().contains(pauseText) )
                     {
-                        if(config.getPauseStepDisplay()){stepReportObject.put("steps", step.toString().replace("@", "")); }
+                        if(config.getPauseStepDisplay()){stepReportObject.put(stepsText, step.toString().replace("@", "")); }
                     }
                     else if(step.toString().contains("{") && step.toString().contains("}") && step.toString().contains("Code")){
-                        stepReportObject.put("steps", stepParser.replaceArgsOfCodeStep(test,step.toString()));
+                        stepReportObject.put(stepsText, stepParser.replaceArgsOfCodeStep(test,step.toString()));
                     }
                     else {
                         if(step.toString().contains("@")){
@@ -293,29 +315,28 @@ public class TestExecutor implements Runnable {
                                 }
                                 if(word.contains("@") && !(word.contains("'"))){flag=true;}
                             }
-                            //String removeContent=step.split("@")[1].trim().split(" ")[0].replace("@","");
                             if(removeContent!=null && !flag) {
                                 if (removeContent.contains(".")) {
-                                    stepReportObject.put("steps", step.toString().replace("@" + removeContent, removeContent.split("\\.")[1]));
+                                    stepReportObject.put(stepsText, step.toString().replace("@" + removeContent, removeContent.split("\\.")[1]));
                                 } else {
-                                    stepReportObject.put("steps", step.toString().replace("@" + removeContent, removeContent));
+                                    stepReportObject.put(stepsText, step.toString().replace("@" + removeContent, removeContent));
                                 }
                             }
                             else{
                                 if(flag){
-                                    stepReportObject.put("steps", step.toString().replace("@" + removeContent, removeContent));
+                                    stepReportObject.put(stepsText, step.toString().replace("@" + removeContent, removeContent));
                                 }
                             }
 
                         }
                         else {
-                            stepReportObject.put("steps", step.toString().replace("@", ""));
+                            stepReportObject.put(stepsText, step.toString().replace("@", ""));
                         }
                     }
                 }
-                if (step.toString().toLowerCase().contains("print")) {
+                if (step.toString().toLowerCase().contains(printText)) {
                     try {
-                        stepReportObject.put("steps", stepParser.printStep(driver, step.toString(), test));
+                        stepReportObject.put(stepsText, stepParser.printStep(driver, step.toString(), test));
                     } catch (Exception e) {}
                 }
             }
@@ -326,40 +347,39 @@ public class TestExecutor implements Runnable {
             }
             try {
 
-                if (step.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Step: ")) {
+                if (step.toString().replaceAll(whiteSpace, " ").trim().startsWith(stepText)) {
                     if (step.toString().contains("{") && step.toString().contains("}")) {
-                        stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
+                        stepReportObject.put(stepsText, reportParser.dataSetStepReplaceValue(test, step.toString()));
                     }
-                    String Step = stepParser.parseStep(driver, test, step.toString());
+                    String stepNew = stepParser.parseStep(driver, test, step.toString());
 
-                    if (step.toString().toLowerCase().contains("random")) {
-                        stepReportObject.put("steps", Step.replace("@", ""));
+                    if (step.toString().toLowerCase().contains(randomText)) {
+                        stepReportObject.put(stepsText, stepNew.replace("@", ""));
                     }
                 }
 
-                if (step.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Verify: ")) {
+                if (step.toString().replaceAll(whiteSpace, " ").trim().startsWith(verifyText)) {
                     if (step.toString().contains("{") && step.toString().contains("}")) {
-                        stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step.toString()));
+                        stepReportObject.put(stepsText, reportParser.dataSetStepReplaceValue(test, step.toString()));
                     }
-                    //verifyParser.parseVerify(driver, test, step.toString());
                     sendVerifyStep(step.toString());
 
                 }
             } catch (Exception ae)
             {
                 if (step.toString().contains("{") && step.toString().contains("}")) {
-                    stepReportObject.put("steps", step.toString().replaceAll("[{,}]", "'").replace("@", ""));
+                    stepReportObject.put(stepsText, step.toString().replaceAll("[{,}]", "'").replace("@", ""));
                 }
                 ae.printStackTrace(new PrintWriter(sw));
                 exceptionAsString = sw.toString();
-                tesboLogger.testFailed("Failed");
+                tesboLogger.testFailed(failedTextMsg);
                 tesboLogger.testFailed(exceptionAsString);
                 stepPassed = false;
-                log.error("Failed");
+                log.error(failedTextMsg);
                 log.error(exceptionAsString);
             }
 
-            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Close:"))
+            if (step.toString().replaceAll(whiteSpace, " ").trim().contains("Close:"))
             {
                 String sessionName = step.toString().split(":")[1].trim().replace("]", "");
                 boolean isSession = false;
@@ -374,7 +394,7 @@ public class TestExecutor implements Runnable {
                     log.info(sessionName+" session is closed");
                 }
 
-            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Code: "))
+            } else if (step.toString().replaceAll(whiteSpace, " ").trim().startsWith(codeText))
             {
                 try {
                     if (step.toString().contains("{") && step.toString().contains("}")) {
@@ -388,15 +408,15 @@ public class TestExecutor implements Runnable {
                 } catch (Exception e) {
                     e.printStackTrace(new PrintWriter(sw));
                     exceptionAsString = sw.toString();
-                    tesboLogger.testFailed("Failed");
+                    tesboLogger.testFailed(failedTextMsg);
                     tesboLogger.testFailed(sw.toString());
-                    log.error("Failed");
+                    log.error(failedTextMsg);
                     log.error(sw.toString());
                     stepPassed = false;
 
                 }
 
-            } else if (step.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Collection: ")) {
+            } else if (step.toString().replaceAll(whiteSpace, " ").trim().startsWith("Collection: ")) {
                 log.info("Start "+step.toString());
                 JSONArray groupSteps = new JSONArray();
                 try {
@@ -404,14 +424,14 @@ public class TestExecutor implements Runnable {
                     groupSteps = testsFileParser.getGroupTestStepByTestFileandTestCaseName(stepParser.getCollectionName(step.toString()));
                 } catch (Exception e)
                 {
-                    if (groupSteps.size() == 0)
+                    if (groupSteps.isEmpty())
                         throw e;
-                    J++;
+                    j++;
                     e.printStackTrace(new PrintWriter(sw));
                     exceptionAsString = sw.toString();
-                    tesboLogger.testFailed("Failed");
+                    tesboLogger.testFailed(failedTextMsg);
                     tesboLogger.testFailed(sw.toString());
-                    log.error("Failed");
+                    log.error(failedTextMsg);
                     log.error(sw.toString());
                     stepNumber++;
                     stepPassed = false;
@@ -421,39 +441,38 @@ public class TestExecutor implements Runnable {
 
                     startTimeStep = System.currentTimeMillis();
                     step = steps.get(i);
-                    stepReportObject.put("stepIndex", ++stepIndex);
-                    stepReportObject.put("startTime", startTimeStep);
-                    stepReportObject.put("steps", groupStep.toString().replace("@", ""));
+                    stepReportObject.put(stepIndexText, ++stepIndex);
+                    stepReportObject.put(startTimeText, startTimeStep);
+                    stepReportObject.put(stepsText, groupStep.toString().replace("@", ""));
 
-                    if (groupStep.toString().startsWith("Step: ")) {
+                    if (groupStep.toString().startsWith(stepText)) {
                         try {
                             stepParser.parseStep(driver, test, groupStep.toString());
                         } catch (Exception ae) {
-                            J++;
+                            j++;
                             ae.printStackTrace(new PrintWriter(sw));
                             exceptionAsString = sw.toString();
-                            tesboLogger.testFailed("Failed");
+                            tesboLogger.testFailed(failedTextMsg);
                             tesboLogger.testFailed(sw.toString());
-                            log.error("Failed");
+                            log.error(failedTextMsg);
                             log.error(sw.toString());
                             stepPassed = false;
                         }
-                    } else if (groupStep.toString().startsWith("Verify: ")) {
+                    } else if (groupStep.toString().startsWith(verifyText)) {
                         try {
-                            //verifyParser.parseVerify(driver, test, groupStep.toString());
                             sendVerifyStep(groupStep.toString());
-                        } catch (Exception NE) {
-                            J++;
-                            NE.printStackTrace(new PrintWriter(sw));
+                        } catch (Exception ne) {
+                            j++;
+                            ne.printStackTrace(new PrintWriter(sw));
                             exceptionAsString = sw.toString();
-                            tesboLogger.testFailed("Failed");
+                            tesboLogger.testFailed(failedTextMsg);
                             tesboLogger.testFailed(sw.toString());
-                            log.error("Failed");
+                            log.error(failedTextMsg);
                             log.error(sw.toString());
                             stepPassed = false;
                         }
                     }
-                    else if (groupStep.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Code: ")) {
+                    else if (groupStep.toString().replaceAll(whiteSpace, " ").trim().startsWith(codeText)) {
 
                         try {
                             if (step.toString().contains("{") && step.toString().contains("}")) {
@@ -467,15 +486,15 @@ public class TestExecutor implements Runnable {
                         } catch (Exception e) {
                             e.printStackTrace(new PrintWriter(sw));
                             exceptionAsString = sw.toString();
-                            tesboLogger.testFailed("Failed");
+                            tesboLogger.testFailed(failedTextMsg);
                             tesboLogger.testFailed(sw.toString());
-                            log.error("Failed");
+                            log.error(failedTextMsg);
                             log.error(sw.toString());
                             stepPassed = false;
                         }
                     }
                     reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
-                    stepReportObject = addStepResultInReport(driver, stepReportObject, test, stepPassed);
+                    stepReportObject = addStepResultInReport(driver, stepReportObject, stepPassed);
                     testStepArray.add(stepReportObject);
                     stepReportObject = new JSONObject();
                 }
@@ -485,9 +504,9 @@ public class TestExecutor implements Runnable {
             reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
 
             if (stepReportObject.size() != 0) {
-                stepReportObject = addStepResultInReport(driver, stepReportObject, test, stepPassed);
+                stepReportObject = addStepResultInReport(driver, stepReportObject, stepPassed);
 
-                if(step.toString().toLowerCase().contains("pause") )
+                if(step.toString().toLowerCase().contains(pauseText) )
                 {
                     if(config.getPauseStepDisplay()){ testStepArray.add(stepReportObject); }
                 }
@@ -497,16 +516,16 @@ public class TestExecutor implements Runnable {
                 break;
             }
 
-            if (step.toString().replaceAll("\\s{2,}", " ").trim().startsWith("Code: ") && Reporter.printStepReportObject.size()!=0) {
-                for (int j = 0; j < Reporter.printStepReportObject.size(); j++){
-                    JSONObject ExtStep = new JSONObject();
+            if (step.toString().replaceAll(whiteSpace, " ").trim().startsWith(codeText) && (Reporter.printStepReportObject.size()!=0)) {
+                for (int k = 0; k < Reporter.printStepReportObject.size(); k++){
+                    JSONObject extStep;
                     JSONObject printExtStep = new JSONObject();
-                    ExtStep= (JSONObject) Reporter.printStepReportObject.get(j);
-                    printExtStep.put("stepIndex", ++stepIndex);
-                    printExtStep.put("steps",ExtStep.get("steps"));
-                    printExtStep.put("status","passed");
-                    tesboLogger.stepLog(ExtStep.get("steps").toString());
-                    log.info(ExtStep.get("steps").toString());
+                    extStep= (JSONObject) Reporter.printStepReportObject.get(j);
+                    printExtStep.put(stepIndexText, ++stepIndex);
+                    printExtStep.put(stepsText,extStep.get(stepsText));
+                    printExtStep.put(statusText,passedText);
+                    tesboLogger.stepLog(extStep.get(stepsText).toString());
+                    log.info(extStep.get(stepsText).toString());
                     testStepArray.add(printExtStep);
                 }
 
@@ -515,31 +534,31 @@ public class TestExecutor implements Runnable {
 
         }
 
-        if (testsFileParser.isAfterTestInTestsFile(test.get("testsFileName").toString())) {
-            JSONArray annotationSteps = testsFileParser.getBeforeAndAfterTestStepByTestsFile(test.get("testsFileName").toString(), "AfterTest");
+        if (testsFileParser.isAfterTestInTestsFile(testsFileName)) {
+            JSONArray annotationSteps = testsFileParser.getBeforeAndAfterTestStepByTestsFile(testsFileName, "AfterTest");
             for (int i = 0; i < annotationSteps.size(); i++) {
 
                 JSONObject stepReportObject = new JSONObject();
                 long startTimeStep = System.currentTimeMillis();
                 Object step = annotationSteps.get(i);
 
-                if(step.toString().toLowerCase().contains("pause") )
+                if(step.toString().toLowerCase().contains(pauseText) )
                 {
-                    if(config.getPauseStepDisplay()){ stepReportObject.put("stepIndex", ++stepIndex); }
+                    if(config.getPauseStepDisplay()){ stepReportObject.put(stepIndexText, ++stepIndex); }
                 }
-                else{ stepReportObject.put("stepIndex", ++stepIndex); }
-                stepReportObject.put("startTime", startTimeStep);
+                else{ stepReportObject.put(stepIndexText, ++stepIndex); }
+                stepReportObject.put(startTimeText, startTimeStep);
 
                 stepReportObject = addStepExecutonOfannotation(driver, stepReportObject, step.toString());
 
                 if (stepReportObject.size() != 0) {
-                    if(step.toString().toLowerCase().contains("pause") )
+                    if(step.toString().toLowerCase().contains(pauseText) )
                     {
                         if(config.getPauseStepDisplay()){ testStepArray.add(stepReportObject); }
                     }
                     else { testStepArray.add(stepReportObject); }
                 }
-                if (stepReportObject.get("status").equals("failed")) {
+                if (stepReportObject.get(statusText).equals(failedText)) {
                     break;
                 }
 
@@ -550,33 +569,33 @@ public class TestExecutor implements Runnable {
 
         testReportObject.put("browserVersion", caps.getVersion());
         String osName= caps.getPlatform().toString();
-        if(osName.toLowerCase().equals("xp")) { osName = "windows"; }
+        if(osName.equalsIgnoreCase("xp")) { osName = "windows"; }
         testReportObject.put("osName", osName);
 
         long stopTimeTest = System.currentTimeMillis();
         testReportObject.put("testStep", testStepArray);
 
-        if (testResult.equals("failed")) {
+        if (testResult.equals(failedText)) {
             testReportObject.put("fullStackTrace", exceptionAsString);
             testReportObject.put("screenShot", screenShotPath);
         }
         testReportObject.put("totalTime", stopTimeTest - startTime);
-        testReportObject.put("status", testResult);
+        testReportObject.put(statusText, testResult);
 
-        buildReport.addDataInMainObject(test.get("browser").toString(), test.get("testsFileName").toString(), test.get("testName").toString(), testReportObject);
+        buildReport.addDataInMainObject(browser, testsFileName, testName, testReportObject);
 
         ReportAPIConfig reportAPIConfig = new ReportAPIConfig();
         if(config.getIsCloudIntegration()) {
             boolean isAddOnCloud=false;
-            if(testsFileParser.isRetry(test.get("testsFileName").toString(), test.get("testName").toString()).toLowerCase().equals("null") || testsFileParser.isRetry(test.get("testsFileName").toString(), test.get("testName").toString()).toLowerCase().equals("false")){
-                if(!(Integer.parseInt(config.getRetryAnalyser())>0) || testsFileParser.isRetry(test.get("testsFileName").toString(), test.get("testName").toString()).toLowerCase().equals("false")){
+            if(testsFileParser.isRetry(testsFileName, testName).equalsIgnoreCase("null") || testsFileParser.isRetry(testsFileName, testName).equalsIgnoreCase("false")){
+                if(!(Integer.parseInt(config.getRetryAnalyser())>0) || testsFileParser.isRetry(testsFileName, testName).equalsIgnoreCase("false")){
                     isAddOnCloud=true;
                 }
                 else {
                     if(testExecutionBuilder.failTest == Integer.parseInt(config.getRetryAnalyser())){
                         isAddOnCloud=true;
                     }
-                    else if(testResult.toLowerCase().equals("passed")){
+                    else if(testResult.equalsIgnoreCase(passedText)){
                         isAddOnCloud=true;
                     }
                 }
@@ -585,20 +604,20 @@ public class TestExecutor implements Runnable {
                 if(testExecutionBuilder.failTest == Integer.parseInt(config.getRetryAnalyser())){
                     isAddOnCloud=true;
                 }
-                else if(testResult.toLowerCase().equals("passed")){
+                else if(testResult.equalsIgnoreCase(passedText)){
                     isAddOnCloud=true;
                 }
             }
             if (isAddOnCloud) {reportAPIConfig.organiazeDataForCloudReport(testReportObject);}
         }
-        if(testResult.toLowerCase().equals("failed")){
-            if(testsFileParser.isRetry(test.get("testsFileName").toString(), test.get("testName").toString()).toLowerCase().equals("null")){
+        if(testResult.equalsIgnoreCase(failedText)){
+            if(testsFileParser.isRetry(testsFileName, testName).toLowerCase().equals("null")){
                 testExecutionBuilder.failTestExecutionQueue(test);
             }
         }
         else {
             Object removeTest=null;
-            if(TestExecutionBuilder.failTestQueue.size()>0){
+            if(!TestExecutionBuilder.failTestQueue.isEmpty()){
                 for(Object test:TestExecutionBuilder.failTestQueue){
                     if(test.equals(this.test)){
                         removeTest=test;
@@ -615,29 +634,26 @@ public class TestExecutor implements Runnable {
     @Override
     public void run() {
         try {
-            JSONObject testData = new JSONObject();
-            TestExecutionBuilder testExecutionBuilder=new TestExecutionBuilder();
-            if(testExecutionBuilder.isSingleWindow) {
-                testExecutionBuilder.isSingleWindow=false;
-                beforeTest(test.get("browser").toString());
-                testExecutionBuilder.driver=driver;
+            if(TestExecutionBuilder.isSingleWindow) {
+                TestExecutionBuilder.isSingleWindow=false;
+                beforeTest();
+                TestExecutionBuilder.driver=driver;
             }
-            if(! testExecutionBuilder.isSingleWindow && testExecutionBuilder.singleWindowRun) {
+            if(! TestExecutionBuilder.isSingleWindow && TestExecutionBuilder.singleWindowRun) {
                 driver=testExecutionBuilder.driver;
             }
 
-            if(! testExecutionBuilder.isSingleWindow && !testExecutionBuilder.singleWindowRun) {
-                beforeTest(test.get("browser").toString());
+            if(! TestExecutionBuilder.isSingleWindow && !TestExecutionBuilder.singleWindowRun) {
+                beforeTest();
             }
 
             runTest();
 
-            if(! testExecutionBuilder.isSingleWindow && !testExecutionBuilder.singleWindowRun) {
-                if(!(!config.getBrowserClose() && testResult.toLowerCase().equals("failed"))) {
+            if(! TestExecutionBuilder.isSingleWindow && !TestExecutionBuilder.singleWindowRun) {
+                if(!(!config.getBrowserClose() && testResult.equalsIgnoreCase(failedText))) {
                     afterTest(null);
                 }
             }
-            TestExecutionBuilder builder = new TestExecutionBuilder();
 
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
@@ -655,14 +671,11 @@ public class TestExecutor implements Runnable {
      * @lastModifiedBy:
      */
     public WebDriver initializeBrowser(Object session) {
-        GetConfiguration config = new GetConfiguration();
-        SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
         String seleniumAddress = null;
-        Commands cmd = new Commands();
-        if(config.getIsGrid() || Boolean.valueOf(setCommandLineArgument.IsGrid)) {
+        if(config.getIsGrid() || Boolean.valueOf(SetCommandLineArgument.IsGrid)) {
             seleniumAddress = cmd.getSeleniumAddress();
         }
-        String browserName = test.get("browser").toString();
+        String browserName = browser;
         log.info("Start Browser: "+browserName);
         DesiredCapabilities capability = new DesiredCapabilities();
         JSONObject capabilities = null;
@@ -681,8 +694,8 @@ public class TestExecutor implements Runnable {
                     }
                 }
 
-                if (browserName.equalsIgnoreCase("firefox")) {
-                    capability.setCapability("browserName","firefox");
+                if (browserName.equalsIgnoreCase(firefoxText)) {
+                    capability.setCapability(browserNameText,firefoxText);
                     WebDriverManager.firefoxdriver().setup();
                     System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "true");
                     System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE, "/dev/null");
@@ -690,15 +703,15 @@ public class TestExecutor implements Runnable {
                         driver = new FirefoxDriver();
                     }
                 }
-                if (browserName.equalsIgnoreCase("chrome")) {
-                    capability.setCapability("browserName","chrome");
+                if (browserName.equalsIgnoreCase(chromeText)) {
+                    capability.setCapability(browserNameText,chromeText);
                     WebDriverManager.chromedriver().setup();
                     if (seleniumAddress == null) {
                         driver = new ChromeDriver();
                     }
                 }
                 if (browserName.equalsIgnoreCase("ie")) {
-                    capability.setCapability("browserName","internetExplorer");
+                    capability.setCapability(browserNameText,"internetExplorer");
                     WebDriverManager.iedriver().setup();
                     if (seleniumAddress == null) {
                         driver = new InternetExplorerDriver();
@@ -741,13 +754,13 @@ public class TestExecutor implements Runnable {
      * @lastModifiedBy:
      */
     public void initializeSessionRunTime(Object step) {
-        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("[") && step.toString().replaceAll("\\s{2,}", " ").trim().contains("]")) {
+        if (step.toString().replaceAll(whiteSpace, " ").trim().contains("[") && step.toString().replaceAll(whiteSpace, " ").trim().contains("]")) {
             String testStep = step.toString().replace("[", "").replace("]", "");
             for (Object session : listOfSession) {
-                if (testStep.toString().toLowerCase().equals(session.toString().toLowerCase())) {
+                if (testStep.equalsIgnoreCase(session.toString())) {
                     boolean isInSessionList = false;
                     for (Map.Entry map : sessionList.entrySet()) {
-                        if (map.getKey().toString().toLowerCase().equals(testStep.toString().toLowerCase())) {
+                        if (map.getKey().toString().equalsIgnoreCase(testStep)) {
                             isInSessionList = true;
                             driver = (WebDriver) map.getValue();
                         }
@@ -778,13 +791,12 @@ public class TestExecutor implements Runnable {
      * @return
      */
     public WebDriver initializeBrowserFromBinaryPath(String browserName) {
-        GetConfiguration config = new GetConfiguration();
         if(config.getBinaryPath(browserName+"Path")!=null){
-            if (browserName.equalsIgnoreCase("firefox")) {
+            if (browserName.equalsIgnoreCase(firefoxText)) {
                 System.setProperty("webdriver.gecko.driver", config.getBinaryPath(browserName+"Path"));
                 driver = new FirefoxDriver();
             }
-            if (browserName.equalsIgnoreCase("chrome")) {
+            if (browserName.equalsIgnoreCase(chromeText)) {
                 System.setProperty("webdriver.chrome.driver", config.getBinaryPath(browserName+"Path"));
                 driver = new ChromeDriver();
             }
@@ -807,20 +819,19 @@ public class TestExecutor implements Runnable {
      * @auther : Ankit Mistry
      * @param driver
      * @param stepReportObject
-     * @param test
      * @param stepPassed
      * @return
      */
-    public JSONObject addStepResultInReport(WebDriver driver, JSONObject stepReportObject,JSONObject test, boolean stepPassed)  {
+    public JSONObject addStepResultInReport(WebDriver driver, JSONObject stepReportObject, boolean stepPassed)  {
         if(stepReportObject.size()!=0) {
             if (!stepPassed) {
-                stepReportObject.put("status", "failed");
-                testResult = "failed";
-                screenShotPath = cmd.captureScreenshot(driver, test.get("testsFileName").toString(), test.get("testName").toString());
+                stepReportObject.put(statusText, failedText);
+                testResult = failedText;
+                screenShotPath = cmd.captureScreenshot(driver, testsFileName, testName);
                 log.error("Capture screenshot: "+screenShotPath);
             } else {
-                testResult = "passed";
-                stepReportObject.put("status", "passed");
+                testResult = passedText;
+                stepReportObject.put(statusText, passedText);
             }
             long stepEndTime = System.currentTimeMillis();
             stepReportObject.put("endTime", stepEndTime);
@@ -843,12 +854,12 @@ public class TestExecutor implements Runnable {
 
         boolean stepPassed = true;
 
-        if (!(step.contains("{") && step.contains("}") && step.contains("print") && step.contains("random")))  {
-            stepReportObject.put("steps", step.replace("@",""));
+        if (!(step.contains("{") && step.contains("}") && step.contains(printText) && step.contains(randomText)))  {
+            stepReportObject.put(stepsText, step.replace("@",""));
         }
-        if (step.contains("print"))  {
+        if (step.contains(printText))  {
             try {
-                stepReportObject.put("steps",stepParser.printStep(driver,step,test));
+                stepReportObject.put(stepsText,stepParser.printStep(driver,step,test));
             } catch (Exception e) {
                 e.printStackTrace(new PrintWriter(sw));
                 tesboLogger.testFailed(sw.toString());
@@ -858,57 +869,56 @@ public class TestExecutor implements Runnable {
 
         try {
 
-            if (step.replaceAll("\\s{2,}", " ").trim().startsWith("Step: ")) {
-                if (step.toLowerCase().contains("print")) {
+            if (step.replaceAll(whiteSpace, " ").trim().startsWith(stepText)) {
+                if (step.toLowerCase().contains(printText)) {
                     try {
-                        stepReportObject.put("steps", stepParser.printStep(driver, step, test));
+                        stepReportObject.put(stepsText, stepParser.printStep(driver, step, test));
                     } catch (Exception e) {}
                 }
                 if (step.contains("{") && step.contains("}")) {
 
-                    stepReportObject.put("steps", reportParser.dataSetStepReplaceValue(test, step));
+                    stepReportObject.put(stepsText, reportParser.dataSetStepReplaceValue(test, step));
                 }
-                String Step=stepParser.parseStep(driver, test, step);
+                String newStep=stepParser.parseStep(driver, test, step);
 
-                if (step.toLowerCase().contains("random")) {
-                    stepReportObject.put("steps",Step.replace("@",""));
+                if (step.toLowerCase().contains(randomText)) {
+                    stepReportObject.put(stepsText,newStep.replace("@",""));
                 }
             }
 
-            if (step.replaceAll("\\s{2,}", " ").trim().startsWith("Verify: ")) {
-                //verifyParser.parseVerify(driver, test, step.toString());
+            if (step.replaceAll(whiteSpace, " ").trim().startsWith(verifyText)) {
                 sendVerifyStep(step);
 
             }
         } catch (Exception ae) {
             if (step.contains("{") && step.contains("}")) {
-                stepReportObject.put("steps", step.replaceAll("[{,}]","'").replace("@",""));
+                stepReportObject.put(stepsText, step.replaceAll("[{,}]","'").replace("@",""));
             }
             ae.printStackTrace(new PrintWriter(sw));
             exceptionAsString = sw.toString();
-            tesboLogger.testFailed("Failed");
+            tesboLogger.testFailed(failedTextMsg);
             tesboLogger.testFailed(exceptionAsString);
-            log.error("Failed");
+            log.error(failedTextMsg);
             log.error(exceptionAsString);
             stepPassed = false;
         }
 
-        if (step.replaceAll("\\s{2,}", " ").trim().startsWith("Code: ")) {
+        if (step.replaceAll(whiteSpace, " ").trim().startsWith(codeText)) {
             try {
                 externalCode.runAllAnnotatedWith(Step.class, step,test, driver);
             }catch (Exception e){
                 e.printStackTrace(new PrintWriter(sw));
                 exceptionAsString = sw.toString();
-                tesboLogger.testFailed("Failed");
+                tesboLogger.testFailed(failedTextMsg);
                 tesboLogger.testFailed(sw.toString());
-                log.error("Failed");
+                log.error(failedTextMsg);
                 log.error(sw.toString());
                 stepPassed = false;
             }
         }
         reportParser.addScreenshotUrlInReport(stepReportObject, step);
         if(stepReportObject.size()!=0) {
-            stepReportObject = addStepResultInReport(driver, stepReportObject, test, stepPassed);
+            stepReportObject = addStepResultInReport(driver, stepReportObject, stepPassed);
         }
         return stepReportObject;
     }
@@ -922,30 +932,31 @@ public class TestExecutor implements Runnable {
         VerifyParser verifyParser = new VerifyParser();
         StepParser stepParser = new StepParser();
         int count = (int) step.chars().filter(ch -> ch == '@').count();
-        String verifyStep = stepParser.RemovedVerificationTextFromSteps(step);
+        String verifyStep = stepParser.removedVerificationTextFromSteps(step);
         if (count >= 2) {
-            if (!(verifyStep.toLowerCase().contains(" and ") | verifyStep.toLowerCase().contains(" or "))) {
+            if (!(verifyStep.toLowerCase().contains(" and ") || verifyStep.toLowerCase().contains(" or "))) {
                 stepParser.listOfSteps(step, count);
                 for (String newStep : stepParser.listOfSteps(step, count)) {
                     verifyParser.parseVerify(driver, test, newStep);
                 }
             }else if (verifyStep.toLowerCase().contains(" and "))
             {
-                for(String newStep:stepParser.ListOfStepWhoHasSameVerifier(step,"and")){
+                for(String newStep:stepParser.listOfStepWhoHasSameVerifier(step,"and")){
                     verifyParser.parseVerify(driver, test,newStep);
                 }
             }
             else if (verifyStep.toLowerCase().contains(" or "))
             {
                 int failCount = 0;
-                for (String orConditionStep : stepParser.ListOfStepWhoHasSameVerifier(step,"or")) {
+                for (String orConditionStep : stepParser.listOfStepWhoHasSameVerifier(step,"or")) {
                     try {
                         verifyParser.parseVerify(driver, test, orConditionStep);
                     } catch (Exception e) {
                         failCount++;
-                        if (failCount == stepParser.ListOfStepWhoHasSameVerifier(step,"or").size()) {
-                            log.error("'" + step + "' step is not verified");
-                            throw new AssertException("'" + step + "' step is not verified");
+                        if (failCount == stepParser.listOfStepWhoHasSameVerifier(step,"or").size()) {
+                            String erroeMsg="'" + step + "' step is not verified";
+                            log.error(erroeMsg);
+                            throw new AssertException(erroeMsg);
                         }
                     }
                 }

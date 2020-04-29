@@ -81,14 +81,20 @@ public class IfStepParser {
                 try {
                     number = Integer.parseInt(textOfStep);
                 } catch (Exception e) {
-                    isIfError = true;
+
+
+                    synchronized (this){
+                        isIfError = true;
+                    }
                     throw new TesboException("Please enter numeric value for verification in if condition");
                 }
 
                 try {
                     elementNumber = Integer.parseInt(cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step, 1)) + "_IF").getText());
                 } catch (Exception e) {
-                    isIfError = true;
+                    synchronized (this){
+                        isIfError = true;
+                    }
                     throw new TesboException("Given element has not numeric value: " + parseElementName(step, 1));
                 }
 
@@ -220,7 +226,7 @@ public class IfStepParser {
         StepParser stepParser = new StepParser();
         boolean flag = false;
         if (step.contains("'")) {
-            step = stepParser.RemovedVerificationTextFromSteps(step);
+            step = stepParser.removedVerificationTextFromSteps(step);
         }
         if (step.toLowerCase().contains(" and ")) {
             conditionType = "and";

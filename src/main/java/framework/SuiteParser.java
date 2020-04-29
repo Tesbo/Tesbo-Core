@@ -71,15 +71,16 @@ public class SuiteParser {
      */
     public JSONArray getTestNameFromSuiteFile(StringBuffer testsFile) {
 
-        String allLines[] = testsFile.toString().split("[\\r\\n]+");
+        String[] allLines = testsFile.toString().split("[\\r\\n]+");
         JSONArray testName = new JSONArray();
         for (int i = 0; i < allLines.length; i++) {
             if(!allLines[i].equals("")) {
                 String comment = String.valueOf(allLines[i].charAt(0)) + String.valueOf(allLines[i].charAt(1));
                 if ((allLines[i].toLowerCase().startsWith("test")) && (!comment.equals("//"))) {
                     if (!allLines[i].trim().startsWith("Test: ")) {
-                        log.error("Please write valid keyword or step for this \"" + allLines[i] + "\" on suite file");
-                        throw new TesboException("Please write valid keyword or step for \"" + allLines[i] + "\" on suite file");
+                        String errorMsg="Please write valid keyword or step for this \"" + allLines[i] + "\" on suite file";
+                        log.error(errorMsg);
+                        throw new TesboException(errorMsg);
                     }
                     testName.add(allLines[i].trim());
                 } else {
@@ -101,8 +102,9 @@ public class SuiteParser {
         for(int i=0;i<testNameList.size();i++){
             for(int j=i+1;j<testNameList.size();j++){
                 if(testNameList.get(i).equals(testNameList.get(j))){
-                    log.error("'"+testNameList.get(i)+"' test is define multiple time on same suite file");
-                    throw new TesboException("'"+testNameList.get(i)+"' test is define multiple time on same suite file");
+                    String errorMsg="'"+testNameList.get(i)+"' test is define multiple time on same suite file";
+                    log.error(errorMsg);
+                    throw new TesboException(errorMsg);
                 }
             }
         }
@@ -126,41 +128,13 @@ public class SuiteParser {
         GetConfiguration getConfiguration=new GetConfiguration();
         JSONArray testsFileNameList= testsFileParser.getTestFiles(getConfiguration.getTestsDirectory());
 
-        /*for(Object testsFileName:testsFileNameList){
-            File name = new File(testsFileName.toString());
-            StringBuffer testsFileDetails = testsFileParser.readTestsFile(name.getName());
-            JSONArray testName= testsFileParser.getTestNameByTestsFile(testsFileDetails);
-            JSONArray TestList=new JSONArray();
-            for(Object suiteTestName:suiteTestNameList){
-                for(Object test:testName) {
-                    if(test.toString().equals(suiteTestName.toString().split(":")[1].trim())) {
-                        boolean isExistInTampSuiteTestNameList=false;
-                        for(Object tampSuiteTest:tampSuiteTestNameList){
-                            if(suiteTestName.equals(tampSuiteTest)){
-                                isExistInTampSuiteTestNameList=true;
-                                break;
-                            }
-                        }
-                        if(!isExistInTampSuiteTestNameList){
-                            log.error("'"+suiteTestName+"' test is found multiple time on tests file");
-                            throw new TesboException("'"+suiteTestName+"' test is found multiple time on tests file");
-                        }
-                        TestList.add(test.toString().trim());
-                        tampSuiteTestNameList.remove(suiteTestName);
-                    }
-                }
-            }
-            if(!TestList.isEmpty()) {
-                testNameWithTestsFileName.put(name.getName(), TestList);
-            }
-        }*/
 
 
         //=======================================================================
-        //tampSuiteTestNameList.addAll(suiteTestNameList);
+
         int i=1;
         for(Object suiteTestName:suiteTestNameList){
-            JSONArray TestList=new JSONArray();
+            JSONArray testList=new JSONArray();
             String testFileName = "";
             for(Object testsFileName:testsFileNameList){
                 File name = new File(testsFileName.toString());
@@ -176,32 +150,34 @@ public class SuiteParser {
                             }
                         }
                         if(!isExistInTampSuiteTestNameList){
-                            log.error("'"+suiteTestName+"' test is found multiple time on tests file");
-                            throw new TesboException("'"+suiteTestName+"' test is found multiple time on tests file");
+                            String errorMsg="'"+suiteTestName+"' test is found multiple time on tests file";
+                            log.error(errorMsg);
+                            throw new TesboException(errorMsg);
                         }
                         testFileName=name.getName()+"_"+i++;
-                        TestList.add(test.toString().trim());
+                        testList.add(test.toString().trim());
                         tampSuiteTestNameList.remove(suiteTestName);
                     }
 
                 }
 
             }
-            if(!TestList.isEmpty()) {
-                testNameWithTestsFileName.put(testFileName, TestList);
+            if(!testList.isEmpty()) {
+                testNameWithTestsFileName.put(testFileName, testList);
             }
         }
 
         //=======================================================================
 
-        if(tampSuiteTestNameList.size()!=0){
+        if(!tampSuiteTestNameList.isEmpty()){
             String testList="";
             for(Object test:tampSuiteTestNameList){
                 if(testList.equals("")){ testList=test.toString();
                 }else { testList=testList+", "+test.toString(); }
             }
-            log.error("'"+testList+"' test is not found in any tests file");
-            throw new TesboException("'"+testList+"' test is not found in any tests file");
+            String errorMsg="'"+testList+"' test is not found in any tests file";
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
         return testNameWithTestsFileName;
     }
@@ -223,31 +199,31 @@ public class SuiteParser {
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
             for(Object testsFilePath:suiteFileList) {
                 String[] testsFile=testsFilePath.toString().split("\\.");
-                if (testsFile.length == 2) {
-                    if (!testsFile[1].equalsIgnoreCase("suite")) {
+                if (testsFile.length == 2 && (!testsFile[1].equalsIgnoreCase("suite"))) {
                         flag=true;
                         if(file==null)
                             file="'."+testsFile[1]+"'";
                         else
                             file+=", '."+testsFile[1]+"'";
-                    }
                 }
             }
-            if(flag==true){
-                log.error(file+" file found in suite directory");
-                tesboLogger.errorLog(file+" file not found in suite directory");
+            if(flag){
+                String errorMsg=file+" file found in suite directory";
+                log.error(errorMsg);
+                tesboLogger.errorLog(errorMsg);
                 throw (new NoSuchFileException(""));
             }
         } catch (Exception e) {
-            if(flag==true){
+            if(flag){
                 log.error("Message : Please create only '.suite' file in tests directory.");
                 tesboLogger.testFailed("Message : Please create only '.suite' file in tests directory.");
             }
             else {
+                String errorMsg="'" + directory + "' no files found on your location.";
                 log.error("Message : Please Enter valid directory path.");
-                log.error("'" + directory + "' no files found on your location.");
+                log.error(errorMsg);
                 tesboLogger.testFailed("Message : Please Enter valid directory path.");
-                tesboLogger.testFailed("'" + directory + "' no files found on your location.");
+                tesboLogger.testFailed(errorMsg);
                 StringWriter sw = new StringWriter();
                 e.printStackTrace(new PrintWriter(sw));
                 tesboLogger.testFailed(sw.toString());
