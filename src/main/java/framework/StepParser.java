@@ -771,8 +771,8 @@ public class StepParser {
     public String parseTextToEnter(JSONObject test, String step) {
         String textToEnter = "";
         String replaceAllString="[{,}]";
-        String dataType=test.get("dataType").toString();
-        String dataSetName=test.get("dataSetName").toString();
+        Object dataType=test.get("dataType");
+        Object dataSetName=test.get("dataSetName");
 
         int startPoint = 0;
         int endPoint = 0;
@@ -823,9 +823,9 @@ public class StepParser {
 
                 if (!isDetaSet) {
                     try {
-                        if (dataType.equalsIgnoreCase("excel")) {
+                        if (dataType.toString().equalsIgnoreCase("excel")) {
                             try {
-                                textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(dataSetName), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.sheetNumber(testsFileName, test.get(testNameText).toString())));
+                                textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(dataSetName.toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.sheetNumber(testsFileName, test.get(testNameText).toString())));
                                 if (textToEnter != null) {
                                     step=step.replace("@","");
                                     String logStepMsg=step.replace( "{"+headerName+"}", "{"+textToEnter+"}").replaceAll(replaceAllString, "'");
@@ -847,8 +847,8 @@ public class StepParser {
                         log.error(sw.toString());
                     }
                     try {
-                        if (dataType.equalsIgnoreCase("global")) {
-                            textToEnter = dataDrivenParser.getGlobalDataValue(testsFileName,null, dataSetName, headerName).get(headerName).toString();
+                        if (dataType.toString().equalsIgnoreCase("global")) {
+                            textToEnter = dataDrivenParser.getGlobalDataValue(testsFileName,null, dataSetName.toString(), headerName).get(headerName).toString();
                             step=step.replace("@","");
                             String logStepMsg=step.replace(headerName, textToEnter).replaceAll(replaceAllString, "'");
                             tesboLogger.stepLog(logStepMsg);
@@ -860,8 +860,8 @@ public class StepParser {
                         throw new TesboException(errorMsg);
                     }
 
-                    if(dataType.equalsIgnoreCase("list")){
-                        textToEnter=dataDrivenParser.getDataSetListValue(dataSetName, headerName,Integer.parseInt(test.get("row").toString()));
+                    if(dataType.toString().equalsIgnoreCase("list")){
+                        textToEnter=dataDrivenParser.getDataSetListValue(dataSetName.toString(), headerName,Integer.parseInt(test.get("row").toString()));
                         step=step.replace("@","");
                         String stepLogText=step.replace(headerName, textToEnter).replaceAll(replaceAllString, "'");
                         tesboLogger.stepLog(stepLogText);

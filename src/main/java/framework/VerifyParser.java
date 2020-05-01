@@ -11,11 +11,20 @@ import Exception.*;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class VerifyParser {
 
-    private static final Logger log = LogManager.getLogger(Validation.class);
+    private static final Logger log = LogManager.getLogger(VerifyParser.class);
+
+    String toContainText="\"> to contain: <\"";
+    String butWasText="\"> but was:<\"";
+    String attributeOrCssText="attributeOrCSS";
+    String toBeEqualText="\"> to be equal to: <\"";
+    String notToBeEqualText="\"> not to be equal to:<\"";
+    String testsFileNameText="testsFileName";
+    String comparisonFailureText="ComparisonFailure: expected:<\"";
+    String expectingText="Expecting:<\"";
+    String ignoreCaseText="ignore case";
+
     public void parseVerify(WebDriver driver, JSONObject test, String verify) throws Exception {
         Commands cmd = new Commands();
         GetLocator locator = new GetLocator();
@@ -23,15 +32,16 @@ public class VerifyParser {
         TesboLogger tesboLogger = new TesboLogger();
         boolean flag=false;
         if(!(verify.contains("{") && verify.contains("}"))) {
-            tesboLogger.stepLog(verify.replace("@", ""));
-            log.info(verify.replace("@", ""));
+            String verifyStepLog=verify.replace("@", "");
+            tesboLogger.stepLog(verifyStepLog);
+            log.info(verifyStepLog);
         }
         WebElement element=null;
         String textOfStep=null;
         if(verify.contains("@")) {
-            element = cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(verify)));
+            element = cmd.findElement(driver, locator.getLocatorValue(test.get(testsFileNameText).toString(), stepParser.parseElementName(verify)));
         }
-        if(verify.contains("'") | (verify.contains("{") && verify.contains("}"))) {
+        if(verify.contains("'") || (verify.contains("{") && verify.contains("}"))) {
              textOfStep = stepParser.parseTextToEnter(test, verify);
         }
         //Is list size
@@ -41,9 +51,10 @@ public class VerifyParser {
                  * Verify: @element has size of '10'
                  */
 
-                if(cmd.findElements(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(verify))).size()!= Integer.parseInt(stepParser.parseTextToEnter(test,verify))) {
-                    log.error("Element list size not equal to '"+stepParser.parseTextToEnter(test,verify)+"'");
-                    throw new AssertException("Element list size not equal to '"+stepParser.parseTextToEnter(test,verify)+"'");
+                if(cmd.findElements(driver, locator.getLocatorValue(test.get(testsFileNameText).toString(), stepParser.parseElementName(verify))).size()!= Integer.parseInt(stepParser.parseTextToEnter(test,verify))) {
+                    String errorMsg="Element list size not equal to '"+stepParser.parseTextToEnter(test,verify)+"'";
+                    log.error(errorMsg);
+                    throw new AssertException(errorMsg);
                 }
                 flag=true;
             } catch (Exception e) {
@@ -60,10 +71,10 @@ public class VerifyParser {
                     /*
                      * Verify: @element text is not equal 'Text'
                      */
-                    //assertThat(element.getText()).isNotEqualTo(textOfStep);
                     if(element.getText().equals(textOfStep)) {
-                        log.error("Expecting:<\""+element.getText()+"\"> not to be equal to:<\""+textOfStep+"\">");
-                        throw new AssertException("Expecting:<\""+element.getText()+"\"> not to be equal to:<\""+textOfStep+"\">");
+                        String errorMsg=expectingText+element.getText()+notToBeEqualText+textOfStep+"\">";
+                        log.error(errorMsg);
+                        throw new AssertException(errorMsg);
                     }
                     flag=true;
                 }
@@ -71,11 +82,11 @@ public class VerifyParser {
                     /*
                      * Verify: @element text is equal ignore case 'Text'
                      */
-                    if (verify.toLowerCase().contains("ignore case")) {
-                        //assertThat(element.getText()).isEqualToIgnoringCase(textOfStep);
+                    if (verify.toLowerCase().contains(ignoreCaseText)) {
                         if(!element.getText().equalsIgnoreCase(textOfStep)) {
-                            log.error("Expecting:<\""+element.getText()+"\"> to be equal to: <\""+textOfStep+"\"> ignoring case considerations");
-                            throw new AssertException("Expecting:<\""+element.getText()+"\"> to be equal to: <\""+textOfStep+"\"> ignoring case considerations");
+                            String errorMsg=expectingText+element.getText()+toBeEqualText+textOfStep+"\"> ignoring case considerations";
+                            log.error(errorMsg);
+                            throw new AssertException(errorMsg);
                         }
                         flag=true;
                     }
@@ -83,10 +94,10 @@ public class VerifyParser {
                      * Verify: @element text is equal 'Text'
                      */
                     else {
-                        //assertThat(element.getText()).isEqualTo(textOfStep);
                         if(!element.getText().equals(textOfStep)) {
-                            log.error("ComparisonFailure: expected:<\""+element.getText()+"\"> but was:<\""+textOfStep+"\">");
-                            throw new AssertException("ComparisonFailure: expected:<\""+element.getText()+"\"> but was:<\""+textOfStep+"\">");
+                            String errorMsg=comparisonFailureText+element.getText()+butWasText+textOfStep+"\">";
+                            log.error(errorMsg);
+                            throw new AssertException(errorMsg);
                         }
                         flag=true;
                     }
@@ -96,11 +107,11 @@ public class VerifyParser {
                     /*
                      * Verify: @element text is contains ignore case 'Text'.
                      */
-                    if (verify.toLowerCase().contains("ignore case")) {
-                        //assertThat(element.getText()).containsIgnoringCase(textOfStep);
+                    if (verify.toLowerCase().contains(ignoreCaseText)) {
                         if(!element.getText().toLowerCase().contains(textOfStep.toLowerCase())) {
-                            log.error("Expecting:<\""+element.getText()+"\"> to contain: <\""+textOfStep+"\"> (ignoring case)");
-                            throw new AssertException("Expecting:<\""+element.getText()+"\"> to contain: <\""+textOfStep+"\"> (ignoring case)");
+                            String errorMsg=expectingText+element.getText()+toContainText+textOfStep+"\"> (ignoring case)";
+                            log.error(errorMsg);
+                            throw new AssertException(errorMsg);
                         }
                         flag=true;
                     }
@@ -108,10 +119,10 @@ public class VerifyParser {
                      * Verify: @element text is contains 'Text'.
                      */
                     else {
-                        //assertThat(element.getText()).contains(textOfStep);
                         if(!element.getText().contains(textOfStep)) {
-                            log.error("Expecting:<\""+element.getText()+"\"> to contain: <\""+textOfStep+"\">");
-                            throw new AssertException("Expecting:<\""+element.getText()+"\"> to contain: <\""+textOfStep+"\">");
+                            String errorMsg=expectingText+element.getText()+toContainText+textOfStep+"\">";
+                            log.error(errorMsg);
+                            throw new AssertException(errorMsg);
                         }
 
                         flag=true;
@@ -122,10 +133,10 @@ public class VerifyParser {
                      * Verify: @element text is start with 'Text'.
                      */
 
-                    //assertThat(element.getText()).startsWith(textOfStep);
                     if(!element.getText().startsWith(textOfStep)){
-                        log.error("Expecting:<\""+element.getText()+"\"> to start with: <\""+textOfStep+"\">");
-                        throw new AssertException("Expecting:<\""+element.getText()+"\"> to start with: <\""+textOfStep+"\">");
+                        String errorMsg=expectingText+element.getText()+"\"> to start with: <\""+textOfStep+"\">";
+                        log.error(errorMsg);
+                        throw new AssertException(errorMsg);
                     }
                     flag=true;
                 }
@@ -133,11 +144,11 @@ public class VerifyParser {
                     /*
                      * Verify: @element text is end with 'Text'.
                      */
-                    //assertThat(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(verify))).getText()).endsWith(stepParser.parseTextToEnter(test,verify));
 
                     if(!element.getText().endsWith(textOfStep)){
-                        log.error("Expecting:<\""+element.getText()+"\"> to end with: <\""+textOfStep+"\">");
-                        throw new AssertException("Expecting:<\""+element.getText()+"\"> to end with: <\""+textOfStep+"\">");
+                        String errorMsg=expectingText+element.getText()+"\"> to end with: <\""+textOfStep+"\">";
+                        log.error(errorMsg);
+                        throw new AssertException(errorMsg);
                     }
                     flag=true;
 
@@ -146,10 +157,10 @@ public class VerifyParser {
                     /*
                      * Verify: @element text should be number.
                      */
-                    //assertThat(isNumeric(element.getText())).isTrue();
                     if(!isNumeric(element.getText())) {
-                        log.error("ComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
-                        throw new AssertException("ComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
+                        String errorMsg="ComparisonFailure: expected:<[tru]e> but was:<[fals]e>";
+                        log.error(errorMsg);
+                        throw new AssertException(errorMsg);
                     }
                     flag=true;
 
@@ -159,8 +170,9 @@ public class VerifyParser {
                      * Verify: @element text should be Alphanumeric.
                      */
                     if(!element.getText().matches("[a-zA-Z0-9 ]+")) {
-                        log.error("AlphanumericComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
-                        throw new AssertException("AlphanumericComparisonFailure: expected:<[tru]e> but was:<[fals]e>");
+                        String errorMsg="AlphanumericComparisonFailure: expected:<[tru]e> but was:<[fals]e>";
+                        log.error(errorMsg);
+                        throw new AssertException(errorMsg);
                     }
                     flag=true;
 
@@ -178,7 +190,6 @@ public class VerifyParser {
                  * Verify: @element should displayed
                  * Verify: @element is present
                  */
-                //assertThat(element.isDisplayed()).isEqualTo(true);
                 if(!element.isDisplayed()) {
                     log.error("Element is not displayed");
                     throw new AssertException("Element is not displayed");
@@ -215,11 +226,11 @@ public class VerifyParser {
                     /*
                      * Verify : Page Title is equal to ignore case 'Google search'
                      */
-                    if (verify.toLowerCase().contains("ignore case")) {
-                        //assertThat(driver.getTitle()).isEqualToIgnoringCase(textOfStep);
+                    if (verify.toLowerCase().contains(ignoreCaseText)) {
                         if(!driver.getTitle().equalsIgnoreCase(textOfStep)) {
-                            log.error("ComparisonFailure: expected:<\""+driver.getTitle()+"\"> but was:<\""+textOfStep+"\">");
-                            throw new AssertException("ComparisonFailure: expected:<\""+driver.getTitle()+"\"> but was:<\""+textOfStep+"\">");
+                            String errorMsg=comparisonFailureText+driver.getTitle()+butWasText+textOfStep+"\">";
+                            log.error(errorMsg);
+                            throw new AssertException(errorMsg);
                         }
                         flag=true;
                     }
@@ -227,10 +238,10 @@ public class VerifyParser {
                      * Verify : Page Title is equal to 'Google search'
                      */
                     else {
-                        //assertThat(driver.getTitle()).isEqualTo(textOfStep);
                         if(!driver.getTitle().equals(textOfStep)) {
-                            log.error("ComparisonFailure: expected:<\""+driver.getTitle()+"\"> but was:<\""+textOfStep+"\">");
-                            throw new AssertException("ComparisonFailure: expected:<\""+driver.getTitle()+"\"> but was:<\""+textOfStep+"\">");
+                            String errorMsg=comparisonFailureText+driver.getTitle()+butWasText+textOfStep+"\">";
+                            log.error(errorMsg);
+                            throw new AssertException(errorMsg);
                         }
                         flag=true;
                     }
@@ -247,8 +258,9 @@ public class VerifyParser {
                  * Step: Get cookies and check 'any cookie name' is available
                  */
                 if (!cmd.isCookieAvailable(driver, stepParser.parseTextToEnter(test, verify))) {
-                    log.error("'" + stepParser.parseTextToEnter(test, verify) + "' cookie is not found");
-                    throw new AssertException("'" + stepParser.parseTextToEnter(test, verify) + "' cookie is not found");
+                    String errorMsg="'" + stepParser.parseTextToEnter(test, verify) + "' cookie is not found";
+                    log.error(errorMsg);
+                    throw new AssertException(errorMsg);
                 }
                 flag = true;
             }
@@ -261,8 +273,9 @@ public class VerifyParser {
                  * Verify: current url is equal to 'https://tesbo10.atlassian.net'
                  */
                 if (!cmd.getCurrentUrl(driver,stepParser.parseTextToEnter(test, verify))) {
-                    log.error("current url is not match with '" + stepParser.parseTextToEnter(test, verify) + "'");
-                    throw new AssertException("current url is not match with '" + stepParser.parseTextToEnter(test, verify) + "'");
+                    String errorMsg="current url is not match with '" + stepParser.parseTextToEnter(test, verify) + "'";
+                    log.error(errorMsg);
+                    throw new AssertException(errorMsg);
                 }
                 flag = true;
             }
@@ -272,8 +285,9 @@ public class VerifyParser {
                  * Verify: current url is contains 'https://tesbo10.atlassian.net'
                  */
                 if (!cmd.verifyCurrentUrlContains(driver,stepParser.parseTextToEnter(test, verify))) {
-                    log.error("current url contains is not match with '" + stepParser.parseTextToEnter(test, verify) + "'");
-                    throw new AssertException("current url contains is not match with '" + stepParser.parseTextToEnter(test, verify) + "'");
+                    String errorMsg="current url contains is not match with '" + stepParser.parseTextToEnter(test, verify) + "'";
+                    log.error(errorMsg);
+                    throw new AssertException(errorMsg);
                 }
                 flag = true;
             }
@@ -281,25 +295,26 @@ public class VerifyParser {
 
         // verify attribute value
         if(verify.toLowerCase().contains(" get attribute ")){
-            element=cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(verify)));
+            element=cmd.findElement(driver, locator.getLocatorValue(test.get(testsFileNameText).toString(), stepParser.parseElementName(verify)));
 
-            if(element.getAttribute(getAttributeAndCSS_NameAndVerifyText(verify,"attributeOrCSS"))==null){
-                log.info("'"+getAttributeAndCSS_NameAndVerifyText(verify,"attributeOrCSS")+"' attribute is not fount.");
-                throw new TesboException("'"+getAttributeAndCSS_NameAndVerifyText(verify,"attributeOrCSS")+"' attribute is not fount.");
+            if(element.getAttribute(getAttributeAndCSSNameAndVerifyText(verify,attributeOrCssText))==null){
+                String errorMsg="'"+getAttributeAndCSSNameAndVerifyText(verify,attributeOrCssText)+"' attribute is not fount.";
+                log.info(errorMsg);
+                throw new TesboException(errorMsg);
             }
-            String attributeValue=element.getAttribute(getAttributeAndCSS_NameAndVerifyText(verify,"attributeOrCSS"));
+            String attributeValue=element.getAttribute(getAttributeAndCSSNameAndVerifyText(verify,attributeOrCssText));
             String verifyText=null;
             if(verify.contains("{") && verify.contains("}")){
                 String[] stepWord=verify.split(" ");
                 for(String word:stepWord){
-                    if(word.toLowerCase().equals("attribute")){
+                    if(word.equalsIgnoreCase("attribute")){
                         verifyText=stepParser.parseTextToEnter(test, verify.replace(" "+word+" "," "));
                         break;
                     }
                 }
             }
             else{
-                verifyText=getAttributeAndCSS_NameAndVerifyText(verify,"text") ;
+                verifyText=getAttributeAndCSSNameAndVerifyText(verify,"text") ;
             }
 
             if(verify.toLowerCase().contains(" not equal to ")){
@@ -307,8 +322,9 @@ public class VerifyParser {
                 * Verify: Get attribute 'attribute name' of @element is not equal to 'attribute value'
                 * */
                 if(attributeValue.equals(verifyText)){
-                    log.error("Expecting:<\""+attributeValue+"\"> not to be equal to:<\""+verifyText+"\">");
-                    throw new AssertException("Expecting:<\""+attributeValue+"\"> not to be equal to:<\""+verifyText+"\">");
+                    String errorMsg=expectingText+attributeValue+notToBeEqualText+verifyText+"\">";
+                    log.error(errorMsg);
+                    throw new AssertException(errorMsg);
                 }
                 flag=true;
             }
@@ -319,8 +335,9 @@ public class VerifyParser {
                      * Verify: Get attribute 'attribute name' of @element is equal to ignore case 'attribute value'
                      * */
                     if(!attributeValue.equalsIgnoreCase(verifyText)){
-                        log.error("Expecting:<\""+attributeValue+"\"> to be equal to: <\""+verifyText+"\">");
-                        throw new AssertException("Expecting:<\""+attributeValue+"\"> to be equal to: <\""+verifyText+"\">");
+                        String errorMsg=expectingText+attributeValue+toBeEqualText+verifyText+"\">";
+                        log.error(errorMsg);
+                        throw new AssertException(errorMsg);
                     }
                     flag=true;
                 }
@@ -329,8 +346,9 @@ public class VerifyParser {
                      * Verify: Get attribute 'attribute name' of @element is equal to 'attribute value'
                      * */
                     if(!attributeValue.equals(verifyText)){
-                        log.error("ComparisonFailure: expected:<\""+attributeValue+"\"> but was:<\""+verifyText+"\">");
-                        throw new AssertException("ComparisonFailure: expected:<\""+attributeValue+"\"> but was:<\""+verifyText+"\">");
+                        String errorMsg=comparisonFailureText+attributeValue+butWasText+verifyText+"\">";
+                        log.error(errorMsg);
+                        throw new AssertException(errorMsg);
                     }
                     flag=true;
                 }
@@ -340,8 +358,9 @@ public class VerifyParser {
                  * Verify: Get attribute 'attribute name' of @element contains is 'attribute value'
                  * */
                 if(!attributeValue.contains(verifyText)){
-                    log.error("Expecting:<\""+attributeValue+"\"> to contain: <\""+verifyText+"\">");
-                    throw new AssertException("Expecting:<\""+attributeValue+"\"> to contain: <\""+verifyText+"\">");
+                    String errorMsg=expectingText+attributeValue+toContainText+verifyText+"\">";
+                    log.error(errorMsg);
+                    throw new AssertException(errorMsg);
                 }
                 flag=true;
             }
@@ -349,25 +368,26 @@ public class VerifyParser {
 
         // verify CSS value
         if(verify.toLowerCase().contains(" get css value ")){
-            element=cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), stepParser.parseElementName(verify)));
+            element=cmd.findElement(driver, locator.getLocatorValue(test.get(testsFileNameText).toString(), stepParser.parseElementName(verify)));
 
-            if(element.getCssValue(getAttributeAndCSS_NameAndVerifyText(verify,"attributeOrCSS"))==null){
-                log.info("'"+getAttributeAndCSS_NameAndVerifyText(verify,"attributeOrCSS")+"' CSS attribute is not fount.");
-                throw new TesboException("'"+getAttributeAndCSS_NameAndVerifyText(verify,"attributeOrCSS")+"' CSS attribute is not fount.");
+            if(element.getCssValue(getAttributeAndCSSNameAndVerifyText(verify,attributeOrCssText))==null){
+                String errorMsg="'"+getAttributeAndCSSNameAndVerifyText(verify,attributeOrCssText)+"' CSS attribute is not fount.";
+                log.info(errorMsg);
+                throw new TesboException(errorMsg);
             }
-            String cssValue=element.getCssValue(getAttributeAndCSS_NameAndVerifyText(verify,"attributeOrCSS"));
+            String cssValue=element.getCssValue(getAttributeAndCSSNameAndVerifyText(verify,attributeOrCssText));
             String verifyText=null;
             if(verify.contains("{") && verify.contains("}")){
                 String[] stepWord=verify.split(" ");
                 for(String word:stepWord){
-                    if(word.toLowerCase().equals("css")){
+                    if(word.equalsIgnoreCase("css")){
                         verifyText=stepParser.parseTextToEnter(test, verify.replace(" "+word+" "," "));
                         break;
                     }
                 }
             }
             else{
-                verifyText=getAttributeAndCSS_NameAndVerifyText(verify,"text") ;
+                verifyText=getAttributeAndCSSNameAndVerifyText(verify,"text") ;
             }
 
             if(verify.toLowerCase().contains(" not equal to ")){
@@ -375,8 +395,9 @@ public class VerifyParser {
                  * Verify: Get css value 'css name' of @element is not equal to 'css value'
                  * */
                 if(cssValue.equals(verifyText)){
-                    log.error("Expecting:<\""+cssValue+"\"> not to be equal to:<\""+verifyText+"\">");
-                    throw new AssertException("Expecting:<\""+cssValue+"\"> not to be equal to:<\""+verifyText+"\">");
+                    String errorMsg=expectingText+cssValue+notToBeEqualText+verifyText+"\">";
+                    log.error(errorMsg);
+                    throw new AssertException(errorMsg);
                 }
                 flag=true;
             }
@@ -387,8 +408,9 @@ public class VerifyParser {
                      * Verify: Get css value 'css name' of @element is equal to ignore case 'css value'
                      * */
                     if(!cssValue.equalsIgnoreCase(verifyText)){
-                        log.error("Expecting:<\""+cssValue+"\"> to be equal to: <\""+verifyText+"\">");
-                        throw new AssertException("Expecting:<\""+cssValue+"\"> to be equal to: <\""+verifyText+"\">");
+                        String errorMsg=expectingText+cssValue+toBeEqualText+verifyText+"\">";
+                        log.error(errorMsg);
+                        throw new AssertException(errorMsg);
                     }
                     flag=true;
                 }
@@ -397,8 +419,9 @@ public class VerifyParser {
                         /*
                          * Verify: Get css value 'css name' of @element is equal to 'css value'
                          * */
-                        log.error("ComparisonFailure: expected:<\""+cssValue+"\"> but was:<\""+verifyText+"\">");
-                        throw new AssertException("ComparisonFailure: expected:<\""+cssValue+"\"> but was:<\""+verifyText+"\">");
+                        String errorMsg=comparisonFailureText+cssValue+butWasText+verifyText+"\">";
+                        log.error(errorMsg);
+                        throw new AssertException(errorMsg);
                     }
                     flag=true;
                 }
@@ -408,23 +431,25 @@ public class VerifyParser {
                  * Verify: Get css value 'css name' of @element contains is 'css value'
                  * */
                 if(!cssValue.contains(verifyText)){
-                    log.error("Expecting:<\""+cssValue+"\"> to contain: <\""+verifyText+"\">");
-                    throw new AssertException("Expecting:<\""+cssValue+"\"> to contain: <\""+verifyText+"\">");
+                    String errorMsg=expectingText+cssValue+toContainText+verifyText+"\">";
+                    log.error(errorMsg);
+                    throw new AssertException(errorMsg);
                 }
                 flag=true;
             }
         }
 
         if(!flag) {
-            log.error("'"+verify+"' Step is not define properly.");
-            throw new TesboException("'"+verify+"' Step is not define properly.");
+            String errorMsg="'"+verify+"' Step is not define properly.";
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
         tesboLogger.testPassed("Passed");
     }
 
     public static boolean isNumeric(String strNum) {
         try {
-            double d = Double.parseDouble(strNum);
+            Double.parseDouble(strNum);
         } catch (NumberFormatException | NullPointerException nfe) {
             return false;
         }
@@ -448,11 +473,11 @@ public class VerifyParser {
                 , element);
     }
 
-    public String getAttributeAndCSS_NameAndVerifyText(String step, String attributeOrText){
+    public String getAttributeAndCSSNameAndVerifyText(String step, String attributeOrText){
         String attributeNameOrText=null;
         String[] stepsWord=step.split("'");
 
-        if(attributeOrText.equals("attributeOrCSS")){
+        if(attributeOrText.equals(attributeOrCssText)){
             attributeNameOrText= stepsWord[1];
         }
         else if(attributeOrText.equals("text")){

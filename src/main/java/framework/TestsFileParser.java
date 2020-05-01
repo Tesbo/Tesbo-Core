@@ -1,6 +1,5 @@
 package framework;
 
-import Execution.Tesbo;
 import Exception.*;
 import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +19,24 @@ import java.util.stream.Stream;
 public class TestsFileParser {
 
     TesboLogger tesboLogger = new TesboLogger();
-    private static final Logger log = LogManager.getLogger(Tesbo.class);
+    String testText="Test: ";
+    String collectionNameText="Collection Name: ";
+    String newLineRegex="[\\r\\n]+";
+    String beforeTestText="BeforeTest:";
+    String afterTestText="AfterTest:";
+    String endText="End::";
+    String endStepErrorMsg="Please define end step in a correct way: End";
+    String endStepNotFoundErrorMsg="End Step is not found for '";
+    String beforeTestEndStepErrorMsg="End Step is not found for BeforeTest";
+    String keywordErrorMsg="Please write valid keyword for this step \"";
+    String spaceRegex="\\s{2,}";
+    String codeText="Code: ";
+    String stepText="Step: ";
+    String testSmallText="' test";
+    String verifyText="Verify: ";
+    String dataSetText="DataSet: ";
+
+    private static final Logger log = LogManager.getLogger(TestsFileParser.class);
     /**
      * @param directory
      * @return give all the file inside a directory
@@ -46,21 +62,23 @@ public class TestsFileParser {
                     }
                 }
             }
-            if(flag==true){
-                log.error(file+" file found in tests directory");
-                tesboLogger.errorLog(file+" file not found in tests directory");
+            if(flag){
+                String errorMsg=file+" file found in tests directory";
+                log.error(errorMsg);
+                tesboLogger.errorLog(errorMsg);
                 throw (new NoSuchFileException(""));
             }
         } catch (Exception e) {
-            if(flag==true){
+            if(flag){
                 log.error("Message : Please create only '.tests' file in tests directory.");
                 tesboLogger.testFailed("Message : Please create only '.tests' file in tests directory.");
             }
             else {
+                String errorMsg="'" + directory + "' no files found on your location.";
                 log.error("Message : Please Enter valid directory path.");
-                log.error("'" + directory + "' no files found on your location.");
+                log.error(errorMsg);
                 tesboLogger.testFailed("Message : Please Enter valid directory path.");
-                tesboLogger.testFailed("'" + directory + "' no files found on your location.");
+                tesboLogger.testFailed(errorMsg);
                 StringWriter sw = new StringWriter();
                 e.printStackTrace(new PrintWriter(sw));
                 tesboLogger.testFailed(sw.toString());
@@ -119,8 +137,7 @@ public class TestsFileParser {
     }
 
     public String[] getTestsData(StringBuffer sb) {
-        String allLines[] = sb.toString().split("[\\r\\n]+");
-        return allLines;
+        return sb.toString().split(newLineRegex);
     }
 
     /**
@@ -130,27 +147,28 @@ public class TestsFileParser {
      */
     public JSONArray getTestNameByTag(String tagName, StringBuffer testsFile) {
 
-        String allLines[] = testsFile.toString().split("[\\r\\n]+");
+        String[] allLines = testsFile.toString().split(newLineRegex);
         JSONArray testName = new JSONArray();
 
 
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].toLowerCase().startsWith("test: ") | allLines[i].toLowerCase().startsWith("test")) {
+            if (allLines[i].toLowerCase().startsWith("test: ") || allLines[i].toLowerCase().startsWith("test")) {
                 String tagLine = allLines[i + 1].toLowerCase();
                 String[] tagArray = tagLine.replaceAll("\\s+","").split("#");
                 for(String  tag : tagArray)
                 {
                     if(!tag.equals("")) {
-                        if (tag.toLowerCase().trim().equals(tagName.toLowerCase())) {
-                            //allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")
-                            if (!allLines[i].trim().startsWith("Test: ")) {
-                                log.error("Please write valid keyword or step for this \"" + allLines[i] + "\"");
-                                throw new TesboException("Please write valid keyword or step for this \"" + allLines[i] + "\"");
+                        if (tag.trim().equalsIgnoreCase(tagName)) {
+                            if (!allLines[i].trim().startsWith(testText)) {
+                                String errorMsg="Please write valid keyword or step for this \"" + allLines[i] + "\"";
+                                log.error(errorMsg);
+                                throw new TesboException(errorMsg);
                             }
-                            String testNameArray[] = allLines[i].split(":");
+                            String[] testNameArray = allLines[i].split(":");
                             if(testNameArray.length<2){
-                                log.error("Test name is blank '"+allLines[i]+"'");
-                                throw new TesboException("Test name is blank '"+allLines[i]+"'");
+                                String errorMsg="Test name is blank '"+allLines[i]+"'";
+                                log.error(errorMsg);
+                                throw new TesboException(errorMsg);
                             }
                             testName.add(testNameArray[1].trim());
                         }
@@ -161,8 +179,7 @@ public class TestsFileParser {
 
         }
         // When No Test Available
-        if (testName.size() == 0) {
-            //throw new NoTestFoundException("No test found in tests file");
+        if (testName.isEmpty()) {
             return null;
         }
         return testName;
@@ -199,12 +216,12 @@ public class TestsFileParser {
     /**
      * Not completed need to work on this...
      * @lastModifiedBy: Ankit Mistry
-     * @param TestsFileName
+     * @param testsFileName
      * @return
      */
-    public JSONArray getTestStepByTestsFileandTestCaseName(String TestsFileName, String testName) {
-        StringBuffer testsFileDetails = readTestsFile(TestsFileName);
-        String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
+    public JSONArray getTestStepByTestsFileandTestCaseName(String testsFileName, String testName) {
+        StringBuffer testsFileDetails = readTestsFile(testsFileName);
+        String[] allLines = testsFileDetails.toString().split(newLineRegex);
         JSONArray testSteps = new JSONArray();
         Validation validation=new Validation();
         int testCount=0;
@@ -213,8 +230,8 @@ public class TestsFileParser {
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
 
-            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
+            if (allLines[i].startsWith(testText) && !(allLines[i].startsWith(beforeTestText) || allLines[i].startsWith(afterTestText))) {
+                String[] testNameArray = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
                     startPoint = i+1;
@@ -226,30 +243,33 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains(endText))) {
                     endpoint = i;
                     break;
                 }
-                if(allLines[i].replaceAll("\\s{2,}", " ").trim().equals("end")){
-                    log.error("Please define end step in a correct way: End");
-                    throw new TesboException("Please define end step in a correct way: End");
+                if(allLines[i].replaceAll(spaceRegex, " ").trim().equals("end")){
+                    log.error(endStepErrorMsg);
+                    throw new TesboException(endStepErrorMsg);
                 }
             }
         }
         if(testCount>=2 || endpoint==0) {
-            log.error("End Step is not found for '" + testName + "' test");
-            throw new TesboException("End Step is not found for '" + testName + "' test");
+            String errorMsg=endStepNotFoundErrorMsg + testName + testSmallText;
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].toString().replaceAll("\\s{2,}", " ").contains("Step:")){
-                log.error("Step is blank '"+allLines[j]+"'");
-                throw new TesboException("Step is blank '"+allLines[j]+"'");
+            String step=allLines[j].replaceAll(spaceRegex, " ").trim();
+            if(step.split(":").length<2 && step.contains("Step:")){
+                String errorMsg="Step is blank '"+allLines[j]+"'";
+                log.error(errorMsg);
+                throw new TesboException(errorMsg);
             }
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Step: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Verify: ") |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("If:: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().equals("Else::") | allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Else If:: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().equals("End::") |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Collection: ") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Code: ") |
-                    ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")) & !(allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("DataSet: ")))) {
+            if (step.startsWith(stepText) || step.startsWith(verifyText) ||
+                    step.startsWith("If:: ") || step.equals("Else::") || step.startsWith("Else If:: ") || step.equals(endText) ||
+                    step.startsWith("Collection: ") || (step.contains("[Close:") && step.contains("]")) ||
+                    step.startsWith(codeText) ||
+                    ( step.contains("[") && step.contains("]") && !(step.toLowerCase().contains("[close")) && !(step.startsWith(dataSetText)))) {
 
                 testSteps.add(allLines[j]);
             }
@@ -257,9 +277,10 @@ public class TestsFileParser {
                 validation.keyWordValidation(allLines[j]);
             }
         }
-        if (testSteps.size() == 0) {
-            log.error("Steps are not defined for test : " + testName);
-            throw new TesboException("Steps are not defined for test : " + testName);
+        if (testSteps.isEmpty()) {
+            String errorMsg="Steps are not defined for test : " + testName;
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
 
         return testSteps;
@@ -276,29 +297,29 @@ public class TestsFileParser {
      */
     public String getTestDataSetByTestsFileAndTestCaseName(String testsFileName, String testName) {
         StringBuffer testsFileDetails = readTestsFile(testsFileName);
-        String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testsFileDetails.toString().split(newLineRegex);
         String testDataSet = null;
         int startPoint = 0;
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
+            if (allLines[i].startsWith(testText) && !(allLines[i].startsWith(beforeTestText) || allLines[i].startsWith(afterTestText))) {
+                String[] testNameArray = allLines[i].split(":");
                 if(testNameArray[1].trim().contains(testName)) {
                     startPoint = i;
                     testStarted = true;
                 }
             }
             if (testStarted) {
-                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains(endText))) {
                     endpoint = i;
                     break;
                 }
             }
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("DataSet: ")) {
-                if (!(allLines[j].contains("DataSet: "))) {
+            if (allLines[j].replaceAll(spaceRegex, " ").trim().startsWith(dataSetText)) {
+                if (!(allLines[j].contains(dataSetText))) {
                     log.error("Write 'DataSet' keyword in test");
                     throw new TesboException("Write 'DataSet' keyword in test");
                 }
@@ -307,8 +328,9 @@ public class TestsFileParser {
             }
             else{
                 if(allLines[j].toLowerCase().startsWith("dataset")){
-                    log.error("Please add valid key word for: '"+allLines[j]+"'");
-                    throw new TesboException("Please add valid key word for: '"+allLines[j]+"'");
+                    String errorMsg="Please add valid key word for: '"+allLines[j]+"'";
+                    log.error(errorMsg);
+                    throw new TesboException(errorMsg);
                 }
             }
         }
@@ -319,7 +341,7 @@ public class TestsFileParser {
     public JSONArray getGroupTestStepByTestFileandTestCaseName(String groupName) {
         String testsFileName=getTestsFileNameWhoHasCollection(groupName);
         StringBuffer testsFileDetails = readTestsFile(testsFileName);
-        String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testsFileDetails.toString().split(newLineRegex);
         Validation validation=new Validation();
         JSONArray testSteps = new JSONArray();
         int startPoint = 0;
@@ -328,11 +350,11 @@ public class TestsFileParser {
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
             if(groupStarted){
-                if (allLines[i].startsWith("Test: ")) {
+                if (allLines[i].startsWith(testText)) {
                     groupCount++;
                 }
             }
-            if (allLines[i].startsWith("Collection Name: ")) {
+            if (allLines[i].startsWith(collectionNameText)) {
                 String[] testNameArray = allLines[i].split(":");
                 if (testNameArray[1].trim().toLowerCase().equalsIgnoreCase(groupName)) {
                     startPoint = i;
@@ -343,7 +365,7 @@ public class TestsFileParser {
                 }
             }
             if (groupStarted) {
-                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains(endText))) {
                     endpoint = i;
                     groupStarted = false;
                 }
@@ -351,24 +373,27 @@ public class TestsFileParser {
         }
         if(startPoint==0 && endpoint==0)
         {
-            log.error("Collection name "+ groupName +" is not found on tests file");
-            throw new TesboException("Collection name "+ groupName +" is not found on tests file");
+            String errorMsg="Collection name "+ groupName +" is not found on tests file";
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
         if(groupCount>=2 || endpoint==0) {
-            log.error("End Step is not found for '" + groupName + "' collection");
-            throw new TesboException("End Step is not found for '" + groupName + "' collection");
+            String errorMsg=endStepNotFoundErrorMsg + groupName + testSmallText;
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].startsWith("Step: ") | allLines[j].startsWith("Verify: ") | allLines[j].startsWith("Code: ")) {
+            if (allLines[j].startsWith(stepText) || allLines[j].startsWith(verifyText) || allLines[j].startsWith(codeText)) {
                 testSteps.add(allLines[j]);
             }
             else{
                 validation.keyWordValidation(allLines[j]);
             }
         }
-        if (testSteps.size() == 0) {
-            log.error("Steps are not defined for collection : " + groupName);
-            throw new TesboException("Steps are not defined for collection : " + groupName);
+        if (testSteps.isEmpty()) {
+            String errorMsg="Steps are not defined for collection : " + groupName;
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
         return testSteps;
     }
@@ -378,15 +403,15 @@ public class TestsFileParser {
      * @return
      */
     public JSONArray getGroupName(StringBuffer testsFileDetails) {
-        String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testsFileDetails.toString().split(newLineRegex);
         JSONArray testName = new JSONArray();
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].startsWith("Collection Name: ")) {
-                String testNameArray[] = allLines[i].split(":");
+            if (allLines[i].startsWith(collectionNameText)) {
+                String[] testNameArray = allLines[i].split(":");
                 testName.add(testNameArray[1].trim());
             }
         }   // When No Test Available
-        if (testName.size() == 0) { return null; }
+        if (testName.isEmpty()) { return null; }
 
         return testName;
     }
@@ -412,8 +437,8 @@ public class TestsFileParser {
         }
 
         for (Object testsFile : allTestsFile.keySet()) {
-            String testFileName[] = testsFile.toString().split(".tests");
-            if (testFileName[0].toLowerCase().equals(testsFileName.toLowerCase())) {
+            String[] testFileName = testsFile.toString().split(".tests");
+            if (testFileName[0].equalsIgnoreCase(testsFileName)) {
                 JSONArray testNames = getTestNameByTestsFile((StringBuffer) allTestsFile.get(testsFile));
                 if (testNames != null) {
                     testNameWithTestsFile.put(testsFile.toString(), testNames);
@@ -430,28 +455,29 @@ public class TestsFileParser {
      */
     public JSONArray getTestNameByTestsFile(StringBuffer testFileDetails) {
 
-        String allLines[] = testFileDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testFileDetails.toString().split(newLineRegex);
         JSONArray testName = new JSONArray();
 
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
+            if (allLines[i].startsWith(testText) && !(allLines[i].startsWith(beforeTestText) || allLines[i].startsWith(afterTestText))) {
 
-                String testNameArray[] = allLines[i].split(":");
+                String[] testNameArray = allLines[i].split(":");
                 if(testNameArray.length<2){
-                    log.error("Test name is blank '"+allLines[i]+"'");
-                    throw new TesboException("Test name is blank '"+allLines[i]+"'");
+                    String errorMsg="Test name is blank '"+allLines[i]+"'";
+                    log.error(errorMsg);
+                    throw new TesboException(errorMsg);
                 }
                 testName.add(testNameArray[1].trim());
             }
             else {
                 if(allLines[i].trim().toLowerCase().startsWith("test")){
-                    log.error("Please write valid keyword for this \"" +allLines[i]+"\"");
-                    throw new TesboException("Please write valid keyword for this \"" +allLines[i]+"\"");
+                    String errorMsg="Please write valid keyword for this \"" +allLines[i]+"\"";
+                    log.error(errorMsg);
+                    throw new TesboException(errorMsg);
                 }
             }
         }   // When No Test Available
-        if (testName.size() == 0) {
-            //throw new NoTestFoundException("No test found in tests file");
+        if (testName.isEmpty()) {
             return null;
         }
         return testName;
@@ -466,15 +492,15 @@ public class TestsFileParser {
      */
     public JSONArray getSessionListFromTest(String testsFileName, String testName) {
         StringBuffer testsFileDetails = readTestsFile(testsFileName);
-        String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testsFileDetails.toString().split(newLineRegex);
         JSONArray sessionName = new JSONArray();
         int testCount=0;
         int startPoint = 0;
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
+            if (allLines[i].startsWith(testText) && !(allLines[i].startsWith(beforeTestText) || allLines[i].startsWith(afterTestText))) {
+                String[] testNameArray = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
                     startPoint = i;
@@ -484,7 +510,7 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains(endText))) {
                     endpoint = i;
                     break;
                 }
@@ -492,14 +518,15 @@ public class TestsFileParser {
         }
 
         if(testCount>=2 || endpoint==0) {
-            log.error("End Step is not found for '" + testName + "' test");
-            throw new TesboException("End Step is not found for '" + testName + "' test");
+            String errorMsg=endStepNotFoundErrorMsg + testName + testSmallText;
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
 
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Session: ") ) {
-                String[] SessionStep=allLines[j].split("[:|,]");
-                for (String session:SessionStep)
+            if (allLines[j].replaceAll(spaceRegex, " ").trim().startsWith("Session: ") ) {
+                String[] sessionStep=allLines[j].split("[:|,]");
+                for (String session:sessionStep)
                 {
                     if(!(session.equals("Session")))
                     {
@@ -507,9 +534,10 @@ public class TestsFileParser {
                     }
                 }
             }
-            else if(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().startsWith("session")){
-                log.error("Please write valid keyword for this step \"" +allLines[j]+"\"");
-                throw new TesboException("Please write valid keyword for this step \"" +allLines[j]+"\"");
+            else if(allLines[j].replaceAll(spaceRegex, " ").trim().toLowerCase().startsWith("session")){
+                String errorMsg=keywordErrorMsg +allLines[j]+"\"";
+                log.error(errorMsg);
+                throw new TesboException(errorMsg);
             }
         }
         return sessionName;
@@ -523,17 +551,18 @@ public class TestsFileParser {
      */
     public JSONArray getSeverityAndPriority(JSONObject test) {
         StringBuffer testsFileDetails = readTestsFile(test.get("testsFileName").toString());
-        String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testsFileDetails.toString().split(newLineRegex);
         JSONArray severityAndPriority = new JSONArray();
+        String testName=test.get("testName").toString();
         int testCount=0;
         int startPoint = 0;
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
+            if (allLines[i].startsWith(testText) && !(allLines[i].startsWith(beforeTestText) || allLines[i].startsWith(afterTestText))) {
+                String[] testNameArray = allLines[i].split(":");
 
-                if (testNameArray[1].trim().contains(test.get("testName").toString())) {
+                if (testNameArray[1].trim().contains(testName)) {
                     startPoint = i;
                     testStarted = true;
                 }
@@ -543,21 +572,22 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].startsWith("Step: ")) {
+                if (allLines[i].startsWith(stepText)) {
                     endpoint = i;
                     break;
                 }
             }
         }
         if(testCount>=2 || endpoint==0) {
-            log.error("Step is not found for '" + test.get("testName").toString() + "' test");
-            throw new TesboException("Step is not found for '" + test.get("testName").toString() + "' test");
+            String errorMsg="Step is not found for '" + testName + testSmallText;
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
 
         for (int j = startPoint; j < endpoint; j++) {
 
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Priority: ")
-                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Severity: ")) {
+            if (allLines[j].replaceAll(spaceRegex, " ").trim().contains("Priority: ")
+                    || allLines[j].replaceAll(spaceRegex, " ").trim().contains("Severity: ")) {
                 severityAndPriority.add(allLines[j]);
             }
         }
@@ -573,26 +603,27 @@ public class TestsFileParser {
      */
     public boolean isBeforeTestInTestsFile(String testFileName) {
         StringBuffer testFileDetails = readTestsFile(testFileName);
-        String allLines[] = testFileDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testFileDetails.toString().split(newLineRegex);
         boolean isBeforeTest=false;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].trim().equals("BeforeTest:")) {
+            if (allLines[i].trim().equals(beforeTestText)) {
                 isBeforeTest=true;
             }
             if(isBeforeTest) {
-                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains(endText))) {
                     break;
                 }
-                if (allLines[i].startsWith("Test: ") && allLines[i].startsWith("Collection Name: ")) {
-                    log.error("End Step is not found for BeforeTest");
-                    throw new TesboException("End Step is not found for BeforeTest");
+                if (allLines[i].startsWith(testText) && allLines[i].startsWith(collectionNameText)) {
+                    log.error(beforeTestEndStepErrorMsg);
+                    throw new TesboException(beforeTestEndStepErrorMsg);
                 }
 
             }
 
-            if(allLines[i].trim().toLowerCase().equals("beforetest") && !(allLines[i].trim().toLowerCase().equals("BeforeTest:"))) {
-                log.error("Please write valid keyword for this step \"" +allLines[i]+"\"");
-                throw new TesboException("Please write valid keyword for this step \"" +allLines[i]+"\"");
+            if(allLines[i].trim().equalsIgnoreCase("beforetest") && !(allLines[i].trim().equalsIgnoreCase(beforeTestText))) {
+                String errorMsg=keywordErrorMsg +allLines[i]+"\"";
+                log.error(errorMsg);
+                throw new TesboException(errorMsg);
             }
         }
 
@@ -608,24 +639,25 @@ public class TestsFileParser {
     public boolean isAfterTestInTestsFile(String testFileName) {
 
         StringBuffer testFileDetails = readTestsFile(testFileName);
-        String allLines[] = testFileDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testFileDetails.toString().split(newLineRegex);
         boolean isAfterTest=false;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].trim().equals("AfterTest:")) {
+            if (allLines[i].trim().equals(afterTestText)) {
                 isAfterTest=true;
             }
             if(isAfterTest) {
-                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains(endText))) {
                     break;
                 }
-                if (allLines[i].startsWith("Test: ") && allLines[i].startsWith("Collection Name: ")) {
-                    log.error("End Step is not found for BeforeTest");
-                    throw new TesboException("End Step is not found for BeforeTest");
+                if (allLines[i].startsWith(testText) && allLines[i].startsWith(collectionNameText)) {
+                    log.error(beforeTestEndStepErrorMsg);
+                    throw new TesboException(beforeTestEndStepErrorMsg);
                 }
             }
-            if(allLines[i].trim().toLowerCase().equals("aftertest") && !(allLines[i].trim().toLowerCase().equals("AfterTest:"))){
-                log.error("Please write valid keyword for this step \"" +allLines[i]+"\"");
-                throw new TesboException("Please write valid keyword for this step \"" +allLines[i]+"\"");
+            if(allLines[i].trim().equalsIgnoreCase("aftertest") && !(allLines[i].trim().equalsIgnoreCase(afterTestText))){
+                String errorMsg=keywordErrorMsg +allLines[i]+"\"";
+                log.error(errorMsg);
+                throw new TesboException(errorMsg);
 
             }
         }
@@ -641,7 +673,7 @@ public class TestsFileParser {
      */
     public JSONArray getBeforeAndAfterTestStepByTestsFile(String testsFileName, String annotationName) {
         StringBuffer testsFileDetails = readTestsFile(testsFileName);
-        String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testsFileDetails.toString().split(newLineRegex);
         JSONArray annotationSteps = new JSONArray();
         Validation validation=new Validation();
         int testCount=0;
@@ -664,25 +696,27 @@ public class TestsFileParser {
                     endpoint = i;
                     break;
                 }
-                if(allLines[i].replaceAll("\\s{2,}", " ").trim().equals("end")){
-                    log.error("Please define end step in a correct way: End");
-                    throw new TesboException("Please define end step in a correct way: End");
+                if(allLines[i].replaceAll(spaceRegex, " ").trim().equals("end")){
+                    log.error(endStepErrorMsg);
+                    throw new TesboException(endStepErrorMsg);
                 }
             }
         }
         if(testCount>=2 || endpoint==0) {
-            log.error("End Step is not found for '" + annotationName + "' test");
-            throw new TesboException("End Step is not found for '" + annotationName + "' test");
+            String errorMsg=endStepNotFoundErrorMsg + annotationName + testSmallText;
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].replaceAll("\\s{2,}", " ").startsWith("Step: ")){
-                log.error("Step is blank '"+allLines[j]+"'");
-                throw new TesboException("Step is blank '"+allLines[j]+"'");
+            if(allLines[j].replaceAll(spaceRegex, " ").split(":").length<2 && allLines[j].replaceAll(spaceRegex, " ").startsWith(stepText)){
+                String errorMsg="Step is blank '"+allLines[j]+"'";
+                log.error(errorMsg);
+                throw new TesboException(errorMsg);
             }
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Step: ") | allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Verify: ") |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Collection: ") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().startsWith("Code: ") |
-                    ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
+            if (allLines[j].replaceAll(spaceRegex, " ").trim().startsWith(stepText) || allLines[j].replaceAll(spaceRegex, " ").trim().startsWith(verifyText) ||
+                    allLines[j].replaceAll(spaceRegex, " ").trim().startsWith("Collection: ") || (allLines[j].replaceAll(spaceRegex, " ").trim().contains("[Close:") && allLines[j].replaceAll(spaceRegex, " ").trim().contains("]")) ||
+                    allLines[j].replaceAll(spaceRegex, " ").trim().startsWith(codeText) ||
+                    ( allLines[j].replaceAll(spaceRegex, " ").trim().contains("[") && allLines[j].replaceAll(spaceRegex, " ").trim().contains("]") && !(allLines[j].replaceAll(spaceRegex, " ").trim().toLowerCase().contains("[close")))) {
 
                 annotationSteps.add(allLines[j]);
             }
@@ -690,9 +724,10 @@ public class TestsFileParser {
                 validation.keyWordValidation(allLines[j]);
             }
         }
-        if (annotationSteps.size() == 0) {
-            log.error("Steps are not defined for annotation : " + annotationName);
-            throw new TesboException("Steps are not defined for annotation : " + annotationName);
+        if (annotationSteps.isEmpty()) {
+            String errorMsg="Steps are not defined for annotation : " + annotationName;
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
         return annotationSteps;
     }
@@ -707,28 +742,28 @@ public class TestsFileParser {
      */
     public void getAnnotationDataSetByTestsFile(String testsFileName) {
         StringBuffer testsFileDetails = readTestsFile(testsFileName);
-        String allLines[] = testsFileDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testsFileDetails.toString().split(newLineRegex);
         int startPoint = 0;
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].equals("BeforeTest:") || allLines[i].equals("AfterTest:")) {
+            if (allLines[i].equals(beforeTestText) || allLines[i].equals(afterTestText)) {
                 startPoint = i;
                 testStarted = true;
             }
             if (testStarted) {
-                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains(endText))) {
                     endpoint = i;
                     break;
                 }
             }
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) {
+            if (allLines[j].replaceAll(spaceRegex, " ").trim().contains("DataSet:")) {
                 log.error("DataSet is not use in BeforeTest and AfterTest annotation");
                 throw new TesboException("DataSet is not use in BeforeTest and AfterTest annotation");
             }
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("{") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("{DataSet."))) {
+            if (allLines[j].replaceAll(spaceRegex, " ").trim().contains("{") && !(allLines[j].replaceAll(spaceRegex, " ").trim().contains("{DataSet."))) {
                 log.error("DataSet value not use directly in BeforeTest and AfterTest annotation");
                 throw new TesboException("DataSet value not use directly in BeforeTest and AfterTest annotation");
             }
@@ -745,14 +780,14 @@ public class TestsFileParser {
      */
     public String isRetry(String testFileName, String testName) {
         StringBuffer testFileDetails = readTestsFile(testFileName);
-        String allLines[] = testFileDetails.toString().split("[\\r\\n]+");
+        String[] allLines = testFileDetails.toString().split(newLineRegex);
         int testCount=0;
         int startPoint = 0;
         boolean testStarted = false;
         int endpoint = 0;
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].startsWith("Test: ") && !(allLines[i].startsWith("BeforeTest:") || allLines[i].startsWith("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
+            if (allLines[i].startsWith(testText) && !(allLines[i].startsWith(beforeTestText) || allLines[i].startsWith(afterTestText))) {
+                String[] testNameArray = allLines[i].split(":");
 
                 if (testNameArray[1].trim().contains(testName)) {
                     startPoint = i;
@@ -764,27 +799,29 @@ public class TestsFileParser {
             }
             if (testStarted) {
 
-                if (allLines[i].trim().equals("End") && !(allLines[i].contains("End::"))) {
+                if (allLines[i].trim().equals("End") && !(allLines[i].contains(endText))) {
                     endpoint = i;
                     break;
                 }
-                if(allLines[i].replaceAll("\\s{2,}", " ").trim().equals("end")){
-                    log.error("Please define end step in a correct way: End");
-                    throw new TesboException("Please define end step in a correct way: End");
+                if(allLines[i].replaceAll(spaceRegex, " ").trim().equals("end")){
+                    log.error(endStepErrorMsg);
+                    throw new TesboException(endStepErrorMsg);
                 }
             }
         }
         String retry="null";
         if(testCount>=2 || endpoint==0) {
-            log.error("End Step is not found for '" + testName + "' test");
-            throw new TesboException("End Step is not found for '" + testName + "' test");
+            String errorMsg=endStepNotFoundErrorMsg + testName + testSmallText;
+            log.error(errorMsg);
+            throw new TesboException(errorMsg);
         }
         for (int j = startPoint; j < endpoint; j++) {
-            if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].toString().replaceAll("\\s{2,}", " ").contains("Retry:")){
-                log.error("Retry is blank '"+allLines[j]+"'");
-                throw new TesboException("Retry is blank '"+allLines[j]+"'");
+            if(allLines[j].replaceAll(spaceRegex, " ").split(":").length<2 && allLines[j].replaceAll(spaceRegex, " ").contains("Retry:")){
+                String errorMsg="Retry is blank '"+allLines[j]+"'";
+                log.error(errorMsg);
+                throw new TesboException(errorMsg);
             }
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Retry:") ) {
+            if (allLines[j].replaceAll(spaceRegex, " ").trim().contains("Retry:") ) {
                 retry=allLines[j].split(":")[1];
             }
 
@@ -809,16 +846,17 @@ public class TestsFileParser {
         for(Object testsFile:testsFileList){
             File name = new File(testsFile.toString());
             StringBuffer testsFileDetails = readTestsFile(name.getName());
-            String[] allLines = testsFileDetails.toString().split("[\\r\\n]+");
+            String[] allLines = testsFileDetails.toString().split(newLineRegex);
 
             for (int i = 0; i < allLines.length; i++) {
-                if (allLines[i].startsWith("Collection Name: ")) {
-                    String CollectionNameArray[] = allLines[i].split(":");
-                    if (CollectionNameArray[1].trim().equals(collectionName)) {
+                if (allLines[i].startsWith(collectionNameText)) {
+                    String[] collectionNameArray = allLines[i].split(":");
+                    if (collectionNameArray[1].trim().equals(collectionName)) {
                         numberOfCollectionFound++;
                         if(numberOfCollectionFound>=2){
-                            log.info("Multiple '"+CollectionNameArray[1].trim()+"' collection name found in tests file");
-                            throw new TesboException("Multiple '"+CollectionNameArray[1].trim()+"' collection name found in tests file");
+                            String errorMsg="Multiple '"+collectionNameArray[1].trim()+"' collection name found in tests file";
+                            log.info(errorMsg);
+                            throw new TesboException(errorMsg);
                         }
                         testsFileName=name.getName();
                     }
@@ -827,8 +865,9 @@ public class TestsFileParser {
 
         }
         if(testsFileName.equals("")){
-            log.info("'"+collectionName+"' collection name not found in any tests file");
-            throw new TesboException("'"+collectionName+"' collection name not found in any tests file");
+            String errorMsg="'"+collectionName+"' collection name not found in any tests file";
+            log.info(errorMsg);
+            throw new TesboException(errorMsg);
         }
         return testsFileName;
     }
