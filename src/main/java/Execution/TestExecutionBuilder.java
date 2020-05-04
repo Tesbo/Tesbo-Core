@@ -21,6 +21,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -358,11 +360,11 @@ public class TestExecutionBuilder {
                         dataSetName = testsFileParser.getTestDataSetByTestsFileAndTestCaseName(testsFileName.toString(), testName.toString());
                     }
                     if (dataSetName != null) {
-                        ArrayList<String> columnNameList = new ArrayList<String>();
+                        List<String> columnNameList = new LinkedList<>();
                         if(isBeforeTest){
                            // columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepByTestsFile(testsFileName.toString(),"BeforeTest"));
                         }
-                        if(isAfterTest && columnNameList.size() == 0){
+                        if(isAfterTest /*&& columnNameList.size() == 0*/){
                             //columnNameList = dataDrivenParser.getColumnNameFromTest(suiteParser.getBeforeAndAfterTestStepByTestsFile(testsFileName.toString(),"AfterTest"));
                         }
                         if(columnNameList.size() == 0) {
