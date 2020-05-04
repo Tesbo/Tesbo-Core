@@ -16,7 +16,11 @@ import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import com.cloudinary.*;
+import com.cloudinary.utils.ObjectUtils;
+
 import Exception.TesboException;
 
 public class ReportAPIConfig {
@@ -27,6 +31,7 @@ public class ReportAPIConfig {
 
     public static void main(String[] args) {
         ReportAPIConfig reportAPIConfig=new ReportAPIConfig();
+        reportAPIConfig.cloudinaryScreenshotUpload("C:\\Users\\QAble\\Desktop\\tesbo\\tesbo-core\\screenshots\\Login.t_Logoutuserfromadminside_20200225180718.png");
     }
 
     public void getBuildKey() {
@@ -104,7 +109,7 @@ public class ReportAPIConfig {
         JSONObject userDetails = config.getCloudIntegration();
 
         try {
-            String screenShotUrl = awsScreenshotUpload(testObject.get("screenShot").toString());
+            String screenShotUrl = cloudinaryScreenshotUpload(testObject.get("screenShot").toString());
             testObject.remove("screenShot");
             testObject.put("screenShot", screenShotUrl);
         } catch (Exception e) {
@@ -137,7 +142,7 @@ public class ReportAPIConfig {
         }
     }
 
-    public String awsScreenshotUpload(String screenshotUrl) {
+    /*public String awsScreenshotUpload(String screenshotUrl) {
         try {
             String screenshot[] = screenshotUrl.split(File.pathSeparator);
             String screenshotName = screenshot[screenshot.length - 1];
@@ -159,7 +164,34 @@ public class ReportAPIConfig {
 
        return null;
 
+    }*/
+
+
+    public String cloudinaryScreenshotUpload(String screenshotUrl){
+        
+        File file = new File(screenshotUrl);
+        String path = file.getAbsolutePath();
+        String screenshotNam = null;
+        Map config = new HashMap();
+        config.put("cloud_name", "dqyuanngf");
+        config.put("api_key", "836742259538521");
+        config.put("api_secret", "TiENTOSlmxRwp-aXfNGi5DVm-zQ");
+
+        Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", "dqyuanngf",
+                "api_key", "836742259538521",
+                "api_secret", "TiENTOSlmxRwp-aXfNGi5DVm-zQ"));
+
+        try {
+            Map uploadResult = cloudinary.uploader().upload(new File(path), ObjectUtils.emptyMap());
+            screenshotNam=uploadResult.get("secure_url").toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return screenshotNam;
     }
+
+
 
 
 }

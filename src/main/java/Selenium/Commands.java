@@ -113,6 +113,12 @@ public class Commands {
             if (config.getHighlightElement()) {
                 JavascriptExecutor js = (JavascriptExecutor) driver;
                 js.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", element);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                js.executeScript("arguments[0].setAttribute('style', arguments[1]);", element, "");
             }
         }
         return element;
@@ -244,6 +250,13 @@ public class Commands {
         if (config.getHighlightElement() && isIf) {
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", element);
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            js.executeScript("arguments[0].setAttribute('style', arguments[1]);", element, "");
         }
         return element;
     }
@@ -338,7 +351,7 @@ public class Commands {
      */
     public void scrollAndClick(WebDriver driver, WebElement element)  {
         scrollToCoordinate(driver, "250", "300");
-        pause(5);
+        pause(1);
         element.click();
     }
 
@@ -620,6 +633,7 @@ public class Commands {
         wait.until(elementToBeClickable(element));
         element.click();
     }
+
 
     /**
      * @param driver
