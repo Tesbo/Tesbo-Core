@@ -84,8 +84,6 @@ public class ReportParser {
         String headerName="";
         String regex="[{,}]";
         String testsFileName=test.get("testsFileName").toString();
-        String dataType=test.get("dataType").toString();
-        String dataSetName=test.get("dataSetName").toString();
 
         if (step.contains("{") && step.contains("}")) {
             startPoint = step.indexOf('{') + 1;
@@ -140,6 +138,8 @@ public class ReportParser {
                 }
 
                 if (!isDetaSet) {
+                    String dataType=test.get("dataType").toString();
+                    String dataSetName=test.get("dataSetName").toString();
                     try {
 
                         if (dataType.equalsIgnoreCase("excel")) {
