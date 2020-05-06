@@ -2,6 +2,7 @@ package framework;
 
 import Execution.TestExecutionBuilder;
 import Selenium.Commands;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,13 +13,13 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -37,6 +38,7 @@ public class DataDrivenParser {
      String notFoundMsg="' is not found in '";
      CommonMethods commonMethods=new CommonMethods();
      boolean isJSONArray=false;
+    String variableType="text";
 
         /**
          *
@@ -153,17 +155,22 @@ public class DataDrivenParser {
                             commonMethods.throwTesboException("'"+dataSetName+"' data set has not same number of value in all array list.",log);
                         }
                     }
-                    if(((JSONObject)DataSet).containsKey(key)){
-                        type = "list";
-                    }
-                    else{
-                        if(key.split("\\.").length!=3) {
-                            commonMethods.throwTesboException("'"+key + notFoundMsg + dataSetName + "' Data Set'",log);
-                        }
-                    }
+                    type=getDataSetTypeIsList(((JSONObject)DataSet),key,dataSetName);
                 }
             }
         return type;
+    }
+
+    public String getDataSetTypeIsList(JSONObject dataSet,String key, String dataSetName){
+        if((dataSet).containsKey(key)){
+            return "list";
+        }
+        else{
+            if(key.split("\\.").length!=3) {
+                commonMethods.throwTesboException("'"+key + notFoundMsg + dataSetName + "' Data Set'",log);
+            }
+        }
+        return null;
     }
 
     public String verifyJsonObjectHasJsonArrayListAndAllObjectHasSameNumberOfArrayListAndAllKeyValuePresent(JSONObject main, String dataSetName, List<String> keyName) {
@@ -173,16 +180,8 @@ public class DataDrivenParser {
             JSONObject dataSetList = (JSONObject) main.get(dataSetName);
             if (dataSetList.containsKey(key)) {
                 if (((JSONObject) main.get(dataSetName)).get(key) instanceof JSONArray){
-                    if(arraySize==0){
-                        JSONArray arrayList=((JSONArray) ((JSONObject) main.get(dataSetName)).get(key));
-                        arraySize=arrayList.size();
-                    }
-                    else {
-                        JSONArray arrayList=((JSONArray) ((JSONObject) main.get(dataSetName)).get(key));
-                        if(arraySize != arrayList.size()){
-                            commonMethods.throwTesboException("'"+key + "' key array size is different than others.",log);
-                        }
-                    }
+                    arraySize=getJsonArraySizeOfJsonObject(arraySize,((JSONArray) ((JSONObject) main.get(dataSetName)).get(key)), key);
+
                     type = "list";
                 }
                 else {
@@ -195,6 +194,18 @@ public class DataDrivenParser {
             }
         }
         return type;
+    }
+
+    public int getJsonArraySizeOfJsonObject(int arraySize, JSONArray arrayList, String key){
+        if(arraySize==0){
+                arraySize=arrayList.size();
+        }
+        else {
+            if(arraySize != arrayList.size()){
+                commonMethods.throwTesboException("'"+key + "' key array size is different than others.",log);
+            }
+        }
+        return arraySize;
     }
 
     /**
@@ -256,12 +267,7 @@ public class DataDrivenParser {
                 if(isDefine){
                     defineList.add(calName.replaceAll("[{}()]", "").trim());
                 }else {
-                    boolean flag=false;
-                    for(int i=0;i<defineList.size();i++){
-                        if(calName.toLowerCase().contains(defineList.get(i).toString().toLowerCase())){
-                            flag=true;
-                        }
-                    }
+                    boolean flag=verifyColumnNameIsExistOnDefineList(defineList, calName);
                     if(!flag) {
                         columnName=calName.replaceAll("[{}()]", "").trim();
                     }
@@ -269,6 +275,15 @@ public class DataDrivenParser {
             }
         }
         return columnName;
+    }
+
+    public boolean verifyColumnNameIsExistOnDefineList(JSONArray defineList,String calName){
+        for(int i=0;i<defineList.size();i++){
+            if(calName.toLowerCase().contains(defineList.get(i).toString().toLowerCase())){
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getExcelUrl(String dataSetName) {
@@ -316,7 +331,7 @@ public class DataDrivenParser {
     }
 
     public List<String> getHeaderName(Iterator<Row> rowIterator, List<String> dataSetValues){
-        ArrayList<String> cellNums=new ArrayList<>();
+        List<String> cellNums=new LinkedList<>();
         while (rowIterator.hasNext()) {
             Row rows = rowIterator.next();
             if (rows.getCell(0) != null) {
@@ -326,15 +341,20 @@ public class DataDrivenParser {
                         Iterator<Cell> cellIterator = rows.cellIterator();
                         while (cellIterator.hasNext()) {
                             Cell cell = cellIterator.next();
-                            if(header.equalsIgnoreCase(formatter.formatCellValue(cell))){
-                                cellNums.add(formatter.formatCellValue(cell) + ":" + cell.getColumnIndex());
-                            }
+                            cellNums=setHeaderNameInList(cellNums, header,cell,formatter);
                         }
                     }
                 }
             }
         }
         return cellNums;
+    }
+
+    public List<String> setHeaderNameInList(List<String> cellNums, String header,Cell cell,DataFormatter formatter){
+        if(header.equalsIgnoreCase(formatter.formatCellValue(cell))){
+            cellNums.add(formatter.formatCellValue(cell) + ":" + cell.getColumnIndex());
+        }
+       return cellNums;
     }
 
     public JSONArray getValueFromHeaderName(Iterator<Row> rowIterator, List<String> cellNums){
@@ -413,12 +433,19 @@ public class DataDrivenParser {
 
                 }
             }
-            if(dataSetFileName!=null && !isInline){ commonMethods.throwTesboException("'" + dataSetFileName + ".json' is not found in DataSet directory",log); }
-
+            verifyDataSetFileNameNotNull(dataSetFileName,isInline);
         }
-        if(keyValue.size()<=0){commonMethods.throwTesboException("Key name " + keyName + " is not found in " + dataSetName + " data set",log);}
+        verifyKeyValueNotZero(keyValue.size(),keyName,dataSetName);
         return keyValue;
 
+    }
+
+    public void verifyDataSetFileNameNotNull(String dataSetFileName,boolean isInline){
+        if(dataSetFileName!=null && !isInline){ commonMethods.throwTesboException("'" + dataSetFileName + ".json' is not found in DataSet directory",log); }
+    }
+
+    public void verifyKeyValueNotZero(int keyValueSize,String keyName,String dataSetName){
+        if(keyValueSize<=0){commonMethods.throwTesboException("Key name " + keyName + " is not found in " + dataSetName + " data set",log);}
     }
 
     public JSONObject getGlobalDataValueFromVariable(String testsFileName, String dataSetName,String keyName){
@@ -488,10 +515,7 @@ public class DataDrivenParser {
     }
 
     public void setValueInDataSetVariable(WebDriver driver, JSONObject test, String step) throws Exception {
-        Commands cmd = new Commands();
-        StepParser stepParser=new StepParser();
-        GetLocator locator = new GetLocator();
-        String variableType="text";
+        variableType="text";
         String testsFileName= test.get("testsFileName").toString();
 
         int startPoint = 0;
@@ -501,114 +525,125 @@ public class DataDrivenParser {
             startPoint = step.indexOf('{') + 1;
             endPoint = step.lastIndexOf('}');
             String headerName = step.substring(startPoint, endPoint);
+            boolean isDataSet;
 
-            boolean isDetaSet=false;
-
-            JSONArray elementText=new JSONArray();
+            JSONArray elementText;
 
             if(step.toLowerCase().contains(" define ")){
-                if(step.toLowerCase().contains(" set ") || step.toLowerCase().contains(" put ") || step.toLowerCase().contains(" assign ")) {
-                    elementText.add(stepParser.parseTextToEnter(test, step));
-                    if (getLocalVariableFromGlobalVariable(testsFileName, headerName)) {
-                        String errorMsg="'" + headerName + "' variable is exist on global data set";
-                        log.error(errorMsg);
-                        throw new TesboException(errorMsg);
-                    }
-                }
-                else{
-                    elementText.add("");
-                }
+                elementText= getLocalDataSetValueFromStep(step,testsFileName,headerName, test);
                 setLocalVariableValue(headerName,elementText);
             }
             else {
                 String dataSetName=test.get("dataSetName").toString();
-                if(test.containsKey("dataType") && (dataSetName.equals("excel") || dataSetName.equals("list"))) {
-                    String errorMsg="Array list and Excel DataSet can't be use in set variable '" + step + "'";
-                    log.error(errorMsg);
-                    throw new TesboException(errorMsg);
-                }
+                verifyVariableValueHasNotArrayListAndExcelType(test.containsKey("dataType"), dataSetName, step);
+                elementText=getElementValueFromStep(driver,step,test,testsFileName);
+                isDataSet=setInlineVariableValue(headerName,testsFileName,elementText,step);
 
-                if(step.toLowerCase().contains(" text ")){
-                    if(step.toLowerCase().contains(" list ")){
-                        variableType="list";
-                        List<WebElement> elementList = cmd.findElements(driver, locator.getLocatorValue(testsFileName, stepParser.parseElementName(step)));
-                        for (WebElement element : elementList) {
-                            elementText.add(element.getText());
-                        }
-                    }
-                    else{
-                        elementText.add(cmd.findElement(driver, locator.getLocatorValue(testsFileName, stepParser.parseElementName(step))).getText());
-                    }
+                if(!isDataSet) {
+                    setVariableValueWhenItHasNotDataSet(test.get("dataType").toString(),testsFileName,dataSetName,headerName,elementText);
                 }
-                else if(step.toLowerCase().contains(" size ")){
-                    elementText.add(cmd.findElements(driver, locator.getLocatorValue(testsFileName, stepParser.parseElementName(step))).size());
-                }
-                else if(step.toLowerCase().contains(" page title ")){
-                    elementText.add(driver.getTitle());
-                }
-                else if(step.toLowerCase().contains(" current url ")){
-                    elementText.add(driver.getCurrentUrl());
-                }
-                else if(step.toLowerCase().contains(" attribute ")){
-                    WebElement element=cmd.findElement(driver, locator.getLocatorValue(testsFileName, stepParser.parseElementName(step)));
-                    if(element.getAttribute(stepParser.parseTextToEnter(test, step))==null){
-                        String errorMsg="'"+stepParser.parseTextToEnter(test, step)+"' attribute is not fount.";
-                        log.error(errorMsg);
-                        throw new TesboException(errorMsg);
-                    }
-                    elementText.add(element.getAttribute(stepParser.parseTextToEnter(test, step)));
-                }
-                else if(step.toLowerCase().contains(" css value ")){
-                    elementText.add(cmd.findElement(driver, locator.getLocatorValue(testsFileName, stepParser.parseElementName(step))).getCssValue(stepParser.parseTextToEnter(test, step)));
-                }
+            }
+        }
+    }
 
-                try {
-                    if (headerName.split("\\.").length==3) {
-                        isDetaSet=true;
-                        String[] dataSet=headerName.split("\\.");
-                        if(dataSet.length==3) {
-                            getGlobalDataValue(testsFileName,dataSet[0], dataSet[1],dataSet[2]);
-                            setVariableValue(testsFileName, dataSet[1], dataSet[2], elementText, variableType);
-                        }
-                        else{
-                            String errorMsg="Please enter DataSet in: '"+step+"'";
-                            log.info(errorMsg);
-                            throw new TesboException(errorMsg);
-                        }
+    public JSONArray getLocalDataSetValueFromStep(String step,String testsFileName,String headerName, JSONObject test){
+        JSONArray elementText=new JSONArray();
+        StepParser stepParser=new StepParser();
+        if(step.toLowerCase().contains(" set ") || step.toLowerCase().contains(" put ") || step.toLowerCase().contains(" assign ")) {
+            elementText.add(stepParser.parseTextToEnter(test, step));
+            if (getLocalVariableFromGlobalVariable(testsFileName, headerName)) {
+                commonMethods.throwTesboException("'" + headerName + "' variable is exist on global data set",log);
+            }
+        }
+        else{ elementText.add(""); }
+        return elementText;
+    }
 
-                    }
-                } catch (Exception e) {
-                    StringWriter sw = new StringWriter();
-                    e.printStackTrace(new PrintWriter(sw));
-                    tesboLogger.testFailed(sw.toString());
-                    log.error(sw.toString());
-                    throw e;
+    public void verifyVariableValueHasNotArrayListAndExcelType(boolean key,String dataSetName, String step){
+        if(key && (dataSetName.equals("excel") || dataSetName.equals("list"))) {
+            commonMethods.throwTesboException("Array list and Excel DataSet can't be use in set variable '" + step + "'",log);
+        }
+    }
+
+    public JSONArray getElementValueFromStep(WebDriver driver,String step,JSONObject test,String testsFileName)throws Exception{
+        Commands cmd = new Commands();
+        StepParser stepParser=new StepParser();
+        GetLocator locator = new GetLocator();
+        JSONArray elementText=new JSONArray();
+
+        if(step.toLowerCase().contains(" text ")){
+            if(step.toLowerCase().contains(" list ")){
+                variableType="list";
+                List<WebElement> elementList = cmd.findElements(driver, locator.getLocatorValue(testsFileName, stepParser.parseElementName(step)));
+                for (WebElement element : elementList) {
+                    elementText.add(element.getText());
                 }
+            }
+            else{
+                elementText.add(cmd.findElement(driver, locator.getLocatorValue(testsFileName, stepParser.parseElementName(step))).getText());
+            }
+        }
+        else if(step.toLowerCase().contains(" size ")){
+            elementText.add(cmd.findElements(driver, locator.getLocatorValue(testsFileName, stepParser.parseElementName(step))).size());
+        }
+        else if(step.toLowerCase().contains(" page title ")){
+            elementText.add(driver.getTitle());
+        }
+        else if(step.toLowerCase().contains(" current url ")){
+            elementText.add(driver.getCurrentUrl());
+        }
+        else if(step.toLowerCase().contains(" attribute ")){
+            WebElement element=cmd.findElement(driver, locator.getLocatorValue(testsFileName, stepParser.parseElementName(step)));
+            if(element.getAttribute(stepParser.parseTextToEnter(test, step))==null){
+                String errorMsg="'"+stepParser.parseTextToEnter(test, step)+"' attribute is not fount.";
+                log.error(errorMsg);
+                throw new TesboException(errorMsg);
+            }
+            elementText.add(element.getAttribute(stepParser.parseTextToEnter(test, step)));
+        }
+        else if(step.toLowerCase().contains(" css value ")){
+            elementText.add(cmd.findElement(driver, locator.getLocatorValue(testsFileName, stepParser.parseElementName(step))).getCssValue(stepParser.parseTextToEnter(test, step)));
+        }
+        return elementText;
+    }
 
-                if(!isDetaSet) {
-                    try {
-                        if (test.get("dataType").toString().equalsIgnoreCase("global")) {
-                            getGlobalDataValue(testsFileName,null, dataSetName,headerName);
-                            setVariableValue(testsFileName, dataSetName,headerName, elementText,variableType);
-                        }
-                    } catch (Exception e) {
-                        try{
-                            if(TestExecutor.localVariable.containsKey(headerName)){
-                                if(variableType.equals("list")){
-                                    TestExecutor.localVariable.put(headerName, elementText);
-                                }else {
-                                    TestExecutor.localVariable.put(headerName, elementText.get(0));
-                                }
-                            }
-                        }
-                        catch (Exception ex) {
-                            String errorMsg="Key name " + headerName + " is not found in " + dataSetName + " data set";
-                            log.error(errorMsg);
-                            throw new TesboException(errorMsg);
-
-                        }
-                    }
+    public boolean setInlineVariableValue(String headerName,String testsFileName,JSONArray elementText,String step){
+        boolean isDataSet=false;
+        try {
+            if (headerName.split("\\.").length==3) {
+                isDataSet=true;
+                String[] dataSet=headerName.split("\\.");
+                if(dataSet.length==3) {
+                    getGlobalDataValue(testsFileName,dataSet[0], dataSet[1],dataSet[2]);
+                    setVariableValue(testsFileName, dataSet[1], dataSet[2], elementText, variableType);
                 }
+                else{ commonMethods.throwTesboException("Please enter DataSet in: '"+step+"'",log); }
+            }
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
+            throw e;
+        }
+        return isDataSet;
+    }
+
+    public void setVariableValueWhenItHasNotDataSet(String dataType,String testsFileName,String dataSetName,String headerName,JSONArray elementText){
+        try {
+            if (dataType.equalsIgnoreCase("global")) {
+                getGlobalDataValue(testsFileName,null, dataSetName,headerName);
+                setVariableValue(testsFileName, dataSetName,headerName, elementText,variableType);
+            }
+        } catch (Exception e) {
+            try{
+                if(TestExecutor.localVariable.containsKey(headerName)){
+                    if(variableType.equals("list")){ TestExecutor.localVariable.put(headerName, elementText); }
+                    else { TestExecutor.localVariable.put(headerName, elementText.get(0)); }
+                }
+            }
+            catch (Exception ex) {
+                commonMethods.throwTesboException("Key name " + headerName + " is not found in " + dataSetName + " data set",log);
             }
         }
     }
@@ -638,14 +673,13 @@ public class DataDrivenParser {
         JSONObject variables=new JSONObject();
         if(variableType.equals("list")){ variables.put(keyName, elementText); }
         else{variables.put(keyName, elementText.get(0));}
-
         return variables;
     }
 
     public void setVariableValueWhenDataSetVariableAlreadyExist(String testsFileName, String dataSetName,String keyName,String variableType,JSONArray elementText){
         JSONObject testDataSet= (JSONObject) TestExecutionBuilder.dataSetVariable.get(testsFileName);
         JSONObject variables;
-        JSONObject dataSetNames=new JSONObject();
+        JSONObject dataSetNames;
 
         if(testDataSet.containsKey(dataSetName)){
             dataSetNames= (JSONObject) testDataSet.get(dataSetName);
@@ -663,42 +697,48 @@ public class DataDrivenParser {
     public void setLocalVariableValue(String keyName,JSONArray elementText){
 
         TestExecutor.localVariable.put(keyName,elementText.get(0));
-
     }
 
     public boolean getLocalVariableFromGlobalVariable(String testsFileName,String keyName){
         boolean isVariableExist=false;
         JSONObject dataSetList = (JSONObject) TestExecutionBuilder.dataSetVariable.get(testsFileName);
         if(dataSetList!=null) {
-            for (Object dataSet : dataSetList.keySet()) {
-                JSONObject dataSetValues = (JSONObject) dataSetList.get(dataSet);
+            HashMap<String,Object> result =new HashMap<>();
+            try {
+                result = new ObjectMapper().readValue(dataSetList.toJSONString(), HashMap.class);
+            } catch (IOException e) { }
+            for (Map.Entry<String,Object> entry : result.entrySet())
+            {
+                JSONObject dataSetValues = (JSONObject) dataSetList.get(entry.getKey());
                 if (dataSetValues.containsKey(keyName)) {
                     isVariableExist = true;
                 }
             }
         }
-
         if(!isVariableExist){
-            TestsFileParser testsFileParser=new TestsFileParser();
-            StringBuffer testsFile= testsFileParser.readTestsFile(testsFileName);
-            String[] allLines = testsFile.toString().split("[\\r\\n]+");
-            boolean isDataSetName=false;
-            boolean isBreak=false;
-            for (int i = 0; i < allLines.length; i++) {
-                if (allLines[i].contains("DataSet:")) {
-                    isDataSetName = true;
+            isVariableExist=isDataSerValueIsExistOnTestsFile(testsFileName,keyName);
+        }
+        return isVariableExist;
+    }
+
+    public boolean isDataSerValueIsExistOnTestsFile(String testsFileName,String keyName){
+        TestsFileParser testsFileParser=new TestsFileParser();
+        boolean isVariableExist=false;
+        StringBuffer testsFile= testsFileParser.readTestsFile(testsFileName);
+        String[] allLines = testsFile.toString().split("[\\r\\n]+");
+        boolean isDataSetName=false;
+        boolean isBreak=false;
+        for (int i = 0; i < allLines.length; i++) {
+            if (allLines[i].contains("DataSet:")) {
+                isDataSetName = true;
+            }
+            if(isDataSetName) {
+                if(allLines[i].contains("\"" + keyName + "\":")) {
+                    isVariableExist = true;
+                    isBreak=true;
                 }
-                if(isDataSetName) {
-
-                    if(allLines[i].contains("\"" + keyName + "\":")) {
-                        isVariableExist = true;
-                        isBreak=true;
-                    }
-                    if(allLines[i].startsWith("Test: ")) {isBreak=true;}
-
-                    if(isBreak){break;}
-
-                }
+                if(allLines[i].startsWith("Test: ")) {isBreak=true;}
+                if(isBreak){break;}
             }
         }
         return isVariableExist;
@@ -717,7 +757,6 @@ public class DataDrivenParser {
                 } else {
                     JSONObject dataSetList = (JSONObject) main.get(dataSetName);
                     dataSetListSize=getDataSetListSizeWhenItHasJsonObject(dataSetList);
-
                 }
             }
         }
@@ -726,8 +765,13 @@ public class DataDrivenParser {
 
     public int getDataSetListSizeWhenItHasJsonObject(JSONObject dataSetList){
         int dataSetListSize=0;
-        for (Object key : dataSetList.keySet()) {
-            dataSetListSize = ((JSONArray) dataSetList.get(key)).size();
+        HashMap<String,Object> result =new HashMap<>();
+        try {
+            result = new ObjectMapper().readValue(dataSetList.toJSONString(), HashMap.class);
+        } catch (IOException e) { }
+        for (Map.Entry<String,Object> entry : result.entrySet())
+        {
+            dataSetListSize = ((ArrayList)entry.getValue()).size();
             if(dataSetListSize!=0) {break;}
         }
        return dataSetListSize;
@@ -751,9 +795,7 @@ public class DataDrivenParser {
                 }
                 break;
             }
-
         }
-
         return keyValue;
     }
 }

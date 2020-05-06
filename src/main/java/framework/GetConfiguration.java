@@ -9,7 +9,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Get Configuration class will contains all the methods that will read
@@ -35,7 +35,7 @@ public class GetConfiguration {
         return file.getAbsolutePath();
     }
 
-    public ArrayList<String> getBrowsers() {
+    public List<String> getBrowsers() {
 
         if(SetCommandLineArgument.browser !=null && !(SetCommandLineArgument.browser.equalsIgnoreCase("all"))){
             String browserList=SetCommandLineArgument.browser;
@@ -48,7 +48,6 @@ public class GetConfiguration {
                 else {
                     browser=browser+",\""+browsers[i]+"\"";
                 }
-
             }
             String browserArray="["+browser+"]";
             JSONArray browserJsonArray = null;
@@ -65,7 +64,7 @@ public class GetConfiguration {
         }
     }
 
-    public ArrayList<String> getBrowser() {
+    public List<String> getBrowser() {
         JSONObject run = (JSONObject) main.get("run");
         JSONObject browser = (JSONObject) run.get("browser");
         return (JSONArray) browser.get("name");
@@ -85,7 +84,7 @@ public class GetConfiguration {
 
     }
 
-    public ArrayList<String> getTags() {
+    public List<String> getTags() {
         if(SetCommandLineArgument.byTag !=null){
             JSONArray tag=new JSONArray();
             tag.add(SetCommandLineArgument.byTag);
@@ -253,7 +252,7 @@ public class GetConfiguration {
      * @Description : get suite name from config file.
      * @return : suite names.
      */
-    public ArrayList<String> getSuite()  {
+    public List<String> getSuite()  {
         JSONObject run = (JSONObject) main.get("run");
         JSONObject by = (JSONObject) run.get("by");
         return (JSONArray) by.get(suiteName);
@@ -436,7 +435,7 @@ public class GetConfiguration {
      * @lastModifiedBy:
      * @return
      */
-    public ArrayList<String> getLocatorPreference()  {
+    public List<String> getLocatorPreference()  {
         JSONObject run = (JSONObject) main.get("run");
         return (JSONArray) run.get("locatorPreference");
     }
@@ -465,6 +464,4 @@ public class GetConfiguration {
             return "";
         }
     }
-
-
 }

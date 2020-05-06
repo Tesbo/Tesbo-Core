@@ -15,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Validation {
 
@@ -195,8 +197,7 @@ public class Validation {
 
     public void browserValidation() {
 
-        ArrayList<String> browserList=new ArrayList<>();
-
+        List<String> browserList=new LinkedList<>();
         try {
             browserList=getCofig.getBrowsers();
 
@@ -611,7 +612,8 @@ public class Validation {
     }
 
     public void locatorTypesValidation() {
-        ArrayList<String> locatorTypes;
+        List<String> locatorTypes;
+
         locatorTypes=getCofig.getLocatorPreference();
         if(locatorTypes!=null){
             if(locatorTypes.isEmpty()){

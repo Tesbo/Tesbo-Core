@@ -60,7 +60,7 @@ public class Commands {
             isIf=false;
             elementvalue=elementvalue.replace("_IF","");
         }
-        ArrayList<String> locatorTypes=new ArrayList<>();
+        List<String> locatorTypes;
         locatorTypes=config.getLocatorPreference();
         if(locatorTypes!=null){
             if(locatorTypes.size()==0){
@@ -118,7 +118,7 @@ public class Commands {
         return element;
     }
 
-    public WebElement findElementFromLocatorPreference(WebDriver driver, String elementvalue,ArrayList<String> locatorTypes) {
+    public WebElement findElementFromLocatorPreference(WebDriver driver, String elementvalue,List<String> locatorTypes) {
         WebElement element = null;
         GetConfiguration config = new GetConfiguration();
         int webdriverTime = 600;

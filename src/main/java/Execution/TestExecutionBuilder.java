@@ -285,7 +285,7 @@ public class TestExecutionBuilder {
         GetConfiguration config = new GetConfiguration();
         JSONArray completeTestObjectArray = new JSONArray();
 
-        ArrayList<String> suiteOrTaglist = null;
+        List<String> suiteOrTaglist = null;
         boolean isTag = false;
         boolean isSuite = false;
 
