@@ -27,7 +27,7 @@ import Exception.TesboException;
 public class ReportAPIConfig {
 
 
-    public static String URL="http://v2.tesbo.io:7000";
+    public static String URL="http://localhost:7000";
     public static String buildID;
 
     public static void main(String[] args) {
@@ -53,7 +53,7 @@ public class ReportAPIConfig {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, "{\n\t\"buildName\": \""+buildName+"\",\n\t\"projectID\" : \""+userDetails.get("projectKey")+"\",\n\t\"userID\" : \""+userDetails.get("apiKey")+"\"\n}");
         Request request = new Request.Builder()
-                .url(URL+"/createBuild")
+                .url(URL+"/createBuild/Tesbo")
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
                 .build();
