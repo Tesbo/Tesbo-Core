@@ -388,7 +388,7 @@ public class Validation {
     }
 
     public void sessionDefineValidation(String testsFileName, String testName,JSONArray listOfSession) {
-        StringBuffer testsFileNameDetails =testsFileParser.readTestsFile(testsFileName);
+        StringBuilder testsFileNameDetails =testsFileParser.readTestsFile(testsFileName);
         String[] allLines = testsFileNameDetails.toString().split(newLineRegex);
         int testCount=0;
         int startPoint = 0;
@@ -467,7 +467,7 @@ public class Validation {
     }
 
     public void collectionValidation(String testsFileName, String testName) {
-        StringBuffer testsFileNameDetails =testsFileParser.readTestsFile(testsFileName);
+        StringBuilder testsFileNameDetails =testsFileParser.readTestsFile(testsFileName);
         StepParser stepParser=new StepParser();
         String[] allLines = testsFileNameDetails.toString().split(newLineRegex);
         int testCount=0;
@@ -566,7 +566,7 @@ public class Validation {
             }
         }
 
-        StringBuffer testsFileDetails = testsFileParser.readTestsFile(test.get("testsFileName").toString());
+        StringBuilder testsFileDetails = testsFileParser.readTestsFile(test.get("testsFileName").toString());
         String[] allLines = testsFileDetails.toString().split(newLineRegex);
         boolean isSeverityOrPriority=false;
         int testCount=0;

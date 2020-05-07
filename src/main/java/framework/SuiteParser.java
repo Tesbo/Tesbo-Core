@@ -138,7 +138,7 @@ public class SuiteParser {
             String testFileName = "";
             for(Object testsFileName:testsFileNameList){
                 File name = new File(testsFileName.toString());
-                StringBuffer testsFileDetails = testsFileParser.readTestsFile(name.getName());
+                StringBuilder testsFileDetails = testsFileParser.readTestsFile(name.getName());
                 JSONArray testName= testsFileParser.getTestNameByTestsFile(testsFileDetails);
                 for(Object test:testName) {
                     if(test.toString().equals(suiteTestName.toString().split(":")[1].trim())) {

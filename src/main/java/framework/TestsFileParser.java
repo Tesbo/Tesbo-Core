@@ -100,12 +100,12 @@ public class TestsFileParser {
      * @param fileName : File name with extension e.g. login.tests
      * @return whole file content as String buffer
      */
-    public StringBuffer readTestsFile(String fileName) {
+    public StringBuilder readTestsFile(String fileName) {
 
         GetConfiguration configuration = new GetConfiguration();
         BufferedReader br = null;
         FileReader fr = null;
-        StringBuffer tests = new StringBuffer();
+        StringBuilder tests = new StringBuilder();
 
         try {
             fr = new FileReader(configuration.getTestsDirectory() + "/" + fileName);
@@ -136,7 +136,7 @@ public class TestsFileParser {
         return tests;
     }
 
-    public String[] getTestsData(StringBuffer sb) {
+    public String[] getTestsData(StringBuilder sb) {
         return sb.toString().split(newLineRegex);
     }
 
@@ -145,7 +145,7 @@ public class TestsFileParser {
      * @param testsFile
      * @return List of Test based on tests file Data
      */
-    public JSONArray getTestNameByTag(String tagName, StringBuffer testsFile) {
+    public JSONArray getTestNameByTag(String tagName, StringBuilder testsFile) {
 
         String[] allLines = testsFile.toString().split(newLineRegex);
         JSONArray testName = new JSONArray();
@@ -205,7 +205,7 @@ public class TestsFileParser {
         }
 
         for (Object testsFile : allTestsFile.keySet()) {
-            JSONArray testNames = getTestNameByTag(tag, (StringBuffer) allTestsFile.get(testsFile));
+            JSONArray testNames = getTestNameByTag(tag, (StringBuilder) allTestsFile.get(testsFile));
             if (testNames != null) {
                 testNameWithTestsFile.put(testsFile.toString(), testNames);
             }
@@ -220,7 +220,7 @@ public class TestsFileParser {
      * @return
      */
     public JSONArray getTestStepByTestsFileandTestCaseName(String testsFileName, String testName) {
-        StringBuffer testsFileDetails = readTestsFile(testsFileName);
+        StringBuilder testsFileDetails = readTestsFile(testsFileName);
         String[] allLines = testsFileDetails.toString().split(newLineRegex);
         JSONArray testSteps = new JSONArray();
         Validation validation=new Validation();
@@ -296,7 +296,7 @@ public class TestsFileParser {
      * @return
      */
     public String getTestDataSetByTestsFileAndTestCaseName(String testsFileName, String testName) {
-        StringBuffer testsFileDetails = readTestsFile(testsFileName);
+        StringBuilder testsFileDetails = readTestsFile(testsFileName);
         String[] allLines = testsFileDetails.toString().split(newLineRegex);
         String testDataSet = null;
         int startPoint = 0;
@@ -340,7 +340,7 @@ public class TestsFileParser {
 
     public JSONArray getGroupTestStepByTestFileandTestCaseName(String groupName) {
         String testsFileName=getTestsFileNameWhoHasCollection(groupName);
-        StringBuffer testsFileDetails = readTestsFile(testsFileName);
+        StringBuilder testsFileDetails = readTestsFile(testsFileName);
         String[] allLines = testsFileDetails.toString().split(newLineRegex);
         Validation validation=new Validation();
         JSONArray testSteps = new JSONArray();
@@ -402,7 +402,7 @@ public class TestsFileParser {
      * @param testsFileDetails
      * @return
      */
-    public JSONArray getGroupName(StringBuffer testsFileDetails) {
+    public JSONArray getGroupName(StringBuilder testsFileDetails) {
         String[] allLines = testsFileDetails.toString().split(newLineRegex);
         JSONArray testName = new JSONArray();
         for (int i = 0; i < allLines.length; i++) {
@@ -439,7 +439,7 @@ public class TestsFileParser {
         for (Object testsFile : allTestsFile.keySet()) {
             String[] testFileName = testsFile.toString().split(".tests");
             if (testFileName[0].equalsIgnoreCase(testsFileName)) {
-                JSONArray testNames = getTestNameByTestsFile((StringBuffer) allTestsFile.get(testsFile));
+                JSONArray testNames = getTestNameByTestsFile((StringBuilder) allTestsFile.get(testsFile));
                 if (testNames != null) {
                     testNameWithTestsFile.put(testsFile.toString(), testNames);
                 }
@@ -453,7 +453,7 @@ public class TestsFileParser {
      * @return
      * @Description : get test name by suit.
      */
-    public JSONArray getTestNameByTestsFile(StringBuffer testFileDetails) {
+    public JSONArray getTestNameByTestsFile(StringBuilder testFileDetails) {
 
         String[] allLines = testFileDetails.toString().split(newLineRegex);
         JSONArray testName = new JSONArray();
@@ -491,7 +491,7 @@ public class TestsFileParser {
      * @return
      */
     public JSONArray getSessionListFromTest(String testsFileName, String testName) {
-        StringBuffer testsFileDetails = readTestsFile(testsFileName);
+        StringBuilder testsFileDetails = readTestsFile(testsFileName);
         String[] allLines = testsFileDetails.toString().split(newLineRegex);
         JSONArray sessionName = new JSONArray();
         int testCount=0;
@@ -550,7 +550,7 @@ public class TestsFileParser {
      *
      */
     public JSONArray getSeverityAndPriority(JSONObject test) {
-        StringBuffer testsFileDetails = readTestsFile(test.get("testsFileName").toString());
+        StringBuilder testsFileDetails = readTestsFile(test.get("testsFileName").toString());
         String[] allLines = testsFileDetails.toString().split(newLineRegex);
         JSONArray severityAndPriority = new JSONArray();
         String testName=test.get("testName").toString();
@@ -602,7 +602,7 @@ public class TestsFileParser {
      * @return
      */
     public boolean isBeforeTestInTestsFile(String testFileName) {
-        StringBuffer testFileDetails = readTestsFile(testFileName);
+        StringBuilder testFileDetails = readTestsFile(testFileName);
         String[] allLines = testFileDetails.toString().split(newLineRegex);
         boolean isBeforeTest=false;
         for (int i = 0; i < allLines.length; i++) {
@@ -638,7 +638,7 @@ public class TestsFileParser {
      */
     public boolean isAfterTestInTestsFile(String testFileName) {
 
-        StringBuffer testFileDetails = readTestsFile(testFileName);
+        StringBuilder testFileDetails = readTestsFile(testFileName);
         String[] allLines = testFileDetails.toString().split(newLineRegex);
         boolean isAfterTest=false;
         for (int i = 0; i < allLines.length; i++) {
@@ -672,7 +672,7 @@ public class TestsFileParser {
      * @return
      */
     public JSONArray getBeforeAndAfterTestStepByTestsFile(String testsFileName, String annotationName) {
-        StringBuffer testsFileDetails = readTestsFile(testsFileName);
+        StringBuilder testsFileDetails = readTestsFile(testsFileName);
         String[] allLines = testsFileDetails.toString().split(newLineRegex);
         JSONArray annotationSteps = new JSONArray();
         Validation validation=new Validation();
@@ -741,7 +741,7 @@ public class TestsFileParser {
      * @return
      */
     public void getAnnotationDataSetByTestsFile(String testsFileName) {
-        StringBuffer testsFileDetails = readTestsFile(testsFileName);
+        StringBuilder testsFileDetails = readTestsFile(testsFileName);
         String[] allLines = testsFileDetails.toString().split(newLineRegex);
         int startPoint = 0;
         boolean testStarted = false;
@@ -779,7 +779,7 @@ public class TestsFileParser {
      * @return
      */
     public String isRetry(String testFileName, String testName) {
-        StringBuffer testFileDetails = readTestsFile(testFileName);
+        StringBuilder testFileDetails = readTestsFile(testFileName);
         String[] allLines = testFileDetails.toString().split(newLineRegex);
         int testCount=0;
         int startPoint = 0;
@@ -845,7 +845,7 @@ public class TestsFileParser {
         int numberOfCollectionFound=0;
         for(Object testsFile:testsFileList){
             File name = new File(testsFile.toString());
-            StringBuffer testsFileDetails = readTestsFile(name.getName());
+            StringBuilder testsFileDetails = readTestsFile(name.getName());
             String[] allLines = testsFileDetails.toString().split(newLineRegex);
 
             for (int i = 0; i < allLines.length; i++) {

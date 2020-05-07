@@ -60,11 +60,11 @@ public class GetConfiguration {
             return  browserJsonArray;
         }
         else {
-            return getBrowser();
+            return getBrowserFromConfig();
         }
     }
 
-    public List<String> getBrowser() {
+    public List<String> getBrowserFromConfig() {
         JSONObject run = (JSONObject) main.get("run");
         JSONObject browser = (JSONObject) run.get("browser");
         return (JSONArray) browser.get("name");

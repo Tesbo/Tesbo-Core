@@ -724,7 +724,7 @@ public class DataDrivenParser {
     public boolean isDataSerValueIsExistOnTestsFile(String testsFileName,String keyName){
         TestsFileParser testsFileParser=new TestsFileParser();
         boolean isVariableExist=false;
-        StringBuffer testsFile= testsFileParser.readTestsFile(testsFileName);
+        StringBuilder testsFile= testsFileParser.readTestsFile(testsFileName);
         String[] allLines = testsFile.toString().split("[\\r\\n]+");
         boolean isDataSetName=false;
         boolean isBreak=false;
