@@ -514,7 +514,7 @@ public class DataDrivenParser {
         return sheetNo;
     }
 
-    public void setValueInDataSetVariable(WebDriver driver, JSONObject test, String step) throws Exception {
+    public void setValueInDataSetVariable(WebDriver driver, JSONObject test, String step) {
         variableType="text";
         String testsFileName= test.get("testsFileName").toString();
 
@@ -565,7 +565,7 @@ public class DataDrivenParser {
         }
     }
 
-    public JSONArray getElementValueFromStep(WebDriver driver,String step,JSONObject test,String testsFileName)throws Exception{
+    public JSONArray getElementValueFromStep(WebDriver driver,String step,JSONObject test,String testsFileName) {
         Commands cmd = new Commands();
         StepParser stepParser=new StepParser();
         GetLocator locator = new GetLocator();

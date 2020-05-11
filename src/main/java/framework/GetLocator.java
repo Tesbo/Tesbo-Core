@@ -7,7 +7,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
@@ -28,7 +27,7 @@ public class GetLocator {
 
     private static final Logger log = LogManager.getLogger(GetLocator.class);
 
-    public String getLocatorValue(String testsFileName, String locatorName) throws NoSuchFieldException, IOException {
+    public String getLocatorValue(String testsFileName, String locatorName) {
         verifyLocatorNameIsNotEmpty(locatorName);
         JSONArray locatorFileList = new JSONArray();
         JSONObject main=null;
@@ -41,16 +40,15 @@ public class GetLocator {
                 flag=verifyThatLocatorDirectoryHasOnlyJsonFile(locatorFileList, paths);
             } catch (Exception e) {
                 if(flag) {
-                    setErrorMsg("Message : Please create only '.json' file in Locator directory.",log);
+                    commonMethods.throwTesboException("Please create only '.json' file in Locator directory.", log);
                 }
                 else {
-                    setErrorMsg("Message : Please Enter valid directory path for locators.",log);
+                    tesboLogger.testFailed("Message : Please Enter valid directory path for locators.");
                     StringWriter sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
                     tesboLogger.testFailed(sw.toString());
                     log.error(sw.toString());
                 }
-                throw e;
             }
             main = Utility.loadJsonFile(config.getLocatorDirectory() + "/" + testsFileName.split(".tests")[0] + json);
         }
@@ -91,7 +89,7 @@ public class GetLocator {
         return locatorsName;
     }
 
-    public boolean verifyThatLocatorDirectoryHasOnlyJsonFile(JSONArray locatorFileList,Stream<Path> paths) throws NoSuchFieldException {
+    public boolean verifyThatLocatorDirectoryHasOnlyJsonFile(JSONArray locatorFileList,Stream<Path> paths) {
         StringBuilder file = new StringBuilder();
         locatorFileList.addAll(paths
                 .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
@@ -108,9 +106,8 @@ public class GetLocator {
         }
         if(flag){
             String errorMsg=file+" file found";
-            log.error(errorMsg);
             tesboLogger.errorLog(errorMsg);
-            throw (new NoSuchFieldException());
+            commonMethods.throwTesboException(errorMsg,log);
         }
         return flag;
     }
@@ -145,10 +142,6 @@ public class GetLocator {
         }
     }
 
-    public void setErrorMsg(String errorMsg, Logger log){
-        log.error(errorMsg);
-        tesboLogger.errorLog(errorMsg);
-    }
 
 }
 

@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import Exception.*;
 import org.json.simple.JSONObject;
 
 public class SuiteParser {
     TesboLogger tesboLogger = new TesboLogger();
+    CommonMethods commonMethods=new CommonMethods();
     private static final Logger log = LogManager.getLogger(SuiteParser.class);
 
     /**
@@ -27,12 +27,12 @@ public class SuiteParser {
      * @param fileName : File name with extension e.g. smoke.suite
      * @return whole file content as String buffer
      */
-    public StringBuffer readSuiteFile(String fileName) {
+    public StringBuilder readSuiteFile(String fileName) {
 
         GetConfiguration configuration = new GetConfiguration();
         BufferedReader br = null;
         FileReader fr = null;
-        StringBuffer tests = new StringBuffer();
+        StringBuilder tests = new StringBuilder();
 
         try {
             fr = new FileReader(configuration.getSuitesDirectory() + "/" + fileName+".suite");
@@ -69,7 +69,7 @@ public class SuiteParser {
      * @param testsFile
      * @return
      */
-    public JSONArray getTestNameFromSuiteFile(StringBuffer testsFile) {
+    public JSONArray getTestNameFromSuiteFile(StringBuilder testsFile) {
 
         String[] allLines = testsFile.toString().split("[\\r\\n]+");
         JSONArray testName = new JSONArray();
@@ -77,16 +77,11 @@ public class SuiteParser {
             if(!allLines[i].equals("")) {
                 String comment = String.valueOf(allLines[i].charAt(0)) + String.valueOf(allLines[i].charAt(1));
                 if ((allLines[i].toLowerCase().startsWith("test")) && (!comment.equals("//"))) {
-                    if (!allLines[i].trim().startsWith("Test: ")) {
-                        String errorMsg="Please write valid keyword or step for this \"" + allLines[i] + "\" on suite file";
-                        log.error(errorMsg);
-                        throw new TesboException(errorMsg);
-                    }
+                    verifyTestStartWithValidText(allLines[i]);
                     testName.add(allLines[i].trim());
                 } else {
                     if (!comment.equals("//")) {
-                        log.error("Define only test name in '.suite' file");
-                        throw new TesboException("Define only test name in '.suite' file");
+                        commonMethods.throwTesboException("Define only test name in '.suite' file",log);
                     }
                 }
             }
@@ -97,14 +92,18 @@ public class SuiteParser {
         return testName;
     }
 
+    public void verifyTestStartWithValidText(String testName){
+        if (!testName.trim().startsWith("Test: ")) {
+            commonMethods.throwTesboException("Please write valid keyword or step for this \"" + testName + "\" on suite file",log);
+        }
+    }
+
     public void validationForDuplicateTestInSuiteFile(JSONArray testNameList)
     {
         for(int i=0;i<testNameList.size();i++){
             for(int j=i+1;j<testNameList.size();j++){
                 if(testNameList.get(i).equals(testNameList.get(j))){
-                    String errorMsg="'"+testNameList.get(i)+"' test is define multiple time on same suite file";
-                    log.error(errorMsg);
-                    throw new TesboException(errorMsg);
+                    commonMethods.throwTesboException("'"+testNameList.get(i)+"' test is define multiple time on same suite file",log);
                 }
             }
         }
@@ -119,7 +118,7 @@ public class SuiteParser {
     public JSONObject getTestsFileNameUsingTestName(String suiteFileName) {
 
         JSONArray tampSuiteTestNameList=new JSONArray();
-        StringBuffer suiteFile= readSuiteFile(suiteFileName);
+        StringBuilder suiteFile= readSuiteFile(suiteFileName);
         JSONArray suiteTestNameList=getTestNameFromSuiteFile(suiteFile);
 
         tampSuiteTestNameList.addAll(suiteTestNameList);
@@ -127,10 +126,6 @@ public class SuiteParser {
         TestsFileParser testsFileParser=new TestsFileParser();
         GetConfiguration getConfiguration=new GetConfiguration();
         JSONArray testsFileNameList= testsFileParser.getTestFiles(getConfiguration.getTestsDirectory());
-
-
-
-        //=======================================================================
 
         int i=1;
         for(Object suiteTestName:suiteTestNameList){
@@ -142,23 +137,11 @@ public class SuiteParser {
                 JSONArray testName= testsFileParser.getTestNameByTestsFile(testsFileDetails);
                 for(Object test:testName) {
                     if(test.toString().equals(suiteTestName.toString().split(":")[1].trim())) {
-                        boolean isExistInTampSuiteTestNameList=false;
-                        for(Object tampSuiteTest:tampSuiteTestNameList){
-                            if(suiteTestName.equals(tampSuiteTest)){
-                                isExistInTampSuiteTestNameList=true;
-                                break;
-                            }
-                        }
-                        if(!isExistInTampSuiteTestNameList){
-                            String errorMsg="'"+suiteTestName+"' test is found multiple time on tests file";
-                            log.error(errorMsg);
-                            throw new TesboException(errorMsg);
-                        }
+                        verifySameTestNameIsExistOrNot(tampSuiteTestNameList,suiteTestName.toString());
                         testFileName=name.getName()+"_"+i++;
                         testList.add(test.toString().trim());
                         tampSuiteTestNameList.remove(suiteTestName);
                     }
-
                 }
 
             }
@@ -167,19 +150,32 @@ public class SuiteParser {
             }
         }
 
-        //=======================================================================
-
-        if(!tampSuiteTestNameList.isEmpty()){
-            String testList="";
-            for(Object test:tampSuiteTestNameList){
-                if(testList.equals("")){ testList=test.toString();
-                }else { testList=testList+", "+test.toString(); }
-            }
-            String errorMsg="'"+testList+"' test is not found in any tests file";
-            log.error(errorMsg);
-            throw new TesboException(errorMsg);
-        }
+        verifyTestNameIsNotExistOnAnyTestsFile(tampSuiteTestNameList);
         return testNameWithTestsFileName;
+    }
+
+    public void verifySameTestNameIsExistOrNot(JSONArray tampSuiteTestNameList,String suiteTestName){
+        boolean isExistInTampSuiteTestNameList=false;
+        for(Object tampSuiteTest:tampSuiteTestNameList){
+            if(suiteTestName.equals(tampSuiteTest)){
+                isExistInTampSuiteTestNameList=true;
+                break;
+            }
+        }
+        if(!isExistInTampSuiteTestNameList){
+            commonMethods.throwTesboException("'"+suiteTestName+"' test is found multiple time on tests file",log);
+        }
+    }
+
+    public void verifyTestNameIsNotExistOnAnyTestsFile(JSONArray tampSuiteTestNameList){
+        if(!tampSuiteTestNameList.isEmpty()){
+            StringBuilder testList=new StringBuilder();
+            for(Object test:tampSuiteTestNameList){
+                if(testList.length()==0){ testList.append(test.toString());
+                }else { testList.append(", "+test.toString()); }
+            }
+            commonMethods.throwTesboException("'"+testList+"' test is not found in any tests file",log);
+        }
     }
 
     /**
@@ -192,7 +188,7 @@ public class SuiteParser {
 
         JSONArray suiteFileList = new JSONArray();
         boolean flag=false;
-        String file=null;
+        StringBuilder file=new StringBuilder();
         try (Stream<Path> paths = Files.walk(Paths.get(directory))) {
 
             suiteFileList.addAll(paths
@@ -201,10 +197,10 @@ public class SuiteParser {
                 String[] testsFile=testsFilePath.toString().split("\\.");
                 if (testsFile.length == 2 && (!testsFile[1].equalsIgnoreCase("suite"))) {
                         flag=true;
-                        if(file==null)
-                            file="'."+testsFile[1]+"'";
+                        if(file.length()==0)
+                            file.append("'."+testsFile[1]+"'");
                         else
-                            file+=", '."+testsFile[1]+"'";
+                            file.append(", '."+testsFile[1]+"'");
                 }
             }
             if(flag){
