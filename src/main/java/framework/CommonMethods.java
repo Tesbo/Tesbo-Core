@@ -3,7 +3,7 @@ package framework;
 import logger.TesboLogger;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
-import Exception.TesboException;
+import Exception.*;
 
 public class CommonMethods {
 
@@ -19,6 +19,10 @@ public class CommonMethods {
     public  void throwTesboException(String errorMsg, Logger log){
             log.error(errorMsg);
             throw new TesboException(errorMsg);
+    }
+    public  void throwAssertException(String errorMsg, Logger log){
+        log.error(errorMsg);
+        throw new AssertException(errorMsg);
     }
     public  void printStepInfo(String InfoMsg, Logger log){
         log.info(InfoMsg);
