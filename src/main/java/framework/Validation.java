@@ -185,9 +185,11 @@ public class Validation {
     public void browserValidation() {
 
         ArrayList<String> browserList=new ArrayList<>();
+        boolean isGrid=false;
 
         try {
             browserList=getCofig.getBrowsers();
+            isGrid=getCofig.getIsGrid();
 
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
@@ -202,8 +204,12 @@ public class Validation {
         if(browserList.size()>0){
             boolean flag=false;
             for (String browser:browserList){
-                if(browser.equalsIgnoreCase("opera") || browser.equalsIgnoreCase("firefox") || browser.equalsIgnoreCase("chrome") ||browser.equalsIgnoreCase("ie") ){
+                if(browser.equalsIgnoreCase("opera") || browser.equalsIgnoreCase("safari") || browser.equalsIgnoreCase("firefox") || browser.equalsIgnoreCase("chrome") ||browser.equalsIgnoreCase("ie") ){
                     flag=true;
+                }
+                if(browser.equalsIgnoreCase("safari") && !isGrid){
+                    log.error("Safari browser is only working on 'Selenium Grid'.");
+                    throw new TesboException("Safari browser is only working on 'Selenium Grid'.");
                 }
                 if(browser.equalsIgnoreCase("Internet Explorer") || browser.equalsIgnoreCase("InternetExplorer")){
                     log.error("Please enter 'IE' instead of 'Internet Explorer'");
@@ -211,8 +217,8 @@ public class Validation {
                 }
             }
             if(!flag){
-                log.error("Only support Firefox, Chrome and IE browser");
-                throw new TesboException("Only support Firefox, Chrome and IE browser");
+                log.error("Only support Firefox, Chrome, IE and Safari browser");
+                throw new TesboException("Only support Firefox, Chrome, IE and Safari browser");
             }
         }
     }
