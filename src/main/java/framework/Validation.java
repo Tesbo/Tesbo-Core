@@ -483,7 +483,7 @@ public class Validation {
         int startPoint = 0;
         int endpoint = 0;
 
-        JSONObject startAndEndPoint=testsFileParser.getTestStartAndEndPoint(allLines,testNameValidation,"Step is not found for '" + test.get(testNameText).toString() + testErrorMsg);
+        JSONObject startAndEndPoint=testsFileParser.getTestStartAndEndPoint(allLines,test.get(testNameText).toString(),"Step is not found for '" + test.get(testNameText).toString() + testErrorMsg);
         startPoint= Integer.parseInt(startAndEndPoint.get(startPointText).toString());
         endpoint= Integer.parseInt(startAndEndPoint.get(endPointText).toString());
 

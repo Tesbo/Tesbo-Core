@@ -666,7 +666,6 @@ public class TestsFileParser {
                 testCount=testCount(testCount,testStarted);
             }
             if (testStarted) {
-
                 JSONObject endPoints=getTestEndStep(allLines[i],i);
                 if(endPoints.size()!=0){
                     startAndEndPoint.put(endPointText,i);
@@ -675,7 +674,6 @@ public class TestsFileParser {
                 }
             }
         }
-
         if(testCount>=2 || endpoint==0) {
             commonMethods.throwTesboException(errorMsg,log);
         }

@@ -7,7 +7,6 @@ import org.json.simple.JSONObject;
 import logger.TesboLogger;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import Exception.*;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 
@@ -42,9 +41,9 @@ public class VerifyParser {
         if(verify.contains("@")) {
             element = cmd.findElement(driver, locator.getLocatorValue(test.get(testsFileNameText).toString(), stepParser.parseElementName(verify)));
         }
-        if(verify.contains("'") || (verify.contains("{") && verify.contains("}"))) {
-             textOfStep = stepParser.parseTextToEnter(test, verify);
-        }
+
+        textOfStep = getVerifyTextFromStep(verify,test);
+
         //Is list size
         if (verify.toLowerCase().contains(" size ")) {
             flag=verifyListOfElementSize(driver,test,verify);
@@ -53,33 +52,7 @@ public class VerifyParser {
 
         //Text verification.
         if (verify.toLowerCase().contains("text")) {
-            try {
-                //equal
-                if (verify.toLowerCase().contains("not equal")) {
-                   flag=verifyTextNotEqual(element,textOfStep);
-                }
-                else if(verify.toLowerCase().contains("equal")) {
-                    flag=verifyTextIsEqual(element,textOfStep,verify);
-                }
-                //contains
-                else if (verify.toLowerCase().contains("contains")) {
-                    flag=verifyTextContains(element,textOfStep,verify);
-                }
-                else if(verify.toLowerCase().contains("start with")){
-                    flag=verifyTextStartWith(element,textOfStep);
-                }
-                else if(verify.toLowerCase().contains("end with")){
-                    flag=verifyTextEndWith(element,textOfStep);
-                }
-                else if(verify.toLowerCase().contains("number")){
-                    flag=verifyElementTextIsNumber(element);
-                }
-                else if(verify.toLowerCase().contains("alphanumeric")){
-                    flag=verifyElementTextIsAlphanumeric(element);
-                }
-            } catch (Exception e) {
-                throw e;
-            }
+            flag=verifyElementTextValue(element,textOfStep,verify);
         }
 
         //Is displayed
@@ -116,28 +89,59 @@ public class VerifyParser {
         }
 
         if(!flag) {
-            String errorMsg="'"+verify+"' Step is not define properly.";
-            log.error(errorMsg);
-            throw new TesboException(errorMsg);
+            commonMethods.throwTesboException("'"+verify+"' Step is not define properly.",log);
         }
         tesboLogger.testPassed("Passed");
     }
 
-    public boolean verifyListOfElementSize(WebDriver driver, JSONObject test,String verify){
-        boolean flag=false;
-        try {
-            /*
-             * Verify: @element has size of '10'
-             */
-
-            if(cmd.findElements(driver, locator.getLocatorValue(test.get(testsFileNameText).toString(), stepParser.parseElementName(verify))).size()!= Integer.parseInt(stepParser.parseTextToEnter(test,verify))) {
-                commonMethods.throwAssertException("Element list size not equal to '"+stepParser.parseTextToEnter(test,verify)+"'",log);
-            }
-            flag=true;
-        } catch (Exception e) {
-            throw e;
+    public String getVerifyTextFromStep(String verify,JSONObject test){
+        if(verify.contains("'") || (verify.contains("{") && verify.contains("}"))) {
+            return stepParser.parseTextToEnter(test, verify);
         }
+        return null;
+    }
+
+    public boolean verifyElementTextValue(WebElement element,String textOfStep,String verify){
+        boolean flag=false;
+
+        //equal
+        if (verify.toLowerCase().contains("not equal")) {
+            flag=verifyTextNotEqual(element,textOfStep);
+        }
+        else if(verify.toLowerCase().contains("equal")) {
+            flag=verifyTextIsEqual(element,textOfStep,verify);
+        }
+        //contains
+        else if (verify.toLowerCase().contains("contains")) {
+            flag=verifyTextContains(element,textOfStep,verify);
+        }
+        else if(verify.toLowerCase().contains("start with")){
+            flag=verifyTextStartWith(element,textOfStep);
+        }
+        else if(verify.toLowerCase().contains("end with")){
+            flag=verifyTextEndWith(element,textOfStep);
+        }
+        else if(verify.toLowerCase().contains("number")){
+            flag=verifyElementTextIsNumber(element);
+        }
+        else if(verify.toLowerCase().contains("alphanumeric")){
+            flag=verifyElementTextIsAlphanumeric(element);
+        }
+
         return flag;
+    }
+
+    public boolean verifyListOfElementSize(WebDriver driver, JSONObject test,String verify){
+
+        /*
+         * Verify: @element has size of '10'
+         */
+
+        if(cmd.findElements(driver, locator.getLocatorValue(test.get(testsFileNameText).toString(), stepParser.parseElementName(verify))).size()!= Integer.parseInt(stepParser.parseTextToEnter(test,verify))) {
+            commonMethods.throwAssertException("Element list size not equal to '"+stepParser.parseTextToEnter(test,verify)+"'",log);
+        }
+
+        return true;
     }
 
     public boolean verifyTextNotEqual(WebElement element,String textOfStep){
@@ -244,66 +248,55 @@ public class VerifyParser {
     }
 
     public boolean verifyElementIsDisplayed(WebElement element){
-        boolean flag=false;
-        try {
-            /*
-             * Verify: @element is displayed
-             * Verify: @element should displayed
-             * Verify: @element is present
-             */
-            if(!element.isDisplayed()) {
-                commonMethods.throwAssertException("Element is not displayed",log);
-            }
-            flag=true;
-        } catch (Exception e) {
-            throw e;
+
+        /*
+         * Verify: @element is displayed
+         * Verify: @element should displayed
+         * Verify: @element is present
+         */
+        if(!element.isDisplayed()) {
+            commonMethods.throwAssertException("Element is not displayed",log);
         }
-        return flag;
+
+        return true;
     }
 
     public boolean verifyElementIsVisible(WebElement element){
-        boolean flag=false;
-        try {
-            /*
-             * Verify: @element is Visible
-             */
-            if(!isVisibleInViewport(element)) {
-                commonMethods.throwAssertException("Element is not Visible",log);
-            }
-            flag=true;
-        } catch (Exception e) {
-            throw e;
+        /*
+         * Verify: @element is Visible
+         */
+        boolean isVisibleInViewport=isVisibleInViewport(element);
+        if(!isVisibleInViewport) {
+            commonMethods.throwAssertException("Element is not Visible",log);
         }
-        return flag;
+
+        return true;
     }
 
     public boolean verifyPageTitle(WebDriver driver,String textOfStep,String verify){
         boolean flag=false;
         //equal
-        try {
-            if (verify.toLowerCase().contains("equal")) {
-                /*
-                 * Verify : Page Title is equal to ignore case 'Google search'
-                 */
-                if (verify.toLowerCase().contains(ignoreCaseText)) {
-                    if(!driver.getTitle().equalsIgnoreCase(textOfStep)) {
-                        commonMethods.throwAssertException(comparisonFailureText+driver.getTitle()+butWasText+textOfStep+"\">",log);
-                    }
-                    flag=true;
+        if (verify.toLowerCase().contains("equal")) {
+            /*
+             * Verify : Page Title is equal to ignore case 'Google search'
+             */
+            if (verify.toLowerCase().contains(ignoreCaseText)) {
+                if(!driver.getTitle().equalsIgnoreCase(textOfStep)) {
+                    commonMethods.throwAssertException(comparisonFailureText+driver.getTitle()+butWasText+textOfStep+"\">",log);
                 }
-                /*
-                 * Verify : Page Title is equal to 'Google search'
-                 */
-                else {
-                    if(!driver.getTitle().equals(textOfStep)) {
-                        commonMethods.throwAssertException(comparisonFailureText+driver.getTitle()+butWasText+textOfStep+"\">",log);
-                    }
-                    flag=true;
-                }
+                flag=true;
             }
-        } catch (Exception e) {
-            throw e;
+            /*
+             * Verify : Page Title is equal to 'Google search'
+             */
+            else {
+                if(!driver.getTitle().equals(textOfStep)) {
+                    commonMethods.throwAssertException(comparisonFailureText+driver.getTitle()+butWasText+textOfStep+"\">",log);
+                }
+                flag=true;
+            }
         }
+
         return flag;
     }
 
@@ -372,47 +365,61 @@ public class VerifyParser {
         }
 
         if(verify.toLowerCase().contains(" not equal to ")){
-            /*
-             * Verify: Get attribute 'attribute name' of @element is not equal to 'attribute value'
-             * */
-            if(attributeValue.equals(verifyText)){
-                commonMethods.throwAssertException(expectingText+attributeValue+notToBeEqualText+verifyText+"\">",log);
-            }
-            flag=true;
+            flag=verifyElementAttributeValueNotEqualToGivenText(attributeValue,verifyText);
         }
         else if(verify.toLowerCase().contains(" is equal to ")){
 
-            if(verify.toLowerCase().contains(" is equal to ignore case ")){
-                /*
-                 * Verify: Get attribute 'attribute name' of @element is equal to ignore case 'attribute value'
-                 * */
-                if(!attributeValue.equalsIgnoreCase(verifyText)){
-                    commonMethods.throwAssertException(expectingText+attributeValue+toBeEqualText+verifyText+"\">",log);
-                }
-                flag=true;
-            }
-            else{
-                /*
-                 * Verify: Get attribute 'attribute name' of @element is equal to 'attribute value'
-                 * */
-                if(!attributeValue.equals(verifyText)){
-                    commonMethods.throwAssertException(comparisonFailureText+attributeValue+butWasText+verifyText+"\">",log);
-                }
-                flag=true;
-            }
+            flag=verifyElementAttributeValueEqualToGivenText(attributeValue,verifyText,verify);
         }
         else if(verify.toLowerCase().contains(" contains ")){
-            /*
-             * Verify: Get attribute 'attribute name' of @element contains is 'attribute value'
-             * */
-            if(!attributeValue.contains(verifyText)){
-                commonMethods.throwAssertException(expectingText+attributeValue+toContainText+verifyText+"\">",log);
-            }
-            flag=true;
+            flag=verifyElementAttributeValueContainsIsGivenText(attributeValue,verifyText);
         }
 
 
         return flag;
+    }
+
+    public boolean verifyElementAttributeValueEqualToGivenText(String attributeValue,String verifyText,String verify){
+        boolean flag=false;
+        if(verify.toLowerCase().contains(" is equal to ignore case ")){
+            /*
+             * Verify: Get attribute 'attribute name' of @element is equal to ignore case 'attribute value'
+             * */
+            if(!attributeValue.equalsIgnoreCase(verifyText)){
+                commonMethods.throwAssertException(expectingText+attributeValue+toBeEqualText+verifyText+"\">",log);
+            }
+            flag=true;
+        }
+        else{
+            /*
+             * Verify: Get attribute 'attribute name' of @element is equal to 'attribute value'
+             * */
+            if(!attributeValue.equals(verifyText)){
+                commonMethods.throwAssertException(comparisonFailureText+attributeValue+butWasText+verifyText+"\">",log);
+            }
+            flag=true;
+        }
+        return flag;
+    }
+
+    public boolean verifyElementAttributeValueNotEqualToGivenText(String attributeValue,String verifyText){
+        /*
+         * Verify: Get attribute 'attribute name' of @element is not equal to 'attribute value'
+         * */
+        if(attributeValue.equals(verifyText)){
+            commonMethods.throwAssertException(expectingText+attributeValue+notToBeEqualText+verifyText+"\">",log);
+        }
+        return true;
+    }
+
+    public boolean verifyElementAttributeValueContainsIsGivenText(String attributeValue,String verifyText){
+        /*
+         * Verify: Get attribute 'attribute name' of @element contains is 'attribute value'
+         * */
+        if(!attributeValue.contains(verifyText)){
+            commonMethods.throwAssertException(expectingText+attributeValue+toContainText+verifyText+"\">",log);
+        }
+        return true;
     }
 
     public boolean verifyCssValue(WebDriver driver,JSONObject test,String verify){
@@ -438,45 +445,59 @@ public class VerifyParser {
         }
 
         if(verify.toLowerCase().contains(" not equal to ")){
-            /*
-             * Verify: Get css value 'css name' of @element is not equal to 'css value'
-             * */
-            if(cssValue.equals(verifyText)){
-                commonMethods.throwAssertException(expectingText+cssValue+notToBeEqualText+verifyText+"\">",log);
-            }
-            flag=true;
+            flag=verifyElementCssValueNotEqualToGivenText(cssValue,verifyText);
         }
         else if(verify.toLowerCase().contains(" is equal to ")){
 
-            if(verify.toLowerCase().contains(" is equal to ignore case ")){
-                /*
-                 * Verify: Get css value 'css name' of @element is equal to ignore case 'css value'
-                 * */
-                if(!cssValue.equalsIgnoreCase(verifyText)){
-                    commonMethods.throwAssertException(expectingText+cssValue+toBeEqualText+verifyText+"\">",log);
-                }
-                flag=true;
-            }
-            else{
-                if(!cssValue.equals(verifyText)){
-                    /*
-                     * Verify: Get css value 'css name' of @element is equal to 'css value'
-                     * */
-                    commonMethods.throwAssertException(comparisonFailureText+cssValue+butWasText+verifyText+"\">",log);
-                }
-                flag=true;
-            }
+            flag=verifyElementCssValueEqualToGivenText(cssValue,verifyText,verify);
         }
         else if(verify.toLowerCase().contains(" contains ")){
+            flag=verifyElementCssValueContainsIsGivenText(cssValue,verifyText);
+        }
+        return flag;
+    }
+
+    public boolean verifyElementCssValueEqualToGivenText(String cssValue,String verifyText,String verify){
+        boolean flag=false;
+        if(verify.toLowerCase().contains(" is equal to ignore case ")){
             /*
-             * Verify: Get css value 'css name' of @element contains is 'css value'
+             * Verify: Get css value 'css name' of @element is equal to ignore case 'css value'
              * */
-            if(!cssValue.contains(verifyText)){
-                commonMethods.throwAssertException(expectingText+cssValue+toContainText+verifyText+"\">",log);
+            if(!cssValue.equalsIgnoreCase(verifyText)){
+                commonMethods.throwAssertException(expectingText+cssValue+toBeEqualText+verifyText+"\">",log);
+            }
+            flag=true;
+        }
+        else{
+            if(!cssValue.equals(verifyText)){
+                /*
+                 * Verify: Get css value 'css name' of @element is equal to 'css value'
+                 * */
+                commonMethods.throwAssertException(comparisonFailureText+cssValue+butWasText+verifyText+"\">",log);
             }
             flag=true;
         }
         return flag;
+    }
+
+    public boolean verifyElementCssValueNotEqualToGivenText(String cssValue,String verifyText){
+        /*
+         * Verify: Get css value 'css name' of @element is not equal to 'css value'
+         * */
+        if(cssValue.equals(verifyText)){
+            commonMethods.throwAssertException(expectingText+cssValue+notToBeEqualText+verifyText+"\">",log);
+        }
+        return true;
+    }
+
+    public boolean verifyElementCssValueContainsIsGivenText(String cssValue,String verifyText){
+        /*
+         * Verify: Get css value 'css name' of @element contains is 'css value'
+         * */
+        if(!cssValue.contains(verifyText)){
+            commonMethods.throwAssertException(expectingText+cssValue+toContainText+verifyText+"\">",log);
+        }
+        return true;
     }
 
     public static boolean isNumeric(String strNum) {
