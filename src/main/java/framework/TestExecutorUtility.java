@@ -11,10 +11,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import reportAPI.ReportAPIConfig;
 import reportAPI.Reporter;
@@ -24,18 +26,19 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 
-public class TestExecutorUtility {
+public class TestExecutorUtility{
 
     Commands cmd=new Commands();
     GetConfiguration config=new GetConfiguration();
     TesboLogger tesboLogger =new TesboLogger();
-    private static final TestExecutor testExecutor=new TestExecutor();
     private static final Logger log = LogManager.getLogger(TestExecutorUtility.class);
     StepParser stepParser=new StepParser();
     ReportParser reportParser=new ReportParser();
     CommonMethods commonMethods=new CommonMethods();
     TestsFileParser testsFileParser=new TestsFileParser();
     ExternalCode externalCode=new ExternalCode();
+    VerifyParser verifyParser = new VerifyParser();
+    StringWriter sw = new StringWriter();
 
 
     String firefoxText="firefox";
@@ -56,7 +59,14 @@ public class TestExecutorUtility {
     String verifyText="Verify: ";
     String codeText="Code: ";
     String exceptionAsString = null;
-
+    String screenShotPathText="screenShotPath";
+    String testResultText="testResult";
+    String sessionListText="sessionList";
+    String stepReportObjectText="stepReportObject";
+    String driverText="driver";
+    String testsFileNameText="testsFileName";
+    String testNameText="testName";
+    String capabilityText="capability";
 
     public String getSeleniumAddress(){
         String seleniumAddress = null;
@@ -68,55 +78,70 @@ public class TestExecutorUtility {
     }
 
     public JSONObject browserInitialization(WebDriver driver,String browserName,String seleniumAddress){
-
         DesiredCapabilities capability = new DesiredCapabilities();
         JSONObject browserData=new JSONObject();
-        JSONObject capabilities = null;
 
         if(config.getBinaryPath(browserName+"Path")!=null){
             String binaryPathLog="Binary path of "+browserName+": "+config.getBinaryPath(browserName+"Path");
             log.info(binaryPathLog);
             log.info("Initialize browser using binary path");
-            testExecutor.initializeBrowserFromBinaryPath(browserName);
+            driver=initializeBrowserFromBinaryPath(browserName,driver);
         }
         else {
-            if (cmd.IsCapabilities(browserName) && seleniumAddress != null) {
-                capabilities = cmd.getCapabilities(browserName);
-                if (capabilities != null){
-                    capability = cmd.setCapabilities(capabilities,capability);
-                }
-            }
+            capability = setCapability(browserName,seleniumAddress,capability);
 
-            if (browserName.equalsIgnoreCase(firefoxText)) {
-                capability.setCapability(browserNameText,firefoxText);
-                WebDriverManager.firefoxdriver().setup();
-                System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "true");
-                System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE, "/dev/null");
-                if (seleniumAddress == null) {
-                    driver = new FirefoxDriver();
-                }
-            }
-            if (browserName.equalsIgnoreCase(chromeText)) {
-                capability.setCapability(browserNameText,chromeText);
-                WebDriverManager.chromedriver().setup();
-                if (seleniumAddress == null) {
-                    driver = new ChromeDriver();
-                }
-            }
-            if (browserName.equalsIgnoreCase("ie")) {
-                capability.setCapability(browserNameText,"internetExplorer");
-                WebDriverManager.iedriver().setup();
-                if (seleniumAddress == null) {
-                    driver = new InternetExplorerDriver();
-                }
-
-            }
+            JSONObject browserDetails= browserInitialize(driver,browserName,seleniumAddress,capability);
+            capability= (DesiredCapabilities) browserDetails.get(capabilityText);
+            driver= (WebDriver) browserDetails.get(driverText);
         }
-        browserData.put("capability",capability);
-        browserData.put("driver",driver);
+        browserData.put(capabilityText,capability);
+        browserData.put(driverText,driver);
 
         return browserData;
 
+    }
+    public JSONObject browserInitialize(WebDriver driver,String browserName,String seleniumAddress,DesiredCapabilities capability){
+        JSONObject browserData=new JSONObject();
+        if (browserName.equalsIgnoreCase(firefoxText)) {
+            capability.setCapability(browserNameText,firefoxText);
+            WebDriverManager.firefoxdriver().setup();
+            System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "true");
+            System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE, "/dev/null");
+            if (seleniumAddress == null) {
+                driver = new FirefoxDriver();
+            }
+        }
+        if (browserName.equalsIgnoreCase(chromeText)) {
+            capability.setCapability(browserNameText,chromeText);
+            WebDriverManager.chromedriver().setup();
+            if (seleniumAddress == null) {
+                driver = new ChromeDriver();
+            }
+        }
+        if (browserName.equalsIgnoreCase("ie")) {
+            capability.setCapability(browserNameText,"internetExplorer");
+            WebDriverManager.iedriver().setup();
+            if (seleniumAddress == null) {
+                driver = new InternetExplorerDriver();
+            }
+
+        }
+        browserData.put(capabilityText,capability);
+        browserData.put(driverText,driver);
+
+        return browserData;
+    }
+
+
+    public DesiredCapabilities setCapability(String browserName,String seleniumAddress,DesiredCapabilities capability){
+        JSONObject capabilities = null;
+        if (cmd.IsCapabilities(browserName) && seleniumAddress != null) {
+            capabilities = cmd.getCapabilities(browserName);
+            if (capabilities != null){
+                capability = cmd.setCapabilities(capabilities,capability);
+            }
+        }
+        return capability;
     }
 
     public Map<String, WebDriver> setSessionList(WebDriver driver,Object session, Map<String, WebDriver> sessionList){
@@ -134,8 +159,8 @@ public class TestExecutorUtility {
             String seleniumAddressLog="Start test with selenium address: "+seleniumAddress;
             log.info(seleniumAddressLog);
         }
-        remoteBrowserDetails.put("driver",driver);
-        remoteBrowserDetails.put("sessionList",sessionList);
+        remoteBrowserDetails.put(driverText,driver);
+        remoteBrowserDetails.put(sessionListText,sessionList);
         return remoteBrowserDetails;
     }
 
@@ -154,40 +179,44 @@ public class TestExecutorUtility {
      * @auther : Ankit Mistry
      * @lastModifiedBy:
      */
-    public WebDriver initializeSessionRunTime(WebDriver driver, Object step, Map<String, WebDriver> sessionList, JSONArray listOfSession) {
+    public JSONObject initializeSessionRunTime(WebDriver driver, Object step, Map<String, WebDriver> sessionList, JSONArray listOfSession,String browser) {
+        JSONObject browserDetails=new JSONObject();
         if (step.toString().replaceAll(whiteSpace, " ").trim().contains("[") && step.toString().replaceAll(whiteSpace, " ").trim().contains("]")) {
             String testStep = step.toString().replace("[", "").replace("]", "");
             for (Object session : listOfSession) {
                 if (testStep.equalsIgnoreCase(session.toString())) {
-                    boolean isInSessionList = false;
-                    for (Map.Entry map : sessionList.entrySet()) {
-                        if (map.getKey().toString().equalsIgnoreCase(testStep)) {
-                            isInSessionList = true;
-                            driver = (WebDriver) map.getValue();
-                        }
-                    }
-                    if (!isInSessionList) {
-                        driver = testExecutor.initializeBrowser(session);
-                        try {
-                            Thread.sleep(1000);
-                        } catch (Exception e) {
-                            StringWriter sw = new StringWriter();
-                            e.printStackTrace(new PrintWriter(sw));
-                            tesboLogger.testFailed(sw.toString());
-                            log.error(sw.toString());
-                        }
-                    }
+                    browserDetails=initializeSessionBrowser(driver,session,sessionList,testStep,browser);
                 }
             }
             tesboLogger.stepLog(step.toString());
             log.info(step);
         }
-        return driver;
-
+        return browserDetails;
     }
 
-    public JSONObject addPrintAnsRandomStepForReport(WebDriver driver, String step, JSONObject stepReportObject, JSONObject test){
-        StringWriter sw = new StringWriter();
+    public JSONObject initializeSessionBrowser(WebDriver driver, Object session, Map<String, WebDriver> sessionList, String testStep,String browser){
+        JSONObject browserDetails=new JSONObject();
+        boolean isInSessionList = false;
+        for (Map.Entry map : sessionList.entrySet()) {
+            if (map.getKey().toString().equalsIgnoreCase(testStep)) {
+                isInSessionList = true;
+                driver = (WebDriver) map.getValue();
+            }
+        }
+        if (!isInSessionList) {
+            browserDetails = initializeBrowser(session,driver,browser,sessionList);
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace(new PrintWriter(sw));
+                tesboLogger.testFailed(sw.toString());
+                log.error(sw.toString());
+            }
+        }
+        return browserDetails;
+    }
+
+        public JSONObject addPrintAnsRandomStepForReport(WebDriver driver, String step, JSONObject stepReportObject, JSONObject test){
         if (!(step.contains("{") && step.contains("}") && step.contains(printText) && step.contains(randomText)))  {
             stepReportObject.put(stepsText, step.replace("@",""));
         }
@@ -238,38 +267,49 @@ public class TestExecutorUtility {
      * @lastModifiedBy:
      */
     public void sendVerifyStep(WebDriver driver,String step,JSONObject test) {
-        VerifyParser verifyParser = new VerifyParser();
         int count = (int) step.chars().filter(ch -> ch == '@').count();
         String verifyStep = stepParser.removedVerificationTextFromSteps(step);
         if (count >= 2) {
             if (!(verifyStep.toLowerCase().contains(" and ") || verifyStep.toLowerCase().contains(" or "))) {
-                stepParser.listOfSteps(step, count);
-                for (String newStep : stepParser.listOfSteps(step, count)) {
-                    verifyParser.parseVerify(driver, test, newStep);
-                }
+                executeVerifyStepWhenItHasMultipleElement(step,count,test,driver);
             }else if (verifyStep.toLowerCase().contains(" and "))
             {
-                for(String newStep:stepParser.listOfStepWhoHasSameVerifier(step,"and")){
-                    verifyParser.parseVerify(driver, test,newStep);
-                }
+                executeVerifyStepWhenItHasAndVerifier(step,test,driver);
             }
             else if (verifyStep.toLowerCase().contains(" or "))
             {
-                int failCount = 0;
-                for (String orConditionStep : stepParser.listOfStepWhoHasSameVerifier(step,"or")) {
-                    try {
-                        verifyParser.parseVerify(driver, test, orConditionStep);
-                    } catch (Exception e) {
-                        failCount++;
-                        if (failCount == stepParser.listOfStepWhoHasSameVerifier(step,"or").size()) {
-                            commonMethods.throwAssertException("'" + step + "' step is not verified",log);
-                        }
-                    }
-                }
+                executeVerifyStepWhenItHasOrVerifier(step,test,driver);
             }
         }
         else {
             verifyParser.parseVerify(driver, test, step);
+        }
+    }
+
+    public void executeVerifyStepWhenItHasAndVerifier(String step,JSONObject test,WebDriver driver){
+        for(String newStep:stepParser.listOfStepWhoHasSameVerifier(step,"and")){
+            verifyParser.parseVerify(driver, test,newStep);
+        }
+    }
+
+    public void executeVerifyStepWhenItHasOrVerifier(String step,JSONObject test,WebDriver driver){
+        int failCount = 0;
+        for (String orConditionStep : stepParser.listOfStepWhoHasSameVerifier(step,"or")) {
+            try {
+                verifyParser.parseVerify(driver, test, orConditionStep);
+            } catch (Exception e) {
+                failCount++;
+                if (failCount == stepParser.listOfStepWhoHasSameVerifier(step,"or").size()) {
+                    commonMethods.throwAssertException("'" + step + "' step is not verified",log);
+                }
+            }
+        }
+    }
+
+    public void executeVerifyStepWhenItHasMultipleElement(String step,int count,JSONObject test,WebDriver driver){
+        stepParser.listOfSteps(step, count);
+        for (String newStep : stepParser.listOfSteps(step, count)) {
+            verifyParser.parseVerify(driver, test, newStep);
         }
     }
 
@@ -296,7 +336,7 @@ public class TestExecutorUtility {
         return testReportObject;
     }
 
-    public JSONObject executeBeforeTestStepIfExistInTestsFile(WebDriver driver,String testsFileName,int stepIndex,JSONArray testStepArray){
+    public JSONObject executeBeforeTestStepIfExistInTestsFile(WebDriver driver,String testsFileName,int stepIndex,JSONArray testStepArray,JSONObject test,String testResult,String screenShotPath){
         String beforeTextMsg="Before test functionality is exist or not in tests file: "+testsFileParser.isBeforeTestInTestsFile(testsFileName);
         log.info(beforeTextMsg);
         if(testsFileParser.isBeforeTestInTestsFile(testsFileName)){
@@ -307,39 +347,45 @@ public class TestExecutorUtility {
                 long startTimeStep = System.currentTimeMillis();
                 Object step = annotationSteps.get(i);
 
-                if(step.toString().toLowerCase().contains(pauseText) )
-                {
+                if(step.toString().toLowerCase().contains(pauseText) ) {
                     if(config.getPauseStepDisplay()){ stepReportObject.put(stepIndexText, ++stepIndex); }
                 }
                 else{ stepReportObject.put(stepIndexText, ++stepIndex); }
 
                 stepReportObject.put(startTimeText, startTimeStep);
 
-                stepReportObject=testExecutor.addStepExecutionOfAnnotation(driver,stepReportObject,step.toString());
+                JSONObject stepReportDetails=addStepExecutionOfAnnotation(driver,stepReportObject,step.toString(),test);
+                testResult= (String) stepReportDetails.get(testResultText);
+                screenShotPath= (String) stepReportDetails.get(screenShotPathText);
+                stepReportObject= (JSONObject) stepReportDetails.get(stepReportObjectText);
 
-                if(stepReportObject.size()!=0) {
-                    if(step.toString().toLowerCase().contains(pauseText) )
-                    {
-                        if(config.getPauseStepDisplay()){ testStepArray.add(stepReportObject); }
-                    }
-                    else { testStepArray.add(stepReportObject); }
-                }
-                if (stepReportObject.get(statusText).equals(failedText)) {
-                    break;
-                }
+                testStepArray= addStepReportObjectToTestStepArray(testStepArray,stepReportObject,step.toString());
 
+                if (stepReportObject.get(statusText).equals(failedText)) { break; }
             }
         }
         JSONObject testStepDetails=new JSONObject();
+        testStepDetails.put(testResultText,testResult);
+        testStepDetails.put(screenShotPathText,screenShotPath);
         testStepDetails.put("testSteps",testStepArray);
         testStepDetails.put(stepIndexText,stepIndex);
         return testStepDetails;
     }
 
-    public JSONArray executeAfterTestStepIfExistInTestsFile(WebDriver driver,String testsFileName,int stepIndex,JSONArray testStepArray){
+    public JSONArray addStepReportObjectToTestStepArray(JSONArray testStepArray,JSONObject stepReportObject,String step){
+        if(stepReportObject.size()!=0) {
+            if(step.toLowerCase().contains(pauseText) )
+            {
+                if(config.getPauseStepDisplay()){ testStepArray.add(stepReportObject); }
+            }
+            else { testStepArray.add(stepReportObject); }
+        }
+        return testStepArray;
+    }
+
+    public JSONObject executeAfterTestStepIfExistInTestsFile(WebDriver driver,String testsFileName,int stepIndex,JSONArray testStepArray,JSONObject test,String testResult,String screenShotPath){
         String beforeTextMsg="Before test functionality is exist or not in tests file: "+testsFileParser.isBeforeTestInTestsFile(testsFileName);
         log.info(beforeTextMsg);
-
         if (testsFileParser.isAfterTestInTestsFile(testsFileName)) {
             JSONArray annotationSteps = testsFileParser.getBeforeAndAfterTestStepByTestsFile(testsFileName, "AfterTest");
             for (int i = 0; i < annotationSteps.size(); i++) {
@@ -348,33 +394,40 @@ public class TestExecutorUtility {
                 long startTimeStep = System.currentTimeMillis();
                 Object step = annotationSteps.get(i);
 
-                if(step.toString().toLowerCase().contains(pauseText) )
-                {
+                if(step.toString().toLowerCase().contains(pauseText) ) {
                     if(config.getPauseStepDisplay()){ stepReportObject.put(stepIndexText, ++stepIndex); }
                 }
                 else{ stepReportObject.put(stepIndexText, ++stepIndex); }
                 stepReportObject.put(startTimeText, startTimeStep);
 
-                stepReportObject = testExecutor.addStepExecutionOfAnnotation(driver, stepReportObject, step.toString());
+                JSONObject stepReportDetails = addStepExecutionOfAnnotation(driver, stepReportObject, step.toString(),test);
+                testResult= (String) stepReportDetails.get(testResultText);
+                screenShotPath= (String) stepReportDetails.get(screenShotPathText);
+                stepReportObject= (JSONObject) stepReportDetails.get(stepReportObjectText);
 
-                if (stepReportObject.size() != 0) {
-                    if(step.toString().toLowerCase().contains(pauseText) )
-                    {
-                        if(config.getPauseStepDisplay()){ testStepArray.add(stepReportObject); }
-                    }
-                    else { testStepArray.add(stepReportObject); }
-                }
-                if (stepReportObject.get(statusText).equals(failedText)) {
-                    break;
-                }
+                testStepArray= addStepReportObjectToTestStepArray(testStepArray,stepReportObject,step.toString());
+
+                if (stepReportObject.get(statusText).equals(failedText)) { break; }
 
             }
         }
-        return testStepArray;
+        JSONObject testReportDetails=new JSONObject();
+        testReportDetails.put(testResultText,testResult);
+        testReportDetails.put(screenShotPathText,screenShotPath);
+        testReportDetails.put("testStepArray",testStepArray);
+
+
+        return testReportDetails;
     }
 
-    public JSONObject executeTestSteps(WebDriver driver,String testsFileName,int stepIndex,JSONArray testStepArray,String testName, JSONObject test,Map<String, WebDriver> sessionList,JSONArray listOfSession,boolean isSession){
-        StringWriter sw = new StringWriter();
+    public JSONObject executeTestSteps(WebDriver driver,JSONArray testStepArray, JSONObject test,Map<String, WebDriver> sessionList,JSONArray listOfSession,JSONObject testReportDetails){
+        String testsFileName=test.get(testsFileNameText).toString();
+        String testName=test.get(testNameText).toString();
+        String browser=test.get("browser").toString();
+        int stepIndex= (int) testReportDetails.get("stepIndex");
+        boolean isSession= (boolean) testReportDetails.get("isSession");
+        String testResult= testReportDetails.get(testResultText).toString();
+        String screenShotPath=testReportDetails.get(screenShotPathText).toString();
 
         /*Getting step using testsFileName and Testcase Name*/
         String stepLogInfo="Get steps for "+testName+" test from "+testsFileName+" tests file";
@@ -384,7 +437,6 @@ public class TestExecutorUtility {
         int j = 0;
         String testInfoMsg=testName+" test has "+steps.size()+" steps";
         log.info(testInfoMsg);
-        IfStepParser ifStepParser=new IfStepParser();
 
         for(int i = 0; i < steps.size(); i++) {
             boolean stepPassed = true;
@@ -392,42 +444,13 @@ public class TestExecutorUtility {
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
 
-            if((step.toString().toLowerCase().startsWith("else::") || step.toString().toLowerCase().startsWith("else if:: ") || step.toString().toLowerCase().startsWith("end::")))
-            {
-                try {
-                    commonMethods.throwTesboException("If condition is not found for '" + step.toString() + "' step.",log);
-                }catch (Exception e){
-                    e.printStackTrace(new PrintWriter(sw));
-                    exceptionAsString = sw.toString();
-                    tesboLogger.testFailed(failedTextMsg);
-                    tesboLogger.testFailed(exceptionAsString);
-                    stepPassed = false;
-                    log.error(failedTextMsg);
-                    log.error(exceptionAsString);
-                }
-            }
+            stepPassed=throwErrorWhenIfConditionIsNotFoundForElseOrElseIf(step.toString(),stepPassed);
 
-            if(step.toString().startsWith("If:: ") && !(step.toString().toLowerCase().startsWith("else if:: "))){
-                try{
-                    steps= ifStepParser.getStepsOfTestWhoHasIfCondition(driver,test,steps);
-                    try {
-                        step = steps.get(i);
-                        if (step.toString().startsWith("If:: ")) {
-                            i--;
-                            continue;
-                        }
-                    }catch (Exception e1){ continue; }
-                } catch (Exception e) {
-                    e.printStackTrace(new PrintWriter(sw));
-                    exceptionAsString = sw.toString();
-                    tesboLogger.testFailed(failedTextMsg);
-                    tesboLogger.testFailed(exceptionAsString);
-                    stepPassed = false;
-                    log.error(failedTextMsg);
-                    log.error(exceptionAsString);
-                }
-
-            }
+            JSONObject ifConditionStepDetails= executeIfConditionIfTestHas(step.toString(),stepPassed,test,driver,steps,i);
+            i = (int) ifConditionStepDetails.get("i");
+            stepPassed= (boolean) ifConditionStepDetails.get("stepPassed");
+            steps= (JSONArray) ifConditionStepDetails.get(stepsText);
+            if((boolean)ifConditionStepDetails.get("isContinue")){continue;}
 
             if (!step.toString().replaceAll(whiteSpace, " ").trim().startsWith("Collection: ")) {
                 if(step.toString().toLowerCase().contains(pauseText) )
@@ -472,7 +495,6 @@ public class TestExecutorUtility {
                                     stepReportObject.put(stepsText, step.toString().replace("@" + removeContent, removeContent));
                                 }
                             }
-
                         }
                         else {
                             stepReportObject.put(stepsText, step.toString().replace("@", ""));
@@ -484,12 +506,15 @@ public class TestExecutorUtility {
                         stepReportObject.put(stepsText, stepParser.printStep(driver, step.toString(), test));
                     } catch (Exception e) {log.error("");}
                 }
+
             }
 
             if (isSession) {
                 String startSessionLog="Start session for "+step;
                 log.info(startSessionLog);
-                driver =initializeSessionRunTime(driver, step,sessionList,listOfSession);
+                JSONObject browserDetails  =initializeSessionRunTime(driver, step,sessionList,listOfSession,browser);
+                driver=(WebDriver) browserDetails.get(driverText);
+                sessionList= (Map<String, WebDriver>) browserDetails.get(sessionListText);
             }
             try {
 
@@ -536,7 +561,7 @@ public class TestExecutorUtility {
                     }
                 }
                 if (isSessions) {
-                    testExecutor.afterTest(sessionName);
+                    sessionList=stepToExecuteAfterTest(driver,sessionName,sessionList,isSession);
                     String sessionClosedLog=sessionName+" session is closed";
                     log.info(sessionClosedLog);
                 }
@@ -644,17 +669,24 @@ public class TestExecutorUtility {
                         }
                     }
                     reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
-                    stepReportObject = testExecutor.addStepResultInReport(driver, stepReportObject, stepPassed);
+
+                    JSONObject stepDetails = addStepResultInReport(driver, stepReportObject, stepPassed,testsFileName,testName);
+                    stepReportObject= (JSONObject) stepDetails.get(stepReportObjectText);
+                    testResult= (String) stepDetails.get(testResultText);
+                    screenShotPath= (String)  stepDetails.get(screenShotPathText);
                     testStepArray.add(stepReportObject);
                     stepReportObject = new JSONObject();
                 }
             }
 
+
             reportParser.addScreenshotUrlInReport(stepReportObject, step.toString());
 
             if (stepReportObject.size() != 0) {
-                stepReportObject = testExecutor.addStepResultInReport(driver, stepReportObject, stepPassed);
-
+                JSONObject stepDetails = addStepResultInReport(driver, stepReportObject, stepPassed,testsFileName,testName);
+                stepReportObject= (JSONObject) stepDetails.get(stepReportObjectText);
+                testResult= (String) stepDetails.get(testResultText);
+                screenShotPath= (String)  stepDetails.get(screenShotPathText);
                 if(step.toString().toLowerCase().contains(pauseText) )
                 {
                     if(config.getPauseStepDisplay()){ testStepArray.add(stepReportObject); }
@@ -684,6 +716,10 @@ public class TestExecutorUtility {
         }
 
         JSONObject testStepDetails=new JSONObject();
+
+        testStepDetails.put(testResultText,testResult);
+        testStepDetails.put(screenShotPathText,screenShotPath);
+        testStepDetails.put(driverText,driver);
         testStepDetails.put("testSteps",testStepArray);
         testStepDetails.put(stepIndexText,stepIndex);
         testStepDetails.put("exceptionAsString",exceptionAsString);
@@ -691,19 +727,58 @@ public class TestExecutorUtility {
         return testStepDetails;
     }
 
+    public boolean throwErrorWhenIfConditionIsNotFoundForElseOrElseIf(String step,boolean stepPassed){
+        if((step.toLowerCase().startsWith("else::") || step.toLowerCase().startsWith("else if:: ") || step.toLowerCase().startsWith("end::")))
+        {
+            try {
+                commonMethods.throwTesboException("If condition is not found for '" + step + "' step.",log);
+            }catch (Exception e){
+                e.printStackTrace(new PrintWriter(sw));
+                exceptionAsString = sw.toString();
+                commonMethods.logErrorMsg(failedTextMsg,log);
+                commonMethods.logErrorMsg(exceptionAsString,log);
+                stepPassed = false;
+            }
+        }
+        return stepPassed;
+    }
+
+    public JSONObject executeIfConditionIfTestHas(String step,boolean stepPassed,JSONObject test,WebDriver driver,JSONArray steps,int i){
+        IfStepParser ifStepParser=new IfStepParser();
+        JSONObject detailsOfIfConditionStep=new JSONObject();
+        boolean isContinue=false;
+        if(step.startsWith("If:: ") && !(step.toLowerCase().startsWith("else if:: "))){
+            try{
+                steps= ifStepParser.getStepsOfTestWhoHasIfCondition(driver,test,steps);
+            } catch (Exception e) {
+                e.printStackTrace(new PrintWriter(sw));
+                exceptionAsString = sw.toString();
+                commonMethods.logErrorMsg(failedTextMsg,log);
+                commonMethods.logErrorMsg(exceptionAsString,log);
+                stepPassed = false;
+            }
+            try {
+                step = steps.get(i).toString();
+                if (step.startsWith("If:: ")) {
+                    i--;
+                    isContinue=true;
+                }
+            }catch (Exception e1){ isContinue=true; }
+        }
+        detailsOfIfConditionStep.put("i",i);
+        detailsOfIfConditionStep.put("stepPassed",stepPassed);
+        detailsOfIfConditionStep.put("isContinue",isContinue);
+        detailsOfIfConditionStep.put(stepsText,steps);
+
+        return detailsOfIfConditionStep;
+    }
+
     public void addReportOnCloud(String testName,String testsFileName,JSONObject testReportObject,String testResult){
         ReportAPIConfig reportAPIConfig = new ReportAPIConfig();
         if(config.getIsCloudIntegration()) {
             boolean isAddOnCloud=false;
             if(testsFileParser.isRetry(testsFileName, testName).equalsIgnoreCase("null") || testsFileParser.isRetry(testsFileName, testName).equalsIgnoreCase("false")){
-                if(!(Integer.parseInt(config.getRetryAnalyser())>0) || testsFileParser.isRetry(testsFileName, testName).equalsIgnoreCase("false")){
-                    isAddOnCloud=true;
-                }
-                else {
-                    if(TestExecutionBuilder.failTest == Integer.parseInt(config.getRetryAnalyser()) || (testResult.equalsIgnoreCase(passedText))){
-                        isAddOnCloud=true;
-                    }
-                }
+                isAddOnCloud=isRetryAnalyserIsGreaterThenZero(testName,testsFileName,testResult);
             }
             else {
                 if(TestExecutionBuilder.failTest == Integer.parseInt(config.getRetryAnalyser()) || testResult.equalsIgnoreCase(passedText)){
@@ -714,6 +789,18 @@ public class TestExecutorUtility {
         }
     }
 
+    public boolean isRetryAnalyserIsGreaterThenZero(String testName,String testsFileName,String testResult){
+        if((Integer.parseInt(config.getRetryAnalyser())!=0) || testsFileParser.isRetry(testsFileName, testName).equalsIgnoreCase("false")){
+            return true;
+        }
+        else {
+            if(TestExecutionBuilder.failTest == Integer.parseInt(config.getRetryAnalyser()) || (testResult.equalsIgnoreCase(passedText))){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void manageFailTestExecutionQueue(String testResult,String testName,String testsFileName,JSONObject test,JSONObject classTest){
         TestExecutionBuilder testExecutionBuilder=new TestExecutionBuilder();
         if(testResult.equalsIgnoreCase(failedText)){
@@ -722,18 +809,22 @@ public class TestExecutorUtility {
             }
         }
         else {
-            Object removeTest=null;
             if(!TestExecutionBuilder.failTestQueue.isEmpty()){
-                for(Object failTest:TestExecutionBuilder.failTestQueue){
-                    if(failTest.equals(classTest)){
-                        removeTest=failTest;
-                    }
-                }
+                Object removeTest=removeTestName(classTest);
                 if(removeTest!=null){
                     TestExecutionBuilder.failTestQueue.remove(test);
                 }
             }
         }
+    }
+
+    public Object removeTestName(JSONObject classTest){
+        for(Object failTest:TestExecutionBuilder.failTestQueue){
+            if(failTest.equals(classTest)){
+                return failTest;
+            }
+        }
+        return null;
     }
 
     public JSONArray addTestFirstStepOfOpenBaseUrlToReportObject(JSONArray testStepArray,int stepIndex){
@@ -749,6 +840,258 @@ public class TestExecutorUtility {
 
         }
         return testStepArray;
+    }
+
+    public JSONObject addTestDetailsOnReportObject(JSONObject testReportObject,JSONObject test,String testName,String testsFileName,String browser){
+        long startTime = System.currentTimeMillis();
+        /*Adding data into the report*/
+        testReportObject.put(startTimeText, startTime);
+        testReportObject.put(browserNameText, browser);
+        testReportObject.put(testNameText, testName);
+        testReportObject.put(testsFileNameText, testsFileName);
+        testReportObject.put("suiteName", test.get("suiteName").toString());
+        testReportObject.put("tagName", test.get("tagName").toString());
+        String logInfoMsg="Test: "+testName;
+        tesboLogger.testLog(logInfoMsg);
+        log.info(logInfoMsg);
+
+        return testReportObject;
+    }
+
+    public JSONObject getSessionListIfTestHasAnsInitializeBrowser(String testsFileName,String testName,boolean isSession,WebDriver driver,String browser,Map<String, WebDriver> sessionList){
+        JSONObject testSessionDetails=new JSONObject();
+        JSONArray listOfSession = testsFileParser.getSessionListFromTest(testsFileName, testName);
+        if (!listOfSession.isEmpty()) {
+            isSession = true;
+            log.info("Test is run with multiple session");
+        } else {
+            log.info("Test is run with single session");
+            JSONObject browserDetails=initializeBrowser(null,driver,browser,sessionList);
+            driver=(WebDriver) browserDetails.get(driverText);
+            sessionList= (Map<String, WebDriver>) browserDetails.get(sessionListText);
+        }
+        testSessionDetails.put(sessionListText,sessionList);
+        testSessionDetails.put(driverText,driver);
+        testSessionDetails.put("listOfSession",listOfSession);
+        testSessionDetails.put("isSession",isSession);
+
+        return testSessionDetails;
+    }
+
+    public Map<String, WebDriver> stepToExecuteAfterTest(WebDriver driver,String sessionName,Map<String, WebDriver> sessionList,boolean isSession){
+        if (sessionName != null) {
+            for (Map.Entry session : sessionList.entrySet()) {
+                if (sessionName.equals(session.getKey().toString())) {
+                    String logInfoText="Close browser for "+sessionName+" session";
+                    log.info(logInfoText);
+                    driver = (WebDriver) session.getValue();
+                    driver.quit();
+                    sessionList.remove(session.getKey());
+                    log.info("Remove session from list");
+                    break;
+                }
+            }
+        } else {
+            if (isSession) {
+                for (Map.Entry session : sessionList.entrySet()) {
+                    driver = (WebDriver) session.getValue();
+                    driver.quit();
+                }
+                log.info("Close all session browser");
+            } else {
+                driver.quit();
+                log.info("Close browser");
+            }
+        }
+        return sessionList;
+    }
+
+    public JSONObject addBrowserAndOsDetailsOnReportObject(JSONObject testReportObject, Capabilities caps){
+        testReportObject.put("browserVersion", caps.getVersion());
+        String osName= caps.getPlatform().toString();
+        if(osName.equalsIgnoreCase("xp")) { osName = "windows"; }
+        testReportObject.put("osName", osName);
+        return testReportObject;
+    }
+
+    public JSONObject addTestStepStatusAndEndTimeToReportObject(JSONObject testReportObject,JSONArray testStepArray,String testResult,String screenShotPath,long startTime){
+        long stopTimeTest = System.currentTimeMillis();
+        testReportObject.put("testStep", testStepArray);
+
+        if (testResult.equals(failedText)) {
+            testReportObject.put("fullStackTrace", exceptionAsString);
+            testReportObject.put("screenShot", screenShotPath);
+        }
+        testReportObject.put("totalTime", stopTimeTest - startTime);
+        testReportObject.put(statusText, testResult);
+
+
+        return testReportObject;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     * @param browserName
+     * @return
+     */
+    public WebDriver initializeBrowserFromBinaryPath(String browserName,WebDriver driver) {
+        if(config.getBinaryPath(browserName+"Path")!=null){
+            if (browserName.equalsIgnoreCase(firefoxText)) {
+                System.setProperty("webdriver.gecko.driver", config.getBinaryPath(browserName+"Path"));
+                driver = new FirefoxDriver();
+            }
+            if (browserName.equalsIgnoreCase(chromeText)) {
+                System.setProperty("webdriver.chrome.driver", config.getBinaryPath(browserName+"Path"));
+                driver = new ChromeDriver();
+            }
+            if (browserName.equalsIgnoreCase("ie")) {
+                System.setProperty("webdriver.ie.driver", config.getBinaryPath(browserName+"Path"));
+                driver = new InternetExplorerDriver();
+            }
+            if (browserName.equalsIgnoreCase("opera")) {
+                System.setProperty("webdriver.opera.driver", config.getBinaryPath(browserName+"Path"));
+                driver = new OperaDriver();
+            }
+        }
+        return driver;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @param driver
+     * @param stepReportObject
+     * @param stepPassed
+     * @return
+     */
+    public JSONObject addStepResultInReport(WebDriver driver, JSONObject stepReportObject, boolean stepPassed,String testsFileName,String testName)  {
+        String testResult="";
+        String screenShotPath="";
+        if(stepReportObject.size()!=0) {
+            if (!stepPassed) {
+                stepReportObject.put(statusText, failedText);
+                testResult = failedText;
+                screenShotPath = cmd.captureScreenshot(driver, testsFileName, testName);
+                String screenshotMsg="Capture screenshot: "+screenShotPath;
+                log.error(screenshotMsg);
+            } else {
+                testResult = passedText;
+                stepReportObject.put(statusText, passedText);
+            }
+            long stepEndTime = System.currentTimeMillis();
+            stepReportObject.put("endTime", stepEndTime);
+        }
+        JSONObject stepDetails=new JSONObject();
+        stepDetails.put(stepReportObjectText,stepReportObject);
+        stepDetails.put(testResultText,testResult);
+        stepDetails.put(screenShotPathText,screenShotPath);
+
+        return stepDetails;
+    }
+
+    /**
+     * @param session
+     * @auther : Ankit Mistry
+     * @lastModifiedBy:
+     */
+    public JSONObject initializeBrowser(Object session,WebDriver driver,String browser,Map<String, WebDriver> sessionList) {
+
+        String seleniumAddress =getSeleniumAddress();
+        String browserName = browser;
+        String startBrowserLog="Start Browser: "+browserName;
+        log.info(startBrowserLog);
+        DesiredCapabilities capability;
+        try {
+
+            JSONObject initializeDetails=browserInitialization(driver,browserName,seleniumAddress);
+            driver= (WebDriver) initializeDetails.get(driverText);
+            capability= (DesiredCapabilities) initializeDetails.get(capabilityText);
+
+            sessionList=setSessionList(driver,session, sessionList);
+
+            JSONObject remoteBrowserDetails=openRemoteBrowserIfSeleniumAddressExist(session,seleniumAddress,capability,sessionList,driver);
+            if(remoteBrowserDetails!=null) {
+                driver = (WebDriver) remoteBrowserDetails.get(driverText);
+                sessionList = (Map<String, WebDriver>) remoteBrowserDetails.get(sessionListText);
+            }
+
+            driver.manage().window().maximize();
+
+            openBaseURL(driver);
+
+        } catch (Exception e) {
+            e.printStackTrace(new PrintWriter(sw));
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
+        }
+        JSONObject browserDetails=new JSONObject();
+        browserDetails.put(driverText,driver);
+        browserDetails.put(sessionListText,sessionList);
+
+        return browserDetails;
+    }
+
+    /**
+     * @auther : Ankit Mistry
+     * @param driver
+     * @param stepReportObject
+     * @param step
+     * @return
+     */
+    public JSONObject addStepExecutionOfAnnotation(WebDriver driver, JSONObject stepReportObject,String step,JSONObject test)  {
+
+        String testsFileName=test.get(testsFileNameText).toString();
+        String testName=test.get(testNameText).toString();
+
+        boolean stepPassed = true;
+        stepReportObject=addPrintAnsRandomStepForReport(driver,step,stepReportObject,test);
+
+        try {
+            stepReportObject=addStepForReport(driver,step,stepReportObject,test);
+        } catch (Exception ae) {
+            if (step.contains("{") && step.contains("}")) {
+                stepReportObject.put(stepsText, step.replaceAll("[{,}]","'").replace("@",""));
+            }
+            ae.printStackTrace(new PrintWriter(sw));
+            exceptionAsString = sw.toString();
+            tesboLogger.testFailed(failedTextMsg);
+            tesboLogger.testFailed(exceptionAsString);
+            log.error(failedTextMsg);
+            log.error(exceptionAsString);
+            stepPassed = false;
+        }
+
+        if (step.replaceAll(whiteSpace, " ").trim().startsWith(codeText)) {
+            try {
+                externalCode.runAllAnnotatedWith(Step.class, step,test, driver);
+            }catch (Exception e){
+                e.printStackTrace(new PrintWriter(sw));
+                exceptionAsString = sw.toString();
+                tesboLogger.testFailed(failedTextMsg);
+                tesboLogger.testFailed(sw.toString());
+                log.error(failedTextMsg);
+                log.error(sw.toString());
+                stepPassed = false;
+            }
+        }
+        JSONObject stepReportDetails=new JSONObject();
+        reportParser.addScreenshotUrlInReport(stepReportObject, step);
+        if(stepReportObject.size()!=0) {
+            JSONObject stepDetails = addStepResultInReport(driver, stepReportObject, stepPassed,testsFileName,testName);
+            stepReportObject= (JSONObject) stepDetails.get(stepReportObjectText);
+            stepReportDetails.put(testResultText, stepDetails.get(testResultText));
+            stepReportDetails.put(screenShotPathText, stepDetails.get(stepReportObjectText));
+        }
+        stepReportDetails.put(stepReportObjectText,stepReportObject);
+        return stepReportObject;
+    }
+
+    public JSONObject openRemoteBrowserIfSeleniumAddressExist(Object session,String seleniumAddress, DesiredCapabilities capability,Map<String, WebDriver> sessionLists, WebDriver driver){
+        if (seleniumAddress != null) {
+            return setRemoteBrowser(session,driver,seleniumAddress,capability,sessionLists);
+        }
+
+        return null;
     }
 
 }
