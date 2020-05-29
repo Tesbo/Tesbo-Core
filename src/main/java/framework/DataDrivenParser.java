@@ -1,7 +1,7 @@
 package framework;
 
-import Execution.TestExecutionBuilder;
-import Selenium.Commands;
+import execution.TestExecutionBuilder;
+import selenium.Commands;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +14,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,7 +24,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import Exception.TesboException;
+import exception.TesboException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 

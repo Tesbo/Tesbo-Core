@@ -1,12 +1,13 @@
 package framework;
 
-import Execution.SetCommandLineArgument;
+import execution.SetCommandLineArgument;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import Exception.*;
+import exception.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
@@ -22,6 +23,8 @@ public class GetConfiguration {
     String status="status";
     String count="count";
     JSONObject main = Utility.loadJsonFile(getConfigFilePath());
+    private static final Logger log = LogManager.getLogger(GetConfiguration.class);
+
 
     public String getConfigFilePath() {
         String configName;
@@ -40,13 +43,13 @@ public class GetConfiguration {
         if(SetCommandLineArgument.browser !=null && !(SetCommandLineArgument.browser.equalsIgnoreCase("all"))){
             String browserList=SetCommandLineArgument.browser;
             String[] browsers=browserList.split(",");
-            String browser = null;
+            StringBuilder browser = new StringBuilder();
             for(int i=0;i<browsers.length;i++){
                 if(i==0){
-                    browser="\""+browsers[i]+"\"";
+                    browser.append("\""+browsers[i]+"\"");
                 }
                 else {
-                    browser=browser+",\""+browsers[i]+"\"";
+                    browser.append(",\""+browsers[i]+"\"");
                 }
             }
             String browserArray="["+browser+"]";
@@ -54,8 +57,7 @@ public class GetConfiguration {
             JSONParser parsers = new JSONParser();
             try {
                 browserJsonArray = (JSONArray) parsers.parse(browserArray);
-            } catch (ParseException e) {
-            }
+            } catch (ParseException e) {log.error("");}
 
             return  browserJsonArray;
         }
@@ -116,7 +118,7 @@ public class GetConfiguration {
         try {
             seleniumAddress = run.get("seleniumAddress").toString();
 
-        }catch (Exception e){}
+        }catch (Exception e){log.error("");}
         if(seleniumAddress==null||seleniumAddress.equals(""))
             return  null;
         else
@@ -199,7 +201,7 @@ public class GetConfiguration {
             } else {
                 try {
                     baseUrl = ((JSONObject) main.get("run")).get("baseUrl").toString();
-                } catch (Exception e) { }
+                } catch (Exception e) { log.error("");}
             }
         }
         return baseUrl;
@@ -364,7 +366,7 @@ public class GetConfiguration {
     public boolean getIsGrid()  {
         JSONObject run = (JSONObject) main.get("run");
         try {
-            return (boolean) run.get("IsGrid");
+            return (boolean) run.get("isGrid");
         }catch (Exception e)
         {
             return false;
@@ -377,9 +379,9 @@ public class GetConfiguration {
      * @return
      */
     public String getEnvironment() {
-        JSONObject environment = (JSONObject) ((JSONObject) main.get("run")).get("Environment");
-        if(SetCommandLineArgument.Environment !=null){
-            return (String) environment.get(SetCommandLineArgument.Environment);
+        JSONObject environment = (JSONObject) ((JSONObject) main.get("run")).get("environment");
+        if(SetCommandLineArgument.environment !=null){
+            return (String) environment.get(SetCommandLineArgument.environment);
         }
         return null;
     }
@@ -390,7 +392,7 @@ public class GetConfiguration {
      * @return
      */
     public JSONObject getEnvironmentList() {
-        return (JSONObject) ((JSONObject) main.get("run")).get("Environment");
+        return (JSONObject) ((JSONObject) main.get("run")).get("environment");
     }
 
     /**

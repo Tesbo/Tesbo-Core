@@ -1,10 +1,10 @@
 package framework;
 
-import CustomStep.ExternalCode;
-import CustomStep.Step;
-import Execution.SetCommandLineArgument;
-import Execution.TestExecutionBuilder;
-import Selenium.Commands;
+import customstep.ExternalCode;
+import customstep.Step;
+import execution.SetCommandLineArgument;
+import execution.TestExecutionBuilder;
+import selenium.Commands;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
@@ -18,8 +18,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import reportAPI.ReportAPIConfig;
-import reportAPI.Reporter;
+import reportapi.ReportAPIConfig;
+import reportapi.Reporter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -74,7 +74,7 @@ public class TestExecutorUtility{
 
     public String getSeleniumAddress(){
         String seleniumAddress = null;
-        boolean isGridFromCommandLineArgument= Boolean.parseBoolean(SetCommandLineArgument.IsGrid);
+        boolean isGridFromCommandLineArgument= Boolean.parseBoolean(SetCommandLineArgument.isGrid);
         if(config.getIsGrid() || isGridFromCommandLineArgument) {
             seleniumAddress = cmd.getSeleniumAddress();
         }
@@ -139,7 +139,7 @@ public class TestExecutorUtility{
 
     public DesiredCapabilities setCapability(String browserName,String seleniumAddress,DesiredCapabilities capability){
         JSONObject capabilities = null;
-        if (cmd.IsCapabilities(browserName) && seleniumAddress != null) {
+        if (cmd.isCapabilities(browserName) && seleniumAddress != null) {
             capabilities = cmd.getCapabilities(browserName);
             if (capabilities != null){
                 capability = cmd.setCapabilities(capabilities,capability);
@@ -447,14 +447,12 @@ public class TestExecutorUtility{
             JSONObject stepReportObject = new JSONObject();
             long startTimeStep = System.currentTimeMillis();
             Object step = steps.get(i);
-
             stepPassed=throwErrorWhenIfConditionIsNotFoundForElseOrElseIf(step.toString(),stepPassed);
-
             JSONObject ifConditionStepDetails= executeIfConditionIfTestHas(step.toString(),stepPassed,test,driver,steps,i);
-            i = (int) ifConditionStepDetails.get("i");
+            i = ((int) ifConditionStepDetails.get("i"));
             stepPassed= (boolean) ifConditionStepDetails.get(stepPassedText);
             steps= (JSONArray) ifConditionStepDetails.get(stepsText);
-            if((boolean)ifConditionStepDetails.get("isContinue")){continue;}
+            if((boolean)ifConditionStepDetails.get("isContinue")){ continue;}
 
             stepReportObject=addTestStepToStepReportObject(step.toString(),stepReportObject,stepIndex,startTimeStep,driver,test);
             stepIndex= (int) stepReportObject.get(stepIndexText);
@@ -801,7 +799,6 @@ public class TestExecutorUtility{
                 stepPassed = false;
             }
             try {
-                step = steps.get(i).toString();
                 if (step.startsWith("If:: ")) {
                     i--;
                     isContinue=true;
@@ -907,7 +904,10 @@ public class TestExecutorUtility{
                     isAddOnCloud=true;
                 }
             }
-            if (isAddOnCloud) {reportAPIConfig.organiazeDataForCloudReport(testReportObject);}
+            if (isAddOnCloud) {
+                testReportObject.put("endTime", System.currentTimeMillis());
+                reportAPIConfig.createTests(testReportObject);
+            }
         }
     }
 

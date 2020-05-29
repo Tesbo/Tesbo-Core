@@ -1,4 +1,4 @@
-package CustomStep;
+package customstep;
 
 import java.lang.annotation.*;
 

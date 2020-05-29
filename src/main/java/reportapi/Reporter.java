@@ -1,4 +1,4 @@
-package reportAPI;
+package reportapi;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -6,10 +6,10 @@ import org.json.simple.JSONObject;
 public class Reporter {
     public static JSONArray printStepReportObject = new JSONArray();
 
-    public void printStep(String Step) {
+    public void printStep(String step) {
         JSONObject stepReportObject = new JSONObject();
 
-        stepReportObject.put("steps", Step);
+        stepReportObject.put("steps", step);
         printStepReportObject.add(stepReportObject);
     }
 }
