@@ -64,15 +64,15 @@
 
 					</libs>
 					<options>
-						<option>-keep public class DataCollector.BuildReportDataObject{ public void run();}</option>
-						<option>-keep public class Execution.Tesbo{*;}</option>
-						<option>-keep public class reportAPI.Reporter{*;}</option>
-						<option>-keep public class UserConfig.GetUserConfiguration{*;}</option>
-						<option>-keep public class Execution.SetCommandLineArgument{*;}</option>
-						<option>-keep class Selenium.ExtendTesboDriver{ *; }</option>
-						<option>-keep class CustomStep.Step{ *; }</option>
+						<option>-keep public class datacollector.BuildReportDataObject{ public void run();}</option>
+						<option>-keep public class execution.Tesbo{*;}</option>
+						<option>-keep public class reportapi.Reporter{*;}</option>
+						<option>-keep public class userconfig.GetUserConfiguration{*;}</option>
+						<option>-keep public class execution.SetCommandLineArgument{*;}</option>
+						<option>-keep class selenium.ExtendTesboDriver{ *; }</option>
+						<option>-keep class customstep.Step{ *; }</option>
 						<option>-keepattributes RuntimeVisibleAnnotations</option>
-						<option>-keep class Exception.*</option>
+						<option>-keep class exception.*</option>
 						<option>-keep @javax.persistence.* class * { *; }</option>
 						<option>-ignorewarnings</option>
 						<option>-dontoptimize</option>
@@ -314,7 +314,7 @@
 		<dependency>
 			<groupId>io.github.bonigarcia</groupId>
 			<artifactId>webdrivermanager</artifactId>
-			<version>3.7.0</version>
+			<version>3.8.1</version>
 		</dependency>
 
 		<dependency>
@@ -354,6 +354,12 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>2.11.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.25.0</version>
 		</dependency>
 
 	</dependencies>

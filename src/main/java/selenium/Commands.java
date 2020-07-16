@@ -905,14 +905,13 @@ public class Commands {
      * @lastModifiedBy:
      */
     public DesiredCapabilities setCapabilities(JSONObject capabilities, DesiredCapabilities capability) {
-        SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
 
         for (Object cap : capabilities.keySet()) {
             capability.setCapability(cap.toString(), capabilities.get(cap.toString()));
         }
 
-        if(setCommandLineArgument.platform!=null){
-            capability.setCapability("platform", setCommandLineArgument.platform);
+        if(SetCommandLineArgument.platform!=null){
+            capability.setCapability("platform", SetCommandLineArgument.platform);
         }
         return capability;
     }

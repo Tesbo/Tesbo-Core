@@ -1,4 +1,4 @@
-package Execution;
+package execution;
 
 import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +13,8 @@ public class Tesbo {
     public void run(String[] arguments) {
 
         log.info("**************************************** New Build Start ******************************************");
-        log.info("List of arguments: "+arguments);
+        String infoMsg="List of arguments: "+arguments;
+        log.info(infoMsg);
         TestExecutionBuilder builder = new TestExecutionBuilder();
         TesboLogger logger=new TesboLogger();
         try {

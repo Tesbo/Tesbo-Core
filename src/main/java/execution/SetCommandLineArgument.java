@@ -1,4 +1,4 @@
-package Execution;
+package execution;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -16,10 +16,10 @@ public class SetCommandLineArgument {
     public static String browser;
     @Parameter(names={"--platform", "-p"})
     public static String platform;
-    @Parameter(names={"--IsGrid", "-i"})
-    public static String IsGrid;
-    @Parameter(names={"--Environment", "-e"})
-    public static String Environment;
+    @Parameter(names={"--isGrid", "-i"})
+    public static String isGrid;
+    @Parameter(names={"--environment", "-e"})
+    public static String environment;
     @Parameter(names={"--runPastFailure", "-f"})
     public static String runPastFailure;
     @Parameter(names={"--byTag", "-t"})

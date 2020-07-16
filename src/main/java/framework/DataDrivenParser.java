@@ -705,7 +705,7 @@ public class DataDrivenParser {
             HashMap<String,Object> result =new HashMap<>();
             try {
                 result = new ObjectMapper().readValue(dataSetList.toJSONString(), HashMap.class);
-            } catch (IOException e) { }
+            } catch (IOException e) {log.error(""); }
             for (Map.Entry<String,Object> entry : result.entrySet())
             {
                 JSONObject dataSetValues = (JSONObject) dataSetList.get(entry.getKey());
@@ -767,7 +767,7 @@ public class DataDrivenParser {
         HashMap<String,Object> result =new HashMap<>();
         try {
             result = new ObjectMapper().readValue(dataSetList.toJSONString(), HashMap.class);
-        } catch (IOException e) { }
+        } catch (IOException e) { log.error("");}
         for (Map.Entry<String,Object> entry : result.entrySet())
         {
             dataSetListSize = ((ArrayList)entry.getValue()).size();
