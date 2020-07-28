@@ -1,31 +1,52 @@
-package ReportBuilder;
+package reportbuilder;
 
-import Execution.TestExecutionBuilder;
+import execution.TestExecutionBuilder;
 import framework.GetConfiguration;
 import logger.TesboLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class ReportBuilder implements Runnable {
 
-
+    private static final Logger log = LogManager.getLogger(ReportBuilder.class);
     GetJsonData data = new GetJsonData();
+    StringWriter sw = new StringWriter();
+    String buildHistoryPath="./htmlReport/Build History/";
 
-    String buildHistory = new File(getBuildHistoryPath()).getAbsolutePath();
+    String buildHistory = new File(buildHistoryPath).getAbsolutePath();
     JSONArray dataArray = null;
     TesboLogger tesboLogger = new TesboLogger();
+    Random rand = new Random();
+
+    String divText="</div>\n";
+    String divRowClassText="<div class=\"row\">\n";
+    String divClearFixText="<div class=\"clearfix\"></div>\n";
+    String totalFailedText="totalFailed";
+    String totalPassedText="totalPassed";
+    String bText=", b: ";
+    String htmlText=".html";
+    String newLineText="\">\n";
+    String divStatsCountClassText="<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n";
+    String divCountClassText="<div class=\"count \">";
+    String divXPanelClass="<div class=\"x_panel\">\n";
+    String divXTitleClass="<div class=\"x_title\">\n";
+    String h2ElementText="</h2>\n";
+    String tdElement=" <td>";
+    String tdElementWithNewLine="</td>\n";
+    String testsFileNameText="testsFileName";
+    String imgTegText="<img src=\"../htmlReport/lib/Icon/";
+    String svgText=".svg\"\n";
+    String osNameText="osName";
+    String statusText="status";
+    String fontTagText="</font>\n";
 
     public static void main(String[] args) {
         ReportBuilder builder = new ReportBuilder();
@@ -36,48 +57,24 @@ public class ReportBuilder implements Runnable {
     public void generatReport() {
 
         GetConfiguration getConfiguration=new GetConfiguration();
-        dataArray = data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath());
+        dataArray = data.getLastBuildResultData(new File(buildHistoryPath).getAbsolutePath());
         ReportBuilder builder = new ReportBuilder();
 
-        StringBuffer indexfile = new StringBuffer();
-        //index.html file generator
-        File file = new File("./htmlReport/index.html");
 
         String reportFileName=getConfiguration.getReportFileName();
 
         if(reportFileName.equals("")){
             reportFileName="currentBuildResult";
         }
-        File currentBuildFile = new File("./htmlReport/"+reportFileName+".html");
-        StringBuffer currentBuildResult = null;
+        File currentBuildFile = new File("./htmlReport/"+reportFileName+htmlText);
+        StringBuilder currentBuildResult = null;
         try {
 
-         /*   indexfile = builder.generateHeader(indexfile);
 
-            indexfile = builder.generateBody(indexfile);
-
-            indexfile = builder.generateSideMenu(indexfile);
-
-            indexfile = builder.generateTopHeader(indexfile);
-
-            indexfile = builder.generateSummaryChart(indexfile);
-
-            indexfile = builder.generateTimeSummaryChart(indexfile);
-
-            indexfile = builder.generateFooter(indexfile);
-
-            indexfile = builder.generateLatestBuildResultData(indexfile);
-
-            indexfile = builder.generateTimeSummaryData(indexfile);
-
-
-            builder.writeReportFile(file.getAbsolutePath(), indexfile);
-*/
             //currentbuildresultGenerator
-            currentBuildResult = new StringBuffer();
+            currentBuildResult = new StringBuilder();
             currentBuildResult = builder.generateHeader(currentBuildResult);
             currentBuildResult = builder.generateBody(currentBuildResult);
-            //currentBuildResult = builder.generateSideMenu(currentBuildResult);
             currentBuildResult = builder.generateCurrentBuildSummary(currentBuildResult);
             currentBuildResult = builder.generatePieAndBarChart(currentBuildResult);
             currentBuildResult = builder.generateModuleSummary(currentBuildResult);
@@ -85,15 +82,14 @@ public class ReportBuilder implements Runnable {
             currentBuildResult = builder.generateDonutChartData(currentBuildResult);
             builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
 
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { log.error("");}
 
         builder.writeReportFile(currentBuildFile.getAbsolutePath(), currentBuildResult);
 
     }
 
     public void copyReport(String reportFileName){
-        File source = new File("./htmlReport/"+reportFileName+".html");
+        File source = new File("./htmlReport/"+reportFileName+htmlText);
 
         File files = new File("./htmlReport/Report History");
         if (!files.exists()) {
@@ -101,35 +97,12 @@ public class ReportBuilder implements Runnable {
         }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd_HHmm");
         LocalDateTime now = LocalDateTime.now();
-        File dest = new File("./htmlReport/Report History/"+reportFileName+"_"+dtf.format(now)+".html");
+        File dest = new File("./htmlReport/Report History/"+reportFileName+"_"+dtf.format(now)+htmlText);
         try {
             Files.copy(source.toPath(), dest.toPath());
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public String getReportLibPath() {
-
-        return "./htmlReport/";
-    }
-
-    public String getBuildHistoryPath() {
-
-        return "./htmlReport/Build History/";
-    }
-
-    public void writeReportFile(String filePath, StringBuffer fileContent) {
-
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new FileWriter(filePath, false), 8192 * 4);
-            writer.write(fileContent.toString() + "\n");
-            writer.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(new PrintWriter(sw));
+            log.error(sw.toString());
         }
 
     }
@@ -137,21 +110,26 @@ public class ReportBuilder implements Runnable {
     public void writeReportFile(String filePath, StringBuilder fileContent) {
 
         BufferedWriter writer = null;
-
-
         try {
             writer = new BufferedWriter(new FileWriter(filePath, false), 8192 * 4);
             writer.write(fileContent.toString() + "\n");
             writer.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                if(writer!=null)
+                    writer.close();
+            } catch (IOException e1) {
+                e1.printStackTrace(new PrintWriter(sw));
+                log.error(sw.toString());
+            }
+            e.printStackTrace(new PrintWriter(sw));
+            log.error(sw.toString());
         }
-
 
     }
 
-    public StringBuffer generateHeader(StringBuffer sb) {
+    public StringBuilder generateHeader(StringBuilder sb) {
 
 
         sb.append("<!DOCTYPE html>\n" +
@@ -190,7 +168,7 @@ public class ReportBuilder implements Runnable {
         return sb;
     }
 
-    public StringBuffer generateBody(StringBuffer sb) {
+    public StringBuilder generateBody(StringBuilder sb) {
 
 
         sb.append("<body class=\"nav-md\">\n" +
@@ -201,201 +179,11 @@ public class ReportBuilder implements Runnable {
 
     }
 
-    public StringBuffer generateSideMenu(StringBuffer sb) {
-
-
-        sb.append("\n" +
-                "<div class=\"col-md-3 left_col\">\n" +
-                "  <div class=\"left_col scroll-view\">\n" +
-                "   <div class=\"navbar nav_title\" style=\"border: 0;\">\n" +
-                "     <a href=\"index.html\" class=\"site_title\"> <span>Tesbo Report</span></a>\n" +
-                "     </div>\n" +
-                "     <br/>\n" +
-                "     <br/>\n" +
-                "     <br/>\n" +
-                "\n" +
-                "  <!-- sidebar menu -->\n" +
-                "<div id=\"sidebar-menu\" class=\"main_menu_side hidden-print main_menu\">\n" +
-                " <div class=\"menu_section\">\n" +
-                "  <ul class=\"nav side-menu\">\n" +
-                "   <li><a href=\"index.html\"><i class=\"fa fa-home\"></i> Home </a>\n" +
-                "   </li>\n" +
-                "   </li>\n" +
-                "   <li><a href=\"currentBuildResult.html\"><i class=\"fa fa-bar-chart-o\"></i> Current Build Report</a>\n" +
-                "   </li>\n" +
-                "\n" +
-                "  </ul>\n" +
-                " </div>\n" +
-                "\n" +
-                "\n" +
-                "</div>\n" +
-                "\n" +
-                "</div>\n" +
-                "</div>\n");
-
-        return sb;
-
-    }
-
-    public StringBuffer generateTopHeader(StringBuffer sb) {
-
-        GetJsonData data = new GetJsonData();
-
-        sb.append("<div class=\"right_col\" role=\"main\">\n" +
-                "<!-- top tiles -->\n" +
-                "<div class=\"row tile_count\">\n" +
-                " <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
-                "  <span class=\"count_top\"><i class=\"fa fa-user\"></i> Total Builds</span>\n" +
-                "  <div class=\"count\">" + data.getTotalBuildCount(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
-                "\n" +
-                "  </div>\n" +
-                " <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
-                "  <span class=\"count_top\"><i class=\"fa fa-clock-o\"></i> Average Time</span>\n" +
-                "   <div class=\"count\">" + data.getTotalBuildCount(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
-                "\n" +
-                "   </div>\n" +
-                "  <div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
-                "   <span class=\"count_top\"><i class=\"fa fa-user\"></i> Total Test Run</span>\n" +
-                "   <div class=\"count green\">" + data.getTotalTestOfTheBuild(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
-                "\n" +
-                "  </div>\n" +
-                "\n" +
-                " </div>");
-        return sb;
-    }
-
-    public StringBuffer generateSummaryChart(StringBuffer sb) {
-
-
-        sb.append("<div class=\"row\">\n" +
-                "                <!-- bar charts group -->\n" +
-                "<div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
-                "  <div class=\"x_panel\">\n" +
-                "  <div class=\"x_title\">\n" +
-                "  <h2>Last 10 Build Summary</h2>\n" +
-                "  <div class=\"clearfix\"></div>\n" +
-                "  </div>\n" +
-                "  <div class=\"x_content1\">\n" +
-                "  <div id=\"lastBuildResult\" style=\"width:100%; height:280px;\"></div>\n" +
-                "  </div>\n" +
-                "  </div>\n" +
-                "  </div>\n" +
-                "  <div class=\"clearfix\"></div>\n");
-        return sb;
-
-    }
-
-    public StringBuffer generateTimeSummaryChart(StringBuffer sb) {
-
-
-        sb.append("<div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
-                "  <div class=\"x_panel\">\n" +
-                "   <div class=\"x_title\">\n" +
-                "    <h2>Last 10 Build Time Summary</h2>\n" +
-                "\n" +
-                "   <div class=\"clearfix\"></div>\n" +
-                "   </div>\n" +
-                "   <div class=\"x_content1\">\n" +
-                "   <div id=\"lastBuildTimeResult\" style=\"width:100%; height:280px;\"></div>\n" +
-                "   </div>\n" +
-                "   </div>\n" +
-                "   </div>\n" +
-                "   <div class=\"clearfix\"></div>\n" +
-                "</div>\n" +
-                "<br/>\n" +
-                "</div>\n" +
-                "</div>");
-        return sb;
-
-    }
-
-    public StringBuffer generateFooter(StringBuffer sb) {
-
-        sb.append("<footer>\n" +
-                "<div class=\"pull-right\">\n" +
-                "Tesbo Report<a href=\"\"> </a>\n" +
-                "</div>\n" +
-                "<div class=\"clearfix\"></div>\n" +
-                "</footer>\n" +
-                "<!-- /footer content -->\n" +
-                "</div>\n" +
-                "</div>\n");
-
-        return sb;
-    }
-
-    public StringBuffer generateLatestBuildResultData(StringBuffer sb) {
-
-        sb.append("\n" +
-                "<script>\n" +
-                "\n" +
-                "Morris.Bar({\n" +
-                "element: 'lastBuildResult',\n" +
-                "data: [\n");
-        for (int i = 9; i >= 0; i--) {
-            try {
-
-                JSONObject obj = (JSONObject) data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath()).get(i);
-                sb.append(" {y: '" + obj.get("name") + "', a: " + obj.get("totalPassed") + ", b: " + obj.get("totalFailed") + "},\n ");
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-        sb.append("],\n" +
-                "xkey: 'y',\n" +
-                "ykeys: ['a', 'b'],\n" +
-                "barColors: ['#a1d99b', '#fc9272'],\n" +
-                "labels: ['pass', 'failed']\n" +
-                "});" +
-                " </script>\n");
-
-
-        return sb;
-    }
-
-    public StringBuffer generateTimeSummaryData(StringBuffer sb) {
-
-
-        sb.append("<script>\n" +
-                "\n" +
-                "Morris.Line({\n" +
-                "element: 'lastBuildTimeResult',\n" +
-                "data: [\n");
-
-
-        for (int i = 0; i < 10; i++) {
-            try {
-                JSONObject obj = (JSONObject) data.getLastBuildResultData(new File(getBuildHistoryPath()).getAbsolutePath()).get(i);
-                sb.append(" {y: '" + obj.get("buildRunDate") + "', a: " + obj.get("totalTimeTaken") + "},\n ");
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        sb.append(
-                "],\n" +
-                        "xkey: 'y',\n" +
-                        "ykeys: ['a'],\n" +
-                        "labels: ['Time']\n" +
-                        "});\n" +
-                        "</script>\n" +
-                        "\n" +
-                        "</body>\n" +
-                        "</html>\n");
-
-
-        return sb;
-    }
-
 
     //------------------------------------------------------------------------------------------------------------
 
 
-    public StringBuffer generateCurrentBuildSummary(StringBuffer sb) {
+    public StringBuilder generateCurrentBuildSummary(StringBuilder sb) {
 
 
 
@@ -403,44 +191,44 @@ public class ReportBuilder implements Runnable {
                 "<!-- top tiles -->\n" +
                 "<div class=\"row tile_count\" style=\"\n" +
                 "    margin-left: 0%;\n" +
-                "\">\n" +
+                newLineText +
                 "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\" style=\"border-left : 2px solid #ADB2B5  \">\n" +
                 "<span class=\"count_top\"> Total </span>\n" +
-                "<div class=\"count\">" + data.getCurrentBuildTotal(new File(getBuildHistoryPath()).getAbsolutePath()) + "</div>\n" +
+                "<div class=\"count\">" + data.getCurrentBuildTotal(new File(buildHistoryPath).getAbsolutePath()) + divText +
                 "\n" +
-                "</div>\n" +
-                "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                divText +
+                divStatsCountClassText +
                 "<span class=\"count_top\"> Passed</span>\n" +
-                "<div class=\"count\">" + data.getCurrentBuildPassed(buildHistory) + "</div>\n" +
+                "<div class=\"count\">" + data.getCurrentBuildPassed(buildHistory) + divText +
                 "\n" +
-                "</div>\n" +
-                "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                divText +
+                divStatsCountClassText +
                 "<span class=\"count_top\"> Failed</span>\n" +
-                "<div class=\"count \">" + data.getCurrentBuildFailed(buildHistory) + "</div>\n" +
+                divCountClassText + data.getCurrentBuildFailed(buildHistory) + divText +
                 "\n" +
-                "</div>\n" +
+                divText +
                 "\n" +
-                "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                divStatsCountClassText +
                 "<span class=\"count_top\"> Total Time</span>\n" +
-                "<div class=\"count \">" + data.getCurrentBuildTotalTime(buildHistory) + "</div>\n" +
+                divCountClassText + data.getCurrentBuildTotalTime(buildHistory) + divText +
                 "\n" +
-                "</div>\n" +
+                divText +
                 "\n" +
                 "\n" +
-                "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                divStatsCountClassText +
                 "<span class=\"count_top\"> Start Time</span>\n" +
-                "<div class=\"count \">" + data.getCurrentBuildStartTime(buildHistory)+ "</div>\n" +
+                divCountClassText + data.getCurrentBuildStartTime(buildHistory)+ divText +
                 "\n" +
-                "</div>\n" +
+                divText +
                 "\n" +
-                "<div class=\"col-md-4 col-sm-4 col-xs-6 tile_stats_count\">\n" +
+                divStatsCountClassText +
                 "<span class=\"count_top\"> End Time</span>\n" +
-                "<div class=\"count \">" + data.getCurrentBuildEndTime(buildHistory) + "</div>\n" +
+                divCountClassText + data.getCurrentBuildEndTime(buildHistory) + divText +
                 "\n" +
-                "</div>\n" +
+                divText +
                 "\n" +
                 "\n" +
-                "</div>\n" +
+                divText +
                 "");
 
 
@@ -448,44 +236,44 @@ public class ReportBuilder implements Runnable {
     }
 
 
-    public StringBuffer generatePieAndBarChart(StringBuffer sb) {
+    public StringBuilder generatePieAndBarChart(StringBuilder sb) {
 
 
-        sb.append("<div class=\"row\">\n" +
+        sb.append(divRowClassText +
                 "\n" +
                 "\n" +
                 "<div class=\"col-md-4 col-sm-6 col-xs-12\">\n" +
-                "<div class=\"x_panel\">\n" +
-                "<div class=\"x_title\">\n" +
+                divXPanelClass +
+                divXTitleClass +
                 "<h2>Pie Chart\n" +
                 "\n" +
-                "</h2>\n" +
+                h2ElementText +
                 "\n" +
-                "<div class=\"clearfix\"></div>\n" +
-                "</div>\n" +
+                divClearFixText +
+                divText +
                 "<div class=\"x_content1\">\n" +
                 "<div id=\"buildSummary\" style=\"width:100%; height:280px;\"></div>\n" +
-                "</div>\n" +
-                "</div>\n" +
-                "<div class=\"clearfix\"></div>\n" +
-                "</div>\n" +
+                divText +
+                divText +
+                divClearFixText +
+                divText +
                 "\n" +
                 "<div class=\"col-md-8 col-sm-6 col-xs-12\">\n" +
-                "<div class=\"x_panel\">\n" +
-                "<div class=\"x_title\">\n" +
+                divXPanelClass +
+                divXTitleClass +
                 "<h2>Browser Wise Report</h2>\n" +
                 "\n" +
-                "<div class=\"clearfix\"></div>\n" +
-                "</div>\n" +
+                divClearFixText +
+                divText +
                 "<div class=\"x_content1\">\n" +
                 "<div id=\"browserReport\" style=\"width:100%; height:280px;\"></div>\n" +
-                "</div>\n" +
-                "</div>\n" +
-                "</div>\n" +
-                "<div class=\"clearfix\"></div>\n" +
+                divText +
+                divText +
+                divText +
+                divClearFixText +
                 "\n" +
                 "\n" +
-                "</div>\n" +
+                divText +
                 "\n" +
                 "\n" +
                 "<br/>\n");
@@ -493,44 +281,23 @@ public class ReportBuilder implements Runnable {
         return sb;
     }
 
-    public StringBuffer generateModuleWiseSummary(StringBuffer sb) {
-
-
-        JSONArray chromeTestsFile = data.getModuleWiseData(buildHistory, "chrome");
-        JSONArray firefoxTestsFile = data.getModuleWiseData(buildHistory, "firefox");
-        JSONArray operaTestsFile = data.getModuleWiseData(buildHistory, "opera");
-        JSONArray ieTestsFile = data.getModuleWiseData(buildHistory, "ie");
-        JSONArray safariTestsFile = data.getModuleWiseData(buildHistory, "safari");
-
-
-        sb = generatePerModuleSummary(sb, chromeTestsFile, "Chrome");
-        sb = generatePerModuleSummary(sb, firefoxTestsFile, "Firefox");
-        sb = generatePerModuleSummary(sb, ieTestsFile, "IE");
-        sb = generatePerModuleSummary(sb, operaTestsFile, "Opera");
-        sb = generatePerModuleSummary(sb, safariTestsFile, "Safari");
-
-
-        return sb;
-    }
-
-
-    public StringBuffer generatePerModuleSummary(StringBuffer sb, JSONArray testsFileArray, String browserName) {
+    public StringBuilder generatePerModuleSummary(StringBuilder sb, JSONArray testsFileArray, String browserName) {
 
         try {
 
 
-            if (testsFileArray.size() > 0) {
+            if (!testsFileArray.isEmpty()) {
 
-                sb.append("<div class=\"row\">\n" +
+                sb.append(divRowClassText +
                         "\n" +
                         "\n" +
                         "<div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
-                        "<div class=\"x_panel\">\n" +
-                        "<div class=\"x_title\">\n" +
+                        divXPanelClass +
+                        divXTitleClass +
                         "<h2>Module Wise Summary : " + browserName + "\n" +
-                        "</h2>\n" +
-                        "<div class=\"clearfix\"></div>\n" +
-                        "</div>\n" +
+                        h2ElementText +
+                        divClearFixText +
+                        divText +
                         "<div class=\"x_content\">\n" +
                         "<table class=\"table table-striped\">\n" +
                         "<thead>\n" +
@@ -549,10 +316,10 @@ public class ReportBuilder implements Runnable {
 
                     sb.append(" <tr>\n" +
                             " <th scope=\"row\">" + (i + 1) + "</th>\n" +
-                            " <td>" + ((JSONObject) testsFileArray.get(i)).get("testsFileName") + "</td>\n" +
-                            " <td>" + (Integer.parseInt(((JSONObject) testsFileArray.get(i)).get("totalFailed").toString()) + Integer.parseInt(((JSONObject) testsFileArray.get(i)).get("totalPassed").toString())) + "</td>\n" +
-                            " <td>" + ((JSONObject) testsFileArray.get(i)).get("totalPassed") + "</td>\n" +
-                            " <td>" + ((JSONObject) testsFileArray.get(i)).get("totalFailed") + "</td>\n" +
+                            tdElement + ((JSONObject) testsFileArray.get(i)).get(testsFileNameText) + tdElementWithNewLine +
+                            tdElement + (Integer.parseInt(((JSONObject) testsFileArray.get(i)).get(totalFailedText).toString()) + Integer.parseInt(((JSONObject) testsFileArray.get(i)).get(totalPassedText).toString())) + tdElementWithNewLine +
+                            tdElement + ((JSONObject) testsFileArray.get(i)).get(totalPassedText) + tdElementWithNewLine +
+                            tdElement + ((JSONObject) testsFileArray.get(i)).get(totalFailedText) + tdElementWithNewLine +
                             " </tr>");
                 }
 
@@ -560,20 +327,17 @@ public class ReportBuilder implements Runnable {
                 sb.append("</tbody>\n" +
                         "</table>\n" +
                         "\n" +
-                        "</div>\n" +
-                        "</div>\n" +
-                        "</div>\n" +
+                        divText +
+                        divText +
+                        divText +
                         "\n" +
-                        "</div>\n" +
+                        divText +
                         "\n");
 
             }
 
 
-        } catch (Exception e) {
-
-
-        }
+        } catch (Exception e) { log.error("");}
 
 
         return sb;
@@ -585,21 +349,21 @@ public class ReportBuilder implements Runnable {
      *
      * @return
      */
-    public StringBuffer generateModuleSummary(StringBuffer sb) {
+    public StringBuilder generateModuleSummary(StringBuilder sb) {
 
 
         JSONArray browserArray = data.getBrowserExecutionReport(buildHistory);
 
         //array of all the browser
 
-        sb.append("<div class=\"row\">\n" +
+        sb.append(divRowClassText +
                 "<div class=\"col-md-12 col-sm-6 col-xs-12\">\n" +
-                "<div class=\"x_panel\">\n" +
-                "<div class=\"x_title\">\n" +
+                divXPanelClass +
+                divXTitleClass +
                 "<h2>Browser Wise Execution Report\n" +
-                "</h2>\n" +
-                "<div class=\"clearfix\"></div>\n" +
-                "</div>\n" +
+                h2ElementText +
+                divClearFixText +
+                divText +
                 "<br>");
 
         for (Object singleBrowser : browserArray) {
@@ -609,18 +373,7 @@ public class ReportBuilder implements Runnable {
             Set keys = ((JSONObject) singleBrowser).keySet();
             Iterator iter = keys.iterator();
 
-            ArrayList browserList = new ArrayList();
-            int i = 0;
-            while (iter.hasNext()) {
-
-                browser = iter.next().toString();
-
-                if (!browser.equals(" ")) {
-                    browserList.add(browser);
-                    browser = " ";
-                }
-
-            }
+            JSONArray browserList = getBrowserList(iter);
 
             browser = browserList.get(0).toString();
 
@@ -637,11 +390,11 @@ public class ReportBuilder implements Runnable {
                     "<div name=\"browserLogo\" align=\"center\" class=\"accordion\" role=\"tablist\"\n" +
                     "aria-multiselectable=\"true\">\n" +
                     "\n" +
-                    "<img src=\"../htmlReport/lib/Icon/" + browser + ".svg\"\n" +
+                    imgTegText + browser + svgText +
                     "style=\"max-width: 100%;height: 20px;\">\n" +
                     "<h5>" + browser.toUpperCase() + "</h5>\n" +
                     "\n" +
-                    "</div>\n" +
+                    divText +
                     "\n" +
                     "</h4>\n" +
                     "</a>\n");
@@ -657,11 +410,10 @@ public class ReportBuilder implements Runnable {
 
 
             for (Object testsFile : testsFileList)
-
             {
 
 
-                sb.append("<!-- TestsFile : " + ((JSONObject) testsFile).get("testsFileName") + "-->");
+                sb.append("<!-- TestsFile : " + ((JSONObject) testsFile).get(testsFileNameText) + "-->");
 
 
                 JSONArray testList = (JSONArray) ((JSONObject) testsFile).get("tests");
@@ -670,16 +422,16 @@ public class ReportBuilder implements Runnable {
                         "<div class=\"x_panel\" class=\"panel-collapse collapse\"\n" +
                                 "role=\"tabpanel\"\n" +
                                 "aria-labelledby=\"headingOne\">\n" +
-                                "<div class=\"x_title\">\n" +
-                                "<h2><i class=\"fa fa-align-left\"></i> " + ((JSONObject) testsFile).get("testsFileName") + "\n" +
-                                "</h2>\n" +
+                                divXTitleClass +
+                                "<h2><i class=\"fa fa-align-left\"></i> " + ((JSONObject) testsFile).get(testsFileNameText) + "\n" +
+                                h2ElementText +
                                 " <div class=\"nav navbar-right\" style=\"padding-top : 5px \">\n" +
-                                "<font>Total  : <b>" + (Double.parseDouble(((JSONObject) testsFile).get("totalPassed").toString()) + Double.parseDouble(((JSONObject) testsFile).get("totalFailed").toString())) + "</b> |</font>\n" +
-                                "<font>Passed : <b>" + ((JSONObject) testsFile).get("totalPassed") + "</b> |</font>\n" +
-                                "<font>Failed : <b>" + ((JSONObject) testsFile).get("totalFailed") + "</b>  |</font>\n" +
-                                " </div>\n" +
+                                "<font>Total  : <b>" + (Double.parseDouble(((JSONObject) testsFile).get(totalPassedText).toString()) + Double.parseDouble(((JSONObject) testsFile).get(totalFailedText).toString())) + "</b> |</font>\n" +
+                                "<font>Passed : <b>" + ((JSONObject) testsFile).get(totalPassedText) + "</b> |</font>\n" +
+                                "<font>Failed : <b>" + ((JSONObject) testsFile).get(totalFailedText) + "</b>  |</font>\n" +
+                                divText +
                                 "  <div class=\"clearfix\"></div>\n" +
-                                " </div>\n" +
+                                divText +
                                 "                      ");
 
                 sb.append("<div class=\"x_content\">\n" +
@@ -690,75 +442,20 @@ public class ReportBuilder implements Runnable {
 
                     sb.append("<!-- test : " + test + "-->");
 
-
                     JSONObject testDetails = (JSONObject) test;
+                    String osName = getOsName((JSONObject) test);
 
-                    boolean isTestFailed = false;
-                    String osName = "";
-                    if (((JSONObject) test).get("osName").toString().toLowerCase().contains("win")) {
-                        osName = "Win10";
-                    }
+                    JSONObject statusDetail=getFontColor((JSONObject) test);
+                    String fontColor= (String) statusDetail.get("fontColor");
+                    boolean isTestFailed= (boolean) statusDetail.get("isTestFailed");
 
-                    if (((JSONObject) test).get("osName").toString().toLowerCase().contains("linux")) {
-                        osName = "linux";
-                    }
+                    JSONObject failTestDetails=getScreenShotPathAndStacktrace(isTestFailed,(JSONObject) test);
+                    new JSONObject();
+                    String stacktrace = (String) failTestDetails.get("stacktrace");
+                    String screenShotpath = (String) failTestDetails.get("screenShotpath");
 
+                    String suiteOrTagName=getSuiteOrTagName(testDetails);
 
-                    if (((JSONObject) test).get("osName").toString().toLowerCase().contains("ubantu")) {
-                        osName = "ubantu";
-                    }
-
-                    if (((JSONObject) test).get("osName").toString().toLowerCase().contains("mac")) {
-                        osName = "mac";
-                    }
-
-
-                    String fontColor = "";
-                    if (((JSONObject) test).get("status").toString().toLowerCase().contains("fail")) {
-                        fontColor = "fc9272";
-                        isTestFailed = true;
-                    }
-
-                    if (((JSONObject) test).get("status").toString().toLowerCase().contains("pass")) {
-                        fontColor = "a1d99b";
-
-                    }
-
-
-                    String stacktrace = "";
-                    String screenShotpath = "";
-
-
-
-                    if (isTestFailed) {
-
-                        try {
-                            stacktrace = ((JSONObject) test).get("fullStackTrace").toString();
-                        } catch (Exception e) {
-                            tesboLogger.errorLog("StackTrace Not Found");
-
-                        }
-                        try {
-                            screenShotpath = ((JSONObject) test).get("screenShot").toString();
-
-                        } catch (Exception e) {
-                            tesboLogger.errorLog("Screenshot Not Found");
-
-                        }
-                    }
-                    String suiteOrTagName="";
-                    if(!testDetails.get("suiteName").toString().equals("")){
-                        suiteOrTagName="<font color=\"#fff\" data-toggle=\"tooltip\" title=\"Suite File\" class=\"nev navbar-right\" style=\"margin-right:1%;font-size: 12px;padding: 5px 10px;background: #007bff;border-radius: 7px;\">\n" +
-                                testDetails.get("suiteName").toString() +
-                                "</font>\n";
-                    }
-                    if(!testDetails.get("tagName").toString().equals("")){
-                        suiteOrTagName="<font color=\"#fff\" data-toggle=\"tooltip\" title=\"Tag Name\" class=\"nev navbar-right\" style=\"margin-right:1%;font-size: 12px;padding: 5px 10px;background: #17a2b8;border-radius: 7px;\">\n" +
-                                testDetails.get("tagName").toString() +
-                                "</font>\n";
-                    }
-
-                    Random rand = new Random();
                     int randomNumber = rand.nextInt();
                     sb.append("<!-- start accordion -->\n" +
                             "<div class=\"accordion\" id=\"" + browser + testDetails.get("testName")+randomNumber + "\" role=\"tablist\"\n" +
@@ -770,18 +467,18 @@ public class ReportBuilder implements Runnable {
                             "aria-expanded=\"true\"\n" +
                             "aria-controls=\"collapseOne\">\n" +
                             "<h4 class=\"panel-title\">\n" +
-                            "<font color=\"#" + fontColor + "\"> " + testDetails.get("testName").toString() + "</font>\n" +
+                            "<font color=\"#" + fontColor + "\"> " + testDetails.get("testName").toString() + fontTagText +
                             "<div class=\"nav navbar-right \">\n" +
-                            "<img src=\"../htmlReport/lib/Icon/" + browser + ".svg\"\n" +
+                            imgTegText + browser + svgText +
                             "style=\"max-width: 100%;height: 20px;\"\n" +
                             "data-toggle=\"tooltip\" data-placement=\"left\"\n" +
-                            "title=\"" + testDetails.get("browserVersion").toString() + "\">\n" +
-                            "<img src=\"../htmlReport/lib/Icon/" + osName + ".svg\"\n" +
+                            "title=\"" + testDetails.get("browserVersion").toString() + newLineText +
+                            imgTegText + osName + svgText +
                             "style=\"max-width: 100%;height: 25px;\"\n" +
                             "\n" +
                             "data-toggle=\"tooltip\" data-placement=\"left\"\n" +
-                            "title=\"" + osName + "\">\n" +
-                            "</div>\n" +
+                            "title=\"" + osName + newLineText +
+                            divText +
                             suiteOrTagName+
                             "</h4>\n" +
 
@@ -804,68 +501,31 @@ public class ReportBuilder implements Runnable {
                     JSONArray stepList = (JSONArray) ((JSONObject) test).get("testStep");
 
 
-                    for (Object step : stepList) {
-
-
-                        sb.append("<!-- Step : " + step + "-->");
-
-
-                        JSONObject stepDetails = (JSONObject) step;
-                        sb.append(" <tr>\n" +
-                                " <th scope=\"row\">" + stepDetails.get("stepIndex") + "</th>\n" +
-                                " <td>" + stepDetails.get("steps") + "</td>\n" +
-                                " <td>" + stepDetails.get("status") + "</td>\n" +
-                                "</tr>");
-
-                    }
+                    sb= addStep(stepList,sb);
 
 
                     sb.append(
                             "</tbody>\n" +
                                     "</table>\n" +
-                                    "</div>\n" +
+                                    divText +
                                     "\n" +
                                     "\n");
 
 
-                    if (isTestFailed) {
-                        sb.append(
-                                "<div class=\"panel-body\" style=\"border-style: dotted;\">\n" +
-                                        "<p><strong>ScreenShot</strong>\n" +
-                                        "</p>\n" +
-                                        "\n" +
-                                        "<img src=\""+ screenShotpath + "\" \n" +
-                                        "style=\"max-width: 100%;height: auto;\">\n" +
-
-                                        " </div>\n" +
-                                        "\n");
-                    }
-
-                    if (isTestFailed) {
-                        sb.append(
-                                "<br>\n" +
-
-                                        "<div class=\"panel-body\" style=\"border-style: dotted;\">\n" +
-                                        "<p><strong>Stack Trace</strong>\n" +
-                                        "</p>\n" +
-                                        stacktrace +
-                                        "</div>\n" +
-                                        "\n");
-
-                    }
+                    sb=addScreenShotPathAndStacktrace(isTestFailed,sb,screenShotpath,stacktrace);
 
 
                     sb.append(
-                            "</div>\n" +
+                            divText +
 
-                                    "</div>\n" +
-                                    "</div>\n");
+                                    divText +
+                                    divText);
 
                 }
 
 
-                sb.append(" </div>\n" +
-                        "</div>\n" +
+                sb.append(divText +
+                        divText +
                         "<br>");
 
             }
@@ -873,7 +533,7 @@ public class ReportBuilder implements Runnable {
             //array of the all the tests
 
             sb.append("<div></div></div>\n" +
-                    " </div>\n" +
+                    divText +
                     "<br>\n");
 
 
@@ -883,8 +543,146 @@ public class ReportBuilder implements Runnable {
         return sb;
     }
 
+    public JSONObject getScreenShotPathAndStacktrace(boolean isTestFailed,JSONObject test){
+        String stacktrace = "";
+        String screenShotpath = "";
+        if (isTestFailed) {
 
-    public StringBuffer generateBrowserWiseChartData(StringBuffer sb) {
+            try {
+                stacktrace = test.get("fullStackTrace").toString();
+            } catch (Exception e) {
+                tesboLogger.errorLog("StackTrace Not Found");
+
+            }
+            try {
+                screenShotpath = test.get("screenShot").toString();
+
+            } catch (Exception e) {
+                tesboLogger.errorLog("Screenshot Not Found");
+
+            }
+        }
+        JSONObject failTestDetails=new JSONObject();
+        failTestDetails.put("stacktrace",stacktrace);
+        failTestDetails.put("screenShotpath",screenShotpath);
+
+        return failTestDetails;
+    }
+
+    public String getSuiteOrTagName(JSONObject testDetails){
+        String suiteOrTagName="";
+        if(!testDetails.get("suiteName").toString().equals("")){
+            suiteOrTagName="<font color=\"#fff\" data-toggle=\"tooltip\" title=\"Suite File\" class=\"nev navbar-right\" style=\"margin-right:1%;font-size: 12px;padding: 5px 10px;background: #007bff;border-radius: 7px;\">\n" +
+                    testDetails.get("suiteName").toString() +
+                    fontTagText;
+        }
+        if(!testDetails.get("tagName").toString().equals("")){
+            suiteOrTagName="<font color=\"#fff\" data-toggle=\"tooltip\" title=\"Tag Name\" class=\"nev navbar-right\" style=\"margin-right:1%;font-size: 12px;padding: 5px 10px;background: #17a2b8;border-radius: 7px;\">\n" +
+                    testDetails.get("tagName").toString() +
+                    fontTagText;
+        }
+        return suiteOrTagName;
+    }
+
+    public StringBuilder addScreenShotPathAndStacktrace(boolean isTestFailed,StringBuilder sb,String screenShotpath,String stacktrace){
+        if (isTestFailed) {
+            sb.append(
+                    "<div class=\"panel-body\" style=\"border-style: dotted;\">\n" +
+                            "<p><strong>ScreenShot</strong>\n" +
+                            "</p>\n" +
+                            "\n" +
+                            "<img src=\"../"+ screenShotpath + "\" \n" +
+                            "style=\"max-width: 100%;height: auto;\">\n" +
+
+                            divText +
+                            "\n");
+        }
+
+        if (isTestFailed) {
+            sb.append(
+                    "<br>\n" +
+
+                            "<div class=\"panel-body\" style=\"border-style: dotted;\">\n" +
+                            "<p><strong>Stack Trace</strong>\n" +
+                            "</p>\n" +
+                            stacktrace +
+                            divText +
+                            "\n");
+
+        }
+        return sb;
+    }
+
+    public JSONObject getFontColor(JSONObject test){
+        String fontColor = "";
+        boolean isTestFailed = false;
+        if ( test.get(statusText).toString().toLowerCase().contains("fail")) {
+            fontColor = "fc9272";
+            isTestFailed = true;
+        }
+
+        if (test.get(statusText).toString().toLowerCase().contains("pass")) {
+            fontColor = "a1d99b";
+        }
+        JSONObject statusDetail=new JSONObject();
+        statusDetail.put("fontColor",fontColor);
+        statusDetail.put("isTestFailed",isTestFailed);
+
+        return statusDetail;
+    }
+
+    public String getOsName(JSONObject test){
+        String osName = "";
+        if (test.get(osNameText).toString().toLowerCase().contains("win")) {
+            osName = "Win10";
+        }
+        else if (test.get(osNameText).toString().toLowerCase().contains("linux")) {
+            osName = "linux";
+        }
+        else if (test.get(osNameText).toString().toLowerCase().contains("ubantu")) {
+            osName = "ubantu";
+        }
+        else if (test.get(osNameText).toString().toLowerCase().contains("mac")) {
+            osName = "mac";
+        }
+        return osName;
+    }
+
+    public StringBuilder addStep(JSONArray stepList,StringBuilder sb){
+        for (Object step : stepList) {
+
+
+            sb.append("<!-- Step : " + step + "-->");
+
+
+            JSONObject stepDetails = (JSONObject) step;
+            sb.append(" <tr>\n" +
+                    " <th scope=\"row\">" + stepDetails.get("stepIndex") + "</th>\n" +
+                    tdElement + stepDetails.get("steps") + tdElementWithNewLine +
+                    tdElement + stepDetails.get(statusText) + tdElementWithNewLine +
+                    "</tr>");
+
+        }
+        return sb;
+    }
+
+    public JSONArray getBrowserList(Iterator iter){
+        String browser = " ";
+        JSONArray browserList = new JSONArray();
+        while (iter.hasNext()) {
+
+            browser = iter.next().toString();
+
+            if (!browser.equals(" ")) {
+                browserList.add(browser);
+                browser = " ";
+            }
+
+        }
+        return browserList;
+    }
+
+    public StringBuilder generateBrowserWiseChartData(StringBuilder sb) {
 
 
         sb.append("<script>\n" +
@@ -892,11 +690,11 @@ public class ReportBuilder implements Runnable {
                 "    Morris.Bar({\n" +
                 "        element: 'browserReport',\n" +
                 "        data: [\n" +
-                "            {y: 'Chrome', a: " + data.getCurrentBuildBrowserWiseData(buildHistory, "chrome").get("totalPassed") + ", b: " + data.getCurrentBuildBrowserWiseData(buildHistory, "chrome").get("totalFailed") + "},\n" +
-                "            {y: 'Firefox', a: " + data.getCurrentBuildBrowserWiseData(buildHistory, "firefox").get("totalPassed") + ", b: " + data.getCurrentBuildBrowserWiseData(buildHistory, "firefox").get("totalFailed") + "},\n" +
-                "            {y: 'Ie', a: " + data.getCurrentBuildBrowserWiseData(buildHistory, "ie").get("totalPassed") + ", b: " + data.getCurrentBuildBrowserWiseData(buildHistory, "ie").get("totalFailed") + "},\n" +
-                "            {y: 'Opera', a: " + data.getCurrentBuildBrowserWiseData(buildHistory, "opera").get("totalPassed") + ", b: " + data.getCurrentBuildBrowserWiseData(buildHistory, "opera").get("totalFailed") + "},\n" +
-                "            {y: 'Safari', a: " + data.getCurrentBuildBrowserWiseData(buildHistory, "safari").get("totalPassed") + ", b: " + data.getCurrentBuildBrowserWiseData(buildHistory, "safari").get("totalFailed") + "},\n" +
+                "            {y: 'Chrome', a: " + data.getCurrentBuildBrowserWiseData(buildHistory, "chrome").get(totalPassedText) + bText + data.getCurrentBuildBrowserWiseData(buildHistory, "chrome").get(totalFailedText) + "},\n" +
+                "            {y: 'Firefox', a: " + data.getCurrentBuildBrowserWiseData(buildHistory, "firefox").get(totalPassedText) + bText + data.getCurrentBuildBrowserWiseData(buildHistory, "firefox").get(totalFailedText) + "},\n" +
+                "            {y: 'Ie', a: " + data.getCurrentBuildBrowserWiseData(buildHistory, "ie").get(totalPassedText) + bText + data.getCurrentBuildBrowserWiseData(buildHistory, "ie").get(totalFailedText) + "},\n" +
+                "            {y: 'Opera', a: " + data.getCurrentBuildBrowserWiseData(buildHistory, "opera").get(totalPassedText) + bText + data.getCurrentBuildBrowserWiseData(buildHistory, "opera").get(totalFailedText) + "},\n" +
+                "            {y: 'Safari', a: " + data.getCurrentBuildBrowserWiseData(buildHistory, "safari").get(totalPassedText) + bText + data.getCurrentBuildBrowserWiseData(buildHistory, "safari").get(totalFailedText) + "},\n" +
                 "\n" +
                 "        ],\n" +
                 "        xkey: 'y',\n" +
@@ -912,8 +710,7 @@ public class ReportBuilder implements Runnable {
     }
 
 
-    public StringBuffer generateDonutChartData(StringBuffer sb)
-
+    public StringBuilder generateDonutChartData(StringBuilder sb)
     {
 
         sb.append("<script>\n" +
@@ -954,24 +751,16 @@ public class ReportBuilder implements Runnable {
 
         try {
             Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace(new PrintWriter(sw));
+            log.error(sw.toString());
         }
 
         while (TestExecutionBuilder.buildRunning) {
             try {
-
                 generatReport();
-
-                try {
-                    Thread.sleep(13000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-
-            } catch (Exception e) {
-            }
+                Thread.sleep(13000);
+            } catch (Exception e) {log.error("");}
         }
 
 

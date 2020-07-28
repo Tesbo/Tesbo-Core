@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import Exception.*;
 import org.json.simple.JSONObject;
 
 public class SuiteParser {
     TesboLogger tesboLogger = new TesboLogger();
+    CommonMethods commonMethods=new CommonMethods();
     private static final Logger log = LogManager.getLogger(SuiteParser.class);
 
     /**
@@ -27,12 +27,12 @@ public class SuiteParser {
      * @param fileName : File name with extension e.g. smoke.suite
      * @return whole file content as String buffer
      */
-    public StringBuffer readSuiteFile(String fileName) {
+    public StringBuilder readSuiteFile(String fileName) {
 
         GetConfiguration configuration = new GetConfiguration();
         BufferedReader br = null;
         FileReader fr = null;
-        StringBuffer tests = new StringBuffer();
+        StringBuilder tests = new StringBuilder();
 
         try {
             fr = new FileReader(configuration.getSuitesDirectory() + "/" + fileName+".suite");
@@ -69,23 +69,19 @@ public class SuiteParser {
      * @param testsFile
      * @return
      */
-    public JSONArray getTestNameFromSuiteFile(StringBuffer testsFile) {
+    public JSONArray getTestNameFromSuiteFile(StringBuilder testsFile) {
 
-        String allLines[] = testsFile.toString().split("[\\r\\n]+");
+        String[] allLines = testsFile.toString().split("[\\r\\n]+");
         JSONArray testName = new JSONArray();
         for (int i = 0; i < allLines.length; i++) {
             if(!allLines[i].equals("")) {
                 String comment = String.valueOf(allLines[i].charAt(0)) + String.valueOf(allLines[i].charAt(1));
-                if ((allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) & (!comment.equals("//"))) {
-                    if (allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")) {
-                        log.error("Please write valid keyword for this \"" + allLines[i] + "\"");
-                        throw new TesboException("Please write valid keyword for \"" + allLines[i] + "\" on suite file");
-                    }
+                if ((allLines[i].toLowerCase().startsWith("test")) && (!comment.equals("//"))) {
+                    verifyTestStartWithValidText(allLines[i]);
                     testName.add(allLines[i].trim());
                 } else {
                     if (!comment.equals("//")) {
-                        log.error("Define only test name in '.suite' file");
-                        throw new TesboException("Define only test name in '.suite' file");
+                        commonMethods.throwTesboException("Define only test name in '.suite' file",log);
                     }
                 }
             }
@@ -96,13 +92,18 @@ public class SuiteParser {
         return testName;
     }
 
+    public void verifyTestStartWithValidText(String testName){
+        if (!testName.trim().startsWith("Test: ")) {
+            commonMethods.throwTesboException("Please write valid keyword or step for this \"" + testName + "\" on suite file",log);
+        }
+    }
+
     public void validationForDuplicateTestInSuiteFile(JSONArray testNameList)
     {
         for(int i=0;i<testNameList.size();i++){
             for(int j=i+1;j<testNameList.size();j++){
                 if(testNameList.get(i).equals(testNameList.get(j))){
-                    log.error("'"+testNameList.get(i)+"' test is define multiple time on same suite file");
-                    throw new TesboException("'"+testNameList.get(i)+"' test is define multiple time on same suite file");
+                    commonMethods.throwTesboException("'"+testNameList.get(i)+"' test is define multiple time on same suite file",log);
                 }
             }
         }
@@ -111,13 +112,13 @@ public class SuiteParser {
     /**
      * @auther: Ankit Mistry
      * @lastModifiedBy:
-     * @param fileName
+     * @param suiteFileName
      * @return
      */
-    public JSONObject getTestsFileNameUsingTestName(String fileName) {
+    public JSONObject getTestsFileNameUsingTestName(String suiteFileName) {
 
         JSONArray tampSuiteTestNameList=new JSONArray();
-        StringBuffer suiteFile= readSuiteFile(fileName);
+        StringBuilder suiteFile= readSuiteFile(suiteFileName);
         JSONArray suiteTestNameList=getTestNameFromSuiteFile(suiteFile);
 
         tampSuiteTestNameList.addAll(suiteTestNameList);
@@ -126,45 +127,55 @@ public class SuiteParser {
         GetConfiguration getConfiguration=new GetConfiguration();
         JSONArray testsFileNameList= testsFileParser.getTestFiles(getConfiguration.getTestsDirectory());
 
-        for(Object testsFileName:testsFileNameList){
-            File name = new File(testsFileName.toString());
-            StringBuffer testsFileDetails = testsFileParser.readTestsFile(name.getName());
-            JSONArray testName= testsFileParser.getTestNameByTestsFile(testsFileDetails);
-            JSONArray TestList=new JSONArray();
-            for(Object suiteTestName:suiteTestNameList){
+        int i=1;
+        for(Object suiteTestName:suiteTestNameList){
+            JSONArray testList=new JSONArray();
+            String testFileName = "";
+            for(Object testsFileName:testsFileNameList){
+                File name = new File(testsFileName.toString());
+                StringBuilder testsFileDetails = testsFileParser.readTestsFile(name.getName());
+                JSONArray testName= testsFileParser.getTestNameByTestsFile(testsFileDetails);
                 for(Object test:testName) {
                     if(test.toString().equals(suiteTestName.toString().split(":")[1].trim())) {
-                        boolean isExistInTampSuiteTestNameList=false;
-                        for(Object tampSuiteTest:tampSuiteTestNameList){
-                            if(suiteTestName.equals(tampSuiteTest)){
-                                isExistInTampSuiteTestNameList=true;
-                                break;
-                            }
-                        }
-                        if(!isExistInTampSuiteTestNameList){
-                            log.error("'"+suiteTestName+"' test is found multiple time on tests file");
-                            throw new TesboException("'"+suiteTestName+"' test is found multiple time on tests file");
-                        }
-                        TestList.add(test.toString().trim());
+                        verifySameTestNameIsExistOrNot(tampSuiteTestNameList,suiteTestName.toString());
+                        testFileName=name.getName()+"_"+i++;
+                        testList.add(test.toString().trim());
                         tampSuiteTestNameList.remove(suiteTestName);
                     }
                 }
+
             }
-            if(!TestList.isEmpty()) {
-                testNameWithTestsFileName.put(name.getName(), TestList);
+            if(!testList.isEmpty()) {
+                testNameWithTestsFileName.put(testFileName, testList);
             }
-        }
-        if(tampSuiteTestNameList.size()!=0){
-            String testList="";
-            for(Object test:tampSuiteTestNameList){
-                if(testList.equals("")){ testList=test.toString();
-                }else { testList=testList+", "+test.toString(); }
-            }
-            log.error("'"+testList+"' test is not found in any tests file");
-            throw new TesboException("'"+testList+"' test is not found in any tests file");
         }
 
+        verifyTestNameIsNotExistOnAnyTestsFile(tampSuiteTestNameList);
         return testNameWithTestsFileName;
+    }
+
+    public void verifySameTestNameIsExistOrNot(JSONArray tampSuiteTestNameList,String suiteTestName){
+        boolean isExistInTampSuiteTestNameList=false;
+        for(Object tampSuiteTest:tampSuiteTestNameList){
+            if(suiteTestName.equals(tampSuiteTest)){
+                isExistInTampSuiteTestNameList=true;
+                break;
+            }
+        }
+        if(!isExistInTampSuiteTestNameList){
+            commonMethods.throwTesboException("'"+suiteTestName+"' test is found multiple time on tests file",log);
+        }
+    }
+
+    public void verifyTestNameIsNotExistOnAnyTestsFile(JSONArray tampSuiteTestNameList){
+        if(!tampSuiteTestNameList.isEmpty()){
+            StringBuilder testList=new StringBuilder();
+            for(Object test:tampSuiteTestNameList){
+                if(testList.length()==0){ testList.append(test.toString());
+                }else { testList.append(", "+test.toString()); }
+            }
+            commonMethods.throwTesboException("'"+testList+"' test is not found in any tests file",log);
+        }
     }
 
     /**
@@ -177,38 +188,38 @@ public class SuiteParser {
 
         JSONArray suiteFileList = new JSONArray();
         boolean flag=false;
-        String file=null;
+        StringBuilder file=new StringBuilder();
         try (Stream<Path> paths = Files.walk(Paths.get(directory))) {
 
             suiteFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
             for(Object testsFilePath:suiteFileList) {
                 String[] testsFile=testsFilePath.toString().split("\\.");
-                if (testsFile.length == 2) {
-                    if (!testsFile[1].equalsIgnoreCase("suite")) {
+                if (testsFile.length == 2 && (!testsFile[1].equalsIgnoreCase("suite"))) {
                         flag=true;
-                        if(file==null)
-                            file="'."+testsFile[1]+"'";
+                        if(file.length()==0)
+                            file.append("'."+testsFile[1]+"'");
                         else
-                            file+=", '."+testsFile[1]+"'";
-                    }
+                            file.append(", '."+testsFile[1]+"'");
                 }
             }
-            if(flag==true){
-                log.error(file+" file found in suite directory");
-                tesboLogger.errorLog(file+" file not found in suite directory");
+            if(flag){
+                String errorMsg=file+" file found in suite directory";
+                log.error(errorMsg);
+                tesboLogger.errorLog(errorMsg);
                 throw (new NoSuchFileException(""));
             }
         } catch (Exception e) {
-            if(flag==true){
+            if(flag){
                 log.error("Message : Please create only '.suite' file in tests directory.");
                 tesboLogger.testFailed("Message : Please create only '.suite' file in tests directory.");
             }
             else {
+                String errorMsg="'" + directory + "' no files found on your location.";
                 log.error("Message : Please Enter valid directory path.");
-                log.error("'" + directory + "' no files found on your location.");
+                log.error(errorMsg);
                 tesboLogger.testFailed("Message : Please Enter valid directory path.");
-                tesboLogger.testFailed("'" + directory + "' no files found on your location.");
+                tesboLogger.testFailed(errorMsg);
                 StringWriter sw = new StringWriter();
                 e.printStackTrace(new PrintWriter(sw));
                 tesboLogger.testFailed(sw.toString());
@@ -224,18 +235,5 @@ public class SuiteParser {
             }
         }
         return suiteFileList;
-    }
-
-    public static void main(String[] args) {
-        SuiteParser suiteParser=new SuiteParser();
-        //StringBuffer suiteFile= suiteParser.readSuiteFile("smoke.suite");
-        System.out.println("====================================================================================");
-
-
-        System.out.println(suiteParser.getTestsFileNameUsingTestName("smoke"));
-        System.out.println("====================================================================================");
-
-        System.out.println("====================================================================================");
-
     }
 }

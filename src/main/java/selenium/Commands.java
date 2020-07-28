@@ -1,21 +1,20 @@
-package Selenium;
+package selenium;
 
-import Execution.SetCommandLineArgument;
+import execution.SetCommandLineArgument;
+import framework.CommonMethods;
 import framework.GetConfiguration;
-import framework.Validation;
 import logger.TesboLogger;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.*;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -29,18 +28,22 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import Exception.TesboException;
+import exception.TesboException;
+
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.*;
 
 public class Commands {
 
     protected static Wait<WebDriver> wait;
-    public String parantWindow = "";
-    public String childWindow = "";
+    String parantWindow = "";
+    String childWindow = "";
     TesboLogger tesboLogger =new TesboLogger();
-    private static final Logger log = LogManager.getLogger(Validation.class);
+    private static final Logger log = LogManager.getLogger(Commands.class);
     boolean isIf=true;
+    String elementText="element";
+    String isBreakText="isBreak";
+    CommonMethods commonMethods=new CommonMethods();
 
     /**
      * @param driver       webdriver object for the Test
@@ -51,66 +54,22 @@ public class Commands {
     public WebElement findElement(WebDriver driver, String elementvalue) {
         WebElement element = null;
         GetConfiguration config = new GetConfiguration();
-        int webdriverTime = 600;
-
-        WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
-        pause(3);
 
         if(elementvalue.contains("_IF")){
             isIf=false;
             elementvalue=elementvalue.replace("_IF","");
         }
-        ArrayList<String> locatorTypes=new ArrayList<>();
+        List<String> locatorTypes;
         locatorTypes=config.getLocatorPreference();
         if(locatorTypes!=null){
-            if(locatorTypes.size()==0){
-                log.error("Please enter locator Preference");
-                throw new TesboException("Please enter locator Preference");
+            if(locatorTypes.isEmpty()){
+                commonMethods.throwTesboException("Please enter locator Preference",log);
             }
             element= findElementFromLocatorPreference(driver,elementvalue,locatorTypes);
 
         }else {
-            try {
-                element = driver.findElement(By.cssSelector(elementvalue));
-            } catch (NoSuchElementException css) {
-                try {
-                    element = driver.findElement(By.id(elementvalue));
-                } catch (NoSuchElementException id) {
-                    try {
-                        element = driver.findElement(By.xpath(elementvalue));
-                    } catch (Exception xpath) {
-                        try {
-                            element = driver.findElement(By.className(elementvalue));
-                        } catch (Exception className) {
-                            try {
-                                element = driver.findElement(By.name(elementvalue));
-                            } catch (Exception name) {
-                                try {
-                                    element = driver.findElement(By.tagName(elementvalue));
-                                } catch (Exception tagName) {
-                                    try {
-                                        element = driver.findElement(By.linkText(elementvalue));
-                                    } catch (Exception linkText) {
-                                        try {
-                                            element = driver.findElement(By.partialLinkText(elementvalue));
-                                        } catch (NoSuchElementException e) {
-                                            if(isIf) {
-                                                log.error("Please enter valid locator value");
-                                                tesboLogger.testFailed("Please enter valid locator value");
-                                                throw e;
-                                            }
-                                        }
-                                    }
+            element=getElementByClassNameXpathIdAndCssSelector(driver,elementvalue);
 
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if(element==null){
-                //throw new TesboException("Please enter valid locator value");
-            }
             if (config.getHighlightElement()) {
                 JavascriptExecutor js = (JavascriptExecutor) driver;
                 js.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", element);
@@ -119,135 +78,105 @@ public class Commands {
         return element;
     }
 
-    public WebElement findElementFromLocatorPreference(WebDriver driver, String elementvalue,ArrayList<String> locatorTypes) {
+    public WebElement getElementByClassNameXpathIdAndCssSelector(WebDriver driver,String elementvalue){
+        WebElement element=null;
+        try {
+            element = driver.findElement(By.cssSelector(elementvalue));
+        } catch (NoSuchElementException css) {
+            try {
+                element = driver.findElement(By.id(elementvalue));
+            } catch (NoSuchElementException id) {
+                try {
+                    element = driver.findElement(By.xpath(elementvalue));
+                } catch (Exception xpath) {
+                    try {
+                        element = driver.findElement(By.className(elementvalue));
+                    } catch (Exception className) {
+                        try {
+                            element = driver.findElement(By.name(elementvalue));
+                        } catch (Exception name) {
+                            element=getElementByPartialLinkTextLinkTextTagNameAndName(driver,elementvalue);
+                        }
+                    }
+                }
+            }
+        }
+        return element;
+    }
+
+    public WebElement getElementByPartialLinkTextLinkTextTagNameAndName(WebDriver driver,String elementvalue){
+        WebElement element=null;
+        try {
+            element = driver.findElement(By.name(elementvalue));
+        } catch (Exception name) {
+            try {
+                element = driver.findElement(By.tagName(elementvalue));
+            } catch (Exception tagName) {
+                try {
+                    element = driver.findElement(By.linkText(elementvalue));
+                } catch (Exception linkText) {
+                    try {
+                        element = driver.findElement(By.partialLinkText(elementvalue));
+                    } catch (NoSuchElementException e) {
+                        throwExceptionWhenElementNotFound(elementvalue);
+                    }
+                }
+            }
+        }
+        return element;
+    }
+
+    public WebElement findElementFromLocatorPreference(WebDriver driver, String elementvalue,List<String> locatorTypes) {
         WebElement element = null;
         GetConfiguration config = new GetConfiguration();
-        int webdriverTime = 600;
 
-        WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
-        pause(3);
         int locatorTypesSize=locatorTypes.size();
         int locatorCount=1;
+        boolean isBreak=false;
         for (String locatorType:locatorTypes){
 
             if(locatorType.equalsIgnoreCase("css")){
-                try {
-                    element = driver.findElement(By.cssSelector(elementvalue));
-                    break;
-                } catch (NoSuchElementException css) {
-                    if(locatorCount==locatorTypesSize) {
-                        if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw css;
-                        }
-                    }
-                }
+                JSONObject elementDetails=getElementByCSS(driver,elementvalue,locatorCount,locatorTypesSize);
+                element= (WebElement) elementDetails.get(elementText);
+                isBreak= (boolean) elementDetails.get(isBreakText);
             }
             else if(locatorType.equalsIgnoreCase("id")){
-                try {
-                    element = driver.findElement(By.id(elementvalue));
-                    break;
-                } catch (NoSuchElementException id) {
-                    if(locatorCount==locatorTypesSize) {
-                        {
-                            if(isIf){
-                                log.error("Please enter valid locator value");
-                                tesboLogger.testFailed("Please enter valid locator value");
-                                throw id;
-                            }
-                        }
-                    }
-                }
+                JSONObject elementDetails=getElementById(driver,elementvalue,locatorCount,locatorTypesSize);
+                element= (WebElement) elementDetails.get(elementText);
+                isBreak= (boolean) elementDetails.get(isBreakText);
             }
             else if(locatorType.equalsIgnoreCase("xpath")){
-                try {
-                    element = driver.findElement(By.xpath(elementvalue));
-                    break;
-                } catch (Exception xpath) {
-                    if(locatorCount==locatorTypesSize) {
-                        if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw xpath;
-                        }
-                    }
-                }
+                JSONObject elementDetails=getElementByXpath(driver,elementvalue,locatorCount,locatorTypesSize);
+                element= (WebElement) elementDetails.get(elementText);
+                isBreak= (boolean) elementDetails.get(isBreakText);
             }
             else if(locatorType.equalsIgnoreCase("className")){
-                try {
-                    element = driver.findElement(By.className(elementvalue));
-                    break;
-                } catch (Exception className) {
-                    if(locatorCount==locatorTypesSize) {
-                        if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw className;
-                        }
-                    }
-                }
+                JSONObject elementDetails=getElementByClassName(driver,elementvalue,locatorCount,locatorTypesSize);
+                element= (WebElement) elementDetails.get(elementText);
+                isBreak= (boolean) elementDetails.get(isBreakText);
             }
             else if(locatorType.equalsIgnoreCase("name")){
-                try {
-                    element = driver.findElement(By.name(elementvalue));
-                    break;
-                } catch (Exception name) {
-                    if(locatorCount==locatorTypesSize) {
-                        if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw name;
-                        }
-                    }
-                }
+                JSONObject elementDetails=getElementByName(driver,elementvalue,locatorCount,locatorTypesSize);
+                element= (WebElement) elementDetails.get(elementText);
+                isBreak= (boolean) elementDetails.get(isBreakText);
             }
             else if(locatorType.equalsIgnoreCase("tagName")){
-                try {
-                    element = driver.findElement(By.tagName(elementvalue));
-                    break;
-                } catch (Exception tagName) {
-                    if(locatorCount==locatorTypesSize) {
-                        if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw tagName;
-                        }
-                    }
-                }
+                JSONObject elementDetails=getElementByTagName(driver,elementvalue,locatorCount,locatorTypesSize);
+                element= (WebElement) elementDetails.get(elementText);
+                isBreak= (boolean) elementDetails.get(isBreakText);
             }
             else if(locatorType.equalsIgnoreCase("linkText")){
-                try {
-                    element = driver.findElement(By.linkText(elementvalue));
-                    break;
-                } catch (Exception linkText) {
-                    if(locatorCount==locatorTypesSize) {
-                        if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw linkText;
-                        }
-                    }
-                }
+                JSONObject elementDetails=getElementByLinkText(driver,elementvalue,locatorCount,locatorTypesSize);
+                element= (WebElement) elementDetails.get(elementText);
+                isBreak= (boolean) elementDetails.get(isBreakText);
             }
             else if(locatorType.equalsIgnoreCase("partialLinkText")){
-                try {
-                    element = driver.findElement(By.partialLinkText(elementvalue));
-                    break;
-                } catch (NoSuchElementException e) {
-                    if(locatorCount==locatorTypesSize) {
-                        if(isIf) {
-                            log.error("Please enter valid locator value");
-                            tesboLogger.testFailed("Please enter valid locator value");
-                            throw e;
-                        }
-                    }
-                }
+                JSONObject elementDetails=getElementByPartialLinkText(driver,elementvalue,locatorCount,locatorTypesSize);
+                element= (WebElement) elementDetails.get(elementText);
+                isBreak= (boolean) elementDetails.get(isBreakText);
             }
+            if(isBreak){break;}
             locatorCount++;
-        }
-        if(element==null){
-            //throw new TesboException("Please enter valid locator value");
         }
 
         if (config.getHighlightElement() && isIf) {
@@ -257,13 +186,167 @@ public class Commands {
         return element;
     }
 
+    public JSONObject getElementByCSS(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
+        WebElement element = null;
+        boolean isBreak=false;
+        try {
+            element = driver.findElement(By.cssSelector(elementValue));
+            isBreak=true;
+        } catch (Exception css) {
+            if(locatorCount==locatorTypesSize) {
+                throwExceptionWhenElementNotFound(elementValue);
+            }
+        }
+        JSONObject elementDetails=new JSONObject();
+        elementDetails.put(elementText,element);
+        elementDetails.put(isBreakText,isBreak);
+
+        return elementDetails;
+    }
+
+    public JSONObject getElementById(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
+        WebElement element = null;
+        boolean isBreak=false;
+        try {
+            element = driver.findElement(By.id(elementValue));
+            isBreak=true;
+        } catch (Exception id) {
+            if(locatorCount==locatorTypesSize) {
+                throwExceptionWhenElementNotFound(elementValue);
+            }
+        }
+        JSONObject elementDetails=new JSONObject();
+        elementDetails.put(elementText,element);
+        elementDetails.put(isBreakText,isBreak);
+
+        return elementDetails;
+    }
+
+    public JSONObject getElementByXpath(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
+        WebElement element = null;
+        boolean isBreak=false;
+        try {
+            element = driver.findElement(By.xpath(elementValue));
+            isBreak=true;
+        } catch (Exception xpath) {
+            if(locatorCount==locatorTypesSize) {
+                throwExceptionWhenElementNotFound(elementValue);
+            }
+        }
+        JSONObject elementDetails=new JSONObject();
+        elementDetails.put(elementText,element);
+        elementDetails.put(isBreakText,isBreak);
+
+        return elementDetails;
+    }
+
+    public JSONObject getElementByClassName(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
+        WebElement element = null;
+        boolean isBreak=false;
+        try {
+            element = driver.findElement(By.className(elementValue));
+            isBreak=true;
+        } catch (Exception className) {
+            if(locatorCount==locatorTypesSize) {
+                throwExceptionWhenElementNotFound(elementValue);
+            }
+        }
+        JSONObject elementDetails=new JSONObject();
+        elementDetails.put(elementText,element);
+        elementDetails.put(isBreakText,isBreak);
+
+        return elementDetails;
+    }
+
+    public JSONObject getElementByName(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
+        WebElement element = null;
+        boolean isBreak=false;
+        try {
+            element = driver.findElement(By.name(elementValue));
+            isBreak=true;
+        } catch (Exception name) {
+            if(locatorCount==locatorTypesSize) {
+                throwExceptionWhenElementNotFound(elementValue);
+            }
+        }
+        JSONObject elementDetails=new JSONObject();
+        elementDetails.put(elementText,element);
+        elementDetails.put(isBreakText,isBreak);
+
+        return elementDetails;
+    }
+
+    public JSONObject getElementByTagName(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
+        WebElement element = null;
+        boolean isBreak=false;
+        try {
+            element = driver.findElement(By.tagName(elementValue));
+            isBreak=true;
+        } catch (Exception tagName) {
+            if(locatorCount==locatorTypesSize) {
+                throwExceptionWhenElementNotFound(elementValue);
+            }
+        }
+        JSONObject elementDetails=new JSONObject();
+        elementDetails.put(elementText,element);
+        elementDetails.put(isBreakText,isBreak);
+
+        return elementDetails;
+    }
+
+    public JSONObject getElementByLinkText(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
+        WebElement element = null;
+        boolean isBreak=false;
+        try {
+            element = driver.findElement(By.linkText(elementValue));
+            isBreak=true;
+        } catch (Exception linkText) {
+            if(locatorCount==locatorTypesSize) {
+                throwExceptionWhenElementNotFound(elementValue);
+            }
+        }
+        JSONObject elementDetails=new JSONObject();
+        elementDetails.put(elementText,element);
+        elementDetails.put(isBreakText,isBreak);
+
+        return elementDetails;
+    }
+
+    public JSONObject getElementByPartialLinkText(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
+        WebElement element = null;
+        boolean isBreak=false;
+        try {
+            element = driver.findElement(By.partialLinkText(elementValue));
+            isBreak=true;
+        } catch (Exception e) {
+            if(locatorCount==locatorTypesSize) {
+                throwExceptionWhenElementNotFound(elementValue);
+            }
+        }
+        JSONObject elementDetails=new JSONObject();
+        elementDetails.put(elementText,element);
+        elementDetails.put(isBreakText,isBreak);
+
+        return elementDetails;
+    }
+
+    public void throwExceptionWhenElementNotFound(String elementvalue){
+        if(isIf) {
+            commonMethods.throwTesboException("Element Not found With Locator '"+elementvalue+"'",log);
+        }
+    }
+
     public List<WebElement> findElements(WebDriver driver, String elementvalue) {
 
         List<WebElement> listOfElements =null;
-        int webdriverTime = 600;
 
-        WebDriverWait wait = new WebDriverWait(driver, webdriverTime);
-        pause(3);
+        listOfElements=getElementsByClassNameXpathIdAndCssSelector(driver,elementvalue);
+
+        return listOfElements;
+    }
+
+    public List<WebElement> getElementsByClassNameXpathIdAndCssSelector(WebDriver driver,String elementvalue){
+        List<WebElement> listOfElements=null;
         try {
 
             listOfElements = driver.findElements(By.cssSelector(elementvalue));
@@ -280,35 +363,36 @@ public class Commands {
                     try {
                         listOfElements = driver.findElements(By.className(elementvalue));
                     } catch (Exception className) {
-                        try {
-                            listOfElements = driver.findElements(By.name(elementvalue));
-                        } catch (Exception name) {
-                            try {
-                                listOfElements = driver.findElements(By.tagName(elementvalue));
-                            } catch (Exception tagName) {
-                                try {
-                                    listOfElements = driver.findElements(By.linkText(elementvalue));
-                                } catch (Exception linkText) {
-                                    try {
-                                        listOfElements = driver.findElements(By.partialLinkText(elementvalue));
-                                    } catch (NoSuchElementException e) {
-                                        if(isIf) {
-                                            log.error("Please enter valid locator value");
-                                            tesboLogger.testFailed("Please enter valid locator value");
-                                            throw e;
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
+                        listOfElements=getElementsByPartialLinkTextLinkTextTagNameAndName(driver,elementvalue);
                     }
 
                 }
 
             }
         }
+        return listOfElements;
+    }
 
+    public List<WebElement> getElementsByPartialLinkTextLinkTextTagNameAndName(WebDriver driver,String elementvalue){
+        List<WebElement> listOfElements =null;
+        try {
+            listOfElements = driver.findElements(By.name(elementvalue));
+        } catch (Exception name) {
+            try {
+                listOfElements = driver.findElements(By.tagName(elementvalue));
+            } catch (Exception tagName) {
+                try {
+                    listOfElements = driver.findElements(By.linkText(elementvalue));
+                } catch (Exception linkText) {
+                    try {
+                        listOfElements = driver.findElements(By.partialLinkText(elementvalue));
+                    } catch (NoSuchElementException e) {
+                        throwExceptionWhenElementNotFound(elementvalue);
+                    }
+                }
+
+            }
+        }
         return listOfElements;
     }
 
@@ -329,12 +413,6 @@ public class Commands {
         el.sendKeys(text);
     }
 
-    /**
-     *  verify element is displayed or not
-     */
-    /*public void verifyElementShouldDisplayed(WebElement el) {
-        assertThat(el.isDisplayed()).isTrue();
-    }*/
 
     public void openUrl(WebDriver driver, String url) {
         driver.get(url);
@@ -354,8 +432,8 @@ public class Commands {
 
     public void pause(int sec) {
         try {
-            Thread.sleep(sec * 1000);
-        } catch (InterruptedException e) {
+            Thread.sleep((long)sec * 1000);
+        } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             tesboLogger.testFailed(sw.toString());
@@ -373,11 +451,11 @@ public class Commands {
 
     /**
      * @param driver
-     * @param ID
+     * @param id
      * @Description : Switch to IFrame using ID, Name and Web Element.
      */
-    public void switchFrame(WebDriver driver, String ID) {
-        driver.switchTo().frame(ID);
+    public void switchFrame(WebDriver driver, String id) {
+        driver.switchTo().frame(id);
     }
 
     /**
@@ -422,13 +500,12 @@ public class Commands {
 
     /**
      * @param driver
-     * @param Text
+     * @param text
      * @Description : Switch to alert and enter text.
      */
-    public void switchAlertSendKey(WebDriver driver, String Text) {
-        //driver.switchTo().alert().sendKeys(Text);
+    public void switchAlertSendKey(WebDriver driver, String text) {
         Alert alert  = new WebDriverWait(driver, 10).until(ExpectedConditions.alertIsPresent());
-        alert.sendKeys(Text);
+        alert.sendKeys(text);
         alert.accept();
     }
 
@@ -460,13 +537,10 @@ public class Commands {
      * @Description : Switch to main/parent window.
      */
     public void switchMainWindow(WebDriver driver) {
-        Set<String> handles = driver.getWindowHandles();
+        JSONArray handles = (JSONArray) driver.getWindowHandles();
 
-        for (String windowHandle : handles) {
-            //Condition for get new window.
-            driver.switchTo().window(windowHandle);
-            break;
-        }
+        //Condition for get new window.
+        driver.switchTo().window(handles.get(0).toString());
 
     }
 
@@ -488,28 +562,11 @@ public class Commands {
      */
     public void closeWindowByIndex(WebDriver driver, String step,String browser) {
 
-        int startPoint = step.indexOf("<") + 1;
-        int endPoint = step.lastIndexOf(">");
+        int startPoint = step.indexOf('<') + 1;
+        int endPoint = step.lastIndexOf('>');
         String indexes = step.substring(startPoint, endPoint).trim();
-        String index[];
-        if(indexes.toLowerCase().contains("to")){
-            int startIndex=Integer.parseInt(indexes.toLowerCase().split("to")[0].trim());
-            int endIndex=Integer.parseInt(indexes.toLowerCase().split("to")[1].trim());
-            if(startIndex>endIndex) {
-                throw new TesboException("Starting index is greater than end index <" + indexes + ">");
-            }
-            int numberOfIndex=0;
-            for(int i=startIndex;i<=endIndex;i++){numberOfIndex++;}
-            index= new String[numberOfIndex];
-            for(int i=0;i<numberOfIndex;i++){ index[i]= String.valueOf(startIndex++); }
-        }else {
-            if (indexes.contains(",")) {
-                index = indexes.split(",");
-            } else {
-                index = new String[1];
-                index[0] = indexes;
-            }
-        }
+        String[] index=getIndexOfBrowserWindow(indexes);
+
         ArrayList<String> tabs = new ArrayList<> (driver.getWindowHandles());
         if(browser.equalsIgnoreCase("chrome")){
             ArrayList<String> chromeTabs= new ArrayList<>();
@@ -535,6 +592,29 @@ public class Commands {
             }
         }
 
+    }
+
+    public String[] getIndexOfBrowserWindow(String indexes){
+        String[] index;
+        if(indexes.toLowerCase().contains("to")){
+            int startIndex=Integer.parseInt(indexes.toLowerCase().split("to")[0].trim());
+            int endIndex=Integer.parseInt(indexes.toLowerCase().split("to")[1].trim());
+            if(startIndex>endIndex) {
+                commonMethods.throwTesboException("Starting index is greater than end index <" + indexes + ">",log);
+            }
+            int numberOfIndex=0;
+            for(int i=startIndex;i<=endIndex;i++){numberOfIndex++;}
+            index= new String[numberOfIndex];
+            for(int i=0;i<numberOfIndex;i++){ index[i]= String.valueOf(startIndex++); }
+        }else {
+            if (indexes.contains(",")) {
+                index = indexes.split(",");
+            } else {
+                index = new String[1];
+                index[0] = indexes;
+            }
+        }
+        return index;
     }
 
     /**
@@ -616,8 +696,9 @@ public class Commands {
      * @Description : pause driver until element disappear.
      */
     public void pauseElementDisappear(WebDriver driver, WebElement element) {
-        wait = new WebDriverWait(driver, 100);
+        wait = new WebDriverWait(driver, 15);
         wait.until(invisibilityOf(element));
+
     }
 
     /**
@@ -626,7 +707,7 @@ public class Commands {
      * @Description : pause driver until element clickable.
      */
     public void pauseAndClick(WebDriver driver, WebElement element) {
-        wait = new WebDriverWait(driver, 100);
+        wait = new WebDriverWait(driver, 20);
         wait.until(elementToBeClickable(element));
         element.click();
     }
@@ -637,7 +718,7 @@ public class Commands {
      * @Description : pause driver until element clickable.
      */
     public void pauseElementClickable(WebDriver driver, WebElement element) {
-        wait = new WebDriverWait(driver, 100);
+        wait = new WebDriverWait(driver, 20);
         wait.until(elementToBeClickable(element));
     }
 
@@ -648,39 +729,39 @@ public class Commands {
      * @Description : pause driver until element display.
      */
     public void pauseElementDisplay(WebDriver driver, WebElement element) {
-        wait = new WebDriverWait(driver, 100);
+        wait = new WebDriverWait(driver, 20);
         wait.until(visibilityOf(element));
 
     }
 
     /**
      * @param element
-     * @param Text
+     * @param text
      * @Description : select drop down using visible text.
      */
-    public void selectText(WebElement element, String Text) {
+    public void selectText(WebElement element, String text) {
         Select dropDown = new Select(element);
-        dropDown.selectByVisibleText(Text);
+        dropDown.selectByVisibleText(text);
     }
 
     /**
      * @param element
-     * @param Index
+     * @param index
      * @Description : select drop down value using index.
      */
-    public void selectIndex(WebElement element, int Index) {
+    public void selectIndex(WebElement element, int index) {
         Select dropDown = new Select(element);
-        dropDown.selectByIndex(Index);
+        dropDown.selectByIndex(index);
     }
 
     /**
      * @param element
-     * @param Text
+     * @param text
      * @Description : select drop down using value.
      */
-    public void selectValue(WebElement element, String Text) {
+    public void selectValue(WebElement element, String text) {
         Select dropDown = new Select(element);
-        dropDown.selectByValue(Text);
+        dropDown.selectByValue(text);
     }
 
     /**
@@ -694,45 +775,43 @@ public class Commands {
 
     /**
      * @param element
-     * @param Text
+     * @param text
      * @Description : Deselect value using visible text.
      */
-    public void deselectText(WebElement element, String Text) {
+    public void deselectText(WebElement element, String text) {
         Select dropDown = new Select(element);
-        dropDown.deselectByVisibleText(Text);
+        dropDown.deselectByVisibleText(text);
     }
 
     /**
      * @param element
-     * @param Index
+     * @param index
      * @Description : Deselect value using Index.
      */
-    public void deselectIndex(WebElement element, int Index) {
+    public void deselectIndex(WebElement element, int index) {
         Select dropDown = new Select(element);
-        dropDown.deselectByIndex(Index);
+        dropDown.deselectByIndex(index);
     }
 
     /**
      * @param element
-     * @param Text
+     * @param text
      * @Description : Deselect drop down using value.
      */
-    public void deselectValue(WebElement element, String Text) {
+    public void deselectValue(WebElement element, String text) {
         Select dropDown = new Select(element);
-        dropDown.deselectByValue(Text);
+        dropDown.deselectByValue(text);
     }
 
 
     public String captureScreenshot(WebDriver driver, String suitName, String testName) {
-        String screenshotName = captureScreen(driver, suitName, testName);
-        return screenshotName;
+        return captureScreen(driver, suitName, testName);
     }
 
     public String captureScreen(WebDriver driver, String suitName, String testName) {
         String path;
         try {
             File filePath = new File("screenshots");
-            WebDriver augmentedDriver = new Augmenter().augment(driver);
             File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
             path = filePath + "/" + (suitName.split(".s"))[0] + "_" + testName.replaceAll("\\s", "") + "_" + dtf.format(LocalDateTime.now()) + ".png";
@@ -751,7 +830,7 @@ public class Commands {
      * @auther : Ankit Mistry
      * @lastModifiedBy:
      */
-    public boolean IsCapabilities(String browserName) {
+    public boolean isCapabilities(String browserName) {
         GetConfiguration config = new GetConfiguration();
         JSONObject capabilities = null;
         boolean browser = false;
@@ -812,13 +891,12 @@ public class Commands {
             tesboLogger.testFailed(sw.toString());
             log.error(sw.toString());
         }
-        //ArrayList<String> capabilitieList = (ArrayList<String>) capabilities.get(browserName);
 
         return capabilities;
     }
 
     /**
-     * @param Capabilities
+     * @param capabilities
      * @param capability
      * @return
      * @auther : Ankit Mistry
@@ -826,14 +904,14 @@ public class Commands {
      * @auther : Ankit Mistry
      * @lastModifiedBy:
      */
-    public DesiredCapabilities setCapabilities(JSONObject Capabilities, DesiredCapabilities capability) {
-        SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
-        for (Object cap : Capabilities.keySet()) {
-            capability.setCapability(cap.toString(), Capabilities.get(cap.toString()));
+    public DesiredCapabilities setCapabilities(JSONObject capabilities, DesiredCapabilities capability) {
+
+        for (Object cap : capabilities.keySet()) {
+            capability.setCapability(cap.toString(), capabilities.get(cap.toString()));
         }
 
-        if(setCommandLineArgument.platform!=null){
-            capability.setCapability("platform", setCommandLineArgument.platform);
+        if(SetCommandLineArgument.platform!=null){
+            capability.setCapability("platform", SetCommandLineArgument.platform);
         }
         return capability;
     }
@@ -913,30 +991,7 @@ public class Commands {
         Actions action = new Actions(driver);
         action.dragAndDrop(elementFrom, elementTo).build().perform();
 
-        /*Action dragAndDrop = action.clickAndHold(elementFrom)
-                .moveToElement(elementTo)
-                .release(elementTo)
-                .build();
-
-        dragAndDrop.perform();*/
-
-       /*action.keyDown(Keys.CONTROL)
-                .click(elementFrom)
-                .dragAndDrop(elementFrom, elementTo)
-                .keyUp(Keys.CONTROL);
-        Action selected = action.build();
-        selected.perform();*/
-
-        //action.clickAndHold(elementFrom).moveToElement(elementTo).release(elementFrom).build().perform()
-
-        //Action dragAndDrop = action.clickAndHold(elementFrom).moveToElement(elementTo).release().build();
-        //dragAndDrop.perform();
-
-       /* WebDriver _driver=driver;
-        WebElement _sourceElement = elementFrom;
-        WebElement _targetElement = elementTo;
-        JavascriptExecutor _js = (JavascriptExecutor) _driver;
-        _js.executeScript("$(arguments[0]).simulate('drag-n-drop',{dragTarget:arguments[1],interpolation:{stepWidth:100,stepDelay:50}});",( _sourceElement), (_targetElement));*/
+        // Drag And Drop functionality is pending
     }
 
 
@@ -993,23 +1048,20 @@ public class Commands {
         String path;
         File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
         BufferedImage fullImg = null;
-        try {
-            fullImg = ImageIO.read(screenshot);
-            // Get the location of element on the page
-            Point point = element.getLocation();
-            // Get width and height of the element
-            int eleWidth = element.getSize().getWidth();
-            int eleHeight = element.getSize().getHeight();
-            // Crop the entire page screenshot to get only element screenshot
-            BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(), eleWidth, eleHeight);
-            ImageIO.write(eleScreenshot, "png", screenshot);
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-            path ="ElementScreenshots/"+(suitName.split(".s"))[0] + "_" + testName.replaceAll("\\s", "") + "_" + dtf.format(LocalDateTime.now()) + ".png";
-            File screenshotLocation = new File(path);
-            FileUtils.copyFile(screenshot, screenshotLocation);
-        } catch (IOException e) {
-            throw e;
-        }
+        fullImg = ImageIO.read(screenshot);
+        // Get the location of element on the page
+        Point point = element.getLocation();
+        // Get width and height of the element
+        int eleWidth = element.getSize().getWidth();
+        int eleHeight = element.getSize().getHeight();
+        // Crop the entire page screenshot to get only element screenshot
+        BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(), eleWidth, eleHeight);
+        ImageIO.write(eleScreenshot, "png", screenshot);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        path ="ElementScreenshots/"+(suitName.split(".s"))[0] + "_" + testName.replaceAll("\\s", "") + "_" + dtf.format(LocalDateTime.now()) + ".png";
+        File screenshotLocation = new File(path);
+        FileUtils.copyFile(screenshot, screenshotLocation);
+
         return path;
     }
 

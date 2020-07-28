@@ -1,8 +1,7 @@
 package framework;
 
-import Execution.Tesbo;
-import RandomLibrary.RandLibrary;
-import Selenium.Commands;
+import randomlibrary.RandLibrary;
+import selenium.Commands;
 import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +10,7 @@ import org.json.simple.JSONObject;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import Exception.TesboException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StepParser {
@@ -28,226 +26,176 @@ public class StepParser {
     private static final Logger log = LogManager.getLogger(StepParser.class);
     TesboLogger tesboLogger = new TesboLogger();
     DataDrivenParser dataDrivenParser = new DataDrivenParser();
-    public static String screenShotURL=null;
+    ReportParser reportParser=new ReportParser();
+    Commands cmd = new Commands();
+    GetLocator locator = new GetLocator();
+    CommonMethods commonMethods=new CommonMethods();
+    RandLibrary randLibrary = new RandLibrary();
 
-    public String parseStep(WebDriver driver, JSONObject test, String step) throws Exception {
-        Commands cmd = new Commands();
-        GetLocator locator = new GetLocator();
+    static String screenShotURL=null;
+    String stepText="Step: ";
+    String noStringFoundMsg="No string found to enter.";
+    String testsFileNameText="testsFileName";
+    String testNameText="testName";
+    String enterText="enter";
+    String browserText="browser";
+    String regexText=":|\\s+";
 
-        if (!step.toLowerCase().contains("{") && !step.toLowerCase().contains("}") && !step.toLowerCase().contains("print") && !step.toString().contains("random")) {
-            if(step.contains("@")){
-                String removeContent=null;
-                String[] stepsWord=step.split(" ");
-                for(String word:stepsWord){
-                    if(word.contains("@") && !(word.contains("'"))){
-                        removeContent= word.trim().replace("@","");
-                    }
-                }
-                if(removeContent.contains(".")){
-                    log.info(step.replace("@"+removeContent,removeContent.split("\\.")[1]));
-                    tesboLogger.stepLog(step.replace("@"+removeContent,removeContent.split("\\.")[1]));
-                }
-                else {
-                    log.info(step.replace("@"+removeContent, removeContent));
-                    tesboLogger.stepLog(step.replace("@"+removeContent, removeContent));
-                }
-            }
-            else {
-                log.info(step.replace("@", ""));
-                tesboLogger.stepLog(step.replace("@", ""));
-            }
+    public String parseStep(WebDriver driver, JSONObject test, String step) throws IOException {
 
-        }
+        String pauseText="pause";
+        String andClickText="and click";
+        String scrollText="scroll";
+        String testsFileName=test.get(testsFileNameText).toString();
+        String testName=test.get(testNameText).toString();
+
+        printStepDetails(step);
 
         //Clicks
 
-        if (step.toLowerCase().contains("click") && !(step.toLowerCase().contains("pause") && step.toLowerCase().contains("and click")) && !(step.toLowerCase().contains("scroll") && step.toLowerCase().contains("and click")) && !(step.toLowerCase().contains("right") || step.toLowerCase().contains("double") || step.toLowerCase().contains("and hold")) ) {
+        if(step.toLowerCase().contains("click") && !(step.toLowerCase().contains(pauseText) && step.toLowerCase().contains(andClickText)) && !(step.toLowerCase().contains(scrollText) && step.toLowerCase().contains(andClickText)) && !(step.toLowerCase().contains("right") || step.toLowerCase().contains("double") || step.toLowerCase().contains("and hold")) ) {
 
-            if (step.toLowerCase().contains("from list")) {
-                clickOnElementFromList(driver,test,step);
-            }
-            else if(step.toLowerCase().contains("offset")){
-                clickOnOffset(driver,test,step);
-            }
-            else {
-                cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).click();
-            }
+            clickFunctionality(step,driver, test,testsFileName);
         }
+        else if(step.toLowerCase().contains("click") && step.toLowerCase().contains("and hold")) {
+            // Click And Hold
 
-        // Click And Hold
-        if (step.toLowerCase().contains("click") && step.toLowerCase().contains("and hold")) {
             /**
              * Step: click and hold @element1
              * And
              * Step: click @element1 and hold
              */
-            cmd.clickAndHold(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
+            cmd.clickAndHold(driver,cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
         }
+        else if (step.toLowerCase().contains(pauseText) && step.toLowerCase().contains(andClickText)) {
+            // pause and Click
 
-        // pause and Click
-        if (step.toLowerCase().contains("pause") && step.toLowerCase().contains("and click")) {
             /**
              * Step: pause and click on @element
              * And
              * Step: pause to @element and click
              */
-            cmd.pauseAndClick(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
+            cmd.pauseAndClick(driver,cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
         }
+        else if (step.toLowerCase().contains(scrollText) && step.toLowerCase().contains(andClickText)) {
+            // scroll and Click
 
-        // scroll and Click
-        if (step.toLowerCase().contains("scroll") && step.toLowerCase().contains("and click")) {
             /**
              * Step: scroll and click on @element1
              * And
              * Step: scroll to @element and click
              */
-            cmd.scrollAndClick(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
+            cmd.scrollAndClick(driver,cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
         }
+        else if (step.toLowerCase().contains("right click")) {
+            //Right Click
 
-
-        //Right Click
-        if (step.toLowerCase().contains("right click")) {
-            cmd.rightClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
+            cmd.rightClick(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
         }
+        else if (step.toLowerCase().contains("double click")) {
+            //Double Click
 
-        //Double Click
-        if (step.toLowerCase().contains("double click")) {
-
-            cmd.doubleClick(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
+            cmd.doubleClick(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
         }
+        else if (step.toLowerCase().contains("print")) {
+            //Print
 
-        //Print
-        if (step.toLowerCase().contains("print")) {
             /**
              * Step: print "User should redirect into the login page "
              * Step: print @elementName
              */
-            tesboLogger.stepLog(printStep(driver,step,test));
-            log.info(printStep(driver,step,test));
+            String logStepMsg=printStep(driver,step,test);
+            commonMethods.printStepInfo(logStepMsg,log);
         }
-
-        //Capture Screenshot
-        if (step.toLowerCase().contains("capture screenshot")) {
-            /**
-             * Step: Capture Screenshot of @elementName
-             */
-            if(step.toLowerCase().contains("screenshot of") && step.toLowerCase().contains("@")) {
-                screenShotURL = cmd.screenshotElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))),test.get("testsFileName").toString(), test.get("testName").toString());
-                tesboLogger.stepLog("Screenshot: " + screenShotURL);
-                log.info("Screenshot: " + screenShotURL);
-            }
-            /**
-             * Step: capture screenshot
-             */
-            else if(step.toLowerCase().contains("screenshot")) {
-                screenShotURL = cmd.captureScreenshot(driver, test.get("testsFileName").toString(), test.get("testName").toString());
-                tesboLogger.stepLog("Screenshot: " + screenShotURL);
-                log.info("Screenshot: " + screenShotURL);
-            }
+        else if (step.toLowerCase().contains("capture screenshot")) {
+            //Capture Screenshot
+            captureScreenshotFunctionality(step,driver,testName,testsFileName);
         }
+        else if (step.toLowerCase().contains("clear cookies") || step.toLowerCase().contains("clear cache")) {
+            //clear cookies and cache
 
-        //clear cookies and cache
-        if (step.toLowerCase().contains("clear cookies") || step.toLowerCase().contains("clear cache")) {
             cmd.deleteAllCookies(driver);
         }
+        else if (step.toLowerCase().contains("press")) {
+            //Press Key
 
-        //Press Key
-        if (step.toLowerCase().contains("press")) {
             pressKey(driver, test, step);
         }
+        else if (step.toLowerCase().contains(enterText) && !(step.toLowerCase().contains("press") || step.toLowerCase().contains("switch"))) {
+            //Sendkeys
 
-        //Sendkeys
-        if (step.toLowerCase().contains("enter") && !(step.toLowerCase().contains("press") | step.toLowerCase().contains("switch"))) {
-            if (step.toLowerCase().contains("random")) {step= randomStepParse(driver,test,step); }
-            else {
-                if(step.toLowerCase().contains("clear")){
-                    cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).clear();
-                }
-                cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
-            }
+            step=sendKyeFunctionality(step,driver,test,testsFileName);
         }
+        else if((step.toLowerCase().contains("get ") || step.toLowerCase().contains("define "))){
+            //Variables
 
-        //Upload File
-        if (step.toLowerCase().contains("upload") && step.toLowerCase().contains("file")) {
-            /*
+            variableFunctionality(step,driver,test);
+        }
+        else if (step.toLowerCase().contains("upload") && step.toLowerCase().contains("file")) {
+            //Upload File
+
+            /**
             Step: Upload File 'filePath' @element
             */
-            cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(parseTextToEnter(test, step));
+            cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))).sendKeys(parseTextToEnter(test, step));
         }
+        else if (step.toLowerCase().contains("get page") && step.toLowerCase().contains("source")) {
+            //Get Page Source
 
-        //Get Page Source
-        if (step.toLowerCase().contains("get page") && step.toLowerCase().contains("source")) {
             /*
             Step: Get Page Source
             */
             cmd.getPageSource(driver);
         }
+        else if (step.toLowerCase().contains("url")) {
+            // Open URL
 
-        // Open URL
-        if (step.toLowerCase().contains("url")) {
             /*
             Step: Open URL 'http://demo.guru99.com/test/upload/'
             */
             driver.get(parseTextToEnter(test, step));
         }
+        else if (step.toLowerCase().contains("switch")) {
+            //Switch
 
-        //Switch
-        if (step.toLowerCase().contains("switch")) {
             switchFunction(driver, test, step);
         }
+        else if (step.toLowerCase().contains("navigate") || (step.toLowerCase().contains("refresh") && step.toLowerCase().contains("page"))) {
+            //navigate
 
-        //navigate
-        if (step.toLowerCase().contains("navigate") | (step.toLowerCase().contains("refresh") && step.toLowerCase().contains("page"))) {
             navigateFunction(driver, step);
         }
+        else if (step.toLowerCase().contains(scrollText) && !(step.toLowerCase().contains(andClickText))) {
+            //scroll
 
-        //scroll
-        if (step.toLowerCase().contains("scroll") && !(step.toLowerCase().contains("and click"))) {
-            scrollFunction(driver, test.get("testsFileName").toString(), step);
+            scrollFunction(driver, testsFileName, step);
         }
+        else if (step.toLowerCase().contains(pauseText) && !(step.toLowerCase().contains(andClickText))) {
+            //pause
 
-        //pause
-        if (step.toLowerCase().contains("pause") && !(step.toLowerCase().contains("and click"))) {
-            pauseFunction(driver, test.get("testsFileName").toString(), step);
+            pauseFunction(driver, testsFileName, step);
         }
+        else if (step.toLowerCase().contains("select")) {
+            //select
 
-        //select
-        if (step.toLowerCase().contains("select")) {
             selectFunction(driver, test, step);
         }
+        else if (step.toLowerCase().contains("window") && !(step.toLowerCase().contains("close"))) {
+            //Window Minimize, maximize and resize
 
-        //Window Minimize, maximize and resize
-        if (step.toLowerCase().contains("window") && !(step.toLowerCase().contains("close"))) {
-            if (step.toLowerCase().contains("resize")) {
-                /*
-                * Step: Window Resize (x, y)
-                * */
-                windowResize(step,driver);
-            }
-            if (step.toLowerCase().contains("minimize")) {
-                 /*
-                * Step: Window Minimize
-                * */
-                windowMinimize(driver);
-            }
-            if (step.toLowerCase().contains("maximize")) {
-                 /*
-                * Step: Window Maximize
-                * */
-                windowMaximize(driver);
-            }
+            windowFunctionality(step,driver);
         }
+        else if (step.toLowerCase().contains("mouse hover")) {
+            //Mouse Hover
 
-        //Mouse Hover
-        if (step.toLowerCase().contains("mouse hover")) {
             /**
              * Step: Mouse Hover @element
              */
-            cmd.mouseHover(driver,cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
+            cmd.mouseHover(driver,cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
         }
+        else if (step.toLowerCase().contains("drag") && step.toLowerCase().contains("and drop")) {
+            //Drag and Drop
 
-        //Drag and Drop
-        if (step.toLowerCase().contains("drag") && step.toLowerCase().contains("and drop")) {
             /**
              * Step: Drag and Drop @Element_1 to @element_2 ,
              * Step: Drag and Drop @ele1 to ele2
@@ -257,143 +205,307 @@ public class StepParser {
             // Not working
             dragAndDropElement(driver,test,step);
         }
+        else if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") || step.toLowerCase().contains("cache") || step.toLowerCase().contains(enterText))) {
+            //Clear
 
-        //Clear
-        if (step.toLowerCase().contains("clear") && !(step.toLowerCase().contains("cookies") | step.toLowerCase().contains("cache") | step.toLowerCase().contains("enter"))) {
-            /*
+            /**
             * Step: clear @ElementText
-            * */
-            cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).clear();
+             */
+            cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))).clear();
         }
+        else if (step.toLowerCase().contains("close window")) {
+            //Close Window
 
-        //Close Window
-        if (step.toLowerCase().contains("close window")) {
             /**
              * Step: close window.
              */
             cmd.closeWindow(driver);
         }
-
-        //Close window using index
-        if (step.toLowerCase().contains("close <") && step.toLowerCase().contains("> window"))
+        else if (step.toLowerCase().contains("close <") && step.toLowerCase().contains("> window"))
         {
+            //Close window using index
+
             /**
              * Step: close <1> window
              * Step: close <1,4> window
              * Step: close <1 to 3> window
              */
-            cmd.closeWindowByIndex(driver, step,test.get("browser").toString());
+            cmd.closeWindowByIndex(driver, step,test.get(browserText).toString());
         }
 
         tesboLogger.testPassed("Passed");
         return step;
 
     }
-    public String randomStepParse(WebDriver driver, JSONObject test, String step) throws Exception {
-        Commands cmd = new Commands();
-        GetLocator locator = new GetLocator();
-        RandLibrary randLibrary = new RandLibrary();
+
+    public void printStepDetails(String step){
+        if (!step.toLowerCase().contains("{") && !step.toLowerCase().contains("}") && !step.toLowerCase().contains("print") && !step.contains("random")) {
+            if(step.contains("@")){
+                String removeContent="";
+                String[] stepsWord=step.split(" ");
+                removeContent=removeContainsFromStep(stepsWord);
+                if(removeContent.contains(".")){
+                    String logStepMsg=step.replace("@"+removeContent,removeContent.split("\\.")[1]);
+                    commonMethods.printStepInfo(logStepMsg,log);
+                }
+                else {
+                    String logStepMsg=step.replace("@"+removeContent, removeContent);
+                    commonMethods.printStepInfo(logStepMsg,log);
+                }
+            }
+            else {
+                String logStepMsg=step.replace("@", "");
+                commonMethods.printStepInfo(logStepMsg,log);
+            }
+        }
+    }
+
+    public String removeContainsFromStep(String[] stepsWord){
+        String removeContent="";
+        for(String word:stepsWord){
+            if(word.contains("@") && !(word.contains("'"))){
+                removeContent= word.trim().replace("@","");
+            }
+        }
+        return removeContent;
+    }
+
+    public void clickFunctionality(String step, WebDriver driver, JSONObject test,String testsFileName) {
+        if (step.toLowerCase().contains("from list")) {
+            clickOnElementFromList(driver,test,step);
+        }
+        else if(step.toLowerCase().contains("offset")){
+            clickOnOffset(driver,test,step);
+        }
+        else {
+            cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))).click();
+        }
+    }
+
+    public void captureScreenshotFunctionality(String step, WebDriver driver, String testName,String testsFileName) throws IOException {
+        /**
+         * Step: Capture Screenshot of @elementName
+         */
+        if(step.toLowerCase().contains("screenshot of") && step.toLowerCase().contains("@")) {
+            synchronized (this) {
+                screenShotURL = cmd.screenshotElement(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))), testsFileName, testName);
+            }
+            commonMethods.printStepInfo("Screenshot: " + screenShotURL,log);
+        }
+        /**
+         * Step: capture screenshot
+         */
+        else if(step.toLowerCase().contains("screenshot")) {
+            synchronized (this) {
+                screenShotURL = cmd.captureScreenshot(driver, testsFileName, testName);
+            }
+            commonMethods.printStepInfo("Screenshot: " + screenShotURL,log);
+        }
+    }
+
+    public void variableFunctionality(String step,WebDriver driver,JSONObject test) {
+        if(step.toLowerCase().contains("define ") || step.toLowerCase().contains(" set ") || step.toLowerCase().contains(" put ") || step.toLowerCase().contains(" assign ")) {
+            /**
+             Step: Get text of @element and set / put / assign in to {DataSet variable}
+             Step: Get size of @element and set / put / assign in to {DataSet variable}
+             Step: Get list of @element text and set / put / assign in to {DataSet variable}
+             Step: Get page title and set / put / assign in to {DataSet variable}
+             Step: Get current url and set / put / assign in to {DataSet variable}
+             Step: Get attribute 'attribute name' of @element and set / put / assign in to {DataSet variable}
+             Step: Get css value 'css value' of @element and set / put / assign in to {DataSet variable}
+
+             Define local variable
+             Step: define {local Variable} and set / put / assign 'value'
+             Step: define {local Variable}
+             Step: Get text of @element and set / put / assign in to {local variable}
+             */
+
+            dataDrivenParser.setValueInDataSetVariable(driver, test, step);
+
+            String printStep = reportParser.dataSetStepReplaceValue(test, step);
+            commonMethods.printStepInfo(printStep,log);
+        }
+    }
+
+    public String sendKyeFunctionality(String step,WebDriver driver,JSONObject test,String testsFileName) {
+        if (step.toLowerCase().contains("random")) {step= randomStepParse(driver,test,step); }
+        else {
+            if(step.toLowerCase().contains("clear")){
+                cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))).clear();
+            }
+            cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))).sendKeys(parseTextToEnter(test, step));
+        }
+        return step;
+    }
+
+    public void windowFunctionality(String step,WebDriver driver){
+        if (step.toLowerCase().contains("resize")) {
+            /**
+             * Step: Window Resize (x, y)
+             */
+            windowResize(step,driver);
+        }
+        if (step.toLowerCase().contains("minimize")) {
+            /**
+             * Step: Window Minimize
+             */
+            windowMinimize(driver);
+        }
+        if (step.toLowerCase().contains("maximize")) {
+            /**
+             * Step: Window Maximize
+             */
+            windowMaximize(driver);
+        }
+    }
+
+    public String randomStepParse(WebDriver driver, JSONObject test, String step) {
+
+
+        String testsFileName=test.get(testsFileNameText).toString();
+
+        String textToEnter="";
+
+        textToEnter=randomUserDetails(step);
+
+        if(textToEnter.equals("")){
+            textToEnter=randomUserAddressDetails(step);
+        }
+        if(textToEnter.equals("")){
+            textToEnter=randomUserBankDetails(step);
+        }
+        if(textToEnter.equals("")){
+            textToEnter=randomCommonDetails(step);
+        }
+
+        String stepTexts="";
+        stepTexts=enterTextForRandomFunctionality(textToEnter,step,driver,testsFileName);
+
+        return getRandomStepForReturn(step,stepTexts,textToEnter);
+    }
+
+    public String randomUserDetails(String step){
         String textToEnter="";
         if (step.toLowerCase().contains("firstname")) {textToEnter=randLibrary.firstName(); }
 
-        if (step.toLowerCase().contains("email")) {textToEnter=randLibrary.eMail(); }
+        else if (step.toLowerCase().contains("email")) {textToEnter=randLibrary.eMail(); }
 
-        if (step.toLowerCase().contains("username")){textToEnter=randLibrary.userName(); }
+        else if (step.toLowerCase().contains("username")){textToEnter=randLibrary.userName(); }
 
-        if (step.toLowerCase().contains("mobilenumber")){textToEnter=randLibrary.number(); }
+        else if (step.toLowerCase().contains("mobilenumber")){textToEnter=randLibrary.number(); }
 
-        if (step.toLowerCase().contains("lastname")){textToEnter=randLibrary.LastName(); }
+        else if (step.toLowerCase().contains("lastname")){textToEnter=randLibrary.lastName(); }
 
-        if (step.toLowerCase().contains("age")){textToEnter=randLibrary.AgeAdult(); }
+        else if (step.toLowerCase().contains("age")){textToEnter=randLibrary.ageAdult(); }
 
-        if (step.toLowerCase().contains("birthday")){textToEnter= randLibrary.Birthday(); }
+        else if (step.toLowerCase().contains("birthday")){textToEnter= randLibrary.birthday(); }
 
-        if (step.toLowerCase().contains("debitcard")){textToEnter=randLibrary.DebitCardNo(); }
+        else if (step.toLowerCase().contains("gender")){textToEnter=randLibrary.gender(); }
 
-        if (step.toLowerCase().contains("expirydate")){textToEnter=randLibrary.ExpiryDate(); }
+        else if (step.toLowerCase().contains("fullname")){textToEnter=randLibrary.fullName(); }
 
-        if (step.toLowerCase().contains("cvv")){textToEnter=randLibrary.cvvNo(); }
+        else if (step.toLowerCase().contains("password")){textToEnter=randLibrary.password(); }
 
-        if (step.toLowerCase().contains("country")){textToEnter=randLibrary.Country(); }
+        else if (step.toLowerCase().contains("passport")){textToEnter=randLibrary.passport(); }
 
-        if (step.toLowerCase().contains("city")){textToEnter=randLibrary.city(); }
+        else if (step.toLowerCase().contains("maritalstatus")){textToEnter=randLibrary.maritalStatus(); }
 
-        if (step.toLowerCase().contains("postcode")){textToEnter=randLibrary.postcode(); }
 
-        if (step.toLowerCase().contains("street")){textToEnter=randLibrary.street(); }
+        return textToEnter;
+    }
 
+    public String randomUserAddressDetails(String step){
+        String textToEnter="";
+        if (step.toLowerCase().contains("country")){textToEnter=randLibrary.country(); }
+
+        else if (step.toLowerCase().contains("city")){textToEnter=randLibrary.city(); }
+
+        else if (step.toLowerCase().contains("postcode")){textToEnter=randLibrary.postcode(); }
+
+        else if (step.toLowerCase().contains("street")){textToEnter=randLibrary.street(); }
+
+        else if (step.toLowerCase().contains("state")){textToEnter=randLibrary.state(); }
+
+        else if (step.toLowerCase().contains("fulladdress")){textToEnter=randLibrary.fullAddress(); }
+
+        else if (step.toLowerCase().contains("houseno")){textToEnter=randLibrary.houseNo(); }
+
+
+        return textToEnter;
+    }
+
+    public String randomUserBankDetails(String step){
+        String textToEnter="";
+        if (step.toLowerCase().contains("debitcard")){textToEnter=randLibrary.debitCardNo(); }
+
+        else if (step.toLowerCase().contains("expirydate")){textToEnter=randLibrary.expiryDate(); }
+
+        else if (step.toLowerCase().contains("cvv")){textToEnter=randLibrary.cvvNo(); }
+
+        else if (step.toLowerCase().contains("bankacno")){textToEnter=randLibrary.bankACNo(); }
+
+        else if (step.toLowerCase().contains("cardtype")){textToEnter=randLibrary.cardname(); }
+
+        return textToEnter;
+    }
+
+    public String randomCommonDetails(String step){
+        String textToEnter="";
         if (step.toLowerCase().contains("emoji")){textToEnter=randLibrary.emoji(); }
 
-        if (step.toLowerCase().contains("lorem")){textToEnter=randLibrary.lorem(); }
+        else if (step.toLowerCase().contains("lorem")){textToEnter=randLibrary.lorem(); }
 
-        if (step.toLowerCase().contains("maritalstatus")){textToEnter=randLibrary.maritalStatus(); }
+        else if (step.toLowerCase().contains("domain")){textToEnter=randLibrary.internetDomain(); }
 
-        if (step.toLowerCase().contains("gender")){textToEnter=randLibrary.gender(); }
+        else if (step.toLowerCase().contains("gstno")){textToEnter=randLibrary.gstNo(); }
 
-        if (step.toLowerCase().contains("state")){textToEnter=randLibrary.state(); }
+        else if (step.toLowerCase().contains("panno")){textToEnter=randLibrary.panNo(); }
 
-        if (step.toLowerCase().contains("fulladdress")){textToEnter=randLibrary.fullAddress(); }
+        else if (step.toLowerCase().contains("companyname")){textToEnter=randLibrary.companyName(); }
 
-        if (step.toLowerCase().contains("domain")){textToEnter=randLibrary.internetDomain(); }
+        else if (step.toLowerCase().contains("idno")){textToEnter=randLibrary.idNo(); }
 
-        if (step.toLowerCase().contains("gstno")){textToEnter=randLibrary.GSTNo(); }
+        else if (step.toLowerCase().contains("mail.mailinator")) {textToEnter=randLibrary.randomEmailWithMailinator(); }
 
-        if (step.toLowerCase().contains("panno")){textToEnter=randLibrary.PANNo(); }
+        else if (step.toLowerCase().contains("mail.yopmail")) {textToEnter=randLibrary.randomEmailWithYopmail(); }
 
-        if (step.toLowerCase().contains("companyname")){textToEnter=randLibrary.companyName(); }
+        return textToEnter;
+    }
 
-        if (step.toLowerCase().contains("fullname")){textToEnter=randLibrary.fullName(); }
-
-        if (step.toLowerCase().contains("password")){textToEnter=randLibrary.password(); }
-
-        if (step.toLowerCase().contains("idno")){textToEnter=randLibrary.IDNo(); }
-
-        if (step.toLowerCase().contains("passport")){textToEnter=randLibrary.passport(); }
-
-        if (step.toLowerCase().contains("houseno")){textToEnter=randLibrary.houseNo(); }
-
-        if (step.toLowerCase().contains("bankacno")){textToEnter=randLibrary.bankACNo(); }
-
-        if (step.toLowerCase().contains("cardtype")){textToEnter=randLibrary.cardname(); }
-
-       /* if (step.toLowerCase().contains("number"))
-        { cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomNo()); }
-
-        if (step.toLowerCase().contains("alpha"))
-        { cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomAlpha()); }
-
-        if (step.toLowerCase().contains("numAlpha"))
-        { cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(randLibrary.RandomNoAlpha()); }
-*/
-        String stepText="";
-        if(!textToEnter.equals("")){
-            int startPoint = 0;
-            int endPoint = 0;
-            startPoint = step.indexOf("'") + 1;
-            endPoint = step.lastIndexOf("'");
-            stepText = step.substring(startPoint, endPoint);
-            log.info(step.replace(stepText, textToEnter).replace("@",""));
-            tesboLogger.stepLog(step.replace(stepText, textToEnter).replace("@",""));
-            if (step.toLowerCase().contains("birthday")){
-                cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys((CharSequence) textToEnter);
-
-            }
-            else {
-                cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(textToEnter);
-            }
-        }
-        if(!stepText.equals("")) {
-            return step.replace(stepText, textToEnter);
+    public String getRandomStepForReturn(String step,String stepTexts,String textToEnter){
+        if(!stepTexts.equals("")) {
+            return step.replace(stepTexts, textToEnter);
         }
         else {
             return step;
         }
     }
 
-    public void switchFunction(WebDriver driver, JSONObject test, String step) throws Exception {
+    public String enterTextForRandomFunctionality(String textToEnter,String step, WebDriver driver,String testsFileName){
+        String stepTexts="";
+        if(!textToEnter.equals("")){
+            int startPoint = 0;
+            int endPoint = 0;
+            startPoint = step.indexOf('\'') + 1;
+            endPoint = step.lastIndexOf('\'');
+            stepTexts = step.substring(startPoint, endPoint);
+            String logText=step.replace(stepTexts, textToEnter).replace("@","");
+            commonMethods.printStepInfo(logText,log);
+            if (step.toLowerCase().contains("birthday")){
+                cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))).sendKeys((CharSequence) textToEnter);
+            }
+            else {
+                cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))).sendKeys(textToEnter);
+            }
+        }
+        return stepTexts;
+    }
 
-        Commands cmd = new Commands();
-        GetLocator locator = new GetLocator();
+
+    public void switchFunction(WebDriver driver, JSONObject test, String step) {
+
+
+        String testsFileName=test.get(testsFileNameText).toString();
 
         try {
             //Step :  switch to active Element
@@ -405,41 +517,8 @@ public class StepParser {
              * Switch to alert.
              */
             if (step.toLowerCase().contains("alert")) {
-                /**
-                 * accept identify.
-                 * Step : Switch to alert then accept
-                 */
-                if (step.toLowerCase().contains("accept")) {
-                    cmd.switchAlertAccept(driver);
-                }
-                /**
-                 * close and cancel identify.
-                 * Step : Switch to alert then close.
-                 * Step : Switch to alert then cancel.
-                 */
-                else if (step.toLowerCase().contains("close") || step.toLowerCase().contains("cancel")) {
-                    cmd.switchAlertDismiss(driver);
-                }
-                /**
-                 * verify text identify.
-                 * Step : Switch to alert then verify text with 'text'.
-                 */
-                else if (step.toLowerCase().contains("verify text")) {
-                    String alertText = cmd.switchAlertRead(driver);
-                    assertThat(alertText).containsIgnoringCase(parseTextToEnter(test, step));
-                }
-                /**
-                 * enter identify.
-                 * Step : Switch to alert then enter 'Text'.
-                 */
-
-                else if (step.toLowerCase().contains("enter")) {
-                    try {
-                        cmd.switchAlertSendKey(driver, parseTextToEnter(test, step));
-                    }catch (Exception e){e.printStackTrace();}
-                }
+                switchToAlertFunctionality(driver,step,test);
             }
-
 
             //Step :  switch to default content
             if (step.toLowerCase().contains("default content")) {
@@ -451,63 +530,14 @@ public class StepParser {
              */
             if (step.toLowerCase().contains("frame")) {
                 //using identify.
-                if (step.toLowerCase().contains("using")) {
-                    //Step : Switch to frame using id 'FrameID'.
-                    if (step.toLowerCase().contains("id")) {
-                        cmd.switchFrame(driver, parseTextToEnter(test, step));
-                    }
-                    //Step : Switch to frame using name 'FrameName'.
-                    else if (step.toLowerCase().contains("name")) {
-                        cmd.switchFrame(driver, parseTextToEnter(test, step));
-                    }
-                }
-                /**
-                 * parent or main identify.
-                 * Step : Switch to parent frame.
-                 * Step : Switch to main frame.
-                 */
-                else if (step.toLowerCase().contains("parent") || step.toLowerCase().contains("main")) {
-                    cmd.switchMainFrame(driver);
-                }
-                /**
-                 * element identify.
-                 * Step : Switch to frame @WebElement.
-                 */
-                else if (parseElementName(step) != null) {
-                    try {
-                        cmd.switchFrameElement(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
-                    } catch (NullPointerException e) {
-                        log.info("No element found.");
-                        tesboLogger.errorLog("No element found.");
-                        throw e;
-                    }
-                }
+                switchToFrameFunctionality(driver,step,test,testsFileName);
             }
 
             /**
              * Switch to window.
              */
             if (step.toLowerCase().contains("window")) {
-                /**
-                 * Step : Switch to new window.
-                 */
-                if (step.toLowerCase().contains("new")) {
-                    String browser=test.get("browser").toString().toLowerCase();
-                    if(test.get("browser").toString().toLowerCase().equals("firefox")) {
-                        cmd.switchNewWindow(driver,browser);
-                    }
-                    else{
-                        cmd.switchNewWindow(driver,browser);
-                    }
-                }
-                /**
-                 * Step : Switch to main window.
-                 * Step : Switch to parent window.
-                 */
-                else if (step.toLowerCase().contains("main") || step.toLowerCase().contains("parent")) {
-                    cmd.switchMainWindow(driver);
-                }
-
+                switchToWindowFunctionality(driver,step,test);
             }
 
         } catch (Exception e) {
@@ -517,8 +547,93 @@ public class StepParser {
         }
     }
 
+    public void switchToAlertFunctionality(WebDriver driver,String step,JSONObject test){
+            /**
+             * accept identify.
+             * Step : Switch to alert then accept
+             */
+            if (step.toLowerCase().contains("accept")) {
+                cmd.switchAlertAccept(driver);
+            }
+            /**
+             * close and cancel identify.
+             * Step : Switch to alert then close.
+             * Step : Switch to alert then cancel.
+             */
+            else if (step.toLowerCase().contains("close") || step.toLowerCase().contains("cancel")) {
+                cmd.switchAlertDismiss(driver);
+            }
+            /**
+             * verify text identify.
+             * Step : Switch to alert then verify text with 'text'.
+             */
+            else if (step.toLowerCase().contains("verify text")) {
+                String alertText = cmd.switchAlertRead(driver);
+                assertThat(alertText).containsIgnoringCase(parseTextToEnter(test, step));
+            }
+            /**
+             * enter identify.
+             * Step : Switch to alert then enter 'Text'.
+             */
+
+            else if (step.toLowerCase().contains(enterText)) {
+                try {
+                    cmd.switchAlertSendKey(driver, parseTextToEnter(test, step));
+                }catch (Exception e){log.error(e.getMessage());}
+            }
+    }
+
+    public void switchToFrameFunctionality(WebDriver driver,String step,JSONObject test,String testsFileName){
+
+        if (step.toLowerCase().contains("using")) {
+            //Step: Switch to frame using id 'FrameID'.
+            //Step: Switch to frame using name 'FrameName'.
+
+            if (step.toLowerCase().contains("id") || step.toLowerCase().contains("name")) {
+                cmd.switchFrame(driver, parseTextToEnter(test, step));
+            }
+        }
+        /**
+         * parent or main identify.
+         * Step : Switch to parent frame.
+         * Step : Switch to main frame.
+         */
+        else if (step.toLowerCase().contains("parent") || step.toLowerCase().contains("main")) {
+            cmd.switchMainFrame(driver);
+        }
+        /**
+         * element identify.
+         * Step : Switch to frame @WebElement.
+         */
+        else if (parseElementName(step) != null) {
+            try {
+                cmd.switchFrameElement(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
+            } catch (NullPointerException e) {
+                log.info("No element found.");
+                tesboLogger.errorLog("No element found.");
+                throw e;
+            }
+        }
+    }
+
+    public void switchToWindowFunctionality(WebDriver driver,String step,JSONObject test){
+        /**
+         * Step : Switch to new window.
+         */
+        if (step.toLowerCase().contains("new")) {
+            cmd.switchNewWindow(driver,test.get(browserText).toString().toLowerCase());
+        }
+        /**
+         * Step : Switch to main window.
+         * Step : Switch to parent window.
+         */
+        else if (step.toLowerCase().contains("main") || step.toLowerCase().contains("parent")) {
+            cmd.switchMainWindow(driver);
+        }
+
+    }
+
     public void navigateFunction(WebDriver driver, String step) {
-        Commands cmd = new Commands();
         /**
          * back identify.
          * Step : Navigate to back
@@ -544,9 +659,8 @@ public class StepParser {
         }
     }
 
-    public void scrollFunction(WebDriver driver, String testsFileName, String step) throws Exception {
-        Commands cmd = new Commands();
-        GetLocator locator = new GetLocator();
+    public void scrollFunction(WebDriver driver, String testsFileName, String step) {
+
 
         /**
          * 'Bottom' identify.
@@ -587,7 +701,7 @@ public class StepParser {
          * element identify.
          * Step: Scroll to @element
          */
-        else if (parseElementName(step) != "") {
+        else if (parseElementName(step).equals("")) {
             try {
 
                 cmd.scrollToElement(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
@@ -601,9 +715,8 @@ public class StepParser {
         }
     }
 
-    public void pauseFunction(WebDriver driver, String testsFileName, String step) throws Exception {
-        Commands cmd = new Commands();
-        GetLocator locator = new GetLocator();
+    public void pauseFunction(WebDriver driver, String testsFileName, String step) {
+
 
         /**
          * 'disappear' identify.
@@ -613,6 +726,7 @@ public class StepParser {
             try {
                 cmd.pauseElementDisappear(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
             } catch (Exception e) {
+                log.error("");
             }
         }
         /**
@@ -623,6 +737,7 @@ public class StepParser {
             try {
                 cmd.pauseElementClickable(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
             } catch (Exception e) {
+                log.error("");
             }
         }
         /**
@@ -632,8 +747,7 @@ public class StepParser {
         else if (step.toLowerCase().contains("display")) {
             try {
                 cmd.pauseElementDisplay(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
-            } catch (Exception e) {
-            }
+            } catch (Exception e) {log.error(""); }
         }
         /**
          * 'sec' identify.
@@ -644,9 +758,9 @@ public class StepParser {
         }
     }
 
-    public void selectFunction(WebDriver driver, JSONObject test, String step) throws Exception {
-        Commands cmd = new Commands();
-        GetLocator locator = new GetLocator();
+    public void selectFunction(WebDriver driver, JSONObject test, String step) {
+
+        String testsFileName=test.get(testsFileNameText).toString();
 
         if (step.toLowerCase().contains("deselect")) {
             /**
@@ -654,28 +768,28 @@ public class StepParser {
              * Step : Deselect all from @element
              */
             if (step.toLowerCase().contains("all")) {
-                cmd.deselectAll(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))));
+                cmd.deselectAll(cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))));
             }
             /**
              * 'text' identify.
              * Step : Deselect using text 'Text' from @element
              */
             else if (step.toLowerCase().contains("text")) {
-                cmd.deselectText(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))), parseTextToEnter(test, step));
+                cmd.deselectText(cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))), parseTextToEnter(test, step));
             }
             /**
              * 'index' identify.
              * Step : Deselect using index 1 from @element
              */
             else if (step.toLowerCase().contains("index")) {
-                cmd.deselectIndex(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
+                cmd.deselectIndex(cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
             }
             /**
              * 'value' identify.
              * Step : Deselect using value 'Text' from @element
              */
             else if (step.toLowerCase().contains("value")) {
-                cmd.deselectValue(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))), parseTextToEnter(test, step));
+                cmd.deselectValue(cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))), parseTextToEnter(test, step));
             }
         } else {
             /**
@@ -683,28 +797,28 @@ public class StepParser {
              * Step : Select using text 'Text' from @element
              */
             if (step.toLowerCase().contains("text")) {
-                cmd.selectText(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))), parseTextToEnter(test, step));
+                cmd.selectText(cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))), parseTextToEnter(test, step));
             }
             /**
              * 'index' identify.
              * Step : Select using index 1 from @element
              */
             else if (step.toLowerCase().contains("index")) {
-                cmd.selectIndex(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
+                cmd.selectIndex(cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))), Integer.parseInt(parseNumverToEnter(step, 0)));
             }
             /**
              * 'value' identify.
              * Step : Select using value 'Text' form @element
              */
             else if (step.toLowerCase().contains("value")) {
-                cmd.selectValue(cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))), parseTextToEnter(test, step));
+                cmd.selectValue(cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))), parseTextToEnter(test, step));
             }
         }
     }
 
     public String parseElementName(String step) {
 
-        String[] stepWordList = step.split(":|\\s+");
+        String[] stepWordList = step.split(regexText);
 
         String elementName = "";
 
@@ -725,93 +839,143 @@ public class StepParser {
      */
     public String parseTextToEnter(JSONObject test, String step) {
         String textToEnter = "";
+        String replaceAllString="[{,}]";
+        Object dataType=test.get("dataType");
+        Object dataSetName=test.get("dataSetName");
 
         int startPoint = 0;
         int endPoint = 0;
+        String testsFileName=test.get(testsFileNameText).toString();
 
-        if (step.contains("{") && step.contains("}")) {
-            startPoint = step.indexOf("{") + 1;
-            endPoint = step.lastIndexOf("}");
+        if (step.contains("{") && step.contains("}")
+                && !step.toLowerCase().contains(" define ") && !step.toLowerCase().contains(" attribute ") && !step.toLowerCase().contains(" css value ")) {
+            startPoint = step.indexOf('{') + 1;
+            endPoint = step.lastIndexOf('}');
             String headerName = step.substring(startPoint, endPoint);
             boolean isDetaSet=false;
-            try {
-                if (headerName.contains("DataSet.")) {
-                    isDetaSet=true;
-                    try {
-                        String dataSet[]=headerName.split("\\.");
-                        if(dataSet.length==3) {
-                            textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), dataSet[1], dataSet[2]);
-                            tesboLogger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
-                            log.info(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
-                        }
-                        else{
-                            log.info("Please enter DataSet in: '"+step+"'");
-                            throw new TesboException("Please enter DataSet in: '"+step+"'");
-                        }
-
-                    } catch (StringIndexOutOfBoundsException e) {
-                        throw e;
-                    }
-                }
-                else if(headerName.contains("Dataset.") || headerName.contains("dataSet.") || headerName.contains("dataset.")){
-                    log.error("Please enter valid DataSet in: '"+step+"'");
-                    throw new TesboException("Please enter valid DataSet in: '"+step+"'");
-                }
-            } catch (Exception e) {
-                StringWriter sw = new StringWriter();
-                e.printStackTrace(new PrintWriter(sw));
-                tesboLogger.testFailed(sw.toString());
-                log.error(sw.toString());
-                throw e;
+            if(TestExecutor.localVariable.containsKey(headerName)){
+                return getParseTextToEnterWhenStepHasLocalVariable(headerName,step,replaceAllString);
             }
-
-            if(!isDetaSet) {
+            else {
                 try {
-                    if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
-                        try {
-                            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("testsFileName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
-                            if (textToEnter != null) {
-                                log.info(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
-                                tesboLogger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
-                            }
-
-                        } catch (StringIndexOutOfBoundsException e) {
-                            tesboLogger.stepLog(step);
-                            log.info(step);
-                            tesboLogger.testFailed("no string to enter. Create a separate exeception here");
-                            log.error("no string to enter. Create a separate exeception here");
-                        }
+                    if (headerName.split("\\.").length==3) {
+                        isDetaSet = true;
+                        textToEnter = getParseTextToEnterWhenStepHasInLineDataSet(headerName,testsFileName,step,replaceAllString,"Text");
                     }
                 } catch (Exception e) {
                     StringWriter sw = new StringWriter();
                     e.printStackTrace(new PrintWriter(sw));
                     tesboLogger.testFailed(sw.toString());
                     log.error(sw.toString());
+                    throw e;
                 }
-                try {
-                    if (test.get("dataType").toString().equalsIgnoreCase("global")) {
-                        textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(), headerName);
-                        tesboLogger.stepLog(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
-                        log.info(step.replace("{"+headerName+"}", textToEnter).replaceAll("[{,}]","'").replace("@",""));
-                    }
-                } catch (Exception e) {
-                    log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
-                    throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
+
+                if (!isDetaSet) {
+                    textToEnter =getParseTextToEnterWhenStepHasDataSet(dataType.toString(),headerName,testsFileName,step,replaceAllString,test,dataSetName.toString());
                 }
             }
-        } else {
-            startPoint = step.indexOf("'") + 1;
-            endPoint = step.lastIndexOf("'");
-            try {
-                textToEnter = step.substring(startPoint, endPoint);
-            } catch (StringIndexOutOfBoundsException e) {
-                log.error("No string found to enter.");
-                throw new TesboException("No string found to enter.");
-            }
+        }
+        else {
+            textToEnter=getParseTextToEnterWhenSimpleStep(step);
         }
 
         return textToEnter;
     }
+
+    public String getParseTextToEnterWhenSimpleStep(String step){
+        String textToEnter = "";
+        int startPoint = step.indexOf('\'') + 1;
+        int endPoint = step.lastIndexOf('\'');
+        try {
+            textToEnter = step.substring(startPoint, endPoint);
+        } catch (StringIndexOutOfBoundsException e) {
+            commonMethods.throwTesboException(noStringFoundMsg,log);
+        }
+        return textToEnter;
+    }
+
+    public String getParseTextToEnterWhenStepHasLocalVariable(String headerName,String step,String replaceAllString){
+        String textToEnter = "";
+        textToEnter = TestExecutor.localVariable.get(headerName).toString();
+        String newStep=step.replace( headerName, textToEnter).replaceAll(replaceAllString, "'").replace("@", "");
+        commonMethods.printStepInfo(newStep,log);
+        return textToEnter;
+    }
+
+    public String getParseTextToEnterWhenStepHasDataSet(String dataType,String headerName,String testsFileName,String step,String replaceAllString,JSONObject test,String dataSetName){
+        String textToEnter = "";
+        try {
+            if (dataType.equalsIgnoreCase("excel")) {
+                textToEnter = getParseTextToEnterWhenStepHasExcelDataSet(headerName,testsFileName,step,replaceAllString,test,dataSetName,"Text");
+            }
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
+        }
+        if (dataType.equalsIgnoreCase("global")) {
+            textToEnter = getParseTextToEnterWhenStepHasGlobalDataSet(headerName, testsFileName, step, replaceAllString, dataSetName);
+        }
+        if(dataType.equalsIgnoreCase("list")){
+            textToEnter=getParseTextToEnterWhenStepHasListDataSet(headerName,step,replaceAllString,dataSetName,test);
+        }
+        return textToEnter;
+    }
+
+    public String getParseTextToEnterWhenStepHasInLineDataSet(String headerName,String testsFileName,String step,String replaceAllString,String use){
+        String textToEnter = "";
+        String[] dataSet = headerName.split("\\.");
+        if (dataSet.length == 3) {
+            textToEnter = dataDrivenParser.getGlobalDataValue(testsFileName, dataSet[0], dataSet[1], dataSet[2]).get(dataSet[2]).toString();
+            if(use.equals("Text")) {
+                step = step.replace("@", "");
+                commonMethods.printStepInfo(step.replace(headerName, textToEnter).replaceAll(replaceAllString, "'"),log);
+            }
+        } else {
+            commonMethods.throwTesboException("Please enter DataSet in: '" + step + "'",log);
+        }
+
+        return textToEnter;
+    }
+
+    public String getParseTextToEnterWhenStepHasExcelDataSet(String headerName,String testsFileName,String step,String replaceAllString,JSONObject test,String dataSetName,String use){
+        String textToEnter = "";
+        try {
+            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(dataSetName), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.sheetNumber(testsFileName, test.get(testNameText).toString())));
+            if (textToEnter != null && use.equals("Text")) {
+                step=step.replace("@","");
+                commonMethods.printStepInfo(step.replace( "{"+headerName+"}", "{"+textToEnter+"}").replaceAll(replaceAllString, "'"),log);
+            }
+
+        } catch (StringIndexOutOfBoundsException e) {
+            commonMethods.printStepInfo(step,log);
+            tesboLogger.testFailed("no string to enter. Create a separate exeception here");
+            log.error("no string to enter. Create a separate exeception here");
+        }
+        return textToEnter;
+    }
+
+    public String getParseTextToEnterWhenStepHasGlobalDataSet(String headerName,String testsFileName,String step,String replaceAllString,String dataSetName){
+        String textToEnter = "";
+        try {
+            textToEnter = dataDrivenParser.getGlobalDataValue(testsFileName,null, dataSetName, headerName).get(headerName).toString();
+            step=step.replace("@","");
+            commonMethods.printStepInfo(step.replace(headerName, textToEnter).replaceAll(replaceAllString, "'"),log);
+        } catch (Exception e) {
+            commonMethods.throwTesboException("Key name " + headerName + " is not found in " + dataSetName + " data set",log);
+        }
+        return textToEnter;
+    }
+
+    public String getParseTextToEnterWhenStepHasListDataSet(String headerName,String step,String replaceAllString,String dataSetName,JSONObject test){
+        String textToEnter = "";
+        textToEnter=dataDrivenParser.getDataSetListValue(dataSetName, headerName,Integer.parseInt(test.get("row").toString()));
+        step=step.replace("@","");
+        commonMethods.printStepInfo(step.replace(headerName, textToEnter).replaceAll(replaceAllString, "'"),log);
+        return textToEnter;
+    }
+
 
     /**
      * @param test
@@ -822,35 +986,22 @@ public class StepParser {
      */
     public String passArgsToCode(JSONObject test, String step) {
         String textToEnter = "";
-
+        String dataType=test.get("dataType").toString();
         int startPoint = 0;
         int endPoint = 0;
+        String testsFileName=test.get(testsFileNameText).toString();
+        String dataSetName=test.get("dataSetName").toString();
 
         if (step.contains("{") && step.contains("}")) {
-            startPoint = step.indexOf("{") + 1;
-            endPoint = step.lastIndexOf("}");
+            startPoint = step.indexOf('{') + 1;
+            endPoint = step.lastIndexOf('}');
             String headerName = step.substring(startPoint, endPoint);
-            boolean isDetaSet=false;
+            boolean isDataSet=false;
             try {
-                if (headerName.contains("DataSet.")) {
-                    isDetaSet=true;
-                    try {
-                        String dataSet[]=headerName.split("\\.");
-                        if(dataSet.length==3) {
-                            textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), dataSet[1], dataSet[2]);
-                        }
-                        else{
-                            log.error("Please enter DataSet in: '"+step+"'");
-                            throw new TesboException("Please enter DataSet in: '"+step+"'");
-                        }
+                if (headerName.split("\\.").length==3) {
+                    isDataSet=true;
+                    textToEnter = getParseTextToEnterWhenStepHasInLineDataSet(headerName,testsFileName,step,"","ARG");
 
-                    } catch (StringIndexOutOfBoundsException e) {
-                        throw e;
-                    }
-                }
-                else if(headerName.contains("Dataset.") || headerName.contains("dataSet.") || headerName.contains("dataset.")){
-                    log.error("Please enter valid DataSet in: '"+step+"'");
-                    throw new TesboException("Please enter valid DataSet in: '"+step+"'");
                 }
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
@@ -860,43 +1011,39 @@ public class StepParser {
                 throw e;
             }
 
-            if(!isDetaSet) {
-                try {
-                    if (test.get("dataType").toString().equalsIgnoreCase("excel")) {
-                        try {
-                            textToEnter = dataDrivenParser.getcellValuefromExcel(dataDrivenParser.getExcelUrl(test.get("testsFileName").toString(), test.get("dataSetName").toString()), headerName, (Integer) test.get("row"), Integer.parseInt(dataDrivenParser.SheetNumber(test.get("testsFileName").toString(), test.get("testName").toString())));
-                        } catch (StringIndexOutOfBoundsException e) {
-                            log.error("no string to enter. Create a separate exeception here");
-                            tesboLogger.testFailed("no string to enter. Create a separate exeception here");
-                        }
-                    }
-                } catch (Exception e) {
-                    StringWriter sw = new StringWriter();
-                    e.printStackTrace(new PrintWriter(sw));
-                    tesboLogger.testFailed(sw.toString());
-                    log.error(sw.toString());
-                }
-                try {
-                    if (test.get("dataType").toString().equalsIgnoreCase("global")) {
-                        textToEnter = dataDrivenParser.getGlobalDataValue(test.get("testsFileName").toString(), test.get("dataSetName").toString(), headerName);
-                    }
-                } catch (Exception e) {
-                    log.error("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
-                    throw new TesboException("Key name " + headerName + " is not found in " + test.get("dataSetName").toString() + " data set");
-                }
+            if(!isDataSet) {
+                textToEnter=passArgsToCodeWhenStepHasDataSet(dataType,headerName,testsFileName,step,dataSetName,test);
             }
         } else {
-            startPoint = step.indexOf("'") + 1;
-            endPoint = step.lastIndexOf("'");
-            try {
-                textToEnter = step.substring(startPoint, endPoint);
-            } catch (StringIndexOutOfBoundsException e) {
-                log.error("No string found to enter.");
-                throw new TesboException("No string found to enter.");
-            }
+            textToEnter=getParseTextToEnterWhenSimpleStep(step);
         }
 
         return textToEnter;
+    }
+
+    public String passArgsToCodeWhenStepHasDataSet(String dataType,String headerName,String testsFileName,String step,String dataSetName,JSONObject test){
+        String textToEnter = "";
+        try {
+            if (dataType.equalsIgnoreCase("excel")) {
+                textToEnter = getParseTextToEnterWhenStepHasExcelDataSet(headerName,testsFileName,step,"",test,dataSetName,"ARG");
+            }
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
+        }
+        try {
+            if (dataType.equalsIgnoreCase("global")) {
+                textToEnter = dataDrivenParser.getGlobalDataValue(testsFileName, null, dataSetName, headerName).get(headerName).toString();
+            }
+        } catch (Exception e) {
+            commonMethods.throwTesboException("Key name " + headerName + " is not found in " + dataSetName + " data set",log);
+        }
+        if(dataType.equalsIgnoreCase("list")){
+            textToEnter=dataDrivenParser.getDataSetListValue(dataSetName, headerName,Integer.parseInt(test.get("row").toString()));
+        }
+        return  textToEnter;
     }
 
     /**
@@ -909,42 +1056,45 @@ public class StepParser {
     public String replaceArgsOfCodeStep(JSONObject test, String steps) {
 
         String tagVal=null;
-        String arguments[]=null;
+        String[] arguments=null;
         String[] args=null;
         String step=steps;
         try {
-
-            tagVal=steps.toString().split(":")[1].trim();
-            if(tagVal.split("\\(").length>1) {
-                if (tagVal.toString().contains("{") && tagVal.toString().contains("}")) {
-                    args = tagVal.split("\\(")[1].trim().replaceAll("[()]", "").split(",");
-                    int i=0;
-                    String argument=null;
-
-                    for(String arg:args){
-                        if (arg.toString().contains("{") && arg.toString().contains("}")) {
-                            if(i==0){argument=passArgsToCode(test,arg);i++;}
-                            else {argument+=","+passArgsToCode(test,arg);i++;}
-                        }
-                        else{
-                            if(i==0) {argument = arg;i++;}
-                            else{argument += ","+arg;i++;}
-                        }
-                    }
-                    arguments=argument.split(",");
-                }
+            tagVal=steps.split(":")[1].trim();
+            if(tagVal.split("\\(").length>1 && tagVal.contains("{") && tagVal.contains("}")) {
+                args = tagVal.split("\\(")[1].trim().replaceAll("[()]", "").split(",");
+                arguments = getValueToReplaceArgsOfCodeStep(args,test);
             }
         } catch (Exception e) {
-            log.error("Code step has no value");
-            throw new TesboException("Code step has no value");
+            commonMethods.throwTesboException("Code step has no value",log);
         }
-        for(int i=0;i<arguments.length;i++){
-            step=step.replace(args[i],arguments[i]);
+        if(arguments!=null) {
+            for (int i = 0; i < arguments.length; i++) {
+                step = step.replace(args[i], arguments[i]);
+            }
         }
-
         return step;
     }
 
+    public String[] getValueToReplaceArgsOfCodeStep(String[] args,JSONObject test){
+        String[] arguments=null;
+        StringBuilder argument=new StringBuilder();
+        int i=0;
+        for(String arg:args){
+            if (arg.contains("{") && arg.contains("}")) {
+                if(i==0){argument.append(passArgsToCode(test,arg));i++;}
+                else {argument.append(","+passArgsToCode(test,arg));i++;}
+            }
+            else{
+                if(i==0) {argument.append(arg);i++;}
+                else{argument.append( ","+arg);i++;}
+            }
+        }
+        if(argument.length() !=0) {
+            arguments = argument.toString().split(",");
+        }
+        return arguments;
+    }
 
     public String parseNumverToEnter(String step, int index) {
         String numbers;
@@ -952,15 +1102,14 @@ public class StepParser {
         //extracting string
         numbers = step.replaceAll("[^-?0-9]+", " ");
         if(numbers.trim().equals("")){
-            log.error("Seconds to pause is not found in '"+step+"'");
-            throw new TesboException("Seconds to pause is not found in '"+step+"'");
+            commonMethods.throwTesboException("Seconds to pause is not found in '"+step+"'",log);
         }
         try {
             return Arrays.asList(numbers.trim().split(" ")).get(index);
         }catch (Exception e){
-            log.error("Please add coordinate value (X, Y) in step '"+step+"'");
-            throw new TesboException("Please add coordinate value (X, Y) in step '"+step+"'");
+            commonMethods.throwTesboException("Please add coordinate value (X, Y) in step '"+step+"'",log);
         }
+        return null;
     }
 
     public void generateReportDir() {
@@ -972,46 +1121,50 @@ public class StepParser {
     }
 
 
-    public void pressKey(WebDriver driver, JSONObject test, String step) throws Exception {
+    public void pressKey(WebDriver driver, JSONObject test, String step) {
+        String testsFileName=test.get(testsFileNameText).toString();
 
-        Commands cmd = new Commands();
-        GetLocator locator = new GetLocator();
         Actions actions = new Actions(driver);
-        if (step.toLowerCase().contains("enter")) {
-            if (step.toLowerCase().contains("@")) {
-                cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(Keys.ENTER);
-            } else {
-                actions.sendKeys(Keys.ENTER).build().perform();
-            }
+        if(step.toLowerCase().contains(enterText)) {
+            pressEnterKey(step,driver,testsFileName);
 
         } else if (step.toLowerCase().contains("tab")) {
             actions.sendKeys(Keys.TAB).build().perform();
         } else if (step.toLowerCase().contains("plus")) {
-            String[] Steps = step.split(" ");
-            boolean flag=false;
-            for (int i = 0; i < Steps.length; i++) {
-
-                if (Steps[i].equalsIgnoreCase("'ctrl'")) {
-                    flag=true;
-                    if(!(Steps[i + 2].replaceAll("'", "").toLowerCase().equals("")) &  Steps[i + 2].contains("'")
-                            & ( Steps[i + 2].replaceAll("'", "").toLowerCase().equals("a") | Steps[i + 2].replaceAll("'", "").toLowerCase().equals("c") | Steps[i + 2].replaceAll("'", "").toLowerCase().equals("v"))) {
-                        //actions.keyDown(Keys.COMMAND).sendKeys(Steps[i + 2].replaceAll("'", "").toLowerCase()).keyUp(Keys.COMMAND).perform();
-                        cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).sendKeys(Keys.chord(Keys.CONTROL, Steps[i + 2].replaceAll("'", "").toLowerCase()));
-                    }
-                    else {
-                        log.error("Please enter valid key");
-                        throw new TesboException("Please enter valid key");
-                    }
-                }
-            }
-            if(!flag){
-                log.error("Please enter valid step.");
-                throw new TesboException("Please enter valid step.");
-            }
+            pressCtrlPlus(step,driver,testsFileName);
 
         } else {
-            log.error("Please enter valid step.");
-            throw new TesboException("Please enter valid step.");
+            commonMethods.throwTesboException("Please enter valid step.",log);
+        }
+    }
+
+    public void pressEnterKey(String step,WebDriver driver,String testsFileName){
+        Actions actions = new Actions(driver);
+        if(step.toLowerCase().contains("@")) {
+            cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))).sendKeys(Keys.ENTER);
+        } else {
+            actions.sendKeys(Keys.ENTER).build().perform();
+        }
+    }
+
+    public void pressCtrlPlus(String step,WebDriver driver,String testsFileName){
+        String[] steps = step.split(" ");
+        boolean flag=false;
+        for (int i = 0; i < steps.length; i++) {
+
+            if(steps[i].equalsIgnoreCase("'ctrl'")) {
+                flag=true;
+                if(!(steps[i + 2].replace("'", "").equalsIgnoreCase("")) &&  steps[i + 2].contains("'")
+                        && ( steps[i + 2].replace("'", "").equalsIgnoreCase("a") || steps[i + 2].replace("'", "").equalsIgnoreCase("c") || steps[i + 2].replace("'", "").equalsIgnoreCase("v"))) {
+                    cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step))).sendKeys(Keys.chord(Keys.CONTROL, steps[i + 2].replace("'", "").toLowerCase()));
+                }
+                else {
+                    commonMethods.throwTesboException("Please enter valid key",log);
+                }
+            }
+        }
+        if(!flag){
+            commonMethods.throwTesboException("Please enter valid step.",log);
         }
     }
 
@@ -1032,7 +1185,7 @@ public class StepParser {
             String subString = "";
             if (finalstep.contains("'")) {
                 String replacedStep = "";
-                subString = finalstep.substring(step.indexOf("'") + 1, step.lastIndexOf("'"));
+                subString = finalstep.substring(step.indexOf('\'') + 1, step.lastIndexOf('\''));
                 if (finalstep.contains(subString)) {
                     replacedStep = finalstep.replace(subString, "SubString");
                 }
@@ -1053,7 +1206,7 @@ public class StepParser {
      */
     public String removeStepKeywordFromStep(String step) {
         String finalStep = "";
-        if (step.contains("Step:")) {
+        if (step.startsWith(stepText)) {
             finalStep = step.split("Step:")[1];
         }
         return finalStep;
@@ -1071,8 +1224,7 @@ public class StepParser {
         try {
             textToEnter = step.split(":")[1].trim();
         } catch (Exception e) {
-            log.error("Pleas enter collection name");
-            throw new TesboException("Pleas enter collection name");
+            commonMethods.throwTesboException("Pleas enter collection name",log);
         }
         return textToEnter;
     }
@@ -1084,14 +1236,13 @@ public class StepParser {
      * @param driver
      */
     public void windowResize(String step,WebDriver driver) {
-        String size[] = null;
+        String[] size = null;
         try {
             size = step.split("\\(")[1].trim().replaceAll("\\)","").split(",");
             Dimension dimension = new Dimension(Integer.parseInt(size[0]), Integer.parseInt(size[1]));
             driver.manage().window().setSize(dimension);
         } catch (Exception e) {
-            log.error("Pleas enter 'X' and 'Y' dimension for window resize");
-            throw new TesboException("Pleas enter 'X' and 'Y' dimension for window resize");
+            commonMethods.throwTesboException("Pleas enter 'X' and 'Y' dimension for window resize",log);
         }
     }
 
@@ -1121,10 +1272,10 @@ public class StepParser {
      * @param step
      * @throws Exception
      */
-    public void dragAndDropElement(WebDriver driver,JSONObject test,String step)throws Exception {
-        Commands cmd = new Commands();
-        GetLocator locator = new GetLocator();
-        String[] stepWordList = step.split(":|\\s+");
+    public void dragAndDropElement(WebDriver driver,JSONObject test,String step) {
+
+        String testsFileName=test.get(testsFileNameText).toString();
+        String[] stepWordList = step.split(regexText);
         String elementTo = "";
         String elementFrom = "";
 
@@ -1137,11 +1288,10 @@ public class StepParser {
         }
         if(!(elementTo.equals("") && elementFrom.equals(""))){
             // Not working
-            cmd.dragAndDrop(driver, cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), elementFrom)), cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), elementTo)));
+            cmd.dragAndDrop(driver, cmd.findElement(driver, locator.getLocatorValue(testsFileName, elementFrom)), cmd.findElement(driver, locator.getLocatorValue(testsFileName, elementTo)));
         }
         else{
-            log.error("Pleas enter valid step: '"+step+"'");
-            throw new TesboException("Pleas enter valid step: '"+step+"'");
+            commonMethods.throwTesboException("Pleas enter valid step: '"+step+"'",log);
         }
 
     }
@@ -1155,10 +1305,9 @@ public class StepParser {
      * @param step
      * @throws Exception
      */
-    public void clickOnElementFromList(WebDriver driver,JSONObject test,String step)throws Exception {
-        Commands cmd = new Commands();
-        GetLocator locator = new GetLocator();
-        List<WebElement> listOfElements =cmd.findElements(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step)));
+    public void clickOnElementFromList(WebDriver driver,JSONObject test,String step) {
+        String errorMsg="No string found for click";
+        List<WebElement> listOfElements =cmd.findElements(driver, locator.getLocatorValue(test.get(testsFileNameText).toString(), parseElementName(step)));
 
         //Click on first element from list
         if (step.toLowerCase().contains("first element")) {
@@ -1180,13 +1329,12 @@ public class StepParser {
             Step: click on <any number> from List @elementName
             */
             String clickOnIndex="";
-            int startPoint = step.indexOf("<") + 1;
-            int endPoint = step.lastIndexOf(">");
+            int startPoint = step.indexOf('<') + 1;
+            int endPoint = step.lastIndexOf('>');
             try {
                 clickOnIndex = step.substring(startPoint, endPoint).trim();
             } catch (StringIndexOutOfBoundsException e) {
-                log.error("No string found for click");
-                throw new TesboException("No string found for click");
+                commonMethods.throwTesboException(errorMsg,log);
             }
             listOfElements.get(Integer.parseInt(clickOnIndex)).click();
         }
@@ -1197,14 +1345,13 @@ public class StepParser {
             */
 
             String clickOnText="";
-            int startPoint = step.indexOf("\"") + 1;
-            int endPoint = step.lastIndexOf("\"");
+            int startPoint = step.indexOf('\"') + 1;
+            int endPoint = step.lastIndexOf('\"');
             try {
                 clickOnText = step.substring(startPoint, endPoint);
 
             } catch (StringIndexOutOfBoundsException e) {
-                log.error("No string found for click");
-                throw new TesboException("No string found for click");
+                commonMethods.throwTesboException(errorMsg,log);
             }
             for(WebElement element:listOfElements){
                 if(element.getText().equals(clickOnText)) {
@@ -1226,7 +1373,7 @@ public class StepParser {
         TestsFileParser testsFileParser=new TestsFileParser();
         boolean isSeverityOrPriority=false;
         JSONArray steps= testsFileParser.getSeverityAndPriority(test);
-        if(steps.size()>0){
+        if(!steps.isEmpty()){
             isSeverityOrPriority=true;
         }
         return isSeverityOrPriority;
@@ -1241,20 +1388,18 @@ public class StepParser {
      * @return
      * @throws Exception
      */
-    public String printStep(WebDriver driver,String step, JSONObject test) throws Exception {
-        Commands cmd = new Commands();
-        GetLocator locator = new GetLocator();
+    public String printStep(WebDriver driver,String step, JSONObject test) {
         String printStep;
         if(step.toLowerCase().contains("@")){
-            printStep="Step: "+ cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step))).getText();
+            printStep=stepText+ cmd.findElement(driver, locator.getLocatorValue(test.get(testsFileNameText).toString(), parseElementName(step))).getText();
         }
         else{
             int startPoint = 0;
             int endPoint = 0;
-            startPoint = step.indexOf("\"") + 1;
-            endPoint = step.lastIndexOf("\"");
+            startPoint = step.indexOf('\"') + 1;
+            endPoint = step.lastIndexOf('\"');
             String printText = step.substring(startPoint, endPoint);
-            printStep="Step: "+printText;
+            printStep=stepText+printText;
         }
         return printStep.replace("@","");
     }
@@ -1267,20 +1412,17 @@ public class StepParser {
      * @param step
      * @throws Exception
      */
-    public void clickOnOffset(WebDriver driver,JSONObject test,String step)throws Exception {
-        Commands cmd = new Commands();
-        GetLocator locator = new GetLocator();
+    public void clickOnOffset(WebDriver driver,JSONObject test,String step) {
 
-        WebElement element =cmd.findElement(driver, locator.getLocatorValue(test.get("testsFileName").toString(), parseElementName(step)));
+        WebElement element =cmd.findElement(driver, locator.getLocatorValue(test.get(testsFileNameText).toString(), parseElementName(step)));
         int startPoint = 0;
         int endPoint = 0;
-        startPoint = step.indexOf("(") + 1;
-        endPoint = step.lastIndexOf(")");
+        startPoint = step.indexOf('(') + 1;
+        endPoint = step.lastIndexOf(')');
         String offsetString = step.substring(startPoint, endPoint);
-        String offsets[]=offsetString.trim().split(",");
+        String[] offsets=offsetString.trim().split(",");
         if(offsets.length!=2){
-            log.error("Enter X and Y offset");
-            throw new TesboException("Enter X and Y offset");
+            commonMethods.throwTesboException("Enter X and Y offset",log);
         }
         /*
         * Step: Click on offset (offset  x, offset  y)
@@ -1296,7 +1438,7 @@ public class StepParser {
      * @lastModifiedBy:
      */
     public String[] listOfElementName(String step,int count) {
-        String[] stepWordList = step.split(":|\\s+");
+        String[] stepWordList = step.split(regexText);
         String[] elementName =new String[count];
         int x=0;
         for (String word : stepWordList) {
@@ -1315,18 +1457,18 @@ public class StepParser {
      */
     public String[] listOfSteps(String step, int count) {
 
-        String[] stepWordList = step.split(":|\\s+");
+        String[] stepWordList = step.split(regexText);
         String[] listOfElement= listOfElementName(step,count);
-        String steps[]=new String[count];
+        String[] steps=new String[count];
         int x=0;
         for(String element:listOfElement){
-            String newStep="";
+            StringBuilder newStep=new StringBuilder();
             for (String word : stepWordList) {
-                if (!(word.contains("@") | word.toLowerCase().contains("verify") | word.toLowerCase().contains("and"))) {
-                    if(newStep.equals("")){
-                        newStep=word.trim();
+                if (!(word.contains("@") || word.toLowerCase().contains("verify") || word.toLowerCase().contains("and"))) {
+                    if(newStep.length() == 0){
+                        newStep.append(word.trim());
                     }else {
-                        newStep = newStep + " " + word.trim();
+                        newStep.append(" " + word.trim());
                     }
                 }
             }
@@ -1341,20 +1483,18 @@ public class StepParser {
      * @auther : Ankit Mistry
      * @lastModifiedBy:
      */
-    public String RemovedVerificationTextFromSteps(String step){
+    public String removedVerificationTextFromSteps(String step){
         String textToEnter = "";
         int startPoint = 0;
         int endPoint = 0;
         int count=countOfCharacter(step);
-        int x=0;
         for (int i=0;i<count;i++){
             try {
-                startPoint = step.indexOf("'");
-                endPoint = step.indexOf("'", startPoint + 1) + 1;
+                startPoint = step.indexOf('\'');
+                endPoint = step.indexOf('\'', startPoint + 1) + 1;
                 textToEnter = step.substring(startPoint, endPoint);
                 step = step.replace(textToEnter, "");
-                textToEnter = "";
-            }catch (Exception e){}
+            }catch (Exception e){log.error("");}
         }
         return step;
     }
@@ -1376,27 +1516,27 @@ public class StepParser {
      * @auther : Ankit Mistry
      * @lastModifiedBy:
      */
-    public List<String> ListOfStepWhoHasSameVerifier(String step, String condition) {
-        List<String> stepList = new ArrayList<String>();
+    public List<String> listOfStepWhoHasSameVerifier(String step, String condition) {
+        List<String> stepList = new ArrayList<>();
         Pattern regex = Pattern.compile("[^\\s\"']+|\"[^\"]*\"|'[^']*'");
         Matcher regexMatcher = regex.matcher(step);
         int numberOfStep=0;
-        String newStep="";
+        StringBuilder newStep=new StringBuilder();
         int endStep=regexMatcher.regionEnd();
         while (regexMatcher.find()) {
-            if(!(regexMatcher.group().toLowerCase().equals(condition.toLowerCase()))){
-                newStep=newStep+" "+ regexMatcher.group();
+            if(!(regexMatcher.group().equalsIgnoreCase(condition))){
+                newStep.append(" "+ regexMatcher.group());
             }
 
-            if(regexMatcher.group().toLowerCase().equals(condition.toLowerCase()) | regexMatcher.end()==endStep) {
+            if(regexMatcher.group().equalsIgnoreCase(condition) || regexMatcher.end()==endStep) {
                 if(numberOfStep==0){
-                    stepList.add(newStep.trim());
-                    newStep="";
+                    stepList.add(newStep.toString().trim());
+                    newStep=new StringBuilder();
                     numberOfStep++;
                 }
                 else {
-                    stepList.add("Verify:"+newStep);
-                    newStep="";
+                    stepList.add("Verify: "+newStep);
+                    newStep=new StringBuilder();
                 }
             }
         }

@@ -9,6 +9,14 @@ DataSet:
           "amazonPass": "Ankit216",
           "travelUser": "admin@phptravels.com",
           "travelPass": "demoadmin",
+          "errorMessage":"",
+          "errorMessage1":"",
+          "NewUser":"hii",
+          "elementListOfTextbox":""
+     }
+     "DataNew": {
+           "linkedin1": "",
+           "password1": "tesbo@2018",
      }
      "GmailUsers": {
      "excelFile": "E:/Project/Tesbo/NewTB/tesbo-core/src/test/Resources/GmailData.xlsx"
@@ -17,6 +25,23 @@ DataSet:
           "excelFile": "E:/Project/New_Tesbo/tesbo-core/src/test/Resources/GmailData.xlsx"
           }
 }
+
+
+Test: Set Variable value
+#vr
+DataSet: Credentials
+Step: open url 'https://accounts.google.com/signup'
+Step: Click on @Next
+Step: Get text of @FirstNameError and set it on {errorMessage}
+Step: Get text of @LastNameError and put it on {travelUser}
+Step: Get text of @PasswordError and set it on {travelPass}
+Step: Get text of @UserNameError and assign it on {errorMessage}
+Step: Get text of @UserNameError and put it on {linkedin1}
+Step: Get text of @UserNameError and assign it on {elementListOfTextbox}
+Step: open url 'https://www.mathsisfun.com/numbers/counting.html'
+Step: Get attribute 'tabindex' of @AlgebraTab and put it to {elementListOfTextbox}
+Step: Get css value 'margin-top' of @AlgebraTab and put it to {elementListOfTextbox}
+End
 
 Collection Name: NEW Test CL
 Step: open url 'https://accounts.google.com/signup'
@@ -31,15 +56,18 @@ End
 
 
 Test: T1 login on phptravels DataSet global Credentials
-#T1 #regression
+#T1 #regression #vr
 DataSet: Credentials
 Step: Open URL 'https://www.phptravels.net/admin'
 Step: pause 2 sec
 Code: Hello Test
 Step: Enter {travelUser} in to @Email_Box
-Step: Enter {DataSet.Credentials.travelPass} in @Password_Box
+Step: Enter {travelPass} in @Password_Box
 Code: hii
 Step: Click on @LoginBtn
+Step: define {NewUser1} and assign 'Ankit Mistry'
+Step: pause 2 sec
+Step: Enter {elementListOfTextbox} in to @Email_Box
 Step: pause 10 sec
 Code: New Test
 Step: Scroll to coordinate (300,250)
@@ -939,7 +967,7 @@ End
 
 
 Test: Verify switch to alert then close functionality
-#All #switch1
+#All #switch
 Step: Open URL 'https://www.seleniumeasy.com/test/javascript-alert-box-demo.html'
 Step: Scroll to @ClickMeButton
 Step: Click on @ClickMeButton
@@ -951,10 +979,35 @@ End
 
 Test: Verify switch to alert then enter text on alert
 #All #switch1
-Step: Open URL 'https://www.seleniumeasy.com/test/javascript-alert-box-demo.html'
-Step: Scroll and Click on @ClickForPromptBox
 Step: pause 5 sec
+Step: Enter {NewUser} in to @Email_Box
 Step: Switch to alert then enter 'Testing Demo'
 Step: pause 15 sec
 End
 
+
+Test: Verify click on particular element number from List functionality
+#All #click1
+Step: Open URL 'https://www.mathsisfun.com/numbers/number-chart.php'
+Step: click on <15> from List @NumberList
+Step: pause 5 sec
+End
+
+Test: Verify click on particular element text from List functionality
+#All #click1
+Step: Open URL 'https://www.mathsisfun.com/numbers/number-chart.php'
+Step: click on "Red" from List @ColorList
+Step: pause 5 sec
+End
+
+Test: Define and set Local variable functionality
+#All #variable
+Step: Open URL 'https://www.phptravels.net/admin'
+Step: Pause until @Email_Box is display
+Step: Define {userEmail} variable
+Step: Define {userPassword} variable and set 'demoadmin' value in it
+Step: Get text of @LoginBtn variable and set in to {userEmail}
+Step: Enter {userEmail} in to @Email_Box
+Step: Enter {userPassword} in @Password_Box
+Step: Click on @LoginBtn
+End

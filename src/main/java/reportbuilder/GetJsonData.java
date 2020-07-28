@@ -1,14 +1,14 @@
-package ReportBuilder;
+package reportbuilder;
 
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.apache.commons.io.filefilter.FileFileFilter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,14 +25,17 @@ public class GetJsonData {
 
 
     private static final String FORMAT = "%02d H %02d M %02d S";
+    String totalTimeTakenText="totalTimeTaken";
+    String totalPassedText="totalPassed";
+    String totalFailedText="totalFailed";
+    String browserText="browser";
+    private static final Logger log = LogManager.getLogger(GetJsonData.class);
+    StringWriter sw = new StringWriter();
 
 
     public String parseTime(long milliseconds) {
-
-
         Date date = new Date(milliseconds);
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-
 
         return formatter.format(date)/*String.format(FORMAT,
                 TimeUnit.MILLISECONDS.toHours(milliseconds),
@@ -73,13 +76,13 @@ public class GetJsonData {
     public int getTotalBuildCount(String directory) {
 
         JSONArray testsFileList = new JSONArray();
-
         try (Stream<Path> paths = Files.walk(Paths.get(directory))) {
 
             testsFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(new PrintWriter(sw));
+            log.error(sw.toString());
         }
 
         return testsFileList.size();
@@ -91,13 +94,12 @@ public class GetJsonData {
 
         JSONParser parser = new JSONParser();
         try {
-
-
             FileReader reader = new FileReader(filePath);
             jsonObject = (JSONObject) parser.parse(reader);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(new PrintWriter(sw));
+            log.error(sw.toString());
         }
         return jsonObject;
     }
@@ -111,14 +113,15 @@ public class GetJsonData {
             testsFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(new PrintWriter(sw));
+            log.error(sw.toString());
         }
 
         int totalTime = 0;
 
         for (Object a : testsFileList) {
             JSONObject parser = readJsonFile(new File(a.toString()).getAbsolutePath());
-            totalTime = totalTime + Integer.parseInt(parser.get("totalTimeTaken").toString());
+            totalTime = totalTime + Integer.parseInt(parser.get(totalTimeTakenText).toString());
         }
 
         int totalAvgTimeInMillis = totalTime / testsFileList.size();
@@ -129,13 +132,13 @@ public class GetJsonData {
     public int getTotalTestOfTheBuild(String directory) {
 
         JSONArray testsFileList = new JSONArray();
-
         try (Stream<Path> paths = Files.walk(Paths.get(directory))) {
 
             testsFileList.addAll(paths
                     .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(new PrintWriter(sw));
+            log.error(sw.toString());
         }
 
         int totalTests = 0;
@@ -143,10 +146,8 @@ public class GetJsonData {
         for (Object a : testsFileList) {
             JSONObject parser = readJsonFile(new File(a.toString()).getAbsolutePath());
             try {
-                totalTests = totalTests + Integer.parseInt(parser.get("totalPassed").toString()) + Integer.parseInt(parser.get("totalFailed").toString());
-            } catch (Exception e) {
-
-            }
+                totalTests = totalTests + Integer.parseInt(parser.get(totalPassedText).toString()) + Integer.parseInt(parser.get(totalFailedText).toString());
+            } catch (Exception e) {log.error("");}
         }
 
         return totalTests;
@@ -155,102 +156,76 @@ public class GetJsonData {
 
     public JSONArray getLastBuildResultData(String directory) {
 
-
         JSONArray last10BuildDataArray = new JSONArray();
-
-
         File directory1 = new File(directory);
         File[] files = directory1.listFiles((FileFilter) FileFileFilter.FILE);
-
         Arrays.sort(files, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
-
 
         String startTime = "";
         int totalPassed = 0;
         int totalFailed = 0;
         int totalTimeTaken = 0;
 
-
         for (File a : files) {
-
             try {
 
                 JSONObject parser = readJsonFile(new File(a.toString()).getAbsolutePath());
                 JSONObject individualBuildData = new JSONObject();
 
                 startTime = parser.get("startTime").toString().substring(0, 10);
-                totalPassed = Integer.parseInt(parser.get("totalPassed").toString());
-                totalFailed = Integer.parseInt(parser.get("totalFailed").toString());
-                totalTimeTaken = Integer.parseInt(parser.get("totalTimeTaken").toString());
+                totalPassed = Integer.parseInt(parser.get(totalPassedText).toString());
+                totalFailed = Integer.parseInt(parser.get(totalFailedText).toString());
+                totalTimeTaken = Integer.parseInt(parser.get(totalTimeTakenText).toString());
 
                 individualBuildData.put("name", (a.getName().split(".json")[0]).replace("Result_", " ").toUpperCase() + " " + startTime);
-
-                individualBuildData.put("totalPassed", totalPassed);
-                individualBuildData.put("totalFailed", totalFailed);
-
+                individualBuildData.put(totalPassedText, totalPassed);
+                individualBuildData.put(totalFailedText, totalFailed);
                 individualBuildData.put("buildRunDate", startTime.replace("|", "-"));
-                individualBuildData.put("totalTimeTaken", TimeUnit.MILLISECONDS.toMinutes(totalTimeTaken));
-
-
+                individualBuildData.put(totalTimeTakenText, TimeUnit.MILLISECONDS.toMinutes(totalTimeTaken));
                 last10BuildDataArray.add(individualBuildData);
-            } catch (Exception e) {
-            }
+            } catch (Exception e) { log.error("");}
         }
 
         return last10BuildDataArray;
-
     }
 
 
     public int getCurrentBuildTotal(String dir) {
-
         int total = 0;
+
         try {
             File currentBuildReport = getLastModifiedJsonFile(dir);
             JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+            total = Integer.parseInt(parser.get(totalPassedText).toString()) + Integer.parseInt(parser.get(totalFailedText).toString());
 
-            total = Integer.parseInt(parser.get("totalPassed").toString()) + Integer.parseInt(parser.get("totalFailed").toString());
-
-        } catch (Exception e) {
-
-        }
+        } catch (Exception e) { log.error("");}
 
         return total;
     }
 
     public int getCurrentBuildPassed(String dir) {
-
-
         int total = 0;
+
         try {
             File currentBuildReport = getLastModifiedJsonFile(dir);
             JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
 
-            total = Integer.parseInt(parser.get("totalPassed").toString());
+            total = Integer.parseInt(parser.get(totalPassedText).toString());
 
-        } catch (Exception e) {
-
-        }
-
+        } catch (Exception e) { log.error("");}
 
         return total;
     }
 
     public int getCurrentBuildFailed(String dir) {
-
-
         int total = 0;
-        try {
 
+        try {
             File currentBuildReport = getLastModifiedJsonFile(dir);
             JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
+            total = Integer.parseInt(parser.get(totalFailedText).toString());
 
-            total = Integer.parseInt(parser.get("totalFailed").toString());
-
-        } catch (Exception e) {
-
-        }
-
+        } catch (Exception e) { log.error("");}
 
         return total;
     }
@@ -261,11 +236,9 @@ public class GetJsonData {
             File currentBuildReport = getLastModifiedJsonFile(dir);
             JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
 
-            total = Integer.parseInt(parser.get("totalTimeTaken").toString());
+            total = Integer.parseInt(parser.get(totalTimeTakenText).toString());
 
-        } catch (Exception e) {
-
-        }
+        } catch (Exception e) { log.error("");}
         return parseTime(total);
     }
 
@@ -274,7 +247,6 @@ public class GetJsonData {
         JSONObject parser = null;
         File currentBuildReport = getLastModifiedJsonFile(dir);
         parser = readJsonFile(currentBuildReport.getAbsolutePath());
-
         return parseTime(Long.parseLong(parser.get("startTime").toString()));
     }
 
@@ -290,20 +262,12 @@ public class GetJsonData {
 
         File currentBuildReport = getLastModifiedJsonFile(dir);
         JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
-
-
-        JSONArray testsFileArray = (JSONArray) parser.get("browser");
-
-
+        JSONArray testsFileArray = (JSONArray) parser.get(browserText);
         int totalPass = 0;
         int totalFail = 0;
-
         JSONObject passFailData = new JSONObject();
 
-
         for (int i = 0; i < testsFileArray.size(); i++) {
-
-
             JSONObject browser = (JSONObject) testsFileArray.get(i);
 
             try {
@@ -312,20 +276,13 @@ public class GetJsonData {
 
                 for (Object suiteDetails : suiteList) {
                     JSONObject suite = (JSONObject) suiteDetails;
-
-                    totalPass = totalPass + Integer.parseInt(suite.get("totalPassed").toString());
-                    totalFail = totalFail + Integer.parseInt(suite.get("totalFailed").toString());
-
+                    totalPass = totalPass + Integer.parseInt(suite.get(totalPassedText).toString());
+                    totalFail = totalFail + Integer.parseInt(suite.get(totalFailedText).toString());
                 }
-
-            } catch (Exception e) {
-            }
-
-
+            } catch (Exception e) {log.error("");}
         }
-
-        passFailData.put("totalPassed", totalPass);
-        passFailData.put("totalFailed", totalFail);
+        passFailData.put(totalPassedText, totalPass);
+        passFailData.put(totalFailedText, totalFail);
 
         return passFailData;
     }
@@ -335,54 +292,33 @@ public class GetJsonData {
 
         File currentBuildReport = getLastModifiedJsonFile(dir);
         JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
-
-        JSONArray suiteArray = (JSONArray) parser.get("browser");
-
-
+        JSONArray suiteArray = (JSONArray) parser.get(browserText);
         JSONArray suiteList = null;
 
         for (int i = 0; i < suiteArray.size(); i++) {
-
-
             JSONObject browser = (JSONObject) suiteArray.get(i);
-
             try {
                 JSONObject chromeSuite = (JSONObject) browser.get(browserName);
                 suiteList = (JSONArray) chromeSuite.get("testsFileName");
-
-
             } catch (Exception e) {
-                e.printStackTrace();
+                e.printStackTrace(new PrintWriter(sw));
+                log.error(sw.toString());
             }
-
-
         }
-
-
         return suiteList;
     }
-
 
     public JSONArray getBrowserExecutionReport(String dir) {
 
         File currentBuildReport = getLastModifiedJsonFile(dir);
         JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
-
-
-        JSONArray suiteArray = (JSONArray) parser.get("browser");
-
-
-        return suiteArray;
-
+        return (JSONArray) parser.get(browserText);
     }
-
 
     public JSONArray browserResult(int pass, int fail) {
         JSONArray browserResult = new JSONArray();
-
         browserResult.add(pass);
         browserResult.add(fail);
-
         return browserResult;
     }
 

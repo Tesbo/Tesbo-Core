@@ -1,4 +1,4 @@
-package Selenium;
+package selenium;
 
 import framework.TestExecutor;
 import org.openqa.selenium.WebDriver;
@@ -7,7 +7,7 @@ import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 
 public class ExtendTesboDriver extends TestExecutor {
-    public int DRIVER_WAIT = 15;
+    int driverWait = 15;
 
     /**
      * Initialize UserAbstractPage.
@@ -18,7 +18,7 @@ public class ExtendTesboDriver extends TestExecutor {
 
         this.driver = driver;
         ElementLocatorFactory finder = new AjaxElementLocatorFactory(driver,
-                DRIVER_WAIT);
+                driverWait);
 
         PageFactory.initElements(finder, this);
 
