@@ -1,8 +1,7 @@
-
 {
-  "projectDIR": "E:/Project/New_Tesbo/tesbo-core/src/test/java",
+
   "run": {
-    "baseUrl": "https://google.in",
+    "baseUrl": "https://accounts.google.com/signup",
     "seleniumAddress": "",
     "Environment":{
       "QA":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/QA",
@@ -10,7 +9,7 @@
       "Release":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/Release"
     },
     "by": {
-      "tag": ["T1","T2","T3","V2"]
+      "tag": ["Login"]
     },
     "browser": {
       "name": [
@@ -18,7 +17,7 @@
       ]
     },
     "parallel": {
-      "status": true,
+      "status": false,
       "count": "3"
     },
     "retryAnalyser":{
@@ -33,15 +32,16 @@
         "platform" : ""
       }
     },
+
     "pause":false,
     "SingleWindowRun": false,
     "highlightElement": true,
     "locatorPreference": ["xpath","id"]
   },
   "cloudIntegration" : {
-    "report": false,
-    "apiKey": "89063e42aeb019f608d4d3127c626200",
-    "projectKey" : "5c88a06adfbbad0c046e333f",
-    "buildName":"QAble004"
+    "report": true,
+    "apiKey": "b77CIgRd9UAlJr6evhFbR1CU4",
+    "projectKey" : "5f10208db6a9e04d15340680",
+    "buildName":"QAbleTest"
   }
 }

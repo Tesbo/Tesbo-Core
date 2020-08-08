@@ -4,12 +4,13 @@ import com.diogonunes.jcdp.color.ColoredPrinter;
 import com.diogonunes.jcdp.color.api.Ansi;
 
 
-public class Logger {
+public class TesboLogger {
 
 
     public void stepLog(String step)
 
     {
+
       ColoredPrinter cp = new ColoredPrinter.Builder(1, false)
                 .foreground(Ansi.FColor.GREEN)   //setting format
                 .build();
@@ -18,9 +19,11 @@ public class Logger {
 
     }
 
+
     public void titleLog(String step)
 
     {
+
         ColoredPrinter cp = new ColoredPrinter.Builder(1, false)
                   //setting format
                 .build();
@@ -59,9 +62,17 @@ public class Logger {
         cp.clear();
     }
 
+    public void errorLog(String msg)
+    {
+        ColoredPrinter cp = new ColoredPrinter.Builder(1, false)
+                .foreground(Ansi.FColor.RED)   //setting format
+                .build();
+        cp.println(msg,Ansi.Attribute.DARK, Ansi.FColor.RED, Ansi.BColor.NONE);
+
+        cp.clear();
+    }
 
     public void customeLog(String msg,Ansi.FColor fg )
-
     {
        ColoredPrinter cp = new ColoredPrinter.Builder(1, false)
                 .foreground(fg)   //setting format
@@ -70,6 +81,5 @@ public class Logger {
 
         cp.clear();
     }
-
 
 }

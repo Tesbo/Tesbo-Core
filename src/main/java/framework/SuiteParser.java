@@ -1,9 +1,9 @@
 package framework;
 
-import logger.Logger;
+import logger.TesboLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import Exception.TesboException;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -14,88 +14,38 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//import NoSuiteNameFoundException;
+import org.json.simple.JSONObject;
 
 public class SuiteParser {
-
-    Logger logger = new Logger();
-
-    /**
-     * @param directory
-     * @return give all the file inside a directory
-     */
-    public JSONArray getSuites(String directory)  {
-
-        JSONArray suiteFileList = new JSONArray();
-        boolean flag=false;
-        String file=null;
-        try (Stream<Path> paths = Files.walk(Paths.get(directory))) {
-
-            suiteFileList.addAll(paths
-                    .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
-            for(Object suitePath:suiteFileList) {
-                String[] suite=suitePath.toString().split("\\.");
-                if (suite.length == 2) {
-                    if (!suite[1].equalsIgnoreCase("suite")) {
-                        flag=true;
-                        if(file==null)
-                            file="'."+suite[1]+"'";
-                        else
-                            file+=", '."+suite[1]+"'";
-                    }
-                }
-            }
-            if(flag==true){
-                logger.errorLog(file+" file found");
-                throw (new NoSuchFileException(""));
-            }
-        } catch (Exception e) {
-            if(flag==true){
-                logger.testFailed("Message : Please create only '.suite' file in suite directory.");
-            }
-            else {
-                logger.testFailed("Message : Please Enter valid directory path.");
-                logger.testFailed("'" + directory + "' no files found on your location.");
-                StringWriter sw = new StringWriter();
-                e.printStackTrace(new PrintWriter(sw));
-                logger.testFailed(sw.toString());
-            }
-            try {
-                throw e;
-            } catch (IOException ie) {
-                StringWriter sw = new StringWriter();
-                ie.printStackTrace(new PrintWriter(sw));
-                logger.testFailed(sw.toString());
-            }
-        }
-
-        return suiteFileList;
-    }
+    TesboLogger tesboLogger = new TesboLogger();
+    CommonMethods commonMethods=new CommonMethods();
+    private static final Logger log = LogManager.getLogger(SuiteParser.class);
 
     /**
-     * @param fileName : File name with extension e.g. login.suite
+     * @auther: Ankit Mistry
+     * @lastModifiedBy:
+     * @param fileName : File name with extension e.g. smoke.suite
      * @return whole file content as String buffer
      */
-    public StringBuffer readSuiteFile(String fileName) {
+    public StringBuilder readSuiteFile(String fileName) {
 
         GetConfiguration configuration = new GetConfiguration();
-
         BufferedReader br = null;
         FileReader fr = null;
-
-        StringBuffer suites = new StringBuffer();
+        StringBuilder tests = new StringBuilder();
 
         try {
-            fr = new FileReader(configuration.getSuitesDirectory() + "/" + fileName);
+            fr = new FileReader(configuration.getSuitesDirectory() + "/" + fileName+".suite");
             br = new BufferedReader(fr);
             String sCurrentLine;
             while ((sCurrentLine = br.readLine()) != null) {
-                suites.append(sCurrentLine + "\n");
+                tests.append(sCurrentLine + "\n");
             }
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         } finally {
 
             try {
@@ -106,704 +56,184 @@ public class SuiteParser {
             } catch (Exception ex) {
                 StringWriter sw = new StringWriter();
                 ex.printStackTrace(new PrintWriter(sw));
-                logger.testFailed(sw.toString());
+                tesboLogger.testFailed(sw.toString());
+                log.error(sw.toString());
             }
-
         }
-        return suites;
-    }
-
-    public String[] getSuiteData(StringBuffer sb) {
-        String allLines[] = sb.toString().split("[\\r\\n]+");
-        return allLines;
+        return tests;
     }
 
     /**
-     * @param tagName
-     * @param suite
-     * @return List of Test based on suite Data
+     * @auther: Ankit Mistry
+     * @lastModifiedBy:
+     * @param testsFile
+     * @return
      */
-    public JSONArray getTestNameByTag(String tagName, StringBuffer suite) {
+    public JSONArray getTestNameFromSuiteFile(StringBuilder testsFile) {
 
-        String allLines[] = suite.toString().split("[\\r\\n]+");
+        String[] allLines = testsFile.toString().split("[\\r\\n]+");
         JSONArray testName = new JSONArray();
-
-
         for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].toLowerCase().contains("test:") | allLines[i].toLowerCase().contains("test :")) {
-                String tagLine = allLines[i + 1].toLowerCase();
-                String[] tagArray = tagLine.replaceAll("\\s+","").split("#");
-                for(String  tag : tagArray)
-                {
-                    if(!tag.equals("")) {
-                        if (tag.toLowerCase().trim().equals(tagName.toLowerCase())) {
-                            if (allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")) {
-                                throw new TesboException("Please write valid keyword for this \"" + allLines[i] + "\"");
-                            }
-                            String testNameArray[] = allLines[i].split(":");
-                            if(testNameArray.length<2){
-                                throw new TesboException("Test name is blank '"+allLines[i]+"'");
-                            }
-                            testName.add(testNameArray[1].trim());
-                        }
+            if(!allLines[i].equals("")) {
+                String comment = String.valueOf(allLines[i].charAt(0)) + String.valueOf(allLines[i].charAt(1));
+                if ((allLines[i].toLowerCase().startsWith("test")) && (!comment.equals("//"))) {
+                    verifyTestStartWithValidText(allLines[i]);
+                    testName.add(allLines[i].trim());
+                } else {
+                    if (!comment.equals("//")) {
+                        commonMethods.throwTesboException("Define only test name in '.suite' file",log);
+                    }
+                }
+            }
+
+        }
+
+        validationForDuplicateTestInSuiteFile(testName);
+        return testName;
+    }
+
+    public void verifyTestStartWithValidText(String testName){
+        if (!testName.trim().startsWith("Test: ")) {
+            commonMethods.throwTesboException("Please write valid keyword or step for this \"" + testName + "\" on suite file",log);
+        }
+    }
+
+    public void validationForDuplicateTestInSuiteFile(JSONArray testNameList)
+    {
+        for(int i=0;i<testNameList.size();i++){
+            for(int j=i+1;j<testNameList.size();j++){
+                if(testNameList.get(i).equals(testNameList.get(j))){
+                    commonMethods.throwTesboException("'"+testNameList.get(i)+"' test is define multiple time on same suite file",log);
+                }
+            }
+        }
+    }
+
+    /**
+     * @auther: Ankit Mistry
+     * @lastModifiedBy:
+     * @param suiteFileName
+     * @return
+     */
+    public JSONObject getTestsFileNameUsingTestName(String suiteFileName) {
+
+        JSONArray tampSuiteTestNameList=new JSONArray();
+        StringBuilder suiteFile= readSuiteFile(suiteFileName);
+        JSONArray suiteTestNameList=getTestNameFromSuiteFile(suiteFile);
+
+        tampSuiteTestNameList.addAll(suiteTestNameList);
+        JSONObject testNameWithTestsFileName=new JSONObject();
+        TestsFileParser testsFileParser=new TestsFileParser();
+        GetConfiguration getConfiguration=new GetConfiguration();
+        JSONArray testsFileNameList= testsFileParser.getTestFiles(getConfiguration.getTestsDirectory());
+
+        int i=1;
+        for(Object suiteTestName:suiteTestNameList){
+            JSONArray testList=new JSONArray();
+            String testFileName = "";
+            for(Object testsFileName:testsFileNameList){
+                File name = new File(testsFileName.toString());
+                StringBuilder testsFileDetails = testsFileParser.readTestsFile(name.getName());
+                JSONArray testName= testsFileParser.getTestNameByTestsFile(testsFileDetails);
+                for(Object test:testName) {
+                    if(test.toString().equals(suiteTestName.toString().split(":")[1].trim())) {
+                        verifySameTestNameIsExistOrNot(tampSuiteTestNameList,suiteTestName.toString());
+                        testFileName=name.getName()+"_"+i++;
+                        testList.add(test.toString().trim());
+                        tampSuiteTestNameList.remove(suiteTestName);
                     }
                 }
 
             }
-
+            if(!testList.isEmpty()) {
+                testNameWithTestsFileName.put(testFileName, testList);
+            }
         }
-        // When No Test Available
-        if (testName.size() == 0) {
 
-            //throw new NoTestFoundException("No test found in suite file");
-            return null;
-        }
-        return testName;
+        verifyTestNameIsNotExistOnAnyTestsFile(tampSuiteTestNameList);
+        return testNameWithTestsFileName;
     }
 
-    /**
-     * @param tag
-     * @return
-     * @Discription : Get data as per the tag name
-     */
-    public JSONObject getTestNameByTag(String tag)  {
-        GetConfiguration configuration = new GetConfiguration();
-        String directoryPath = configuration.getSuitesDirectory();
-        JSONArray suiteFileList = getSuites(directoryPath);
-        JSONObject allSuite = new JSONObject();
-
-        JSONObject testNameWithSuites = new JSONObject();
-
-        for (int i = 0; i < suiteFileList.size(); i++) {
-
-            File name = new File(suiteFileList.get(i).toString());
-            SuiteParser suiteName = new SuiteParser();
-            allSuite.put(name.getName(), suiteName.readSuiteFile(name.getName()));
-        }
-
-        for (Object suite : allSuite.keySet()) {
-            JSONArray testNames = getTestNameByTag(tag, (StringBuffer) allSuite.get(suite));
-            if (testNames != null) {
-                testNameWithSuites.put(suite.toString(), testNames);
-            }
-        }
-        return testNameWithSuites;
-    }
-
-    /**
-     * Not completed need to work on this...
-     * @lastModifiedBy: Ankit Mistry
-     * @param suiteName
-     * @return
-     */
-    public JSONArray getTestStepBySuiteandTestCaseName(String suiteName, String testName) {
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        JSONArray testSteps = new JSONArray();
-        Validation validation=new Validation();
-        int testCount=0;
-        int startPoint = 0;
-        boolean testStarted = false;
-        int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
-
-                if (testNameArray[1].trim().contains(testName)) {
-                    startPoint = i;
-                    testStarted = true;
-                }
-                if (testStarted) {
-                    testCount++;
-                }
-            }
-            if (testStarted) {
-
-                if (allLines[i].contains("End")) {
-                    endpoint = i;
-                    break;
-                }
-                if(allLines[i].replaceAll("\\s{2,}", " ").trim().equals("end")){
-                    throw new TesboException("Please define end step in a correct way: End");
-                }
-            }
-        }
-        if(testCount>=2 || endpoint==0) {
-            throw new TesboException("End Step is not found for '" + testName + "' test");
-        }
-        for (int j = startPoint; j < endpoint; j++) {
-            if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].toString().replaceAll("\\s{2,}", " ").contains("Step:")){
-                throw new TesboException("Step is blank '"+allLines[j]+"'");
-            }
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("ExtCode:") |
-                    ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
-
-                testSteps.add(allLines[j]);
-            }
-            else{
-                validation.keyWordValidation(allLines[j]);
-            }
-        }
-        if (testSteps.size() == 0) {
-            throw new TesboException("Steps are not defined for test : " + testName);
-        }
-
-
-        return testSteps;
-    }
-
-    /**
-     *
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     *
-     * @param suiteName
-     * @param testName
-     * @return
-     */
-    public String getTestDataSetBySuiteAndTestCaseName(String suiteName, String testName) {
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        String testDataSet = null;
-        int startPoint = 0;
-        boolean testStarted = false;
-        int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
-                if(testNameArray[1].trim().contains(testName)) {
-                    startPoint = i;
-                    testStarted = true;
-                }
-            }
-            if (testStarted) {
-                if (allLines[i].contains("End")) {
-                    endpoint = i;
-                    break;
-                }
-            }
-        }
-        for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) {
-                if (!(allLines[j].contains("DataSet:")))
-                    throw new TesboException("Write 'DataSet' keyword in test");
-                testDataSet=allLines[j];
+    public void verifySameTestNameIsExistOrNot(JSONArray tampSuiteTestNameList,String suiteTestName){
+        boolean isExistInTampSuiteTestNameList=false;
+        for(Object tampSuiteTest:tampSuiteTestNameList){
+            if(suiteTestName.equals(tampSuiteTest)){
+                isExistInTampSuiteTestNameList=true;
                 break;
             }
-            else{
-                if(allLines[j].toLowerCase().contains("dataset:") || allLines[j].toLowerCase().contains("dataset :")){
-                    throw new TesboException("Please add valid key word for: '"+allLines[j]+"'");
-                }
-            }
         }
-
-        return testDataSet;
+        if(!isExistInTampSuiteTestNameList){
+            commonMethods.throwTesboException("'"+suiteTestName+"' test is found multiple time on tests file",log);
+        }
     }
 
-
-    public JSONArray getGroupTestStepBySuiteandTestCaseName(String suiteName, String groupName) {
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        JSONArray testSteps = new JSONArray();
-        int startPoint = 0;
-        int groupCount=0;
-        boolean groupStarted = false;
-        int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-            if(groupStarted){
-                if (allLines[i].contains("Test:")) {
-                    groupCount++;
-                }
+    public void verifyTestNameIsNotExistOnAnyTestsFile(JSONArray tampSuiteTestNameList){
+        if(!tampSuiteTestNameList.isEmpty()){
+            StringBuilder testList=new StringBuilder();
+            for(Object test:tampSuiteTestNameList){
+                if(testList.length()==0){ testList.append(test.toString());
+                }else { testList.append(", "+test.toString()); }
             }
-            if (allLines[i].contains("Collection Name:")) {
-                String testNameArray[] = allLines[i].split(":");
-                if (testNameArray[1].trim().toLowerCase().equalsIgnoreCase(groupName)) {
-                    startPoint = i;
-                    groupStarted = true;
-                }
-                if (groupStarted) {
-                    groupCount++;
-                }
-            }
-            if (groupStarted) {
-                if (allLines[i].contains("End")) {
-                    endpoint = i;
-                    groupStarted = false;
-                }
-            }
+            commonMethods.throwTesboException("'"+testList+"' test is not found in any tests file",log);
         }
-        if(startPoint==0)
-        {
-            throw new TesboException("Collection name "+ groupName +" is not found on suite");
-        }
-        if(groupCount>=2 || endpoint==0) {
-            throw new TesboException("End Step is not found for '" + groupName + "' collection");
-        }
-        for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].contains("Step:") | allLines[j].contains("Verify:") | allLines[j].contains("ExtCode:")) {
-                testSteps.add(allLines[j]);
-            }
-        }
-        if (testSteps.size() == 0) {
-            throw new TesboException("Steps are not defined for collection : " + groupName);
-        }
-        return testSteps;
     }
 
     /**
-     * @param suite
-     * @return
+     * @auther: Ankit Mistry
+     * @lastModifiedBy:
+     * @param directory
+     * @return give all the file inside a directory
      */
-    public JSONArray getGroupName(StringBuffer suite) {
-        String allLines[] = suite.toString().split("[\\r\\n]+");
-        JSONArray testName = new JSONArray();
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Collection Name:")) {
-                String testNameArray[] = allLines[i].split(":");
-                testName.add(testNameArray[1].trim());
-            }
-        }   // When No Test Available
-        if (testName.size() == 0) { return null; }
+    public JSONArray getSuiteFiles(String directory)  {
 
-        return testName;
-    }
+        JSONArray suiteFileList = new JSONArray();
+        boolean flag=false;
+        StringBuilder file=new StringBuilder();
+        try (Stream<Path> paths = Files.walk(Paths.get(directory))) {
 
-    /**
-     * @return
-     * @throws Exception
-     */
-    public JSONObject getgroupName() throws Exception {
-
-        GetConfiguration configuration = new GetConfiguration();
-        String directoryPath = configuration.getSuitesDirectory();
-
-        JSONArray suiteFileList = getSuites(directoryPath);
-        JSONObject allSuite = new JSONObject();
-
-        JSONObject testNameWithSuites = new JSONObject();
-
-        for (int i = 0; i < suiteFileList.size(); i++) {
-
-            File name = new File(suiteFileList.get(i).toString());
-            SuiteParser suiteName = new SuiteParser();
-            allSuite.put(name.getName(), suiteName.readSuiteFile(name.getName()));
-        }
-
-        for (Object suite : allSuite.keySet()) {
-            for (String suiteName : configuration.getSuite()) {
-                if (suite.toString().contains(suiteName)) {
-                    /*JSONArray testNames = getTestNameByTag(tag, (StringBuffer) allSuite.get(suite));*/
-                    JSONArray testNames = getGroupName((StringBuffer) allSuite.get(suite));
-                    if (testNames != null) {
-                        testNameWithSuites.put(suite.toString(), testNames);
-                    }
+            suiteFileList.addAll(paths
+                    .filter(Files::isRegularFile).collect(Collectors.toCollection(ArrayList::new)));
+            for(Object testsFilePath:suiteFileList) {
+                String[] testsFile=testsFilePath.toString().split("\\.");
+                if (testsFile.length == 2 && (!testsFile[1].equalsIgnoreCase("suite"))) {
+                        flag=true;
+                        if(file.length()==0)
+                            file.append("'."+testsFile[1]+"'");
+                        else
+                            file.append(", '."+testsFile[1]+"'");
                 }
             }
-
-        }
-
-
-        return testNameWithSuites;
-    }
-
-    /**
-     * Description : return test name
-     *
-     * @param suitename
-     * @return
-     */
-    public JSONObject getTestNameBySuite(String suitename)  {
-        GetConfiguration configuration = new GetConfiguration();
-        String directoryPath = configuration.getSuitesDirectory();
-
-        JSONArray suiteFileList = getSuites(directoryPath);
-        JSONObject allSuite = new JSONObject();
-
-        JSONObject testNameWithSuites = new JSONObject();
-
-        for (int i = 0; i < suiteFileList.size(); i++) {
-            File name = new File(suiteFileList.get(i).toString());
-            SuiteParser suiteName = new SuiteParser();
-            allSuite.put(name.getName(), suiteName.readSuiteFile(name.getName()));
-        }
-
-        for (Object suite : allSuite.keySet()) {
-            String suiteName[] = suite.toString().split(".suite");
-            if (suiteName[0].toString().toLowerCase().equals(suitename.toLowerCase())) {
-                JSONArray testNames = getTestNameBysuit((StringBuffer) allSuite.get(suite));
-                if (testNames != null) {
-                    testNameWithSuites.put(suite.toString(), testNames);
-                }
+            if(flag){
+                String errorMsg=file+" file found in suite directory";
+                log.error(errorMsg);
+                tesboLogger.errorLog(errorMsg);
+                throw (new NoSuchFileException(""));
             }
-        }
-        return testNameWithSuites;
-    }
-
-    /**
-     * @param suite
-     * @return
-     * @Description : get test name by suit.
-     */
-    public JSONArray getTestNameBysuit(StringBuffer suite) {
-
-        String allLines[] = suite.toString().split("[\\r\\n]+");
-        JSONArray testName = new JSONArray();
-
-
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
-
-                String testNameArray[] = allLines[i].split(":");
-                if(testNameArray.length<2){
-                    throw new TesboException("Test name is blank '"+allLines[i]+"'");
-                }
-                testName.add(testNameArray[1].trim());
+        } catch (Exception e) {
+            if(flag){
+                log.error("Message : Please create only '.suite' file in tests directory.");
+                tesboLogger.testFailed("Message : Please create only '.suite' file in tests directory.");
             }
             else {
-                if(allLines[i].contains("Test :") | allLines[i].contains("test:") | allLines[i].contains("test :")){
-                    throw new TesboException("Please write valid keyword for this \"" +allLines[i]+"\"");
-                }
+                String errorMsg="'" + directory + "' no files found on your location.";
+                log.error("Message : Please Enter valid directory path.");
+                log.error(errorMsg);
+                tesboLogger.testFailed("Message : Please Enter valid directory path.");
+                tesboLogger.testFailed(errorMsg);
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                tesboLogger.testFailed(sw.toString());
+                log.error(sw.toString());
             }
-        }   // When No Test Available
-        if (testName.size() == 0) {
-
-            //throw new NoTestFoundException("No test found in suite file");
-            return null;
-        }
-        return testName;
-    }
-
-    /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param suiteName
-     * @param testName
-     * @return
-     */
-    public JSONArray getSessionListFromTest(String suiteName, String testName) {
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        JSONArray sessionName = new JSONArray();
-        int testCount=0;
-        int startPoint = 0;
-        boolean testStarted = false;
-        int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
-
-                if (testNameArray[1].trim().contains(testName)) {
-                    startPoint = i;
-                    testStarted = true;
-                }
-                if (testStarted)
-                    testCount++;
-            }
-            if (testStarted) {
-
-                if (allLines[i].contains("End")) {
-                    endpoint = i;
-                    break;
-                }
+            try {
+                throw e;
+            } catch (IOException ie) {
+                StringWriter sw = new StringWriter();
+                ie.printStackTrace(new PrintWriter(sw));
+                tesboLogger.testFailed(sw.toString());
+                log.error(sw.toString());
             }
         }
-
-        if(testCount>=2 || endpoint==0) {
-            throw new TesboException("End Step is not found for '" + testName + "' test");
-        }
-
-        for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Session:") ) {
-                String[] SessionStep=allLines[j].split("[:|,]");
-                for (String session:SessionStep)
-                {
-                    if(!(session.equals("Session")))
-                    {
-                        sessionName.add(session.trim());
-                    }
-                }
-            }
-            else if(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("session:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("session :") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Session :")){
-                throw new TesboException("Please write valid keyword for this step \"" +allLines[j]+"\"");
-            }
-        }
-        return sessionName;
-    }
-
-    /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param test
-     *
-     */
-    public JSONArray getSeverityAndPriority(JSONObject test) {
-        SuiteParser suiteParser=new SuiteParser();
-
-        StringBuffer suiteDetails = suiteParser.readSuiteFile(test.get("suiteName").toString());
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        JSONArray severityAndPriority = new JSONArray();
-        int testCount=0;
-        int startPoint = 0;
-        boolean testStarted = false;
-        int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
-
-                if (testNameArray[1].trim().contains(test.get("testName").toString())) {
-                    startPoint = i;
-                    testStarted = true;
-                }
-                if (testStarted) {
-                    testCount++;
-                }
-            }
-            if (testStarted) {
-
-                if (allLines[i].contains("Step:")) {
-                    endpoint = i;
-                    break;
-                }
-            }
-        }
-        if(testCount>=2 || endpoint==0) {
-            throw new TesboException("Step is not found for '" + test.get("testName").toString() + "' test");
-        }
-
-        for (int j = startPoint; j < endpoint; j++) {
-
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Priority:")
-                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
-                severityAndPriority.add(allLines[j]);
-            }
-        }
-
-        return severityAndPriority;
-    }
-
-    /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param suiteName
-     * @return
-     */
-    public boolean isBeforeTestInSuite(String suiteName) {
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        boolean isBeforeTest=false;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].trim().equals("BeforeTest:")) {
-                isBeforeTest=true;
-            }
-            if(isBeforeTest) {
-                if (allLines[i].trim().equals("End")) {
-                    break;
-                }
-                if (allLines[i].contains("Test:") && allLines[i].contains("Collection Name:")) {
-                    throw new TesboException("End Step is not found for BeforeTest");
-                }
-
-            }
-
-            if (allLines[i].trim().equals("BeforeTest :") || allLines[i].trim().equals("beforeTest:") || allLines[i].trim().equals("beforeTest :")
-                    || allLines[i].trim().equals("beforetest:") || allLines[i].trim().equals("beforetest :")
-                    || allLines[i].trim().equals("Beforetest:") || allLines[i].trim().equals("Beforetest :")) {
-                throw new TesboException("Please write valid keyword for this step \"" +allLines[i]+"\"");
-
-            }
-        }
-
-        return isBeforeTest;
-    }
-
-    /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param suiteName
-     * @return
-     */
-    public boolean isAfterTestInSuite(String suiteName) {
-
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        boolean isAfterTest=false;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].trim().equals("AfterTest:")) {
-                isAfterTest=true;
-            }
-            if(isAfterTest) {
-                if (allLines[i].trim().equals("End")) {
-                    break;
-                }
-                if (allLines[i].contains("Test:") && allLines[i].contains("Collection Name:")) {
-                    throw new TesboException("End Step is not found for BeforeTest");
-                }
-            }
-            if (allLines[i].trim().equals("AfterTest :") || allLines[i].trim().equals("afterTest:") || allLines[i].trim().equals("afterTest :")
-                    || allLines[i].trim().equals("aftertest:") || allLines[i].trim().equals("aftertest :")
-                    || allLines[i].trim().equals("Aftertest:") || allLines[i].trim().equals("Aftertest :")) {
-                throw new TesboException("Please write valid keyword for this step \"" +allLines[i]+"\"");
-
-            }
-        }
-
-        return isAfterTest;
-    }
-
-    /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param suiteName
-     * @return
-     */
-    public JSONArray getBeforeAndAfterTestStepBySuite(String suiteName, String annotationName) {
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        JSONArray annotationSteps = new JSONArray();
-        Validation validation=new Validation();
-        int testCount=0;
-        int startPoint = 0;
-        boolean testStarted = false;
-        int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].equals(annotationName+":")) {
-
-                startPoint = i;
-                testStarted = true;
-
-                if (testStarted) {
-                    testCount++;
-                }
-            }
-            if (testStarted) {
-
-                if (allLines[i].contains("End")) {
-                    endpoint = i;
-                    break;
-                }
-                if(allLines[i].replaceAll("\\s{2,}", " ").trim().equals("end")){
-                    throw new TesboException("Please define end step in a correct way: End");
-                }
-            }
-        }
-        if(testCount>=2 || endpoint==0) {
-            throw new TesboException("End Step is not found for '" + annotationName + "' test");
-        }
-        for (int j = startPoint; j < endpoint; j++) {
-            if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].toString().replaceAll("\\s{2,}", " ").contains("Step:")){
-                throw new TesboException("Step is blank '"+allLines[j]+"'");
-            }
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Step:") | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Verify:") |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:") | (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]")) |
-                    allLines[j].replaceAll("\\s{2,}", " ").trim().contains("ExtCode:") |
-                    ( allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[") && allLines[j].replaceAll("\\s{2,}", " ").trim().contains("]") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().toLowerCase().contains("[close")))) {
-
-                annotationSteps.add(allLines[j]);
-            }
-            else{
-                validation.keyWordValidation(allLines[j]);
-            }
-        }
-        if (annotationSteps.size() == 0) {
-            throw new TesboException("Steps are not defined for annotation : " + annotationName);
-        }
-
-
-        return annotationSteps;
-    }
-
-    /**
-     *
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     *
-     * @param suiteName
-     * @return
-     */
-    public void getAnnotationDataSetBySuite(String suiteName) {
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        int startPoint = 0;
-        boolean testStarted = false;
-        int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:")) {
-                startPoint = i;
-                testStarted = true;
-            }
-            if (testStarted) {
-                if (allLines[i].contains("End")) {
-                    endpoint = i;
-                    break;
-                }
-            }
-        }
-        for (int j = startPoint; j < endpoint; j++) {
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) {
-                throw new TesboException("DataSet is not use in BeforeTest and AfterTest annotation");
-            }
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("{") && !(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("{DataSet."))) {
-                throw new TesboException("DataSet value not use directly in BeforeTest and AfterTest annotation");
-            }
-
-        }
-
-    }
-
-    /**
-     * Not completed need to work on this...
-     * @lastModifiedBy: Ankit Mistry
-     * @param suiteName
-     * @return
-     */
-    public String isRetry(String suiteName, String testName) {
-        StringBuffer suiteDetails = readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        int testCount=0;
-        int startPoint = 0;
-        boolean testStarted = false;
-        int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
-
-                if (testNameArray[1].trim().contains(testName)) {
-                    startPoint = i;
-                    testStarted = true;
-                }
-                if (testStarted) {
-                    testCount++;
-                }
-            }
-            if (testStarted) {
-
-                if (allLines[i].contains("End")) {
-                    endpoint = i;
-                    break;
-                }
-                if(allLines[i].replaceAll("\\s{2,}", " ").trim().equals("end")){
-                    throw new TesboException("Please define end step in a correct way: End");
-                }
-            }
-        }
-        String retry="null";
-        if(testCount>=2 || endpoint==0) {
-            throw new TesboException("End Step is not found for '" + testName + "' test");
-        }
-        for (int j = startPoint; j < endpoint; j++) {
-            if(allLines[j].replaceAll("\\s{2,}", " ").split(":").length<2 && allLines[j].toString().replaceAll("\\s{2,}", " ").contains("Retry:")){
-                throw new TesboException("Retry is blank '"+allLines[j]+"'");
-            }
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Retry:") ) {
-
-                retry=allLines[j].split(":")[1];
-            }
-
-        }
-
-        return retry.trim();
+        return suiteFileList;
     }
 }

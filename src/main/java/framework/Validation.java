@@ -1,76 +1,96 @@
 package framework;
 
-
-
-import Execution.SetCommandLineArgument;
-import logger.Logger;
+import execution.SetCommandLineArgument;
+import logger.TesboLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import Exception.TesboException;
-import org.openqa.selenium.WebDriver;
-
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Validation {
 
-    SuiteParser suiteParser=new SuiteParser();
+    TestsFileParser testsFileParser=new TestsFileParser();
     GetConfiguration getCofig=new GetConfiguration();
-    Logger logger=new Logger();
+    TesboLogger tesboLogger =new TesboLogger();
+    private static final Logger log = LogManager.getLogger(Validation.class);
 
-    public void beforeExecutionValidation() throws Exception {
+    String testNameValidation="Test: ";
+    String testNameText="testName";
+    String spaceRegex="\\s{2,}";
+    String regexForBrackets="\\[|\\]";
+    String newLineRegex="[\\r\\n]+";
+    String beforeTestText="BeforeTest:";
+    String afterTestText="AfterTest:";
+    String testErrorMsg="' test";
+    String closeText="[Close:";
+    String endPointText="endpoint";
+    String startPointText="startPoint";
+    CommonMethods commonMethods=new CommonMethods();
+    SuiteParser suiteParser=new SuiteParser();
+
+    public void beforeExecutionValidation(){
 
         //Validation for Project Directory Path is empty
+        log.info("Validation for Project Directory Path is empty or not");
         projectDirectoryPathValidation();
 
-        //Validation for SuiteDirectory Path
-        suiteDirectoryPathValidation();
+        log.info("Validation for TestsDirectory Path is empty or not");
+        //Validation for TestsDirectory Path
+        testsDirectoryPathValidation();
 
+        log.info("Validation for locatorDirectory Path is empty or not");
         //Validation for locatorDirectory Path
         locatorDirectoryPathValidation();
 
+        log.info("Validation for baseUrl");
         //Validation for baseUrl
         baseUrlValidation();
 
+        log.info("Validation for browser details");
         //Validation for browser
         browserValidation();
 
+        log.info("Validation for Tag and suite is exist or not");
         //Validation for Tag and suite
         byTagAndBySuiteValidation();
         tagNameAndSuiteNameValidation();
 
+        log.info("Validation for parallel execution");
         //Validation for parallel execution
         parallelExecutionValidation();
 
+        log.info("Validation for locator types");
         //Validation for locator types
         locatorTypesValidation();
     }
 
-    public void suiteDirectoryPathValidation() {
+    public void testsDirectoryPathValidation() {
 
-        //Validation for SuiteDirectory Path is empty
-        String suiteDirectoryPath=null;
+        //Validation for TestesDirectory Path is empty
+        String testsDirectoryPath="";
         try {
-            suiteDirectoryPath=getCofig.getSuitesDirectory();
+            testsDirectoryPath=getCofig.getTestsDirectory();
 
         }catch (Exception e){
-            throw new TesboException("'config.json' file not found in project");
+            commonMethods.throwTesboException("'config.json' file not found in projet",log);
         }
-        File file = new File(suiteDirectoryPath);
-        if(suiteDirectoryPath.equals("")) {
-            throw new TesboException("Suite directory path is not define in config file.");
+        File file = new File(testsDirectoryPath);
+        if(testsDirectoryPath.equals("")) {
+            commonMethods.throwTesboException("Tests directory path is not define in config file.",log);
         }
-        if(Files.notExists(Paths.get(suiteDirectoryPath))){
-            throw new TesboException("Please enter valid suite directory path.");
+        if(Files.notExists(Paths.get(testsDirectoryPath))){
+            commonMethods.throwTesboException("Please enter valid tests directory path.",log);
         }
         if(file.list().length==0){
-            throw new TesboException("Suite directory is empty");
+            commonMethods.throwTesboException("Tests directory is empty",log);
         }
 
     }
@@ -79,10 +99,9 @@ public class Validation {
 
         //config File Path is exist or not
 
-        SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
         String configName;
-        if(setCommandLineArgument.configFile !=null){
-            configName=setCommandLineArgument.configFile;
+        if(SetCommandLineArgument.configFile !=null){
+            configName=SetCommandLineArgument.configFile;
         }
         else {
             configName="config.json";
@@ -90,7 +109,7 @@ public class Validation {
         File file = new File(configName);
         Path path = Paths.get(file.getAbsolutePath());
         if(!Files.exists(path)){
-            throw new TesboException("\""+file.getAbsolutePath()+"\""+ " config file is not found in project");
+            commonMethods.throwTesboException("\""+file.getAbsolutePath()+"\""+ " config file is not found in project",log);
         }
 
     }
@@ -98,56 +117,60 @@ public class Validation {
     public void projectDirectoryPathValidation() {
 
         //Validation for Project Directory Path is empty
-        String projectDirectoryPath=null;
+        String projectDirectoryPath="";
         try {
             projectDirectoryPath=getCofig.getProjectDirectory();
         }catch (Exception e){
-            throw new TesboException("'config.json' file not found in project");
+            commonMethods.throwTesboException("'config.json' file not found in project",log);
         }
         File file = new File(projectDirectoryPath);
 
         File[] files = file.listFiles();
         if (files == null) {
-            throw new TesboException("Project directory is empty or not found: \""+projectDirectoryPath+"\"");
+            commonMethods.throwTesboException("Project directory is empty or not found: \""+projectDirectoryPath+"\"",log);
         } else {
-            int count=0;
-            for (File aFile : files) {
-                if(aFile.getName().toString().equals("suite")){count++;}
-                if(aFile.getName().toString().equals("locator")){count++;}
-                if(aFile.getName().toString().equalsIgnoreCase("runner")){count++;}
-            }
-            if(count != 3){
-                throw new TesboException("Project directory has not found 'suite' OR 'locator' OR 'runner' package");
-            }
+            verifyThatProjectDirectoryHasTestsLocatorAndRunnerDirectoryISExistOrNot(files);
         }
 
 
         if(projectDirectoryPath.equals("")) {
-            throw new TesboException("Suite directory path is not define in config file.");
+            commonMethods.throwTesboException("Project directory path is not define in config file.",log);
         }
         if(Files.notExists(Paths.get(projectDirectoryPath))){
-            throw new TesboException("Please enter valid suite directory path.");
+            commonMethods.throwTesboException("Please enter valid project directory path.",log);
         }
         if(file.list().length==0){
-            throw new TesboException("Suite directory is empty");
+            commonMethods.throwTesboException("Project directory is empty",log);
         }
 
     }
 
-    public void locatorDirectoryPathValidation() throws Exception {
+    public void verifyThatProjectDirectoryHasTestsLocatorAndRunnerDirectoryISExistOrNot(File[] files){
+        int count=0;
+        for (File aFile : files) {
+            if(aFile.getName().equals("tests")){count++;}
+            if(aFile.getName().equals("locator")){count++;}
+            if(aFile.getName().equalsIgnoreCase("runner")){count++;}
+        }
+        if(count != 3){
+            commonMethods.throwTesboException("Project directory has not found 'tests' OR 'locator' OR 'runner' package",log);
+        }
+    }
+
+    public void locatorDirectoryPathValidation() {
 
         String locatorDirectory=null;
         locatorDirectory=getCofig.getLocatorDirectory();
         File file = new File(locatorDirectory);
         if(locatorDirectory.equals("")) {
-            throw new TesboException("Locator directory path is not define in config file.");
+            commonMethods.throwTesboException("Locator directory path is not define in config file.",log);
         }
 
         if(Files.notExists(Paths.get(locatorDirectory))){
-            throw new TesboException("Please enter valid locator directory path.");
+            commonMethods.throwTesboException("Please enter valid locator directory path.",log);
         }
         if(file.list().length==0){
-            throw new TesboException("Locator directory is empty");
+            commonMethods.throwTesboException("Locator directory is empty",log);
         }
     }
 
@@ -155,43 +178,37 @@ public class Validation {
 
         String baseUrl=getCofig.getBaseUrl();
         if(baseUrl.equals("")) {
-            throw new TesboException("Base Url is not define in config file.");
+            commonMethods.throwTesboException("Base Url is not define in config file.",log);
         }
     }
 
     public void browserValidation() {
 
-        ArrayList<String> browserList=new ArrayList<>();
-
+        List<String> browserList=new LinkedList<>();
         try {
             browserList=getCofig.getBrowsers();
 
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
         }
 
-        if(browserList.size()==0) {
-            throw new TesboException("Browser name is not define on config file.");
+        if(browserList.isEmpty()) {
+            commonMethods.throwTesboException("Browser name is not define on config file.",log);
         }
-        if(browserList.size()>0){
+        else {
             boolean flag=false;
-            System.out.println(browserList);
             for (String browser:browserList){
                 if(browser.equalsIgnoreCase("opera") || browser.equalsIgnoreCase("firefox") || browser.equalsIgnoreCase("chrome") ||browser.equalsIgnoreCase("ie") ){
                     flag=true;
-                }else
-                {
-                    System.out.println("Browser" + browser);
-                    System.err.println("desired browser Not detected");
                 }
                 if(browser.equalsIgnoreCase("Internet Explorer") || browser.equalsIgnoreCase("InternetExplorer")){
-                    throw new TesboException("Please enter 'IE' instead of 'Internet Explorer'");
+                    commonMethods.throwTesboException("Please enter 'IE' instead of 'Internet Explorer'",log);
                 }
             }
             if(!flag){
-                throw new TesboException("Only support Firefox, Chrome and IE browser");
+                commonMethods.throwTesboException("Only support Firefox, Chrome and IE browser",log);
             }
         }
     }
@@ -206,13 +223,15 @@ public class Validation {
                 if(byValue.toString().equalsIgnoreCase("tag") || byValue.toString().equalsIgnoreCase("suite"))
                     isByValue= true;
             }
-            if(!isByValue)
-                throw new TesboException("'by.tag' or 'by.suite' is incorrect.");
+            if(!isByValue) {
+                commonMethods.throwTesboException("'by.tag' or 'by.suite' is incorrect.",log);
+            }
 
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
+            log.error(sw.toString());
         }
     }
 
@@ -222,67 +241,93 @@ public class Validation {
         JSONArray suiteName= (JSONArray) getCofig.getSuite();
 
         if(tagName!=null) {
-            if (tagName.size() > 0) {
-                for (Object tag : tagName) {
-                    JSONObject testName = suiteParser.getTestNameByTag(tag.toString());
-                    if (testName.size() == 0) { throw new TesboException("Test not found for '" + tag.toString() + "' tag."); }
-                }
-            } else {
-                throw new TesboException("Tag name is not found in config file.");
-            }
+            verifyTestFoundWithTagName(tagName);
         }
         else if(suiteName!=null) {
-            if (suiteName.size() > 0) {
-                for (Object suite : suiteName) {
-                    boolean isSuite=false;
-                    JSONArray SuiteList= suiteParser.getSuites(getCofig.getSuitesDirectory());
-                    for(Object suitePath : SuiteList){
-                        File file=new File(suitePath.toString());
-                        if(suite.toString().equalsIgnoreCase(file.getName().split("\\.")[0])){ isSuite=true; }
-                    }
-                    if (!isSuite) { throw new TesboException("'"+suite+ "' suite is not found in suite directory"); }
-                    JSONObject testNameBySuite = suiteParser.getTestNameBySuite(suite.toString());
-                    if (testNameBySuite.size() == 0) { throw new TesboException("Test is not found in '" + suite.toString() + "' suite."); }
-                }
-            } else { throw new TesboException("Please enter 'Tag name' or 'Suite name' to run test."); }
+            verifyTestFoundWithSuiteName(suiteName);
         }
 
 
     }
 
+    public void verifyTestFoundWithTagName(JSONArray tagName){
+        if (!tagName.isEmpty()) {
+            for (Object tag : tagName) {
+                JSONObject testNameByTag = testsFileParser.getTestNameByTag(tag.toString());
+                if (testNameByTag.size() == 0) {
+                    commonMethods.throwTesboException("Test not found for '" + tag.toString() + "' tag.",log);
+                }
+            }
+        } else {
+            commonMethods.throwTesboException("Tag name is not found in config file.",log);
+        }
+    }
+
+    public void verifyTestFoundWithSuiteName(JSONArray suiteName){
+
+        if (!suiteName.isEmpty()) {
+            for (Object suite : suiteName) {
+                boolean isSuite=false;
+                JSONArray suiteList= suiteParser.getSuiteFiles(getCofig.getSuitesDirectory());
+                for(Object suitePath : suiteList){
+                    File file=new File(suitePath.toString());
+                    if(suite.toString().equalsIgnoreCase(file.getName().split("\\.")[0])){ isSuite=true; }
+                }
+
+                verifySuiteFileIsExistOrNotInDirectory(isSuite, suite.toString());
+            }
+        } else {
+            commonMethods.throwTesboException("Please enter 'Tag name' or 'Suite name' to run test.",log);
+        }
+    }
+
+    public void verifySuiteFileIsExistOrNotInDirectory(boolean isSuite, String suite){
+        if (!isSuite) {
+            commonMethods.throwTesboException("'"+suite+ "' suite is not found in suite directory",log);
+        }
+        JSONArray testNameBySuite = suiteParser.getTestNameFromSuiteFile(suiteParser.readSuiteFile(suite));
+        if (testNameBySuite.isEmpty()) {
+            commonMethods.throwTesboException("'" + suite + "' suite file is empty. There is no test defined in it",log);
+        }
+    }
+
     public void parallelExecutionValidation() {
-        JSONObject parallelExecution = null;
+        JSONObject parallelExecution = new JSONObject();
         try {
             parallelExecution=  getCofig.getParallel();
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
-            logger.testFailed(sw.toString());
+            tesboLogger.testFailed(sw.toString());
         }
-        if(parallelExecution.get("status").toString().equalsIgnoreCase("true"))
-        {
-            if(parallelExecution.get("count").toString().equalsIgnoreCase("0")) {
-                throw new TesboException("Enter count greater than zero in parallel execution.");
-            }
+        if(parallelExecution.get("status").toString().equalsIgnoreCase("true") && parallelExecution.get("count").toString().equalsIgnoreCase("0")) {
+            commonMethods.throwTesboException("Enter count greater than zero in parallel execution.",log);
         }
     }
 
     public void endStepValidation(JSONArray testExecutionQueue) {
 
-        SuiteParser suiteParser=new SuiteParser();
+        IfStepParser ifStepParser=new IfStepParser();
         JSONArray listOfSession;
+
         //Validation for end step
-        if(testExecutionQueue.size()>0){
+        if(!testExecutionQueue.isEmpty()){
             for (int i = 0; i < testExecutionQueue.size(); i++) {
                 JSONObject test= (JSONObject) testExecutionQueue.get(i);
-                JSONArray steps= suiteParser.getTestStepBySuiteandTestCaseName(test.get("suiteName").toString(),test.get("testName").toString());
-                listOfSession = suiteParser.getSessionListFromTest(test.get("suiteName").toString(), test.get("testName").toString());
-                if (listOfSession.size() > 0) {
-                    sessionDefineValidation(test.get("suiteName").toString(), test.get("testName").toString(),listOfSession);
+                String testsFileName=test.get("testsFileName").toString();
+                String testNameFromTest=test.get(testNameText).toString();
+
+                JSONArray steps= testsFileParser.getTestStepByTestsFileandTestCaseName(testsFileName,testNameFromTest);
+                listOfSession = testsFileParser.getSessionListFromTest(testsFileName, testNameFromTest);
+                if (!listOfSession.isEmpty()) {
+                    sessionDefineValidation(testsFileName, testNameFromTest,listOfSession);
                     sessionNotDeclareOnTest(steps, listOfSession);
                     sessionNotDefineOnTest(steps, listOfSession);
                 }
-                collectionValidation(test.get("suiteName").toString(), test.get("testName").toString());
+                if(ifStepParser.isTestsHasIFCondition(steps)){
+                    ifStepParser.isEndStepForIfCondition(steps,testNameFromTest);
+                }
+                collectionValidation(testsFileName, testNameFromTest);
                 severityAndPriorityValidation(test);
             }
         }
@@ -293,240 +338,159 @@ public class Validation {
         for(Object session:listOfSession)
         {
             for(Object step:steps){
-                if( step.toString().replaceAll("\\s{2,}", " ").trim().contains("[") && step.toString().replaceAll("\\s{2,}", " ").trim().contains("]")) {
-                    if(step.toString().replaceAll("\\[|\\]","").equals(session.toString())){
-                        isSessionInTest=true;
-                    }
+                if( step.toString().replaceAll(spaceRegex, " ").trim().contains("[") && step.toString().replaceAll(spaceRegex, " ").trim().contains("]") && (step.toString().replaceAll(regexForBrackets,"").equals(session.toString()))){
+                    isSessionInTest=true;
                 }
             }
         }
         if(!isSessionInTest){
-            throw new TesboException("Session is not found on test");
+            commonMethods.throwTesboException("Session is not found on test",log);
         }
     }
 
     public void sessionNotDefineOnTest(JSONArray steps, JSONArray listOfSession) {
         for (Object step : steps) {
-            if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("[") && step.toString().replaceAll("\\s{2,}", " ").trim().contains("]") &&
-                    !(step.toString().replaceAll("\\s{2,}", " ").trim().contains("[Close") || step.toString().replaceAll("\\s{2,}", " ").trim().contains("DataSet:")) ) {
+            if (step.toString().replaceAll(spaceRegex, " ").trim().contains("[") && step.toString().replaceAll(spaceRegex, " ").trim().contains("]") &&
+                    !(step.toString().replaceAll(spaceRegex, " ").trim().contains("[Close") || step.toString().replaceAll(spaceRegex, " ").trim().contains("DataSet:")) ) {
                 boolean isSessionInTest = false;
                 for (Object session : listOfSession) {
-                    if (step.toString().replaceAll("\\[|\\]", "").equals(session.toString())) {
+                    if (step.toString().replaceAll(regexForBrackets, "").equals(session.toString())) {
                         isSessionInTest = true;
                     }
                 }
                 if (!isSessionInTest) {
-                    throw new TesboException("Session '" + step.toString().replaceAll("\\[|\\]", "") + "' is not declare.");
+                    commonMethods.throwTesboException("Session '" + step.toString().replaceAll(regexForBrackets, "") + "' is not declare.",log);
                 }
             }
         }
 
     }
 
-    public void sessionDefineValidation(String suiteName, String testName,JSONArray listOfSession) {
-        StringBuffer suiteDetails =suiteParser.readSuiteFile(suiteName);
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        int testCount=0;
+    public void sessionDefineValidation(String testsFileName, String testName,JSONArray listOfSession) {
+        StringBuilder testsFileNameDetails =testsFileParser.readTestsFile(testsFileName);
+        String[] allLines = testsFileNameDetails.toString().split(newLineRegex);
         int startPoint = 0;
-        boolean testStarted = false;
         int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
 
-                if (testNameArray[1].trim().contains(testName)) {
-                    startPoint = i;
-                    testStarted = true;
-                }
-                if (testStarted)
-                    testCount++;
-            }
-            if (testStarted) {
-
-                if (allLines[i].contains("End")) {
-                    endpoint = i;
-                    break;
-                }
-            }
-        }
-        if(testCount>=2 || endpoint==0)
-            throw new TesboException("End Step is not found for '"+testName+ "' test");
+        JSONObject startAndEndPoint=testsFileParser.getTestStartAndEndPoint(allLines,testName,"End Step is not found for '" + testName + testErrorMsg);
+        startPoint= Integer.parseInt(startAndEndPoint.get(startPointText).toString());
+        endpoint= Integer.parseInt(startAndEndPoint.get(endPointText).toString());
 
         for (int j = startPoint; j < endpoint; j++) {
 
+            verifySessionIsDefineInSquareBracketOrNot(listOfSession,allLines,j);
+
+            verifySessionIsDefineOnTestOrNot(listOfSession,allLines,j);
+
+            verifyClosedSessionIsDefineOnTestOrNot(listOfSession,allLines,j,endpoint);
+
+        }
+
+    }
+
+    public void verifySessionIsDefineInSquareBracketOrNot(JSONArray listOfSession,String[] allLines,int j){
+        for (Object session : listOfSession) {
+            if (allLines[j].replaceAll(spaceRegex, " ").trim().replaceAll(regexForBrackets, "").equals(session.toString()) && (!allLines[j].replaceAll(spaceRegex, " ").trim().equals("[" + session.toString() + "]"))) {
+                commonMethods.throwTesboException("Session must be define in '[]' square bracket",log);
+            }
+
+        }
+    }
+    public void verifySessionIsDefineOnTestOrNot(JSONArray listOfSession,String[] allLines,int j){
+        if(allLines[j].replaceAll(spaceRegex, " ").trim().contains(closeText)){
+            String sessionClose=  allLines[j].replaceAll(spaceRegex, " ").trim().replaceAll(regexForBrackets, "").split(":")[1].trim();
+            boolean isSessionClose=false;
             for (Object session : listOfSession) {
-                if (allLines[j].replaceAll("\\s{2,}", " ").trim().toString().replaceAll("\\[|\\]", "").equals(session.toString())) {
-                    if (!allLines[j].replaceAll("\\s{2,}", " ").trim().toString().equals("[" + session.toString() + "]")) {
-                        throw new TesboException("Session must be define in '[]' square bracket");
-                    }
-                }
-
-            }
-            if(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:")){
-                String sessionClose=  allLines[j].replaceAll("\\s{2,}", " ").trim().toString().replaceAll("\\[|\\]", "").split(":")[1].trim();
-                boolean isSessionClose=false;
-                for (Object session : listOfSession) {
-                    if(sessionClose.equals(session)){
-                        isSessionClose=true;
-                    }
-                }
-                if(!isSessionClose){
-                    throw new TesboException("Session '" + sessionClose + "' is not available.");
-                }
-
-            }
-
-            if(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("[Close:")){
-                String closedSession=  allLines[j].replaceAll("\\s{2,}", " ").trim().toString().replaceAll("\\[|\\]", "").split(":")[1].trim();
-
-                for (int i = j+1; i < endpoint; i++) {
-                    for (Object session : listOfSession) {
-                        if (allLines[i].replaceAll("\\s{2,}", " ").trim().toString().replaceAll("\\[|\\]", "").equals(session.toString())) {
-
-                            if (allLines[i].replaceAll("\\s{2,}", " ").trim().toString().equals("[" + closedSession + "]")) {
-                                throw new TesboException("Closed session '"+closedSession+"' not define in test");
-                            }
-                        }
-                    }
+                if(sessionClose.equals(session)){
+                    isSessionClose=true;
                 }
             }
+            if(!isSessionClose){
+                commonMethods.throwTesboException("Session '" + sessionClose + "' is not available.",log);
+            }
+
         }
-
     }
 
-    public void collectionValidation(String suiteName, String testName) {
-        StringBuffer suiteDetails =suiteParser.readSuiteFile(suiteName);
+    public void verifyClosedSessionIsDefineOnTestOrNot(JSONArray listOfSession,String[] allLines,int j,int endpoint){
+        if(allLines[j].replaceAll(spaceRegex, " ").trim().contains(closeText)){
+            String closedSession=  allLines[j].replaceAll(spaceRegex, " ").trim().replaceAll(regexForBrackets, "").split(":")[1].trim();
+
+            for (int i = j+1; i < endpoint; i++) {
+                for (Object session : listOfSession) {
+                    if (allLines[i].replaceAll(spaceRegex, " ").trim().replaceAll(regexForBrackets, "").equals(session.toString()) && allLines[i].replaceAll(spaceRegex, " ").trim().equals("[" + closedSession + "]")) {
+                            commonMethods.throwTesboException("Closed session '"+closedSession+"' not define in test",log);
+                    }
+                }
+            }
+        }
+    }
+
+    public void collectionValidation(String testsFileName, String testName) {
+        StringBuilder testsFileNameDetails =testsFileParser.readTestsFile(testsFileName);
         StepParser stepParser=new StepParser();
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
-        int testCount=0;
+        String[] allLines = testsFileNameDetails.toString().split(newLineRegex);
         int startPoint = 0;
-        boolean testStarted = false;
         int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
 
-                if (testNameArray[1].trim().contains(testName)) {
-                    startPoint = i;
-                    testStarted = true;
-                }
-                if (testStarted)
-                    testCount++;
-            }
-            if (testStarted) {
-
-                if (allLines[i].contains("End")) {
-                    endpoint = i;
-                    break;
-                }
-            }
-        }
-        if(testCount>=2 || endpoint==0) {
-            throw new TesboException("End Step is not found for '" + testName + "' test");
-        }
+        JSONObject startAndEndPoint=testsFileParser.getTestStartAndEndPoint(allLines,testName,"End Step is not found for '" + testName + testErrorMsg);
+        startPoint= Integer.parseInt(startAndEndPoint.get(startPointText).toString());
+        endpoint= Integer.parseInt(startAndEndPoint.get(endPointText).toString());
 
         for (int j = startPoint; j < endpoint; j++) {
-
-            if(allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Collection:")){
-                String collectionName=stepParser.getCollectionName(allLines[j].toString());
-                if(collectionName.contains("'") |collectionName.contains("\"")){
-                    throw new TesboException("Collection name not define properly on :"+allLines[j]);
+            if(allLines[j].replaceAll(spaceRegex, " ").trim().startsWith("Collection: ")){
+                String collectionName=stepParser.getCollectionName(allLines[j]);
+                if(collectionName.contains("'") || collectionName.contains("\"")){
+                    commonMethods.throwTesboException("Collection name not define properly on :"+allLines[j],log);
                 }
-                suiteParser.getGroupTestStepBySuiteandTestCaseName(suiteName, collectionName);
+                testsFileParser.getGroupTestStepByTestFileandTestCaseName(collectionName);
             }
         }
-
     }
 
     public void keyWordValidation(String step) {
-
-        if(step.replaceAll("\\s{2,}", " ").trim().contains("Step :") | step.replaceAll("\\s{2,}", " ").trim().contains("step:") | step.replaceAll("\\s{2,}", " ").trim().contains("step :")
-                | step.replaceAll("\\s{2,}", " ").trim().contains("Verify :") | step.replaceAll("\\s{2,}", " ").trim().contains("verify:") | step.replaceAll("\\s{2,}", " ").trim().contains("verify :")
-                | step.replaceAll("\\s{2,}", " ").trim().contains("Collection :") | step.replaceAll("\\s{2,}", " ").trim().contains("collection:") | step.replaceAll("\\s{2,}", " ").trim().contains("collection :")
-                | step.replaceAll("\\s{2,}", " ").trim().contains("ExtCode :") | step.replaceAll("\\s{2,}", " ").trim().contains("externalCode:") | step.replaceAll("\\s{2,}", " ").trim().contains("externalCode :")
-                | step.replaceAll("\\s{2,}", " ").trim().contains("extcode :") | step.replaceAll("\\s{2,}", " ").trim().contains("extcode:") | step.replaceAll("\\s{2,}", " ").trim().contains("Extcode :") | step.replaceAll("\\s{2,}", " ").trim().contains("Extcode:")
-                | step.replaceAll("\\s{2,}", " ").trim().contains("[Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("[close:") | step.replaceAll("\\s{2,}", " ").trim().contains("[close :")
-                | step.replaceAll("\\s{2,}", " ").trim().contains("Close :") | step.replaceAll("\\s{2,}", " ").trim().contains("close:") | step.replaceAll("\\s{2,}", " ").trim().contains("close :")
-                | step.replaceAll("\\s{2,}", " ").trim().contains("Close:")|
-                ( step.replaceAll("\\s{2,}", " ").trim().contains("[Close:") && !(step.replaceAll("\\s{2,}", " ").trim().contains("]"))) ){
-            throw new TesboException("Please write valid keyword for this step \"" +step+"\"");
+        String newStep=step.replaceAll(spaceRegex, " ").trim().toLowerCase();
+        if(newStep.startsWith("step") || newStep.startsWith("verify") || newStep.startsWith("code") || newStep.startsWith("collection")
+                || newStep.startsWith("if") || newStep.startsWith("else if") || newStep.startsWith("end")
+                || newStep.startsWith("[close") || newStep.startsWith("close")
+                || ( step.replaceAll(spaceRegex, " ").trim().contains(closeText) && !(step.replaceAll(spaceRegex, " ").trim().contains("]"))) ){
+            commonMethods.throwTesboException("Please write valid keyword for this step \"" +step+"\"",log);
         }
-
     }
+
 
     public boolean severityAndPriorityValidation(JSONObject test) {
 
-        SuiteParser suiteParser=new SuiteParser();
-        JSONArray steps= suiteParser.getSeverityAndPriority(test);
-        if(steps.size()>0){
-            for (int i = 0; i < steps.size(); i++) {
+        JSONArray steps= testsFileParser.getSeverityAndPriority(test);
+        if(!steps.isEmpty()){
+            for(int i = 0; i < steps.size(); i++) {
                 Object step = steps.get(i);
 
                 try{
-                    if(step.toString().replaceAll("\\s{2,}", " ").trim().split(":").length==2) {
-
-                        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Priority:")) {
-                            String priority=step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1];
-                            if (!(priority.trim().equalsIgnoreCase("high")
-                                    || priority.trim().equalsIgnoreCase("medium")
-                                    || priority.trim().equalsIgnoreCase("low"))) {
-                                throw new TesboException("Enter valid priority name: '"+step+"'");
-                            }
-                        }
-                        if (step.toString().replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
-                            String severity=step.toString().replaceAll("\\s{2,}", " ").trim().split(":")[1];
-                            if (!(severity.trim().equalsIgnoreCase("critical") || severity.trim().equalsIgnoreCase("major")
-                                    || severity.trim().equalsIgnoreCase("medium") || severity.trim().equalsIgnoreCase("minor"))) {
-                                throw new TesboException("Enter valid severity name: '"+step+"'");
-                            }
-                        }
+                    if(step.toString().replaceAll(spaceRegex, " ").trim().split(":").length==2) {
+                        verifyTypeOfPriority(step.toString());
+                        verifyTypeOfSeverity(step.toString());
                     }
                 }catch (Exception e){
-                    throw new TesboException("Write step properly: '"+step+"'");
+                    commonMethods.throwTesboException("Write step properly: '"+step+"'",log);
                 }
-
             }
         }
 
-
-
-
-
-        StringBuffer suiteDetails = suiteParser.readSuiteFile(test.get("suiteName").toString());
-        String allLines[] = suiteDetails.toString().split("[\\r\\n]+");
+        StringBuilder testsFileDetails = testsFileParser.readTestsFile(test.get("testsFileName").toString());
+        String[] allLines = testsFileDetails.toString().split(newLineRegex);
         boolean isSeverityOrPriority=false;
-        int testCount=0;
         int startPoint = 0;
-        boolean testStarted = false;
         int endpoint = 0;
-        for (int i = 0; i < allLines.length; i++) {
-            if (allLines[i].contains("Test:") && !(allLines[i].contains("BeforeTest:") || allLines[i].contains("AfterTest:"))) {
-                String testNameArray[] = allLines[i].split(":");
 
-                if (testNameArray[1].trim().contains(test.get("testName").toString())) {
-                    startPoint = i;
-                    testStarted = true;
-                }
-                if (testStarted) {
-                    testCount++;
-                }
-            }
-            if (testStarted) {
-
-                if (allLines[i].contains("Step:")) {
-                    endpoint = i;
-                    break;
-                }
-            }
-        }
-        if(testCount>=2 || endpoint==0) {
-            throw new TesboException("Step is not found for '" + test.get("testName").toString() + "' test");
-        }
+        JSONObject startAndEndPoint=testsFileParser.getTestStartAndEndPoint(allLines,test.get(testNameText).toString(),"Step is not found for '" + test.get(testNameText).toString() + testErrorMsg);
+        startPoint= Integer.parseInt(startAndEndPoint.get(startPointText).toString());
+        endpoint= Integer.parseInt(startAndEndPoint.get(endPointText).toString());
 
         for (int j = startPoint; j < endpoint; j++) {
 
-            if (allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Priority:")
-                    | allLines[j].replaceAll("\\s{2,}", " ").trim().contains("Severity:")) {
+            if (allLines[j].replaceAll(spaceRegex, " ").trim().contains("Priority: ")
+                    || allLines[j].replaceAll(spaceRegex, " ").trim().contains("Severity: ")) {
                 isSeverityOrPriority=true;
                 break;
             }
@@ -535,13 +499,34 @@ public class Validation {
         return isSeverityOrPriority;
     }
 
-    public void locatorTypesValidation() {
-        ArrayList<String> locatorTypes=new ArrayList<>();
-        locatorTypes=getCofig.getLocatorPreference();
-        if(locatorTypes!=null){
-            if(locatorTypes.size()==0){
-                throw new TesboException("Please enter locator types");
+    public void verifyTypeOfPriority(String step){
+        if (step.replaceAll(spaceRegex, " ").trim().contains("Priority: ")) {
+            String priority=step.replaceAll(spaceRegex, " ").trim().split(":")[1];
+            if (!(priority.trim().equalsIgnoreCase("high")
+                    || priority.trim().equalsIgnoreCase("medium")
+                    || priority.trim().equalsIgnoreCase("low"))) {
+                commonMethods.throwTesboException("Enter valid priority name: '"+step+"'",log);
             }
+        }
+    }
+
+    public void verifyTypeOfSeverity(String step){
+        if (step.replaceAll(spaceRegex, " ").trim().contains("Severity: ")) {
+            String severity=step.replaceAll(spaceRegex, " ").trim().split(":")[1];
+            if (!(severity.trim().equalsIgnoreCase("critical") || severity.trim().equalsIgnoreCase("major")
+                    || severity.trim().equalsIgnoreCase("medium") || severity.trim().equalsIgnoreCase("minor"))) {
+                commonMethods.throwTesboException("Enter valid severity name: '"+step+"'",log);
+            }
+        }
+    }
+
+
+    public void locatorTypesValidation() {
+        List<String> locatorTypes;
+
+        locatorTypes=getCofig.getLocatorPreference();
+        if(locatorTypes!=null && locatorTypes.isEmpty()){
+            commonMethods.throwTesboException("Please enter locator types",log);
         }
     }
 

@@ -1,13 +1,15 @@
-package framework;
+package userconfig;
 
+import exception.TesboException;
 import execution.SetCommandLineArgument;
+import framework.Utility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import exception.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
@@ -16,14 +18,14 @@ import java.util.List;
  * Get Configuration class will contains all the methods that will read
  * the configuration from the runner file and run according to that
  */
-public class GetConfiguration {
+public class GetUserConfiguration {
 
     String suiteName="suite";
     String cloudIntegration="cloudIntegration";
     String status="status";
     String count="count";
     JSONObject main = Utility.loadJsonFile(getConfigFilePath());
-    private static final Logger log = LogManager.getLogger(GetConfiguration.class);
+    private static final Logger log = LogManager.getLogger(GetUserConfiguration.class);
 
 
     public String getConfigFilePath() {
@@ -466,4 +468,5 @@ public class GetConfiguration {
             return "";
         }
     }
+
 }

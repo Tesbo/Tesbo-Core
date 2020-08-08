@@ -4,40 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>Tesbo</groupId>
-	<artifactId>Tesbo-Pro</artifactId>
-	<version>0.0.10</version>
+	<artifactId>Tesbo-Web</artifactId>
+	<version>0.0.6</version>
 	<packaging>jar</packaging>
 
 
 	<name>Tesbo</name>
 	<url>http://maven.apache.org</url>
-
-	<!--<repositories>
-		<repository>
-			<id>Placepass</id>
-			<url>https://dl.bintray.com/jfrog/jfrog-jars/</url>
-		</repository>
-	</repositories>
-
--->
-
-
-
-	<distributionManagement>
-		<repository>
-
-			<id>releases</id>
-			<url>http://download.tesbo.io:8081/artifactory/libs-release-local/</url>
-		</repository>
-		<snapshotRepository>
-			<id>snapshots</id>
-			<url>http://download.tesbo.io:8081/artifactory/libs-snapshot-local/</url>
-		</snapshotRepository>
-	</distributionManagement>
-
-
-
-
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -50,96 +23,42 @@
 	</properties>
 
 	<build>
-
-
-		<finalName>tesbo</finalName>
 		<plugins>
 			<plugin>
-				<groupId>com.github.wvengen</groupId>
-				<artifactId>proguard-maven-plugin</artifactId>
-				<version>2.0.14</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<injar>${project.build.finalName}.${project.packaging}</injar>
-					<outjar>${project.build.finalName}-proguard.${project.packaging}</outjar>
-					<libs>
-	
-					</libs>
-					<options>
-						<option>-keep public class Execution.Tesbo{*;}</option>
-						<option>-keep public class reportAPI.Reporter{*;}</option>
-						<option>-keep public class UserConfig.GetUserConfiguration{*;}</option>
-						<option>-keep public class Execution.SetCommandLineArgument{*;}</option>
-						<option>-keep class Selenium.ExtendTesboDriver{ *; }</option>
-						<option>-keep class ExtCode.ExtCode{ *; }</option>
-						<option>-keepattributes RuntimeVisibleAnnotations</option>
-						<option>-keep class Exception.*</option>
-						<option>-keep @javax.persistence.* class * { *; }</option>
-						<option>-ignorewarnings</option>
-						<option>-dontoptimize</option>
-
-					</options>
+					<source>8</source>
+					<target>8</target>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>net.sf.proguard</groupId>
-						<artifactId>proguard-base</artifactId>
-						<version>${version.net.sf.proguard}</version>
-						<scope>runtime</scope>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>proguard</id>
-						<phase>package</phase>
-						<goals>
-							<goal>proguard</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
+				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>zip-artifacts</id>
 						<phase>package</phase>
 						<goals>
-							<goal>run</goal>
+							<goal>single</goal>
 						</goals>
 						<configuration>
-							<target>
-								<jar destfile="${project.build.directory}\tesbo-proguard-final.jar">
-									<zipfileset excludes="META-INF/*.SF"
-												src="${project.build.directory}/${project.build.finalName}-proguard.${project.packaging}" />
-									<zipgroupfileset dir="${project.build.directory}/lib/" includes="*.jar"
-									/>
-								</jar>
-							</target>
+							<archive>
+								<manifest>
+									<mainClass>
 
+									</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<finalName>${artifactId}_release-${version}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-
-
 			<plugin>
 				<groupId>com.coderplus.maven.plugins</groupId>
 				<artifactId>copy-rename-maven-plugin</artifactId>
@@ -152,78 +71,15 @@
 							<goal>copy</goal>
 						</goals>
 						<configuration>
-							<sourceFile>${project.build.directory}\tesbo-proguard-final.jar</sourceFile>
-							<destinationFile>${project.build.directory}\tesbo.jar</destinationFile>
+							<sourceFile>${project.build.directory}\${artifactId}_release-${version}.jar</sourceFile>
+							<destinationFile>${project.build.directory}\${artifactId}-${version}.jar</destinationFile>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 
 
-
-
-
-
-			<!--<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<skip>true</skip>
-					<file>${project.build.directory}\tesbo-proguard-final.jar</file>
-					<generatePom>false</generatePom>
-					<pomFile>pom.xml</pomFile>
-					<packaging>jar</packaging>
-					<version>${project.version}</version>
-				</configuration>
-			</plugin>
-			-->
-
-
-		<!--	<plugin>
-				<groupId>org.jfrog.buildinfo</groupId>
-				<artifactId>artifactory-maven-plugin</artifactId>
-				<version>2.2.1</version>
-				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<id>build-info</id>
-						<goals>
-							<goal>publish</goal>
-						</goals>
-						<configuration>
-							<deployProperties>
-								<gradle>awesome</gradle>
-							</deployProperties>
-							<artifactory>
-								<includeEnvVars>true</includeEnvVars>
-								<envVarsExcludePatterns>*password*,*secret*,*key*,*token*,*passphrase*</envVarsExcludePatterns>
-								<timeoutSec>60</timeoutSec>
-							</artifactory>
-							<publisher>
-								<contextUrl>http://localhost:8081/artifactory</contextUrl>
-								<username>${username}</username>
-								<password>${password}</password>
-								<excludePatterns>*-tests.jar</excludePatterns>
-								<repoKey>libs-release-local</repoKey>
-								<snapshotRepoKey>libs-snapshot-local</snapshotRepoKey>
-							</publisher>
-							<buildInfo>
-								<buildName>plugin-demo</buildName>
-								<buildNumber>${buildnumber}</buildNumber>
-								<buildUrl>http://build-url.org</buildUrl>
-							</buildInfo>
-
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
--->
 		</plugins>
-
-
-
-
 	</build>
 
 
@@ -314,7 +170,7 @@
 		<dependency>
 			<groupId>io.github.bonigarcia</groupId>
 			<artifactId>webdrivermanager</artifactId>
-			<version>3.3.0</version>
+			<version>3.7.0</version>
 		</dependency>
 
 		<dependency>
@@ -342,6 +198,24 @@
 			<artifactId>rest-assured</artifactId>
 			<version>2.9.0</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.11.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.11.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.25.0</version>
 		</dependency>
 
 	</dependencies>
