@@ -23,7 +23,7 @@ public class ReportAPIConfig {
     String applicationJsonText="application/json";
     String contentTypeText="Content-Type";
     String screenShotText="screenShot";
-    String url="http://report.tesbo.io:443";
+    String url="http://report.tesbo.io";
     public static String buildID;
     private static final Logger log = LogManager.getLogger(ReportAPIConfig.class);
     StringWriter sw = new StringWriter();
