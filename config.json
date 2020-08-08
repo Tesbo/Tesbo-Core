@@ -1,4 +1,3 @@
-
 {
 
   "run": {
@@ -10,7 +9,7 @@
       "Release":"https://pp-marriott:pilotMiami@marriott-stage.placepass.com/Release"
     },
     "by": {
-      "tag": ["variable1","dataSet1"]
+      "tag": ["Login"]
     },
     "browser": {
       "name": [
@@ -40,9 +39,9 @@
     "locatorPreference": ["xpath","id"]
   },
   "cloudIntegration" : {
-    "report": false,
-    "apiKey": "d31129abe90e5e2086e56a26995cc1cc",
-    "projectKey" : "5cd2e1f802d39139e8bf5092",
-    "buildName":"QAbleTest001"
+    "report": true,
+    "apiKey": "b77CIgRd9UAlJr6evhFbR1CU4",
+    "projectKey" : "5f10208db6a9e04d15340680",
+    "buildName":"QAbleTest"
   }
 }
