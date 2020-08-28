@@ -27,6 +27,10 @@ public class SetCommandLineArgument {
     @Parameter(names={"--buildName", "-n"})
     public static String buildName;
 
+    /**
+     *
+     * @param args
+     */
     public void setArgument(String[] args) {
         SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
         JCommander.newBuilder()

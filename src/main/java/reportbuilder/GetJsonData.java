@@ -32,7 +32,11 @@ public class GetJsonData {
     private static final Logger log = LogManager.getLogger(GetJsonData.class);
     StringWriter sw = new StringWriter();
 
-
+    /**
+     *
+     * @param milliseconds
+     * @return
+     */
     public String parseTime(long milliseconds) {
         Date date = new Date(milliseconds);
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
@@ -45,6 +49,11 @@ public class GetJsonData {
                         TimeUnit.MILLISECONDS.toMinutes(milliseconds)))*/;
     }
 
+    /**
+     *
+     * @param milliseconds
+     * @return
+     */
     public String parseTime(int milliseconds) {
 
 
@@ -55,6 +64,11 @@ public class GetJsonData {
                         TimeUnit.MILLISECONDS.toMinutes(milliseconds)));
     }
 
+    /**
+     *
+     * @param dirPath
+     * @return
+     */
     public File getLastModifiedJsonFile(String dirPath) {
 
         File dir = new File(dirPath);
@@ -73,6 +87,11 @@ public class GetJsonData {
 
     }
 
+    /**
+     *
+     * @param directory
+     * @return
+     */
     public int getTotalBuildCount(String directory) {
 
         JSONArray testsFileList = new JSONArray();
@@ -89,6 +108,11 @@ public class GetJsonData {
 
     }
 
+    /**
+     *
+     * @param filePath
+     * @return
+     */
     public JSONObject readJsonFile(String filePath) {
         JSONObject jsonObject = null;
 
@@ -104,6 +128,11 @@ public class GetJsonData {
         return jsonObject;
     }
 
+    /**
+     *
+     * @param directory
+     * @return
+     */
     public String getAvaerageTimeoftheBuild(String directory) {
 
         JSONArray testsFileList = new JSONArray();
@@ -129,6 +158,11 @@ public class GetJsonData {
         return parseTime(totalAvgTimeInMillis);
     }
 
+    /**
+     *
+     * @param directory
+     * @return
+     */
     public int getTotalTestOfTheBuild(String directory) {
 
         JSONArray testsFileList = new JSONArray();
@@ -153,7 +187,11 @@ public class GetJsonData {
         return totalTests;
     }
 
-
+    /**
+     *
+     * @param directory
+     * @return
+     */
     public JSONArray getLastBuildResultData(String directory) {
 
         JSONArray last10BuildDataArray = new JSONArray();
@@ -189,7 +227,11 @@ public class GetJsonData {
         return last10BuildDataArray;
     }
 
-
+    /**
+     *
+     * @param dir
+     * @return
+     */
     public int getCurrentBuildTotal(String dir) {
         int total = 0;
 
@@ -203,6 +245,11 @@ public class GetJsonData {
         return total;
     }
 
+    /**
+     *
+     * @param dir
+     * @return
+     */
     public int getCurrentBuildPassed(String dir) {
         int total = 0;
 
@@ -217,6 +264,11 @@ public class GetJsonData {
         return total;
     }
 
+    /**
+     *
+     * @param dir
+     * @return
+     */
     public int getCurrentBuildFailed(String dir) {
         int total = 0;
 
@@ -230,6 +282,11 @@ public class GetJsonData {
         return total;
     }
 
+    /**
+     *
+     * @param dir
+     * @return
+     */
     public String getCurrentBuildTotalTime(String dir) {
         int total = 0;
         try {
@@ -242,7 +299,11 @@ public class GetJsonData {
         return parseTime(total);
     }
 
-
+    /**
+     *
+     * @param dir
+     * @return
+     */
     public String getCurrentBuildStartTime(String dir) {
         JSONObject parser = null;
         File currentBuildReport = getLastModifiedJsonFile(dir);
@@ -250,14 +311,23 @@ public class GetJsonData {
         return parseTime(Long.parseLong(parser.get("startTime").toString()));
     }
 
-
+    /**
+     *
+     * @param dir
+     * @return
+     */
     public String getCurrentBuildEndTime(String dir) {
         File currentBuildReport = getLastModifiedJsonFile(dir);
         JSONObject parser = readJsonFile(currentBuildReport.getAbsolutePath());
         return parseTime(Long.parseLong(parser.get("endTime").toString()));
     }
 
-
+    /**
+     *
+     * @param dir
+     * @param browserName
+     * @return
+     */
     public JSONObject getCurrentBuildBrowserWiseData(String dir, String browserName) {
 
         File currentBuildReport = getLastModifiedJsonFile(dir);
@@ -287,7 +357,12 @@ public class GetJsonData {
         return passFailData;
     }
 
-
+    /**
+     *
+     * @param dir
+     * @param browserName
+     * @return
+     */
     public JSONArray getModuleWiseData(String dir, String browserName) {
 
         File currentBuildReport = getLastModifiedJsonFile(dir);
@@ -308,6 +383,11 @@ public class GetJsonData {
         return suiteList;
     }
 
+    /**
+     *
+     * @param dir
+     * @return
+     */
     public JSONArray getBrowserExecutionReport(String dir) {
 
         File currentBuildReport = getLastModifiedJsonFile(dir);
@@ -315,6 +395,12 @@ public class GetJsonData {
         return (JSONArray) parser.get(browserText);
     }
 
+    /**
+     *
+     * @param pass
+     * @param fail
+     * @return
+     */
     public JSONArray browserResult(int pass, int fail) {
         JSONArray browserResult = new JSONArray();
         browserResult.add(pass);

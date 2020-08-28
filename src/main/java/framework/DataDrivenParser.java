@@ -80,6 +80,13 @@ public class DataDrivenParser {
         return type;
     }
 
+    /**
+     *
+     * @param main
+     * @param dataSetName
+     * @param keyName
+     * @return
+     */
     public String checkDataSetDataTypeWhenItHasJsonObject(JSONObject main, String dataSetName, List<String> keyName) {
         String type=null;
         if(((JSONObject) main.get(dataSetName)).containsKey(excelFileDataSet)){
@@ -99,6 +106,12 @@ public class DataDrivenParser {
        return  type;
     }
 
+    /**
+     *
+     * @param dataSetList
+     * @param keyName
+     * @return
+     */
     public boolean isDataSetListHasJsonArray(JSONObject dataSetList, List<String> keyName) {
         for(String key: keyName){
             if(dataSetList.get(key) instanceof JSONArray){
@@ -108,6 +121,13 @@ public class DataDrivenParser {
         return false;
     }
 
+    /**
+     *
+     * @param dataSetList
+     * @param dataSetName
+     * @param keyName
+     * @return
+     */
     public String checkDataSetDataTypeIsGlobalOrNot(JSONObject dataSetList, String dataSetName, List<String> keyName) {
         String type=null;
         for(String key: keyName){
@@ -129,6 +149,13 @@ public class DataDrivenParser {
         return  type;
     }
 
+    /**
+     *
+     * @param main
+     * @param dataSetName
+     * @param keyName
+     * @return
+     */
     public String checkDataSetDataTypeWhenItHasJsonArray(JSONObject main, String dataSetName, List<String> keyName) {
         String type=null;
         if(main.get(dataSetName) instanceof JSONArray){
@@ -141,6 +168,14 @@ public class DataDrivenParser {
         return  type;
     }
 
+
+    /**
+     *
+     * @param dataSetList
+     * @param dataSetName
+     * @param keyName
+     * @return
+     */
     public String verifyJsonArrayListHasSameNumberOfArrayListAndAllKeyValuePresent(JSONArray dataSetList, String dataSetName, List<String> keyName) {
         String type=null;
         int arraySize=0;
@@ -160,6 +195,13 @@ public class DataDrivenParser {
         return type;
     }
 
+    /**
+     *
+     * @param dataSet
+     * @param key
+     * @param dataSetName
+     * @return
+     */
     public String getDataSetTypeIsList(JSONObject dataSet,String key, String dataSetName){
         if((dataSet).containsKey(key)){
             return "list";
@@ -172,6 +214,14 @@ public class DataDrivenParser {
         return null;
     }
 
+
+    /**
+     *
+     * @param main
+     * @param dataSetName
+     * @param keyName
+     * @return
+     */
     public String verifyJsonObjectHasJsonArrayListAndAllObjectHasSameNumberOfArrayListAndAllKeyValuePresent(JSONObject main, String dataSetName, List<String> keyName) {
         String type=null;
         int arraySize=0;
@@ -195,6 +245,13 @@ public class DataDrivenParser {
         return type;
     }
 
+    /**
+     *
+     * @param arraySize
+     * @param arrayList
+     * @param key
+     * @return
+     */
     public int getJsonArraySizeOfJsonObject(int arraySize, JSONArray arrayList, String key){
         if(arraySize==0){
                 arraySize=arrayList.size();
@@ -208,10 +265,9 @@ public class DataDrivenParser {
     }
 
     /**
-         * @auther : Ankit Mistry
-         * @lastModifiedBy :
-         * @return : List of data set file list
-         */
+     *
+     * @return
+     */
     public JSONArray getDataSetFileList() {
         GetConfiguration getConfiguration = new GetConfiguration();
         JSONArray dataSetFileList = new JSONArray();
@@ -233,6 +289,11 @@ public class DataDrivenParser {
         return dataSetFileList;
     }
 
+    /**
+     *
+     * @param testSteps
+     * @return
+     */
     public List<String> getColumnNameFromTest(List<String> testSteps){
 
         List<String> columnNameList = new LinkedList<>();
@@ -256,6 +317,12 @@ public class DataDrivenParser {
         return columnNameList;
     }
 
+    /**
+     *
+     * @param splitStep
+     * @param isDefine
+     * @return
+     */
     public String getColumnNameList(String[] splitStep, boolean isDefine){
 
         String columnName = null;
@@ -276,6 +343,12 @@ public class DataDrivenParser {
         return columnName;
     }
 
+    /**
+     *
+     * @param defineList
+     * @param calName
+     * @return
+     */
     public boolean verifyColumnNameIsExistOnDefineList(JSONArray defineList,String calName){
         for(int i=0;i<defineList.size();i++){
             if(calName.toLowerCase().contains(defineList.get(i).toString().toLowerCase())){
@@ -285,6 +358,11 @@ public class DataDrivenParser {
         return false;
     }
 
+    /**
+     *
+     * @param dataSetName
+     * @return
+     */
     public String getExcelUrl(String dataSetName) {
 
         JSONArray dataSetFileList=getDataSetFileList();
@@ -308,6 +386,13 @@ public class DataDrivenParser {
         return filePath;
     }
 
+    /**
+     *
+     * @param url
+     * @param dataSetValues
+     * @param sheetNo
+     * @return
+     */
     public JSONArray getHeaderValuefromExcel(String url,List<String> dataSetValues,int sheetNo)
     {
         String filePath=url;
@@ -329,6 +414,13 @@ public class DataDrivenParser {
         return excelData;
     }
 
+
+    /**
+     *
+     * @param rowIterator
+     * @param dataSetValues
+     * @return
+     */
     public List<String> getHeaderName(Iterator<Row> rowIterator, List<String> dataSetValues){
         List<String> cellNums=new LinkedList<>();
         while (rowIterator.hasNext()) {
@@ -349,6 +441,14 @@ public class DataDrivenParser {
         return cellNums;
     }
 
+    /**
+     *
+     * @param cellNums
+     * @param header
+     * @param cell
+     * @param formatter
+     * @return
+     */
     public List<String> setHeaderNameInList(List<String> cellNums, String header,Cell cell,DataFormatter formatter){
         if(header.equalsIgnoreCase(formatter.formatCellValue(cell))){
             cellNums.add(formatter.formatCellValue(cell) + ":" + cell.getColumnIndex());
@@ -356,6 +456,12 @@ public class DataDrivenParser {
        return cellNums;
     }
 
+    /**
+     *
+     * @param rowIterator
+     * @param cellNums
+     * @return
+     */
     public JSONArray getValueFromHeaderName(Iterator<Row> rowIterator, List<String> cellNums){
         JSONArray excelData=new JSONArray();
         while (rowIterator.hasNext()) {
@@ -377,7 +483,14 @@ public class DataDrivenParser {
     }
 
 
-
+    /**
+     *
+     * @param url
+     * @param headerName
+     * @param rowNum
+     * @param sheetNo
+     * @return
+     */
     public String getcellValuefromExcel(String url,String headerName,int rowNum,int sheetNo) {
 
         List<String> headerNames=new LinkedList<>();
@@ -406,6 +519,14 @@ public class DataDrivenParser {
         return ((JSONObject) cellData.get(rowNum-1)).get(headerName).toString();
     }
 
+    /**
+     *
+     * @param testsFileName
+     * @param dataSetFileName
+     * @param dataSetName
+     * @param keyName
+     * @return
+     */
     public JSONObject getGlobalDataValue(String testsFileName,String dataSetFileName, String dataSetName,String keyName) {
         JSONObject keyValue=new JSONObject();
         boolean isVariable=false;
@@ -439,13 +560,32 @@ public class DataDrivenParser {
 
     }
 
+    /**
+     *
+     * @param dataSetFileName
+     * @param isInline
+     */
     public void verifyDataSetFileNameNotNull(String dataSetFileName,boolean isInline){
         if(dataSetFileName!=null && !isInline){ commonMethods.throwTesboException("'" + dataSetFileName + ".json' is not found in DataSet directory",log); }
     }
 
+    /**
+     *
+     * @param keyValueSize
+     * @param keyName
+     * @param dataSetName
+     */
     public void verifyKeyValueNotZero(int keyValueSize,String keyName,String dataSetName){
         if(keyValueSize<=0){commonMethods.throwTesboException("Key name " + keyName + " is not found in " + dataSetName + " data set",log);}
     }
+
+    /**
+     *
+     * @param testsFileName
+     * @param dataSetName
+     * @param keyName
+     * @return
+     */
 
     public JSONObject getGlobalDataValueFromVariable(String testsFileName, String dataSetName,String keyName){
         JSONObject keyValue=new JSONObject();
@@ -463,6 +603,12 @@ public class DataDrivenParser {
         return keyValue;
     }
 
+    /**
+     *
+     * @param dataSetFileName
+     * @param dataSetFile
+     * @return
+     */
     public boolean isDataSetInline(String dataSetFileName, String dataSetFile){
         if(dataSetFileName!=null){
             String pattern = Pattern.quote(System.getProperty("file.separator"));
@@ -475,6 +621,15 @@ public class DataDrivenParser {
         return false;
     }
 
+    /**
+     * '
+     * @param dataSetFile
+     * @param dataSetName
+     * @param keyName
+     * @param dataSetFileName
+     * @param isInline
+     * @return
+     */
     public JSONObject getGlobalDataValueFromJson(String dataSetFile, String dataSetName,String keyName,String dataSetFileName, boolean isInline){
         JSONObject keyValue=new JSONObject();
         JSONObject main = Utility.loadJsonFile(dataSetFile);
@@ -498,6 +653,12 @@ public class DataDrivenParser {
        return keyValue;
     }
 
+    /**
+     *
+     * @param testsFileName
+     * @param testName
+     * @return
+     */
     public String sheetNumber(String testsFileName,String testName){
         TestsFileParser testsFileParser=new TestsFileParser();
         String dataSetName = testsFileParser.getTestDataSetByTestsFileAndTestCaseName(testsFileName, testName).split(":")[1];
@@ -513,6 +674,12 @@ public class DataDrivenParser {
         return sheetNo;
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param step
+     */
     public void setValueInDataSetVariable(WebDriver driver, JSONObject test, String step) {
         variableType="text";
         String testsFileName= test.get("testsFileName").toString();
@@ -545,6 +712,14 @@ public class DataDrivenParser {
         }
     }
 
+    /**
+     *
+     * @param step
+     * @param testsFileName
+     * @param headerName
+     * @param test
+     * @return
+     */
     public JSONArray getLocalDataSetValueFromStep(String step,String testsFileName,String headerName, JSONObject test){
         JSONArray elementText=new JSONArray();
         StepParser stepParser=new StepParser();
@@ -558,12 +733,26 @@ public class DataDrivenParser {
         return elementText;
     }
 
+    /**
+     *
+     * @param key
+     * @param dataSetName
+     * @param step
+     */
     public void verifyVariableValueHasNotArrayListAndExcelType(boolean key,String dataSetName, String step){
         if(key && (dataSetName.equals("excel") || dataSetName.equals("list"))) {
             commonMethods.throwTesboException("Array list and Excel DataSet can't be use in set variable '" + step + "'",log);
         }
     }
 
+    /**
+     *
+     * @param driver
+     * @param step
+     * @param test
+     * @param testsFileName
+     * @return
+     */
     public JSONArray getElementValueFromStep(WebDriver driver,String step,JSONObject test,String testsFileName) {
         Commands cmd = new Commands();
         StepParser stepParser=new StepParser();
@@ -606,6 +795,14 @@ public class DataDrivenParser {
         return elementText;
     }
 
+    /**
+     *
+     * @param headerName
+     * @param testsFileName
+     * @param elementText
+     * @param step
+     * @return
+     */
     public boolean setInlineVariableValue(String headerName,String testsFileName,JSONArray elementText,String step){
         boolean isDataSet=false;
         try {
@@ -628,6 +825,14 @@ public class DataDrivenParser {
         return isDataSet;
     }
 
+    /**
+     *
+     * @param dataType
+     * @param testsFileName
+     * @param dataSetName
+     * @param headerName
+     * @param elementText
+     */
     public void setVariableValueWhenItHasNotDataSet(String dataType,String testsFileName,String dataSetName,String headerName,JSONArray elementText){
         try {
             if (dataType.equalsIgnoreCase("global")) {
@@ -647,6 +852,14 @@ public class DataDrivenParser {
         }
     }
 
+    /**
+     *
+     * @param testsFileName
+     * @param dataSetName
+     * @param keyName
+     * @param elementText
+     * @param variableType
+     */
     private void setVariableValue(String testsFileName, String dataSetName, String keyName, JSONArray elementText, String variableType){
         JSONObject variables;
         JSONObject dataSetNames=new JSONObject();
@@ -668,6 +881,13 @@ public class DataDrivenParser {
         }
     }
 
+    /**
+     *
+     * @param keyName
+     * @param variableType
+     * @param elementText
+     * @return
+     */
     public JSONObject setVariableValueInJson(String keyName,String variableType,JSONArray elementText){
         JSONObject variables=new JSONObject();
         if(variableType.equals("list")){ variables.put(keyName, elementText); }
@@ -675,6 +895,14 @@ public class DataDrivenParser {
         return variables;
     }
 
+    /**
+     *
+     * @param testsFileName
+     * @param dataSetName
+     * @param keyName
+     * @param variableType
+     * @param elementText
+     */
     public void setVariableValueWhenDataSetVariableAlreadyExist(String testsFileName, String dataSetName,String keyName,String variableType,JSONArray elementText){
         JSONObject testDataSet= (JSONObject) TestExecutionBuilder.dataSetVariable.get(testsFileName);
         JSONObject variables;
@@ -693,11 +921,22 @@ public class DataDrivenParser {
         }
     }
 
+    /**
+     *
+     * @param keyName
+     * @param elementText
+     */
     public void setLocalVariableValue(String keyName,JSONArray elementText){
 
         TestExecutor.localVariable.put(keyName,elementText.get(0));
     }
 
+    /**
+     *
+     * @param testsFileName
+     * @param keyName
+     * @return
+     */
     public boolean getLocalVariableFromGlobalVariable(String testsFileName,String keyName){
         boolean isVariableExist=false;
         JSONObject dataSetList = (JSONObject) TestExecutionBuilder.dataSetVariable.get(testsFileName);
@@ -720,6 +959,12 @@ public class DataDrivenParser {
         return isVariableExist;
     }
 
+    /**
+     *
+     * @param testsFileName
+     * @param keyName
+     * @return
+     */
     public boolean isDataSerValueIsExistOnTestsFile(String testsFileName,String keyName){
         TestsFileParser testsFileParser=new TestsFileParser();
         boolean isVariableExist=false;
@@ -743,6 +988,11 @@ public class DataDrivenParser {
         return isVariableExist;
     }
 
+    /**
+     *
+     * @param dataSetName
+     * @return
+     */
     public int getDataSetListSize(String dataSetName){
         int dataSetListSize=0;
         JSONArray dataSetFileList=getDataSetFileList();
@@ -762,6 +1012,11 @@ public class DataDrivenParser {
         return dataSetListSize;
     }
 
+    /**
+     *
+     * @param dataSetList
+     * @return
+     */
     public int getDataSetListSizeWhenItHasJsonObject(JSONObject dataSetList){
         int dataSetListSize=0;
         HashMap<String,Object> result =new HashMap<>();
@@ -776,6 +1031,13 @@ public class DataDrivenParser {
        return dataSetListSize;
     }
 
+    /**
+     *
+     * @param dataSetName
+     * @param keyName
+     * @param row
+     * @return
+     */
     public String getDataSetListValue(String dataSetName, String keyName, int row){
         String keyValue=null;
         JSONArray dataSetFileList=getDataSetFileList();

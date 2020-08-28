@@ -18,9 +18,8 @@ public class ReportParser {
 
 
     /**
+     *
      * @return
-     * @throws Exception
-     * @Description : Get test file names.
      */
     public JSONArray getSuiteName() {
         GetConfiguration configuration = new GetConfiguration();
@@ -39,9 +38,9 @@ public class ReportParser {
     }
 
     /**
-     * @param obj
-     * @throws IOException
-     * @Decription : Create JSON file.
+     *
+      * @param obj
+     * @param fileName
      */
     public void writeJsonFile(JSONObject obj, String fileName) {
 
@@ -57,6 +56,9 @@ public class ReportParser {
 
     }
 
+    /**
+     *
+     */
     public void generateReportDir() {
         File htmlReportMainDir = new File("./htmlReport");
 
@@ -73,11 +75,10 @@ public class ReportParser {
     }
 
     /**
-     * @param test
+     *
+      * @param test
      * @param step
      * @return
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
      */
     public String dataSetStepReplaceValue(JSONObject test, String step) {
 
@@ -117,6 +118,15 @@ public class ReportParser {
         return step.replace("{"+headerName+"}", "{"+textToEnter+"}").replaceAll(regex,"'");
     }
 
+    /**
+     *
+     * @param isDataSet
+     * @param test
+     * @param headerName
+     * @param step
+     * @param testsFileName
+     * @return
+     */
     public String getTextValueWhenStepHesNotDataSetValue(boolean isDataSet,JSONObject test,String headerName,String step,String testsFileName){
         String textToEnter = "";
 
@@ -142,6 +152,13 @@ public class ReportParser {
         return textToEnter;
     }
 
+
+    /**
+     *
+     * @param step
+     * @param headerName
+     * @return
+     */
     public String getStepWhenItHasLocalVariable(String step,String headerName){
         if(step.toLowerCase().contains("define") || step.toLowerCase().contains("set")){
             step=step.replace("@","");
@@ -153,6 +170,13 @@ public class ReportParser {
         }
     }
 
+    /**
+     *
+     * @param headerName
+     * @param step
+     * @param testsFileName
+     * @return
+     */
     public String getTextValueOfStepFromDataSet(String headerName,String step,String testsFileName){
         String textToEnter = "";
         try {
@@ -179,6 +203,16 @@ public class ReportParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param headerName
+     * @param step
+     * @param testsFileName
+     * @param dataType
+     * @param dataSetName
+     * @param test
+     * @return
+     */
     public String getTextValueOfStepWhenDataSetIsExcel(String headerName,String step,String testsFileName,String dataType,String dataSetName,JSONObject test){
         String textToEnter = "";
 
@@ -198,6 +232,15 @@ public class ReportParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param headerName
+     * @param step
+     * @param testsFileName
+     * @param dataType
+     * @param dataSetName
+     * @return
+     */
     public String getTextValueOfStepWhenDataSetIsGlobal(String headerName,String step,String testsFileName,String dataType,String dataSetName){
         String textToEnter = "";
 
@@ -213,6 +256,11 @@ public class ReportParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param step
+     * @return
+     */
     public String getTextValueOfStepHasPlainText(String step){
         String textToEnter = "";
 
@@ -230,7 +278,7 @@ public class ReportParser {
 
 
     /**
-     * @auther : Ankit Mistry
+     *
      * @param stepReportObject
      * @param step
      * @return

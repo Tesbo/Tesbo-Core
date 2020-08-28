@@ -10,7 +10,6 @@ public class ExtendTesboDriver extends TestExecutor {
     int driverWait = 15;
 
     /**
-     * Initialize UserAbstractPage.
      *
      * @param driver
      */

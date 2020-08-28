@@ -28,7 +28,9 @@ public class ReportAPIConfig {
     private static final Logger log = LogManager.getLogger(ReportAPIConfig.class);
     StringWriter sw = new StringWriter();
 
-
+    /**
+     *
+     */
     public void createBuild() {
         GetConfiguration config = new GetConfiguration();
         String buildName=null;
@@ -67,6 +69,9 @@ public class ReportAPIConfig {
 
     }
 
+    /**
+     *
+     */
     public void updateBuild() {
 
         OkHttpClient client = new OkHttpClient().newBuilder()
@@ -90,8 +95,10 @@ public class ReportAPIConfig {
     }
 
 
-
-
+    /**
+     *
+     * @param testObject
+     */
     public void createTests(JSONObject testObject) {
         GetConfiguration config = new GetConfiguration();
         JSONObject userDetails = config.getCloudIntegration();
@@ -129,6 +136,11 @@ public class ReportAPIConfig {
         }
     }
 
+    /**
+     *
+     * @param screenshotUrl
+     * @return
+     */
     public String cloudinaryScreenshotUpload(String screenshotUrl){
         File file = new File(screenshotUrl);
         String path = file.getAbsolutePath();

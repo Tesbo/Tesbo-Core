@@ -79,6 +79,11 @@ public class TestsFileParser {
         return testsFileList;
     }
 
+    /**
+     *
+     * @param testsFileList
+     * @return
+     */
     public boolean verifyThatTestsDirectoryHasOnlyTestFile(JSONArray testsFileList){
         StringBuilder file=new StringBuilder();
         boolean flag=false;
@@ -96,8 +101,9 @@ public class TestsFileParser {
     }
 
     /**
-     * @param fileName : File name with extension e.g. login.tests
-     * @return whole file content as String buffer
+     *
+     * @param fileName
+     * @return
      */
     public StringBuilder readTestsFile(String fileName) {
 
@@ -136,9 +142,10 @@ public class TestsFileParser {
     }
 
     /**
+     *
      * @param tagName
      * @param testsFile
-     * @return List of Test based on tests file Data
+     * @return
      */
     public JSONArray getTestNameByTag(String tagName, StringBuilder testsFile) {
 
@@ -163,6 +170,13 @@ public class TestsFileParser {
         return testName;
     }
 
+    /**
+     *
+     * @param tagArray
+     * @param tagName
+     * @param testLine
+     * @return
+     */
     public String getTestNameWhenTagNameIsExist(String[] tagArray,String tagName,String testLine){
 
         for(String  tag : tagArray) {
@@ -181,9 +195,9 @@ public class TestsFileParser {
     }
 
     /**
+     *
      * @param tag
      * @return
-     * @Discription : Get data as per the tag name
      */
     public JSONObject getTestNameByTag(String tag)  {
         GetConfiguration configuration = new GetConfiguration();
@@ -209,9 +223,9 @@ public class TestsFileParser {
     }
 
     /**
-     * Not completed need to work on this...
-     * @lastModifiedBy: Ankit Mistry
-     * @param testsFileName
+     *
+      * @param testsFileName
+     * @param testName
      * @return
      */
     public JSONArray getTestStepByTestsFileandTestCaseName(String testsFileName, String testName) {
@@ -252,9 +266,6 @@ public class TestsFileParser {
 
     /**
      *
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     *
      * @param testsFileName
      * @param testName
      * @return
@@ -287,6 +298,11 @@ public class TestsFileParser {
         return testDataSet;
     }
 
+    /**
+     *
+     * @param groupName
+     * @return
+     */
     public JSONArray getGroupTestStepByTestFileandTestCaseName(String groupName) {
         String testsFileName=getTestsFileNameWhoHasCollection(groupName);
         StringBuilder testsFileDetails = readTestsFile(testsFileName);
@@ -315,6 +331,12 @@ public class TestsFileParser {
         return testSteps;
     }
 
+    /**
+     *
+     * @param allLines
+     * @param groupName
+     * @return
+     */
     public JSONObject getTestStartAndEndPointForGroupTest(String[] allLines, String groupName){
         JSONObject startAndEndPoint=new JSONObject();
         int groupCount=0;
@@ -347,6 +369,13 @@ public class TestsFileParser {
         return startAndEndPoint;
     }
 
+    /**
+     *
+     * @param groupStarted
+     * @param groupCount
+     * @param step
+     * @return
+     */
     public int groupCount(boolean groupStarted,int groupCount,String step){
         if(groupStarted && step.startsWith(testText)) {
             groupCount++;
@@ -355,9 +384,9 @@ public class TestsFileParser {
     }
 
     /**
-     * @param testFileDetails
+     *
+      * @param testFileDetails
      * @return
-     * @Description : get test name by suit.
      */
     public JSONArray getTestNameByTestsFile(StringBuilder testFileDetails) {
 
@@ -386,9 +415,8 @@ public class TestsFileParser {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param testsFileName
+     *
+      * @param testsFileName
      * @param testName
      * @return
      */
@@ -421,10 +449,9 @@ public class TestsFileParser {
     }
 
     /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param test
      *
+      * @param test
+     * @return
      */
     public JSONArray getSeverityAndPriority(JSONObject test) {
         StringBuilder testsFileDetails = readTestsFile(test.get("testsFileName").toString());
@@ -450,9 +477,8 @@ public class TestsFileParser {
 
 
     /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param testFileName
+     *
+      * @param testFileName
      * @return
      */
     public boolean isBeforeTestInTestsFile(String testFileName) {
@@ -477,6 +503,11 @@ public class TestsFileParser {
         return isBeforeTest;
     }
 
+    /**
+     *
+     * @param stepLine
+     * @param errorMsg
+     */
     public void endStepNotFound(String stepLine,String errorMsg){
         if (stepLine.startsWith(testText) && stepLine.startsWith(collectionNameText)) {
             commonMethods.throwTesboException(errorMsg,log);
@@ -484,9 +515,8 @@ public class TestsFileParser {
     }
 
     /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param testFileName
+     *
+      * @param testFileName
      * @return
      */
     public boolean isAfterTestInTestsFile(String testFileName) {
@@ -512,9 +542,9 @@ public class TestsFileParser {
     }
 
     /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param testsFileName
+     *
+      * @param testsFileName
+     * @param annotationName
      * @return
      */
     public JSONArray getBeforeAndAfterTestStepByTestsFile(String testsFileName, String annotationName) {
@@ -549,6 +579,13 @@ public class TestsFileParser {
         return annotationSteps;
     }
 
+    /**
+     *
+     * @param allLines
+     * @param annotationName
+     * @param errorMsg
+     * @return
+     */
     public JSONObject getTestStartAndEndPointForBeforeAndAfterTest(String[] allLines, String annotationName,String errorMsg){
         JSONObject startAndEndPoint=new JSONObject();
 
@@ -584,11 +621,7 @@ public class TestsFileParser {
 
     /**
      *
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     *
-     * @param testsFileName
-     * @return
+      * @param testsFileName
      */
     public void getAnnotationDataSetByTestsFile(String testsFileName) {
         StringBuilder testsFileDetails = readTestsFile(testsFileName);
@@ -610,6 +643,12 @@ public class TestsFileParser {
 
     }
 
+    /**
+     *
+     * @param startPoint
+     * @param endpoint
+     * @param allLines
+     */
     public void verifyThatDataSetIsNotUseINAnnotation(int startPoint,int endpoint,String[] allLines){
         for (int j = startPoint; j < endpoint; j++) {
             if (allLines[j].replaceAll(spaceRegex, " ").trim().contains("DataSet:")) {
@@ -622,9 +661,9 @@ public class TestsFileParser {
     }
 
     /**
-     * Not completed need to work on this...
-     * @lastModifiedBy: Ankit Mistry
-     * @param testFileName
+     *
+      * @param testFileName
+     * @param testName
      * @return
      */
     public String isRetry(String testFileName, String testName) {
@@ -649,6 +688,13 @@ public class TestsFileParser {
         return retry.trim();
     }
 
+    /**
+     *
+     * @param allLines
+     * @param testName
+     * @param errorMsg
+     * @return
+     */
     public JSONObject getTestStartAndEndPoint(String[] allLines, String testName,String errorMsg){
         JSONObject startAndEndPoint=new JSONObject();
 
@@ -681,6 +727,12 @@ public class TestsFileParser {
         return startAndEndPoint;
     }
 
+    /**
+     *
+     * @param testCount
+     * @param testStarted
+     * @return
+     */
     public int testCount(int testCount,boolean testStarted){
         if (testStarted) {
             testCount++;
@@ -688,6 +740,12 @@ public class TestsFileParser {
         return testCount;
     }
 
+    /**
+     *
+     * @param step
+     * @param i
+     * @return
+     */
     public JSONObject getTestEndStep(String step,int i){
         JSONObject endPoint=new JSONObject();
         if (step.trim().equals("End") && !(step.contains(endText))) {
@@ -702,10 +760,8 @@ public class TestsFileParser {
     }
 
     /**
-     * Find Collection name from all tests file
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param collectionName
+     *
+      * @param collectionName
      * @return
      */
     public String getTestsFileNameWhoHasCollection(String collectionName){
@@ -736,6 +792,12 @@ public class TestsFileParser {
         verifyCollectionIsExistOnAnyTestFile(testsFileName,collectionName);
         return testsFileName;
     }
+
+    /**
+     *
+     * @param testsFileName
+     * @param collectionName
+     */
     public void verifyCollectionIsExistOnAnyTestFile(String testsFileName,String collectionName){
         if(testsFileName.equals("")){
             commonMethods.throwTesboException("'"+collectionName+"' collection name not found in any tests file",log);

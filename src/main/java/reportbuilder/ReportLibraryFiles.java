@@ -32,11 +32,20 @@ public class ReportLibraryFiles {
 
     String win10 = "PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaWQ9IkxhZ2VyXzEiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDEyOCAxMjg7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB4bWw6c3BhY2U9InByZXNlcnZlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48c3R5bGUgdHlwZT0idGV4dC9jc3MiPgoJLnN0MHtmaWxsOiMwMEFFRjA7fQoJLnN0MXtmaWxsOiNGRkZGRkY7fQo8L3N0eWxlPjxnPjxnPjxnPjxjaXJjbGUgY2xhc3M9InN0MCIgY3g9IjY0IiBjeT0iNjQiIHI9IjUwIi8+PC9nPjwvZz48cGF0aCBjbGFzcz0ic3QxIiBkPSJNODYsNjIuN2wtMjcsMC4ydi0yMEw4NiwzOVY2Mi43eiBNMzYuMiw2NS4xdjE3bDIwLjQsMi44VjY1LjJMMzYuMiw2NS4xeiBNNTguOSw2NS40djE5LjhMODYsODlWNjUuNEg1OC45eiAgICBNMzYuMiw0Ni4xdjE3TDU2LjUsNjNWNDMuNEwzNi4yLDQ2LjF6Ii8+PC9nPjwvc3ZnPg==";
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         ReportLibraryFiles file = new ReportLibraryFiles();
         file.createLibrary();
     }
 
+    /**
+     *
+     * @param base64Image
+     * @param pathFile
+     */
     public void decoder(String base64Image, String pathFile) {
         try (FileOutputStream imageOutFile = new FileOutputStream(pathFile)) {
             // Converting a Base64 String into Image byte array
@@ -50,7 +59,9 @@ public class ReportLibraryFiles {
     }
 
 
-
+    /**
+     *
+     */
     public void createLibrary() {
         generateReportLibraryStructure();
        try {
@@ -85,7 +96,11 @@ public class ReportLibraryFiles {
         }
     }
 
-
+    /**
+     *
+     * @param respath
+     * @return
+     */
     public StringBuilder getFileContent(String respath) {
         InputStream in = ReportBuilder.class.getResourceAsStream(respath);
         if (in == null) {
@@ -118,6 +133,9 @@ public class ReportLibraryFiles {
         return sb;
     }
 
+    /**
+     *
+     */
     public void generateReportLibraryStructure() {
         generateDir("./htmlReport/lib");
         generateDir("./htmlReport/lib/bootstrap");
@@ -132,6 +150,10 @@ public class ReportLibraryFiles {
 
     }
 
+    /**
+     *
+     * @param path
+     */
     public void generateDir(String path) {
         File lib = new File(path);
         if (!lib.exists()) {
@@ -139,6 +161,10 @@ public class ReportLibraryFiles {
         }
     }
 
+    /**
+     *
+     * @param path
+     */
 
     public void generatefile(String path) {
 
@@ -153,6 +179,10 @@ public class ReportLibraryFiles {
         }
     }
 
+    /**
+     *
+     * @param path
+     */
     public void deleteFile(String path){
         try {
             Files.delete(Paths.get(path));

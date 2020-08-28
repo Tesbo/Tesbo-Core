@@ -29,6 +29,13 @@ public class VerifyParser {
     StepParser stepParser = new StepParser();
     TesboLogger tesboLogger = new TesboLogger();
 
+
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param verify
+     */
     public void parseVerify(WebDriver driver, JSONObject test, String verify) {
         boolean flag=false;
         if(!(verify.contains("{") && verify.contains("}"))) {
@@ -94,6 +101,12 @@ public class VerifyParser {
         tesboLogger.testPassed("Passed");
     }
 
+    /**
+     *
+     * @param verify
+     * @param test
+     * @return
+     */
     public String getVerifyTextFromStep(String verify,JSONObject test){
         if(verify.contains("'") || (verify.contains("{") && verify.contains("}"))) {
             return stepParser.parseTextToEnter(test, verify);
@@ -101,6 +114,13 @@ public class VerifyParser {
         return null;
     }
 
+    /**
+     *
+     * @param element
+     * @param textOfStep
+     * @param verify
+     * @return
+     */
     public boolean verifyElementTextValue(WebElement element,String textOfStep,String verify){
         boolean flag=false;
 
@@ -131,6 +151,13 @@ public class VerifyParser {
         return flag;
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param verify
+     * @return
+     */
     public boolean verifyListOfElementSize(WebDriver driver, JSONObject test,String verify){
 
         /*
@@ -144,6 +171,12 @@ public class VerifyParser {
         return true;
     }
 
+    /**
+     *
+     * @param element
+     * @param textOfStep
+     * @return
+     */
     public boolean verifyTextNotEqual(WebElement element,String textOfStep){
         /*
          * Verify: @element text is not equal 'Text'
@@ -154,6 +187,13 @@ public class VerifyParser {
         return true;
     }
 
+    /**
+     *
+     * @param element
+     * @param textOfStep
+     * @param verify
+     * @return
+     */
     public boolean verifyTextIsEqual(WebElement element,String textOfStep,String verify){
         boolean flag=false;
 
@@ -179,6 +219,13 @@ public class VerifyParser {
         return flag;
     }
 
+    /**
+     *
+     * @param element
+     * @param textOfStep
+     * @param verify
+     * @return
+     */
     public boolean verifyTextContains(WebElement element,String textOfStep,String verify){
         boolean flag=false;
 
@@ -204,6 +251,12 @@ public class VerifyParser {
         return flag;
     }
 
+    /**
+     *
+     * @param element
+     * @param textOfStep
+     * @return
+     */
     public boolean verifyTextStartWith(WebElement element,String textOfStep){
         /*
          * Verify: @element text is start with 'Text'.
@@ -216,6 +269,12 @@ public class VerifyParser {
         return true;
     }
 
+    /**
+     *
+     * @param element
+     * @param textOfStep
+     * @return
+     */
     public boolean verifyTextEndWith(WebElement element,String textOfStep){
         /*
          * Verify: @element text is end with 'Text'.
@@ -227,6 +286,11 @@ public class VerifyParser {
         return true;
     }
 
+    /**
+     *
+     * @param element
+     * @return
+     */
     public boolean verifyElementTextIsNumber(WebElement element){
         /*
          * Verify: @element text should be number.
@@ -237,6 +301,11 @@ public class VerifyParser {
         return true;
     }
 
+    /**
+     *
+     * @param element
+     * @return
+     */
     public boolean verifyElementTextIsAlphanumeric(WebElement element){
         /*
          * Verify: @element text should be Alphanumeric.
@@ -247,6 +316,11 @@ public class VerifyParser {
         return true;
     }
 
+    /**
+     *
+     * @param element
+     * @return
+     */
     public boolean verifyElementIsDisplayed(WebElement element){
 
         /*
@@ -261,6 +335,11 @@ public class VerifyParser {
         return true;
     }
 
+    /**
+     *
+     * @param element
+     * @return
+     */
     public boolean verifyElementIsVisible(WebElement element){
         /*
          * Verify: @element is Visible
@@ -273,6 +352,13 @@ public class VerifyParser {
         return true;
     }
 
+    /**
+     *
+     * @param driver
+     * @param textOfStep
+     * @param verify
+     * @return
+     */
     public boolean verifyPageTitle(WebDriver driver,String textOfStep,String verify){
         boolean flag=false;
         //equal
@@ -300,6 +386,13 @@ public class VerifyParser {
         return flag;
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param verify
+     * @return
+     */
     public boolean verifyCurrentURL(WebDriver driver,JSONObject test,String verify){
         boolean flag=false;
         //equal
@@ -326,6 +419,13 @@ public class VerifyParser {
         return flag;
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param verify
+     * @return
+     */
     public boolean verifyBrowserCookies(WebDriver driver,JSONObject test,String verify){
         boolean flag=false;
         if(verify.toLowerCase().contains("check") && verify.toLowerCase().contains("is available")) {
@@ -341,6 +441,13 @@ public class VerifyParser {
         return flag;
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param verify
+     * @return
+     */
     public boolean verifyElementAttribute(WebDriver driver,JSONObject test,String verify){
         boolean flag=false;
 
@@ -379,6 +486,15 @@ public class VerifyParser {
         return flag;
     }
 
+
+    /**
+     *
+     * @param attributeValue
+     * @param verifyText
+     * @param verify
+     * @return
+     */
+
     public boolean verifyElementAttributeValueEqualToGivenText(String attributeValue,String verifyText,String verify){
         boolean flag=false;
         if(verify.toLowerCase().contains(" is equal to ignore case ")){
@@ -402,7 +518,13 @@ public class VerifyParser {
         return flag;
     }
 
-    public boolean verifyElementAttributeValueNotEqualToGivenText(String attributeValue,String verifyText){
+    /**
+     *
+     * @param attributeValue
+     * @param verifyText
+     * @return
+     */
+     public boolean verifyElementAttributeValueNotEqualToGivenText(String attributeValue,String verifyText){
         /*
          * Verify: Get attribute 'attribute name' of @element is not equal to 'attribute value'
          * */
@@ -412,7 +534,15 @@ public class VerifyParser {
         return true;
     }
 
-    public boolean verifyElementAttributeValueContainsIsGivenText(String attributeValue,String verifyText){
+    /**
+     *
+     * @param attributeValue
+     * @param verifyText
+     * @return
+     */
+
+
+     public boolean verifyElementAttributeValueContainsIsGivenText(String attributeValue,String verifyText){
         /*
          * Verify: Get attribute 'attribute name' of @element contains is 'attribute value'
          * */
@@ -422,6 +552,13 @@ public class VerifyParser {
         return true;
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param verify
+     * @return
+     */
     public boolean verifyCssValue(WebDriver driver,JSONObject test,String verify){
         boolean flag=false;
         WebElement element=cmd.findElement(driver, locator.getLocatorValue(test.get(testsFileNameText).toString(), stepParser.parseElementName(verify)));
@@ -457,6 +594,13 @@ public class VerifyParser {
         return flag;
     }
 
+    /**
+     *
+     * @param cssValue
+     * @param verifyText
+     * @param verify
+     * @return
+     */
     public boolean verifyElementCssValueEqualToGivenText(String cssValue,String verifyText,String verify){
         boolean flag=false;
         if(verify.toLowerCase().contains(" is equal to ignore case ")){
@@ -480,6 +624,12 @@ public class VerifyParser {
         return flag;
     }
 
+    /**
+     *
+     * @param cssValue
+     * @param verifyText
+     * @return
+     */
     public boolean verifyElementCssValueNotEqualToGivenText(String cssValue,String verifyText){
         /*
          * Verify: Get css value 'css name' of @element is not equal to 'css value'
@@ -490,6 +640,12 @@ public class VerifyParser {
         return true;
     }
 
+    /**
+     *
+     * @param cssValue
+     * @param verifyText
+     * @return
+     */
     public boolean verifyElementCssValueContainsIsGivenText(String cssValue,String verifyText){
         /*
          * Verify: Get css value 'css name' of @element contains is 'css value'
@@ -500,6 +656,11 @@ public class VerifyParser {
         return true;
     }
 
+    /**
+     *
+     * @param strNum
+     * @return
+     */
     public static boolean isNumeric(String strNum) {
         try {
             Double.parseDouble(strNum);
@@ -509,6 +670,11 @@ public class VerifyParser {
         return true;
     }
 
+    /**
+     *
+     * @param element
+     * @return
+     */
     public static Boolean isVisibleInViewport(WebElement element) {
         WebDriver driver = ((RemoteWebElement)element).getWrappedDriver();
 
@@ -526,6 +692,12 @@ public class VerifyParser {
                 , element);
     }
 
+    /**
+     *
+     * @param step
+     * @param attributeOrText
+     * @return
+     */
     public String getAttributeAndCSSNameAndVerifyText(String step, String attributeOrText){
         String attributeNameOrText=null;
         String[] stepsWord=step.split("'");

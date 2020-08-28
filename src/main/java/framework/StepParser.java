@@ -41,6 +41,15 @@ public class StepParser {
     String browserText="browser";
     String regexText=":|\\s+";
 
+
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param step
+     * @return
+     * @throws IOException
+     */
     public String parseStep(WebDriver driver, JSONObject test, String step) throws IOException {
 
         String pauseText="pause";
@@ -238,6 +247,10 @@ public class StepParser {
 
     }
 
+    /**
+     *
+     * @param step
+     */
     public void printStepDetails(String step){
         if (!step.toLowerCase().contains("{") && !step.toLowerCase().contains("}") && !step.toLowerCase().contains("print") && !step.contains("random")) {
             if(step.contains("@")){
@@ -260,6 +273,11 @@ public class StepParser {
         }
     }
 
+    /**
+     *
+     * @param stepsWord
+     * @return
+     */
     public String removeContainsFromStep(String[] stepsWord){
         String removeContent="";
         for(String word:stepsWord){
@@ -270,6 +288,14 @@ public class StepParser {
         return removeContent;
     }
 
+
+    /**
+     *
+     * @param step
+     * @param driver
+     * @param test
+     * @param testsFileName
+     */
     public void clickFunctionality(String step, WebDriver driver, JSONObject test,String testsFileName) {
         if (step.toLowerCase().contains("from list")) {
             clickOnElementFromList(driver,test,step);
@@ -282,6 +308,15 @@ public class StepParser {
         }
     }
 
+
+    /**
+     *
+     * @param step
+     * @param driver
+     * @param testName
+     * @param testsFileName
+     * @throws IOException
+     */
     public void captureScreenshotFunctionality(String step, WebDriver driver, String testName,String testsFileName) throws IOException {
         /**
          * Step: Capture Screenshot of @elementName
@@ -303,6 +338,12 @@ public class StepParser {
         }
     }
 
+    /**
+     *
+     * @param step
+     * @param driver
+     * @param test
+     */
     public void variableFunctionality(String step,WebDriver driver,JSONObject test) {
         if(step.toLowerCase().contains("define ") || step.toLowerCase().contains(" set ") || step.toLowerCase().contains(" put ") || step.toLowerCase().contains(" assign ")) {
             /**
@@ -327,6 +368,14 @@ public class StepParser {
         }
     }
 
+    /**
+     *
+     * @param step
+     * @param driver
+     * @param test
+     * @param testsFileName
+     * @return
+     */
     public String sendKyeFunctionality(String step,WebDriver driver,JSONObject test,String testsFileName) {
         if (step.toLowerCase().contains("random")) {step= randomStepParse(driver,test,step); }
         else {
@@ -338,6 +387,11 @@ public class StepParser {
         return step;
     }
 
+    /**
+     *
+     * @param step
+     * @param driver
+     */
     public void windowFunctionality(String step,WebDriver driver){
         if (step.toLowerCase().contains("resize")) {
             /**
@@ -359,6 +413,13 @@ public class StepParser {
         }
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param step
+     * @return
+     */
     public String randomStepParse(WebDriver driver, JSONObject test, String step) {
 
 
@@ -384,6 +445,11 @@ public class StepParser {
         return getRandomStepForReturn(step,stepTexts,textToEnter);
     }
 
+    /**
+     *
+     * @param step
+     * @return
+     */
     public String randomUserDetails(String step){
         String textToEnter="";
         if (step.toLowerCase().contains("firstname")) {textToEnter=randLibrary.firstName(); }
@@ -414,6 +480,11 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param step
+     * @return
+     */
     public String randomUserAddressDetails(String step){
         String textToEnter="";
         if (step.toLowerCase().contains("country")){textToEnter=randLibrary.country(); }
@@ -434,6 +505,11 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param step
+     * @return
+     */
     public String randomUserBankDetails(String step){
         String textToEnter="";
         if (step.toLowerCase().contains("debitcard")){textToEnter=randLibrary.debitCardNo(); }
@@ -449,6 +525,11 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param step
+     * @return
+     */
     public String randomCommonDetails(String step){
         String textToEnter="";
         if (step.toLowerCase().contains("emoji")){textToEnter=randLibrary.emoji(); }
@@ -472,6 +553,13 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param step
+     * @param stepTexts
+     * @param textToEnter
+     * @return
+     */
     public String getRandomStepForReturn(String step,String stepTexts,String textToEnter){
         if(!stepTexts.equals("")) {
             return step.replace(stepTexts, textToEnter);
@@ -481,6 +569,14 @@ public class StepParser {
         }
     }
 
+    /**
+     *
+     * @param textToEnter
+     * @param step
+     * @param driver
+     * @param testsFileName
+     * @return
+     */
     public String enterTextForRandomFunctionality(String textToEnter,String step, WebDriver driver,String testsFileName){
         String stepTexts="";
         if(!textToEnter.equals("")){
@@ -501,6 +597,12 @@ public class StepParser {
         return stepTexts;
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param step
+     */
 
     public void switchFunction(WebDriver driver, JSONObject test, String step) {
 
@@ -547,6 +649,12 @@ public class StepParser {
         }
     }
 
+    /**
+     *
+     * @param driver
+     * @param step
+     * @param test
+     */
     public void switchToAlertFunctionality(WebDriver driver,String step,JSONObject test){
             /**
              * accept identify.
@@ -583,6 +691,13 @@ public class StepParser {
             }
     }
 
+    /**
+     *
+     * @param driver
+     * @param step
+     * @param test
+     * @param testsFileName
+     */
     public void switchToFrameFunctionality(WebDriver driver,String step,JSONObject test,String testsFileName){
 
         if (step.toLowerCase().contains("using")) {
@@ -616,6 +731,13 @@ public class StepParser {
         }
     }
 
+
+    /**
+     *
+     * @param driver
+     * @param step
+     * @param test
+     */
     public void switchToWindowFunctionality(WebDriver driver,String step,JSONObject test){
         /**
          * Step : Switch to new window.
@@ -633,6 +755,11 @@ public class StepParser {
 
     }
 
+    /**
+     *
+     * @param driver
+     * @param step
+     */
     public void navigateFunction(WebDriver driver, String step) {
         /**
          * back identify.
@@ -659,6 +786,13 @@ public class StepParser {
         }
     }
 
+
+    /**
+     *
+     * @param driver
+     * @param testsFileName
+     * @param step
+     */
     public void scrollFunction(WebDriver driver, String testsFileName, String step) {
 
 
@@ -715,6 +849,12 @@ public class StepParser {
         }
     }
 
+    /**
+     *
+     * @param driver
+     * @param testsFileName
+     * @param step
+     */
     public void pauseFunction(WebDriver driver, String testsFileName, String step) {
 
 
@@ -758,6 +898,12 @@ public class StepParser {
         }
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param step
+     */
     public void selectFunction(WebDriver driver, JSONObject test, String step) {
 
         String testsFileName=test.get(testsFileNameText).toString();
@@ -816,6 +962,12 @@ public class StepParser {
         }
     }
 
+
+    /**
+     *
+     * @param step
+     * @return
+     */
     public String parseElementName(String step) {
 
         String[] stepWordList = step.split(regexText);
@@ -831,11 +983,10 @@ public class StepParser {
     }
 
     /**
-     * @param test
+     *
+      * @param test
      * @param step
      * @return
-     * @auther :
-     * @lastModifiedBy: Ankit Mistry
      */
     public String parseTextToEnter(JSONObject test, String step) {
         String textToEnter = "";
@@ -882,6 +1033,11 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param step
+     * @return
+     */
     public String getParseTextToEnterWhenSimpleStep(String step){
         String textToEnter = "";
         int startPoint = step.indexOf('\'') + 1;
@@ -894,6 +1050,13 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param headerName
+     * @param step
+     * @param replaceAllString
+     * @return
+     */
     public String getParseTextToEnterWhenStepHasLocalVariable(String headerName,String step,String replaceAllString){
         String textToEnter = "";
         textToEnter = TestExecutor.localVariable.get(headerName).toString();
@@ -902,6 +1065,17 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param dataType
+     * @param headerName
+     * @param testsFileName
+     * @param step
+     * @param replaceAllString
+     * @param test
+     * @param dataSetName
+     * @return
+     */
     public String getParseTextToEnterWhenStepHasDataSet(String dataType,String headerName,String testsFileName,String step,String replaceAllString,JSONObject test,String dataSetName){
         String textToEnter = "";
         try {
@@ -923,6 +1097,15 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param headerName
+     * @param testsFileName
+     * @param step
+     * @param replaceAllString
+     * @param use
+     * @return
+     */
     public String getParseTextToEnterWhenStepHasInLineDataSet(String headerName,String testsFileName,String step,String replaceAllString,String use){
         String textToEnter = "";
         String[] dataSet = headerName.split("\\.");
@@ -939,6 +1122,17 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param headerName
+     * @param testsFileName
+     * @param step
+     * @param replaceAllString
+     * @param test
+     * @param dataSetName
+     * @param use
+     * @return
+     */
     public String getParseTextToEnterWhenStepHasExcelDataSet(String headerName,String testsFileName,String step,String replaceAllString,JSONObject test,String dataSetName,String use){
         String textToEnter = "";
         try {
@@ -956,6 +1150,15 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param headerName
+     * @param testsFileName
+     * @param step
+     * @param replaceAllString
+     * @param dataSetName
+     * @return
+     */
     public String getParseTextToEnterWhenStepHasGlobalDataSet(String headerName,String testsFileName,String step,String replaceAllString,String dataSetName){
         String textToEnter = "";
         try {
@@ -968,6 +1171,15 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param headerName
+     * @param step
+     * @param replaceAllString
+     * @param dataSetName
+     * @param test
+     * @return
+     */
     public String getParseTextToEnterWhenStepHasListDataSet(String headerName,String step,String replaceAllString,String dataSetName,JSONObject test){
         String textToEnter = "";
         textToEnter=dataDrivenParser.getDataSetListValue(dataSetName, headerName,Integer.parseInt(test.get("row").toString()));
@@ -978,11 +1190,10 @@ public class StepParser {
 
 
     /**
-     * @param test
+     *
+      * @param test
      * @param step
      * @return
-     * @auther :
-     * @lastModifiedBy: Ankit Mistry
      */
     public String passArgsToCode(JSONObject test, String step) {
         String textToEnter = "";
@@ -1021,6 +1232,16 @@ public class StepParser {
         return textToEnter;
     }
 
+    /**
+     *
+     * @param dataType
+     * @param headerName
+     * @param testsFileName
+     * @param step
+     * @param dataSetName
+     * @param test
+     * @return
+     */
     public String passArgsToCodeWhenStepHasDataSet(String dataType,String headerName,String testsFileName,String step,String dataSetName,JSONObject test){
         String textToEnter = "";
         try {
@@ -1047,11 +1268,10 @@ public class StepParser {
     }
 
     /**
-     * @param test
+     *
+      * @param test
      * @param steps
      * @return
-     * @auther :
-     * @lastModifiedBy: Ankit Mistry
      */
     public String replaceArgsOfCodeStep(JSONObject test, String steps) {
 
@@ -1076,6 +1296,12 @@ public class StepParser {
         return step;
     }
 
+    /**
+     *
+     * @param args
+     * @param test
+     * @return
+     */
     public String[] getValueToReplaceArgsOfCodeStep(String[] args,JSONObject test){
         String[] arguments=null;
         StringBuilder argument=new StringBuilder();
@@ -1096,6 +1322,12 @@ public class StepParser {
         return arguments;
     }
 
+    /**
+     *
+     * @param step
+     * @param index
+     * @return
+     */
     public String parseNumverToEnter(String step, int index) {
         String numbers;
 
@@ -1112,6 +1344,9 @@ public class StepParser {
         return null;
     }
 
+    /**
+     *
+     */
     public void generateReportDir() {
         File htmlReportMainDir = new File("./screenshots");
 
@@ -1120,7 +1355,12 @@ public class StepParser {
         }
     }
 
-
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param step
+     */
     public void pressKey(WebDriver driver, JSONObject test, String step) {
         String testsFileName=test.get(testsFileNameText).toString();
 
@@ -1138,6 +1378,12 @@ public class StepParser {
         }
     }
 
+    /**
+     *
+     * @param step
+     * @param driver
+     * @param testsFileName
+     */
     public void pressEnterKey(String step,WebDriver driver,String testsFileName){
         Actions actions = new Actions(driver);
         if(step.toLowerCase().contains("@")) {
@@ -1147,6 +1393,12 @@ public class StepParser {
         }
     }
 
+    /**
+     *
+     * @param step
+     * @param driver
+     * @param testsFileName
+     */
     public void pressCtrlPlus(String step,WebDriver driver,String testsFileName){
         String[] steps = step.split(" ");
         boolean flag=false;
@@ -1168,12 +1420,12 @@ public class StepParser {
         }
     }
 
-    /**
-     * @param step
-     * @return modified step that will looks good in report
-     * @author Viral Patel
-     */
 
+    /**
+     *
+     * @param step
+     * @return
+     */
     public String stepModifierForReport(String step) {
 
         String finalstep = removeStepKeywordFromStep(step);
@@ -1199,10 +1451,11 @@ public class StepParser {
         return finalstep;
     }
 
+
     /**
+     *
      * @param step
-     * @return return sentences that will remove step : or step: keyword
-     * @author Viral Patel
+     * @return
      */
     public String removeStepKeywordFromStep(String step) {
         String finalStep = "";
@@ -1213,11 +1466,9 @@ public class StepParser {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param step
-     * @return
      *
+      * @param step
+     * @return
      */
     public String getCollectionName(String step) {
         String textToEnter = null;
@@ -1230,9 +1481,8 @@ public class StepParser {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param step
+     *
+      * @param step
      * @param driver
      */
     public void windowResize(String step,WebDriver driver) {
@@ -1247,30 +1497,26 @@ public class StepParser {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      */
     public void windowMinimize(WebDriver driver) {
         driver.manage().window().setPosition(new Point(0, -1000));
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      */
     public void windowMaximize(WebDriver driver) {
         driver.manage().window().maximize();
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      * @param test
      * @param step
-     * @throws Exception
      */
     public void dragAndDropElement(WebDriver driver,JSONObject test,String step) {
 
@@ -1298,12 +1544,10 @@ public class StepParser {
 
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      * @param test
      * @param step
-     * @throws Exception
      */
     public void clickOnElementFromList(WebDriver driver,JSONObject test,String step) {
         String errorMsg="No string found for click";
@@ -1364,10 +1608,9 @@ public class StepParser {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param test
-     * @throws Exception
+     *
+      * @param test
+     * @return
      */
     public boolean isSeverityOrPriority(JSONObject test) {
         TestsFileParser testsFileParser=new TestsFileParser();
@@ -1380,13 +1623,11 @@ public class StepParser {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
+      * @param driver
      * @param step
-     * @param driver
      * @param test
      * @return
-     * @throws Exception
      */
     public String printStep(WebDriver driver,String step, JSONObject test) {
         String printStep;
@@ -1405,12 +1646,10 @@ public class StepParser {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      * @param test
      * @param step
-     * @throws Exception
      */
     public void clickOnOffset(WebDriver driver,JSONObject test,String step) {
 
@@ -1433,9 +1672,10 @@ public class StepParser {
     }
 
     /**
-     * @param step
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
+      * @param step
+     * @param count
+     * @return
      */
     public String[] listOfElementName(String step,int count) {
         String[] stepWordList = step.split(regexText);
@@ -1451,9 +1691,10 @@ public class StepParser {
     }
 
     /**
-     * @param step
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
+      * @param step
+     * @param count
+     * @return
      */
     public String[] listOfSteps(String step, int count) {
 
@@ -1479,9 +1720,9 @@ public class StepParser {
     }
 
     /**
-     * @param step
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
+      * @param step
+     * @return
      */
     public String removedVerificationTextFromSteps(String step){
         String textToEnter = "";
@@ -1499,6 +1740,11 @@ public class StepParser {
         return step;
     }
 
+    /**
+     *
+     * @param step
+     * @return
+     */
     public int countOfCharacter(String step){
 
         int count = 0;
@@ -1511,10 +1757,12 @@ public class StepParser {
         return count;
     }
 
+
     /**
-     * @param step
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
+      * @param step
+     * @param condition
+     * @return
      */
     public List<String> listOfStepWhoHasSameVerifier(String step, String condition) {
         List<String> stepList = new ArrayList<>();

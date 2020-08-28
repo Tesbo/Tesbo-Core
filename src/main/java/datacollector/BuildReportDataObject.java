@@ -40,6 +40,13 @@ public class BuildReportDataObject implements Runnable {
         t1.start();
     }
 
+
+    /**
+     *
+     * @param browser
+     * @param testFileName
+     * @param testResultObject
+     */
     public void addDataInMainObject(String browser, String testFileName, JSONObject testResultObject) {
         JSONObject testFileObject = getBrowserObject(browser);
         boolean flag = false;
@@ -61,6 +68,12 @@ public class BuildReportDataObject implements Runnable {
 
     }
 
+    /**
+     *
+     * @param testFileObject
+     * @param testResultObject
+     * @return
+     */
     public boolean isTestResultIsPassOrFail(JSONObject testFileObject,JSONObject testResultObject){
         boolean flag = false;
         JSONArray testsFileArray = (JSONArray) testFileObject.get(testsFileText);
@@ -80,7 +93,10 @@ public class BuildReportDataObject implements Runnable {
         return flag;
     }
 
-
+    /**
+     *
+     * @param browserName
+     */
     public void checkForTheBrowser(String browserName) {
 
         JSONObject browserObject = new JSONObject();
@@ -124,7 +140,11 @@ public class BuildReportDataObject implements Runnable {
 
     }
 
-
+    /**
+     *
+     * @param browserName
+     * @return
+     */
     public JSONObject getBrowserObject(String browserName) {
         JSONObject testsFileObject = null;
         int size = browserArray.size();
@@ -140,6 +160,12 @@ public class BuildReportDataObject implements Runnable {
         return testsFileObject;
     }
 
+    /**
+     *
+     * @param browserName
+     * @param testsFileArray
+     * @return
+     */
     public JSONObject setBrowserObject(String browserName, JSONArray testsFileArray) {
         JSONObject testsFileObject = new JSONObject();
         int size = browserArray.size();
@@ -170,7 +196,11 @@ public class BuildReportDataObject implements Runnable {
         return testsFileObject;
     }
 
-
+    /**
+     *
+     * @param browserName
+     * @param testsFile
+     */
     public void checkForTheTestsFile(String browserName, String testsFile) {
 
         JSONObject testsFileObject = getBrowserObject(browserName);
@@ -225,7 +255,12 @@ public class BuildReportDataObject implements Runnable {
         setBrowserObject(browserName, testsFileArray);
     }
 
-
+    /**
+     *
+     * @param browserName
+     * @param testsFile
+     * @param testResult
+     */
     public void checkForTheTest(String browserName, String testsFile, JSONObject testResult) {
 
         JSONObject testsFileObject = getBrowserObject(browserName);
@@ -292,6 +327,13 @@ public class BuildReportDataObject implements Runnable {
 
     }
 
+    /**
+     *
+     * @param testArray
+     * @param testResult
+     * @param tempTestsFileObject
+     * @return
+     */
     public JSONObject getTotalPassFailTestCountAndTotalTimeWhenTestArraySizeIsZero(JSONArray testArray,JSONObject testResult,JSONObject tempTestsFileObject){
         int testArraySize = testArray.size();
         int totalPassed = 0;
@@ -318,6 +360,15 @@ public class BuildReportDataObject implements Runnable {
         return testResultAndTime;
     }
 
+    /**
+     *
+     * @param testArray
+     * @param testResult
+     * @param tempTestsFileObject
+     * @param testResultAndTime
+     * @param testsFile
+     * @return
+     */
     public JSONObject getTotalPassFailTestCountAndTotalTimeWhenRetryAnalyserTrue(JSONArray testArray,JSONObject testResult,JSONObject tempTestsFileObject,JSONObject testResultAndTime,String testsFile){
         boolean flag=false;
         int totalPassed= (int) testResultAndTime.get(totalPassedText);
@@ -354,6 +405,14 @@ public class BuildReportDataObject implements Runnable {
         return testResultAndTime;
     }
 
+    /**
+     *
+     * @param testResult
+     * @param tempTestsFileObject
+     * @param totalPassed
+     * @param totalFailed
+     * @return
+     */
     public JSONObject getTotalPassFailTestCount(JSONObject testResult,JSONObject tempTestsFileObject,int totalPassed,int totalFailed){
         if (testResult.get(statusText).toString().equals(passedText)) {
             totalPassed = Integer.parseInt(tempTestsFileObject.get(totalPassedText).toString()) + 1;
@@ -370,9 +429,8 @@ public class BuildReportDataObject implements Runnable {
     }
 
     /**
-     * @author Viral P.
+     *
      */
-
     @Override
     public void run() {
         ReportParser pr = new ReportParser();

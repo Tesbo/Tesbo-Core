@@ -42,6 +42,11 @@ public class TestExecutor implements Runnable {
         browser=test.get("browser").toString();
     }
 
+    /**
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         TestExecutionBuilder builder = new TestExecutionBuilder();
         ReportParser report = new ReportParser();
@@ -51,9 +56,8 @@ public class TestExecutor implements Runnable {
 
 
     /**
-     * @auther :
-     * @lastModifiedBy: Ankit Mistry
-     */
+     *
+      */
     public void beforeTest() {
         JSONObject testSessionDetails=testExecutorUtility.getSessionListIfTestHasAnsInitializeBrowser(testsFileName,testName,isSession,driver,browser,sessionList);
         sessionList= (Map<String, WebDriver>) testSessionDetails.get("sessionList");
@@ -63,11 +67,19 @@ public class TestExecutor implements Runnable {
     }
 
 
+    /**
+     *
+     * @param sessionName
+     */
     public void afterTest(String sessionName) {
         sessionList=testExecutorUtility.stepToExecuteAfterTest(driver,sessionName,sessionList,isSession);
     }
 
 
+    /**
+     *
+     * @return
+     */
     public JSONObject runTest() {
         BuildReportDataObject buildReport = new BuildReportDataObject();
         localVariable=new JSONObject();
@@ -131,6 +143,9 @@ public class TestExecutor implements Runnable {
         return testReportObject;
     }
 
+    /**
+     *
+     */
     @Override
     public void run() {
         GetConfiguration config=new GetConfiguration();

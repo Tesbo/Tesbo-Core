@@ -8,6 +8,14 @@ import exception.*;
 public class CommonMethods {
 
     TesboLogger tesboLogger = new TesboLogger();
+
+
+    /**
+     *
+     * @param arrayList
+     * @param errorMsg
+     * @param log
+     */
     public  void verifyJsonArrayIsEmpty(JSONArray arrayList, String errorMsg, Logger log){
 
         if(arrayList.isEmpty()){
@@ -16,18 +24,41 @@ public class CommonMethods {
         }
     }
 
+    /**
+     *
+     * @param errorMsg
+     * @param log
+     */
     public  void throwTesboException(String errorMsg, Logger log){
             log.error(errorMsg);
             throw new TesboException(errorMsg);
     }
+
+    /**
+     *
+     * @param errorMsg
+     * @param log
+     */
     public  void throwAssertException(String errorMsg, Logger log){
         log.error(errorMsg);
         throw new AssertException(errorMsg);
     }
+
+    /**
+     *
+     * @param infoMsg
+     * @param log
+     */
     public  void printStepInfo(String infoMsg, Logger log){
         log.info(infoMsg);
         tesboLogger.stepLog(infoMsg);
     }
+
+    /**
+     * 
+     * @param errorMsg
+     * @param log
+     */
     public void logErrorMsg(String errorMsg,Logger log){
         log.error(errorMsg);
         tesboLogger.testFailed(errorMsg);

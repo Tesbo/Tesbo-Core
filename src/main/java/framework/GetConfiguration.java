@@ -25,7 +25,10 @@ public class GetConfiguration {
     JSONObject main = Utility.loadJsonFile(getConfigFilePath());
     private static final Logger log = LogManager.getLogger(GetConfiguration.class);
 
-
+    /**
+     *
+     * @return
+     */
     public String getConfigFilePath() {
         String configName;
         if(SetCommandLineArgument.configFile !=null){
@@ -38,6 +41,10 @@ public class GetConfiguration {
         return file.getAbsolutePath();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<String> getBrowsers() {
 
         if(SetCommandLineArgument.browser !=null && !(SetCommandLineArgument.browser.equalsIgnoreCase("all"))){
@@ -66,13 +73,21 @@ public class GetConfiguration {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<String> getBrowserFromConfig() {
         JSONObject run = (JSONObject) main.get("run");
         JSONObject browser = (JSONObject) run.get("browser");
         return (JSONArray) browser.get("name");
     }
 
-
+    /**
+     *
+     * @param browserName
+     * @return
+     */
     public JSONObject getCapabilities(String browserName)  {
         JSONObject capabilities =null;
         try {
@@ -86,6 +101,10 @@ public class GetConfiguration {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public List<String> getTags() {
         if(SetCommandLineArgument.byTag !=null){
             JSONArray tag=new JSONArray();
@@ -98,18 +117,19 @@ public class GetConfiguration {
             return (JSONArray) by.get("tag");
         }
     }
+
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
      * @return
      */
     public JSONObject getBy()  {
         JSONObject run = (JSONObject) main.get("run");
         return (JSONObject) run.get("by");
     }
+
+
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
      * @return
      */
     public String getSeleniumAddress()  {
@@ -124,11 +144,13 @@ public class GetConfiguration {
         else
             return seleniumAddress;
     }
+
+
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
      * @return
      */
+
     public String getCustomStepDirectory()  {
         File file = null;
         try {
@@ -144,8 +166,7 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
      * @return
      */
     public String getProjectDirectory()  {
@@ -156,7 +177,10 @@ public class GetConfiguration {
         }
     }
 
-
+    /**
+     *
+     * @return
+     */
     public String getRunBy()  {
         String runby = ((JSONObject) main.get("run")).get("by").toString();
         if(runby.contains("Suite") || runby.contains("SUITE"))
@@ -175,9 +199,8 @@ public class GetConfiguration {
 
 
     /**
-     * @auther : Viral Patel
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public JSONObject getCloudIntegration() {
         try {
@@ -190,6 +213,10 @@ public class GetConfiguration {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public String getBaseUrl() {
         String baseUrl = "";
         if(getEnvironment()!=null){
@@ -207,6 +234,10 @@ public class GetConfiguration {
         return baseUrl;
     }
 
+    /**
+     *
+     * @return
+     */
     public JSONObject getParallel() {
         JSONObject parallelData = (JSONObject) ((JSONObject) main.get("run")).get("parallel");
         JSONObject dataOfparallel = new JSONObject();
@@ -234,25 +265,42 @@ public class GetConfiguration {
         return dataOfparallel;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSuitesDirectory()  {
         return Paths.get("").toAbsolutePath().toString()+"/src/test/java/suite";
     }
+
+    /**
+     *
+     * @return
+     */
 
     public String getTestsDirectory()  {
         return Paths.get("").toAbsolutePath().toString()+"/src/test/java/tests";
     }
 
+    /**
+     *
+     * @return
+     */
     public String getLocatorDirectory() {
         return Paths.get("").toAbsolutePath().toString()+"/src/test/java/locator";
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDataSetDirectory() {
         return Paths.get("").toAbsolutePath().toString()+"/src/test/java/DataSet";
     }
 
     /**
-     * @Description : get suite name from config file.
-     * @return : suite names.
+     *
+     * @return
      */
     public List<String> getSuite()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -261,8 +309,7 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
      * @return
      */
     public String getRetryAnalyser()  {
@@ -277,11 +324,11 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
      * @param browser
      * @return
      */
+
     public String getBinaryPath(String browser)  {
         JSONObject run = (JSONObject) main.get("run");
         JSONObject browsersPath = (JSONObject) run.get("binaries");
@@ -299,8 +346,7 @@ public class GetConfiguration {
 
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
      * @return
      */
     public boolean getSingleWindowRun()  {
@@ -314,9 +360,8 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getHighlightElement()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -329,9 +374,8 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getPauseStepDisplay()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -344,9 +388,8 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getBrowserClose()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -359,9 +402,8 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getIsGrid()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -374,9 +416,8 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public String getEnvironment() {
         JSONObject environment = (JSONObject) ((JSONObject) main.get("run")).get("environment");
@@ -387,18 +428,16 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public JSONObject getEnvironmentList() {
         return (JSONObject) ((JSONObject) main.get("run")).get("environment");
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getRunPastFailure()  {
 
@@ -418,9 +457,8 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getIsCloudIntegration() {
         try {
@@ -433,9 +471,8 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public List<String> getLocatorPreference()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -443,9 +480,8 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public String getBuildName()  {
         JSONObject cloudIntegrations = (JSONObject) main.get(cloudIntegration);
@@ -454,9 +490,8 @@ public class GetConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public String getReportFileName()  {
         try {

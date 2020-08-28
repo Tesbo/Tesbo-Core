@@ -46,12 +46,14 @@ public class Commands {
     CommonMethods commonMethods=new CommonMethods();
 
     /**
-     * @param driver       webdriver object for the Test
-     * @param elementvalue element loactor valuse
-     * @return webelement
+     *
+     * @param driver
+     * @param elementvalue
+     * @return
      */
 
-    public WebElement findElement(WebDriver driver, String elementvalue) {
+
+     public WebElement findElement(WebDriver driver, String elementvalue) {
         WebElement element = null;
         GetConfiguration config = new GetConfiguration();
 
@@ -78,7 +80,14 @@ public class Commands {
         return element;
     }
 
-    public WebElement getElementByClassNameXpathIdAndCssSelector(WebDriver driver,String elementvalue){
+    /**
+     *
+     * @param driver
+     * @param elementvalue
+     * @return
+     */
+
+     public WebElement getElementByClassNameXpathIdAndCssSelector(WebDriver driver,String elementvalue){
         WebElement element=null;
         try {
             element = driver.findElement(By.cssSelector(elementvalue));
@@ -104,7 +113,14 @@ public class Commands {
         return element;
     }
 
-    public WebElement getElementByPartialLinkTextLinkTextTagNameAndName(WebDriver driver,String elementvalue){
+    /**
+     *
+     * @param driver
+     * @param elementvalue
+     * @return
+     */
+
+     public WebElement getElementByPartialLinkTextLinkTextTagNameAndName(WebDriver driver,String elementvalue){
         WebElement element=null;
         try {
             element = driver.findElement(By.name(elementvalue));
@@ -126,6 +142,13 @@ public class Commands {
         return element;
     }
 
+    /**
+     *
+     * @param driver
+     * @param elementvalue
+     * @param locatorTypes
+     * @return
+     */
     public WebElement findElementFromLocatorPreference(WebDriver driver, String elementvalue,List<String> locatorTypes) {
         WebElement element = null;
         GetConfiguration config = new GetConfiguration();
@@ -186,6 +209,14 @@ public class Commands {
         return element;
     }
 
+    /**
+     *
+     * @param driver
+     * @param elementValue
+     * @param locatorCount
+     * @param locatorTypesSize
+     * @return
+     */
     public JSONObject getElementByCSS(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
         WebElement element = null;
         boolean isBreak=false;
@@ -204,6 +235,14 @@ public class Commands {
         return elementDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param elementValue
+     * @param locatorCount
+     * @param locatorTypesSize
+     * @return
+     */
     public JSONObject getElementById(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
         WebElement element = null;
         boolean isBreak=false;
@@ -222,6 +261,14 @@ public class Commands {
         return elementDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param elementValue
+     * @param locatorCount
+     * @param locatorTypesSize
+     * @return
+     */
     public JSONObject getElementByXpath(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
         WebElement element = null;
         boolean isBreak=false;
@@ -240,6 +287,14 @@ public class Commands {
         return elementDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param elementValue
+     * @param locatorCount
+     * @param locatorTypesSize
+     * @return
+     */
     public JSONObject getElementByClassName(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
         WebElement element = null;
         boolean isBreak=false;
@@ -258,6 +313,14 @@ public class Commands {
         return elementDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param elementValue
+     * @param locatorCount
+     * @param locatorTypesSize
+     * @return
+     */
     public JSONObject getElementByName(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
         WebElement element = null;
         boolean isBreak=false;
@@ -276,6 +339,14 @@ public class Commands {
         return elementDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param elementValue
+     * @param locatorCount
+     * @param locatorTypesSize
+     * @return
+     */
     public JSONObject getElementByTagName(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
         WebElement element = null;
         boolean isBreak=false;
@@ -294,6 +365,14 @@ public class Commands {
         return elementDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param elementValue
+     * @param locatorCount
+     * @param locatorTypesSize
+     * @return
+     */
     public JSONObject getElementByLinkText(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
         WebElement element = null;
         boolean isBreak=false;
@@ -312,6 +391,14 @@ public class Commands {
         return elementDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param elementValue
+     * @param locatorCount
+     * @param locatorTypesSize
+     * @return
+     */
     public JSONObject getElementByPartialLinkText(WebDriver driver,String elementValue,int locatorCount,int locatorTypesSize){
         WebElement element = null;
         boolean isBreak=false;
@@ -330,12 +417,22 @@ public class Commands {
         return elementDetails;
     }
 
+    /**
+     *
+     * @param elementvalue
+     */
     public void throwExceptionWhenElementNotFound(String elementvalue){
         if(isIf) {
             commonMethods.throwTesboException("Element Not found With Locator '"+elementvalue+"'",log);
         }
     }
 
+    /**
+     *
+     * @param driver
+     * @param elementvalue
+     * @return
+     */
     public List<WebElement> findElements(WebDriver driver, String elementvalue) {
 
         List<WebElement> listOfElements =null;
@@ -345,6 +442,12 @@ public class Commands {
         return listOfElements;
     }
 
+    /**
+     *
+     * @param driver
+     * @param elementvalue
+     * @return
+     */
     public List<WebElement> getElementsByClassNameXpathIdAndCssSelector(WebDriver driver,String elementvalue){
         List<WebElement> listOfElements=null;
         try {
@@ -373,6 +476,12 @@ public class Commands {
         return listOfElements;
     }
 
+    /**
+     *
+     * @param driver
+     * @param elementvalue
+     * @return
+     */
     public List<WebElement> getElementsByPartialLinkTextLinkTextTagNameAndName(WebDriver driver,String elementvalue){
         List<WebElement> listOfElements =null;
         try {
@@ -397,31 +506,34 @@ public class Commands {
     }
 
     /**
-     * @param el webelement
+     *
+     * @param el
      */
-
     public void clickOnElement(WebElement el) {
         el.click();
     }
 
     /**
-     * @param el   webelement
-     * @param text text to enter into the text box
+     *
+     * @param el
+     * @param text
      */
-
     public void sendskeyOnElement(WebElement el, String text) {
         el.sendKeys(text);
     }
 
-
+    /**
+     *
+     * @param driver
+     * @param url
+     */
     public void openUrl(WebDriver driver, String url) {
         driver.get(url);
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      * @param element
      */
     public void scrollAndClick(WebDriver driver, WebElement element)  {
@@ -430,6 +542,10 @@ public class Commands {
         element.click();
     }
 
+    /**
+     *
+     * @param sec
+     */
     public void pause(int sec) {
         try {
             Thread.sleep((long)sec * 1000);
@@ -441,67 +557,77 @@ public class Commands {
         }
     }
 
+    /**
+     *
+     * @param driver
+     */
     public void switchToActiveElement(WebDriver driver) {
         driver.switchTo().activeElement();
     }
 
+    /**
+     *
+     * @param driver
+     */
     public void switchToDefaultContent(WebDriver driver) {
         driver.switchTo().defaultContent();
     }
 
     /**
+     *
      * @param driver
      * @param id
-     * @Description : Switch to IFrame using ID, Name and Web Element.
      */
     public void switchFrame(WebDriver driver, String id) {
         driver.switchTo().frame(id);
     }
 
     /**
-     * @param driver
-     * @Description : Switch to main or parent IFrame.
+     *
+      * @param driver
      */
     public void switchMainFrame(WebDriver driver) {
         driver.switchTo().parentFrame();
     }
 
     /**
-     * @param driver
-     * @Description :
+     *
+      * @param driver
+     * @param element
      */
     public void switchFrameElement(WebDriver driver, WebElement element) {
         driver.switchTo().frame(element);
     }
 
     /**
-     * @param driver
-     * @Description : Switch to alert and Accept.
+     *
+      * @param driver
      */
     public void switchAlertAccept(WebDriver driver) {
         driver.switchTo().alert().accept();
     }
 
     /**
-     * @param driver
-     * @Description : Switch to alert and Dismiss.
+     *
+      * @param driver
      */
     public void switchAlertDismiss(WebDriver driver) {
         driver.switchTo().alert().dismiss();
     }
 
     /**
-     * @param driver
-     * @Description : Switch to alert and get alert text.
+     *
+      * @param driver
+     * @return
      */
     public String switchAlertRead(WebDriver driver) {
         return driver.switchTo().alert().getText();
     }
 
     /**
-     * @param driver
+     *
+      * @param driver
      * @param text
-     * @Description : Switch to alert and enter text.
      */
     public void switchAlertSendKey(WebDriver driver, String text) {
         Alert alert  = new WebDriverWait(driver, 10).until(ExpectedConditions.alertIsPresent());
@@ -510,8 +636,9 @@ public class Commands {
     }
 
     /**
-     * @param driver
-     * @Description : Switch to new open window.
+     *
+      * @param driver
+     * @param browser
      */
     public void switchNewWindow(WebDriver driver, String browser) {
         //Get parent window.
@@ -533,8 +660,8 @@ public class Commands {
     }
 
     /**
-     * @param driver
-     * @Description : Switch to main/parent window.
+     *
+      * @param driver
      */
     public void switchMainWindow(WebDriver driver) {
         JSONArray handles = (JSONArray) driver.getWindowHandles();
@@ -545,20 +672,18 @@ public class Commands {
     }
 
     /**
-     * @param driver
-     * @Description : Close window.
+     *
+      * @param driver
      */
     public void closeWindow(WebDriver driver) {
         driver.close();
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      * @param step
      * @param browser
-     * @Description : Close window tab using index.
      */
     public void closeWindowByIndex(WebDriver driver, String step,String browser) {
 
@@ -594,6 +719,11 @@ public class Commands {
 
     }
 
+    /**
+     *
+     * @param indexes
+     * @return
+     */
     public String[] getIndexOfBrowserWindow(String indexes){
         String[] index;
         if(indexes.toLowerCase().contains("to")){
@@ -618,32 +748,32 @@ public class Commands {
     }
 
     /**
-     * @param driver
-     * @Description : Navigate to back window.
+     *
+      * @param driver
      */
     public void navigateBack(WebDriver driver) {
         driver.navigate().back();
     }
 
     /**
-     * @param driver
-     * @Description : Navigate to forward window.
+     *
+      * @param driver
      */
     public void navigateForward(WebDriver driver) {
         driver.navigate().forward();
     }
 
     /**
-     * @param driver
-     * @Description : Navigate refresh window.
+     *
+      * @param driver
      */
     public void navigateRefresh(WebDriver driver) {
         driver.navigate().refresh();
     }
 
     /**
-     * @param driver
-     * @Description : Scrolling to bottom.
+     *
+      * @param driver
      */
     public void scrollBottom(WebDriver driver) {
         JavascriptExecutor js = ((JavascriptExecutor) driver);
@@ -651,9 +781,8 @@ public class Commands {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      */
     public void scrollHorizontal(WebDriver driver) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -661,8 +790,8 @@ public class Commands {
     }
 
     /**
-     * @param driver
-     * @Description : Scrolling to top.
+     *
+      * @param driver
      */
     public void scrollTop(WebDriver driver) {
         JavascriptExecutor js = ((JavascriptExecutor) driver);
@@ -670,9 +799,9 @@ public class Commands {
     }
 
     /**
-     * @param driver
+     *
+      * @param driver
      * @param element
-     * @Description : Scrolling to web element.
      */
     public void scrollToElement(WebDriver driver, WebElement element) {
         JavascriptExecutor js = ((JavascriptExecutor) driver);
@@ -680,10 +809,10 @@ public class Commands {
     }
 
     /**
-     * @param driver
+     *
+      * @param driver
      * @param x
      * @param y
-     * @Description : Scrolling to coordinate.
      */
     public void scrollToCoordinate(WebDriver driver, String x, String y) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -691,9 +820,9 @@ public class Commands {
     }
 
     /**
-     * @param driver
+     *
+      * @param driver
      * @param element
-     * @Description : pause driver until element disappear.
      */
     public void pauseElementDisappear(WebDriver driver, WebElement element) {
         wait = new WebDriverWait(driver, 15);
@@ -702,9 +831,9 @@ public class Commands {
     }
 
     /**
-     * @param driver
+     *
+      * @param driver
      * @param element
-     * @Description : pause driver until element clickable.
      */
     public void pauseAndClick(WebDriver driver, WebElement element) {
         wait = new WebDriverWait(driver, 20);
@@ -713,9 +842,9 @@ public class Commands {
     }
 
     /**
-     * @param driver
+     *
+      * @param driver
      * @param element
-     * @Description : pause driver until element clickable.
      */
     public void pauseElementClickable(WebDriver driver, WebElement element) {
         wait = new WebDriverWait(driver, 20);
@@ -723,10 +852,9 @@ public class Commands {
     }
 
     /**
-     * @param driver
+     *
+      * @param driver
      * @param element
-     * @return : Web element
-     * @Description : pause driver until element display.
      */
     public void pauseElementDisplay(WebDriver driver, WebElement element) {
         wait = new WebDriverWait(driver, 20);
@@ -735,9 +863,9 @@ public class Commands {
     }
 
     /**
-     * @param element
+     *
+      * @param element
      * @param text
-     * @Description : select drop down using visible text.
      */
     public void selectText(WebElement element, String text) {
         Select dropDown = new Select(element);
@@ -745,9 +873,9 @@ public class Commands {
     }
 
     /**
-     * @param element
+     *
+      * @param element
      * @param index
-     * @Description : select drop down value using index.
      */
     public void selectIndex(WebElement element, int index) {
         Select dropDown = new Select(element);
@@ -755,9 +883,9 @@ public class Commands {
     }
 
     /**
-     * @param element
+     *
+      * @param element
      * @param text
-     * @Description : select drop down using value.
      */
     public void selectValue(WebElement element, String text) {
         Select dropDown = new Select(element);
@@ -765,8 +893,8 @@ public class Commands {
     }
 
     /**
-     * @param element
-     * @Description : Deselect all the value from drop down.
+     *
+      * @param element
      */
     public void deselectAll(WebElement element) {
         Select dropDown = new Select(element);
@@ -774,9 +902,9 @@ public class Commands {
     }
 
     /**
-     * @param element
+     *
+      * @param element
      * @param text
-     * @Description : Deselect value using visible text.
      */
     public void deselectText(WebElement element, String text) {
         Select dropDown = new Select(element);
@@ -784,9 +912,9 @@ public class Commands {
     }
 
     /**
-     * @param element
+     *
+      * @param element
      * @param index
-     * @Description : Deselect value using Index.
      */
     public void deselectIndex(WebElement element, int index) {
         Select dropDown = new Select(element);
@@ -794,9 +922,9 @@ public class Commands {
     }
 
     /**
-     * @param element
+     *
+      * @param element
      * @param text
-     * @Description : Deselect drop down using value.
      */
     public void deselectValue(WebElement element, String text) {
         Select dropDown = new Select(element);
@@ -804,10 +932,24 @@ public class Commands {
     }
 
 
+    /**
+     *
+     * @param driver
+     * @param suitName
+     * @param testName
+     * @return
+     */
     public String captureScreenshot(WebDriver driver, String suitName, String testName) {
         return captureScreen(driver, suitName, testName);
     }
 
+    /**
+     *
+     * @param driver
+     * @param suitName
+     * @param testName
+     * @return
+     */
     public String captureScreen(WebDriver driver, String suitName, String testName) {
         String path;
         try {
@@ -823,12 +965,9 @@ public class Commands {
     }
 
     /**
-     * @param browserName
+     *
+      * @param browserName
      * @return
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
      */
     public boolean isCapabilities(String browserName) {
         GetConfiguration config = new GetConfiguration();
@@ -854,9 +993,8 @@ public class Commands {
     }
 
     /**
-     * @return
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
+      * @return
      */
     public String getSeleniumAddress() {
         GetConfiguration config = new GetConfiguration();
@@ -873,12 +1011,9 @@ public class Commands {
     }
 
     /**
-     * @param browserName
+     *
+      * @param browserName
      * @return
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
      */
     public JSONObject getCapabilities(String browserName) {
         GetConfiguration config = new GetConfiguration();
@@ -896,13 +1031,10 @@ public class Commands {
     }
 
     /**
-     * @param capabilities
+     *
+      * @param capabilities
      * @param capability
      * @return
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
      */
     public DesiredCapabilities setCapabilities(JSONObject capabilities, DesiredCapabilities capability) {
 
@@ -917,12 +1049,11 @@ public class Commands {
     }
 
     /**
-     * @param seleniumAddress
-     * @param driver
+     *
+      * @param driver
      * @param capability
+     * @param seleniumAddress
      * @return
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
      */
     public WebDriver openRemoteBrowser(WebDriver driver, DesiredCapabilities capability, String seleniumAddress) {
         try {
@@ -937,9 +1068,8 @@ public class Commands {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      * @param element
      */
     public void rightClick(WebDriver driver,WebElement element) {
@@ -948,9 +1078,8 @@ public class Commands {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      * @param element
      */
     public void doubleClick(WebDriver driver,WebElement element) {
@@ -959,19 +1088,16 @@ public class Commands {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
      *
+      * @param driver
      */
     public void deleteAllCookies(WebDriver driver) {
         driver.manage().deleteAllCookies();
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      * @param element
      */
     public void mouseHover(WebDriver driver, WebElement element)  {
@@ -980,12 +1106,10 @@ public class Commands {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
      *
-     * @param driver
-     * @param elementTo
+      * @param driver
      * @param elementFrom
+     * @param elementTo
      */
     public void dragAndDrop(WebDriver driver, WebElement elementFrom,WebElement elementTo)  {
         Actions action = new Actions(driver);
@@ -996,9 +1120,8 @@ public class Commands {
 
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      * @param element
      */
     public void clickAndHold(WebDriver driver, WebElement element)  {
@@ -1007,10 +1130,8 @@ public class Commands {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
      *
+      * @param driver
      */
     public void getPageSource(WebDriver driver)  {
         log.error(driver.getPageSource());
@@ -1018,10 +1139,10 @@ public class Commands {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      * @param cookieName
+     * @return
      */
     public boolean isCookieAvailable(WebDriver driver, String cookieName)  {
         boolean isCookie=false;
@@ -1034,12 +1155,12 @@ public class Commands {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
      * @param element
      * @param suitName
      * @param testName
+     * @return
      * @throws IOException
      */
     public String screenshotElement(WebDriver driver, WebElement element, String suitName, String testName) throws IOException {
@@ -1066,11 +1187,10 @@ public class Commands {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
-     * @param offset
+     *
+      * @param driver
      * @param element
+     * @param offset
      */
     public void clickOnOffset(WebDriver driver,WebElement element, String[] offset)  {
         Actions builder = new Actions(driver);
@@ -1079,9 +1199,10 @@ public class Commands {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
+     * @param url
+     * @return
      */
     public boolean getCurrentUrl(WebDriver driver,String url)  {
         boolean isURL=false;
@@ -1090,9 +1211,10 @@ public class Commands {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param driver
+     *
+      * @param driver
+     * @param url
+     * @return
      */
     public boolean verifyCurrentUrlContains(WebDriver driver,String url)  {
         boolean isURL=false;

@@ -59,7 +59,10 @@ public class TestExecutionBuilder {
     String dataSizeText="dataSize";
     String dataTypeText="dataType";
 
-
+    /**
+     *
+     * @param argumentsArray
+     */
     public void startExecution(String[] argumentsArray) {
         Commands cmd=new Commands();
         buildStartTime = System.currentTimeMillis();
@@ -174,7 +177,10 @@ public class TestExecutionBuilder {
     
     }
 
-
+    /**
+     *
+     * @return
+     */
     public String getbuildReportName() {
         String newName;
         File buildHistoryFolderPath = new File("./htmlReport/Build History");
@@ -201,6 +207,10 @@ public class TestExecutionBuilder {
         return newName;
     }
 
+    /**
+     *
+     * @param testExecutionQueue
+     */
     public void parallelBuilder(JSONArray testExecutionQueue) {
         Validation validation = new Validation();
 
@@ -224,6 +234,9 @@ public class TestExecutionBuilder {
         }
     }
 
+    /**
+     *
+     */
     public void buildExecution(){
         Validation validation = new Validation();
 
@@ -260,6 +273,10 @@ public class TestExecutionBuilder {
 
     }
 
+
+    /**
+     *
+     */
     public void failBuildExecution(){
 
         int failTestQueuesize = failTestQueue.size();
@@ -346,6 +363,11 @@ public class TestExecutionBuilder {
         return completeTestObjectArray;
     }
 
+
+    /**
+     *
+     * @return
+     */
     public JSONObject getSuiteOrTagList(){
         List<String> suiteOrTaglist = null;
         boolean isTag = false;
@@ -373,6 +395,17 @@ public class TestExecutionBuilder {
         return suiteOrTagListData;
     }
 
+    /**
+     *
+     * @param testName
+     * @param testsFileName
+     * @param suiteName
+     * @param tagName
+     * @param dataSetName
+     * @param testsFileNAME
+     * @param completeTestObjectArray
+     * @return
+     */
     public JSONArray getTestObjectArrayWhenTestHasDataSet(Object testName, String testsFileName, String suiteName, String tagName, String dataSetName,String testsFileNAME, JSONArray completeTestObjectArray){
         boolean isBeforeTest = isBeforeTestInTestsFile(testsFileNAME);
         boolean isAfterTest = isAfterTestInTestsFile(testsFileNAME);
@@ -400,6 +433,17 @@ public class TestExecutionBuilder {
         return completeTestObjectArray;
     }
 
+    /**
+     *
+     * @param testName
+     * @param testsFileName
+     * @param suiteName
+     * @param tagName
+     * @param dataSetName
+     * @param testsFileNAME
+     * @param completeTestObjectArray
+     * @return
+     */
     public JSONArray getTestObjectArray(Object testName, String testsFileName, String suiteName, String tagName, String dataSetName,String testsFileNAME, JSONArray completeTestObjectArray){
         boolean isBeforeTest = isBeforeTestInTestsFile(testsFileNAME);
         boolean isAfterTest = isAfterTestInTestsFile(testsFileNAME);
@@ -430,7 +474,13 @@ public class TestExecutionBuilder {
         return completeTestObjectArray;
     }
 
-
+    /**
+     *
+     * @param dataSetName
+     * @param testsFileName
+     * @param testName
+     * @return
+     */
     public JSONObject getDataTypeAndDataSize(String dataSetName, String testsFileName, String testName){
         String dataType = "";
         int dataSize = 0;
@@ -457,19 +507,44 @@ public class TestExecutionBuilder {
 
     }
 
+    /**
+     *
+     * @param isBeforeTest
+     * @param isAfterTest
+     * @param testsFileName
+     */
     public void ifIsBeforeAndAfterInTestsFileThenAnnotationDataSetByTestsFile(boolean isBeforeTest, boolean isAfterTest, String testsFileName){
         if(isBeforeTest || isAfterTest){
             testsFileParser.getAnnotationDataSetByTestsFile(testsFileName);
         }
     }
 
+    /**
+     *
+     * @param testsFileNAME
+     * @return
+     */
     public boolean isBeforeTestInTestsFile(String testsFileNAME){
         return testsFileParser.isBeforeTestInTestsFile(testsFileNAME);
     }
+
+    /**
+     *
+     * @param testsFileNAME
+     * @return
+     */
     public boolean isAfterTestInTestsFile(String testsFileNAME){
         return testsFileParser.isAfterTestInTestsFile(testsFileNAME);
     }
 
+    /**
+     *
+     * @param isSuite
+     * @param suiteTestNumber
+     * @param testsFileName
+     * @param testNameWithTestsFileName
+     * @return
+     */
     public String getTestsFileName(boolean isSuite,int suiteTestNumber,String testsFileName, JSONObject testNameWithTestsFileName){
         if(isSuite){
             Set testsFileNameForSuite=testNameWithTestsFileName.keySet();
@@ -490,6 +565,13 @@ public class TestExecutionBuilder {
         return testsFileNAME;
     }
 
+    /**
+     *
+     * @param isSuite
+     * @param isTag
+     * @param suite
+     * @return
+     */
     public JSONObject getTestNameWithTestsFileName(boolean isSuite, boolean isTag,String suite){
         JSONObject testNameWithTestsFileName = null;
         String suiteName="";
@@ -510,10 +592,8 @@ public class TestExecutionBuilder {
         return testNameWithTestsFile;
     }
 
-
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
      * @param testQueue
      */
     public void failTestExecutionQueue(JSONObject testQueue) {
@@ -534,8 +614,7 @@ public class TestExecutionBuilder {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
      * @param failTestQueue
      */
     public void lastBuildFailTestExecutionQueue(JSONArray failTestQueue) {

@@ -34,6 +34,13 @@ public class IfStepParser {
     String newStepText="newStep";
     String nestedIfText="nestedIf";
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param step
+     * @return
+     */
     public boolean parseIfStep(WebDriver driver, JSONObject test, String step) {
 
         String testsFileName=test.get("testsFileName").toString();
@@ -74,6 +81,14 @@ public class IfStepParser {
         return isIfCondition;
     }
 
+    /**
+     *
+     * @param driver
+     * @param step
+     * @param testsFileName
+     * @param isIfCondition
+     * @return
+     */
     public boolean verifyElementISSelectedOrCheckedOnIfCondition(WebDriver driver,String step,String testsFileName,boolean isIfCondition){
         if (cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step, 1)) + "_IF").isSelected()) {
             isIfCondition = true;
@@ -81,6 +96,15 @@ public class IfStepParser {
         return isIfCondition;
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param step
+     * @param testsFileName
+     * @param isIfCondition
+     * @return
+     */
     public boolean verifyElementTextOnIfCondition(WebDriver driver,JSONObject test,String step,String testsFileName,boolean isIfCondition){
         if (step.toLowerCase().contains("equal")) {
             if (elementCountInStep(step) == 2) {
@@ -93,6 +117,14 @@ public class IfStepParser {
 
     }
 
+    /**
+     *
+     * @param driver
+     * @param step
+     * @param testsFileName
+     * @param isIfCondition
+     * @return
+     */
     public boolean verifyTwoElementTextInIfCondition(WebDriver driver,String step,String testsFileName,boolean isIfCondition){
         String firstElementText = cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step, 1)) + "_IF").getText();
         String secondElementText = cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step, 2)) + "_IF").getText();
@@ -115,6 +147,15 @@ public class IfStepParser {
         return isIfCondition;
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param step
+     * @param testsFileName
+     * @param isIfCondition
+     * @return
+     */
     public boolean verifySingleElementTextInIfCondition(WebDriver driver,JSONObject test,String step,String testsFileName,boolean isIfCondition){
         String textOfStep = stepParser.parseTextToEnter(test, step);
         if (step.toLowerCase().contains("ignore case")) {
@@ -135,7 +176,17 @@ public class IfStepParser {
         return isIfCondition;
     }
 
-
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param step
+     * @param testsFileName
+     * @param isIfCondition
+     * @param greaterThan
+     * @param lessThan
+     * @return
+     */
     public boolean verifyNumericValueOnIfCondition(WebDriver driver,JSONObject test,String step,String testsFileName,boolean isIfCondition,String greaterThan,String lessThan){
         int number;
         int elementNumber;
@@ -190,6 +241,14 @@ public class IfStepParser {
         return isIfCondition;
     }
 
+    /**
+     *
+     * @param isIfCondition
+     * @param driver
+     * @param testsFileName
+     * @param step
+     * @return
+     */
     public boolean verifyWhenIfConditionHasDisplayedOrPresent(boolean isIfCondition,WebDriver driver,String testsFileName,String step) {
         try {
             if (cmd.findElement(driver, locator.getLocatorValue(testsFileName, parseElementName(step, 1)) + "_IF").isDisplayed()) {
@@ -199,6 +258,16 @@ public class IfStepParser {
         return isIfCondition;
 
     }
+
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param step
+     * @param isIfCondition
+     * @param conditionType
+     * @return
+     */
 
     public boolean executeStepWhenIfConditionHasAndOrCondition(WebDriver driver,JSONObject test,String step,boolean isIfCondition,String conditionType){
         String[] steps = getListOfSteps(step);
@@ -227,12 +296,23 @@ public class IfStepParser {
         return isIfCondition;
     }
 
+    /**
+     *
+     * @param exceptionAsString
+     * @param isIfError
+     */
     public void throwErrorWhenIsIfErrorTrue(String exceptionAsString,boolean isIfError){
         if (isIfError) {
             throw new TesboException(exceptionAsString.split("\\n")[0].replaceAll(exception,""));
         }
     }
 
+    /**
+     *
+     * @param step
+     * @param elementNumber
+     * @return
+     */
     public String parseElementName(String step, int elementNumber) {
         String[] stepWordList = step.split("::|\\s+");
 
@@ -250,6 +330,11 @@ public class IfStepParser {
         return elementName;
     }
 
+    /**
+     *
+     * @param step
+     * @return
+     */
     public int elementCountInStep(String step) {
         String[] stepWordList = step.split("::|\\s+");
         int count = 0;
@@ -261,6 +346,11 @@ public class IfStepParser {
         return count;
     }
 
+    /**
+     *
+     * @param step
+     * @return
+     */
     public String checkStepHasAndOrCondition(String step) {
         String conditionType = "";
         boolean flag = false;
@@ -281,6 +371,11 @@ public class IfStepParser {
         return conditionType;
     }
 
+    /**
+     *
+     * @param step
+     * @return
+     */
     public String[] getListOfSteps(String step) {
 
         String[] stepWordList = step.split(" And | AND | and | OR | or | Or | oR ");
@@ -295,6 +390,11 @@ public class IfStepParser {
         return steps;
     }
 
+    /**
+     *
+     * @param steps
+     * @return
+     */
     public boolean isTestsHasIFCondition(JSONArray steps) {
 
         for (Object step : steps) {
@@ -310,6 +410,12 @@ public class IfStepParser {
         return false;
     }
 
+
+    /**
+     *
+     * @param steps
+     * @param test
+     */
     public void isEndStepForIfCondition(JSONArray steps, String test) {
         int countForIf = 0;
         int countForEnd = 0;
@@ -332,6 +438,14 @@ public class IfStepParser {
     String elseCondition="";
     String elseIFCondition="";
 
+
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param steps
+     * @return
+     */
     public JSONArray getStepsOfTestWhoHasIfCondition(WebDriver driver, JSONObject test, JSONArray steps) {
         JSONArray newStep = new JSONArray();
         ifCondition = "";
@@ -375,6 +489,14 @@ public class IfStepParser {
         return newStep;
     }
 
+    /**
+     *
+     * @param steps
+     * @param i
+     * @param nestedIf
+     * @param newStep
+     * @return
+     */
     public JSONObject executeWhenElseConditionExistInIfCondition(JSONArray steps,int i,boolean nestedIf,JSONArray newStep){
         if (steps.get(i).toString().startsWith(elseCon) && !(steps.get(i).toString().startsWith(elseIfCon)) && !(elseCondition.equals("fail"))) {
             elseCondition = "pass";
@@ -392,6 +514,14 @@ public class IfStepParser {
         return ifElseStepsDetails;
     }
 
+
+    /**
+     *
+     * @param newStep
+     * @param steps
+     * @param i
+     * @return
+     */
     public JSONArray addStepWhenAllConditionFail(JSONArray newStep,JSONArray steps,int i){
         if (!(ifCondition.equals("fail") || elseCondition.equals("fail") || elseIFCondition.equals("fail"))) {
             newStep.add(steps.get(i));
@@ -399,6 +529,13 @@ public class IfStepParser {
         return newStep;
     }
 
+    /**
+     *
+     * @param newStep
+     * @param steps
+     * @param i
+     * @return
+     */
     public JSONObject addStepWhenIfConditionHasEndStep(JSONArray newStep,JSONArray steps,int i){
         JSONObject endStepsDetails=new JSONObject();
         boolean isBreak=false;
@@ -416,6 +553,17 @@ public class IfStepParser {
         return endStepsDetails;
     }
 
+
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param newStep
+     * @param steps
+     * @param i
+     * @param nestedIf
+     * @return
+     */
     public JSONObject addStepForIfElseCondition(WebDriver driver,JSONObject test,JSONArray newStep,JSONArray steps,int i,boolean nestedIf){
         boolean isContinue=false;
 
@@ -459,7 +607,16 @@ public class IfStepParser {
         return ifElseStepsDetails;
     }
 
-
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param newStep
+     * @param steps
+     * @param i
+     * @param nestedIf
+     * @return
+     */
     public JSONObject addStepForIfCondition(WebDriver driver,JSONObject test,JSONArray newStep,JSONArray steps,int i,boolean nestedIf){
         boolean isContinue=false;
         if(steps.get(i).toString().trim().split("::").length != 2){
@@ -504,6 +661,15 @@ public class IfStepParser {
         return ifStepsDetails;
     }
 
+    /**
+     *
+     * @param steps
+     * @param i
+     * @param nestedIf
+     * @param newStep
+     * @return
+     */
+
     public JSONObject addStepToStepArray(JSONArray steps,int i,boolean nestedIf,JSONArray newStep){
         boolean isContinue=false;
         for (int j = i + 1; j < steps.size(); j++) {
@@ -538,6 +704,13 @@ public class IfStepParser {
     }
 
     int countif=0;
+
+    /**
+     *
+     * @param step
+     * @param nestedIf
+     * @return
+     */
     public boolean isNestedIF(String step, boolean nestedIf){
 
         if(step.startsWith(ifCon) && !(step.startsWith(elseIfCon)))
@@ -555,6 +728,12 @@ public class IfStepParser {
         return nestedIf;
     }
 
+    /**
+     *
+     * @param steps
+     * @param startingStep
+     * @return
+     */
     public int skipIfConditionStep(JSONArray steps, int startingStep){
         int countIf=0;
         for (int j = startingStep; j < steps.size(); j++) {

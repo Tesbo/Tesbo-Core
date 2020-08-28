@@ -6,7 +6,10 @@ import com.diogonunes.jcdp.color.api.Ansi;
 
 public class Logger {
 
-
+    /**
+     *
+     * @param step
+     */
     public void stepLog(String step)
 
     {
@@ -18,6 +21,10 @@ public class Logger {
 
     }
 
+    /**
+     *
+     * @param step
+     */
     public void titleLog(String step)
 
     {
@@ -29,7 +36,10 @@ public class Logger {
 
     }
 
-
+    /**
+     *
+     * @param step
+     */
     public void testLog(String step)
     {
         ColoredPrinter cp = new ColoredPrinter.Builder(1, false)
@@ -38,7 +48,10 @@ public class Logger {
         cp.print(step + "\n",Ansi.Attribute.BOLD, Ansi.FColor.GREEN, Ansi.BColor.NONE);
     }
 
-
+    /**
+     *
+     * @param msg
+     */
     public void testPassed(String msg)
     {
        ColoredPrinter cp = new ColoredPrinter.Builder(1, false)
@@ -49,6 +62,10 @@ public class Logger {
     }
 
 
+    /**
+     *
+     * @param msg
+     */
     public void testFailed(String msg)
     {
       ColoredPrinter cp = new ColoredPrinter.Builder(1, false)
@@ -59,7 +76,11 @@ public class Logger {
         cp.clear();
     }
 
-
+    /**
+     *
+     * @param msg
+     * @param fg
+     */
     public void customeLog(String msg,Ansi.FColor fg )
 
     {

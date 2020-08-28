@@ -6,7 +6,10 @@ import com.diogonunes.jcdp.color.api.Ansi;
 
 public class TesboLogger {
 
-
+    /**
+     *
+     * @param step
+     */
     public void stepLog(String step)
 
     {
@@ -19,7 +22,10 @@ public class TesboLogger {
 
     }
 
-
+    /**
+     *
+     * @param step
+     */
     public void titleLog(String step)
 
     {
@@ -33,6 +39,10 @@ public class TesboLogger {
     }
 
 
+    /**
+     *
+     * @param step
+     */
     public void testLog(String step)
     {
         ColoredPrinter cp = new ColoredPrinter.Builder(1, false)
@@ -41,7 +51,10 @@ public class TesboLogger {
         cp.print(step + "\n",Ansi.Attribute.BOLD, Ansi.FColor.GREEN, Ansi.BColor.NONE);
     }
 
-
+    /**
+     *
+     * @param msg
+     */
     public void testPassed(String msg)
     {
        ColoredPrinter cp = new ColoredPrinter.Builder(1, false)
@@ -51,7 +64,10 @@ public class TesboLogger {
 
     }
 
-
+    /**
+     *
+     * @param msg
+     */
     public void testFailed(String msg)
     {
       ColoredPrinter cp = new ColoredPrinter.Builder(1, false)
@@ -62,6 +78,10 @@ public class TesboLogger {
         cp.clear();
     }
 
+    /**
+     *
+     * @param msg
+     */
     public void errorLog(String msg)
     {
         ColoredPrinter cp = new ColoredPrinter.Builder(1, false)
@@ -72,6 +92,11 @@ public class TesboLogger {
         cp.clear();
     }
 
+    /**
+     *
+     * @param msg
+     * @param fg
+     */
     public void customeLog(String msg,Ansi.FColor fg )
     {
        ColoredPrinter cp = new ColoredPrinter.Builder(1, false)

@@ -22,10 +22,9 @@ public class SuiteParser {
     private static final Logger log = LogManager.getLogger(SuiteParser.class);
 
     /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param fileName : File name with extension e.g. smoke.suite
-     * @return whole file content as String buffer
+     *
+     * @param fileName
+     * @return
      */
     public StringBuilder readSuiteFile(String fileName) {
 
@@ -63,10 +62,10 @@ public class SuiteParser {
         return tests;
     }
 
+
     /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param testsFile
+     *
+      * @param testsFile
      * @return
      */
     public JSONArray getTestNameFromSuiteFile(StringBuilder testsFile) {
@@ -92,12 +91,20 @@ public class SuiteParser {
         return testName;
     }
 
+    /**
+     *
+     * @param testName
+     */
     public void verifyTestStartWithValidText(String testName){
         if (!testName.trim().startsWith("Test: ")) {
             commonMethods.throwTesboException("Please write valid keyword or step for this \"" + testName + "\" on suite file",log);
         }
     }
 
+    /**
+     *
+     * @param testNameList
+     */
     public void validationForDuplicateTestInSuiteFile(JSONArray testNameList)
     {
         for(int i=0;i<testNameList.size();i++){
@@ -110,9 +117,8 @@ public class SuiteParser {
     }
 
     /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param suiteFileName
+     *
+      * @param suiteFileName
      * @return
      */
     public JSONObject getTestsFileNameUsingTestName(String suiteFileName) {
@@ -154,6 +160,11 @@ public class SuiteParser {
         return testNameWithTestsFileName;
     }
 
+    /**
+     *
+     * @param tampSuiteTestNameList
+     * @param suiteTestName
+     */
     public void verifySameTestNameIsExistOrNot(JSONArray tampSuiteTestNameList,String suiteTestName){
         boolean isExistInTampSuiteTestNameList=false;
         for(Object tampSuiteTest:tampSuiteTestNameList){
@@ -167,6 +178,10 @@ public class SuiteParser {
         }
     }
 
+    /**
+     *
+     * @param tampSuiteTestNameList
+     */
     public void verifyTestNameIsNotExistOnAnyTestsFile(JSONArray tampSuiteTestNameList){
         if(!tampSuiteTestNameList.isEmpty()){
             StringBuilder testList=new StringBuilder();
@@ -178,11 +193,11 @@ public class SuiteParser {
         }
     }
 
+
     /**
-     * @auther: Ankit Mistry
-     * @lastModifiedBy:
-     * @param directory
-     * @return give all the file inside a directory
+     *
+      * @param directory
+     * @return
      */
     public JSONArray getSuiteFiles(String directory)  {
 

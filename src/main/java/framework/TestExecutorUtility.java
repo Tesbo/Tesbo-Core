@@ -71,7 +71,10 @@ public class TestExecutorUtility{
     String stepPassedText="stepPassed";
     String isSessionText="isSession";
 
-
+    /**
+     *
+     * @return
+     */
     public String getSeleniumAddress(){
         String seleniumAddress = null;
         boolean isGridFromCommandLineArgument= Boolean.parseBoolean(SetCommandLineArgument.isGrid);
@@ -81,6 +84,13 @@ public class TestExecutorUtility{
         return seleniumAddress;
     }
 
+    /**
+     *
+     * @param driver
+     * @param browserName
+     * @param seleniumAddress
+     * @return
+     */
     public JSONObject browserInitialization(WebDriver driver,String browserName,String seleniumAddress){
         DesiredCapabilities capability = new DesiredCapabilities();
         JSONObject browserData=new JSONObject();
@@ -104,6 +114,15 @@ public class TestExecutorUtility{
         return browserData;
 
     }
+
+    /**
+     *
+     * @param driver
+     * @param browserName
+     * @param seleniumAddress
+     * @param capability
+     * @return
+     */
     public JSONObject browserInitialize(WebDriver driver,String browserName,String seleniumAddress,DesiredCapabilities capability){
         JSONObject browserData=new JSONObject();
         if (browserName.equalsIgnoreCase(firefoxText)) {
@@ -136,7 +155,13 @@ public class TestExecutorUtility{
         return browserData;
     }
 
-
+    /**
+     *
+     * @param browserName
+     * @param seleniumAddress
+     * @param capability
+     * @return
+     */
     public DesiredCapabilities setCapability(String browserName,String seleniumAddress,DesiredCapabilities capability){
         JSONObject capabilities = null;
         if (cmd.isCapabilities(browserName) && seleniumAddress != null) {
@@ -148,6 +173,13 @@ public class TestExecutorUtility{
         return capability;
     }
 
+    /**
+     *
+     * @param driver
+     * @param session
+     * @param sessionList
+     * @return
+     */
     public Map<String, WebDriver> setSessionList(WebDriver driver,Object session, Map<String, WebDriver> sessionList){
         if (session != null) {
             sessionList.put(session.toString(), driver);
@@ -155,6 +187,15 @@ public class TestExecutorUtility{
         return sessionList;
     }
 
+    /**
+     *
+     * @param session
+     * @param driver
+     * @param seleniumAddress
+     * @param capability
+     * @param sessionList
+     * @return
+     */
     public JSONObject setRemoteBrowser(Object session,WebDriver driver,String seleniumAddress, DesiredCapabilities capability,Map<String, WebDriver> sessionList){
         JSONObject remoteBrowserDetails=new JSONObject();
         if (seleniumAddress != null) {
@@ -168,6 +209,10 @@ public class TestExecutorUtility{
         return remoteBrowserDetails;
     }
 
+    /**
+     *
+     * @param driver
+     */
     public void openBaseURL(WebDriver driver){
         try {
             if (!config.getBaseUrl().equals("") || (config.getBaseUrl()!=null)) {
@@ -178,10 +223,15 @@ public class TestExecutorUtility{
         } catch (Exception e) { log.error(""); }
     }
 
+
     /**
+     *
+      * @param driver
      * @param step
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     * @param sessionList
+     * @param listOfSession
+     * @param browser
+     * @return
      */
     public JSONObject initializeSessionRunTime(WebDriver driver, Object step, Map<String, WebDriver> sessionList, JSONArray listOfSession,String browser) {
         JSONObject browserDetails=new JSONObject();
@@ -198,6 +248,15 @@ public class TestExecutorUtility{
         return browserDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param session
+     * @param sessionList
+     * @param testStep
+     * @param browser
+     * @return
+     */
     public JSONObject initializeSessionBrowser(WebDriver driver, Object session, Map<String, WebDriver> sessionList, String testStep,String browser){
         JSONObject browserDetails=new JSONObject();
         boolean isInSessionList = false;
@@ -220,6 +279,14 @@ public class TestExecutorUtility{
         return browserDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param step
+     * @param stepReportObject
+     * @param test
+     * @return
+     */
         public JSONObject addPrintAnsRandomStepForReport(WebDriver driver, String step, JSONObject stepReportObject, JSONObject test){
         if (!(step.contains("{") && step.contains("}") && step.contains(printText) && step.contains(randomText)))  {
             stepReportObject.put(stepsText, step.replace("@",""));
@@ -236,6 +303,14 @@ public class TestExecutorUtility{
         return stepReportObject;
     }
 
+    /**
+     *
+     * @param driver
+     * @param step
+     * @param stepReportObject
+     * @param test
+     * @return
+     */
     public JSONObject addStepForReport(WebDriver driver, String step, JSONObject stepReportObject, JSONObject test){
         if (step.replaceAll(whiteSpace, " ").trim().startsWith(stepText)) {
             if (step.toLowerCase().contains(printText)) {
@@ -266,9 +341,10 @@ public class TestExecutorUtility{
     }
 
     /**
+     *
+      * @param driver
      * @param step
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     * @param test
      */
     public void sendVerifyStep(WebDriver driver,String step,JSONObject test) {
         int count = (int) step.chars().filter(ch -> ch == '@').count();
@@ -290,12 +366,24 @@ public class TestExecutorUtility{
         }
     }
 
+    /**
+     *
+     * @param step
+     * @param test
+     * @param driver
+     */
     public void executeVerifyStepWhenItHasAndVerifier(String step,JSONObject test,WebDriver driver){
         for(String newStep:stepParser.listOfStepWhoHasSameVerifier(step,"and")){
             verifyParser.parseVerify(driver, test,newStep);
         }
     }
 
+    /**
+     *
+     * @param step
+     * @param test
+     * @param driver
+     */
     public void executeVerifyStepWhenItHasOrVerifier(String step,JSONObject test,WebDriver driver){
         int failCount = 0;
         for (String orConditionStep : stepParser.listOfStepWhoHasSameVerifier(step,"or")) {
@@ -310,6 +398,13 @@ public class TestExecutorUtility{
         }
     }
 
+    /**
+     *
+     * @param step
+     * @param count
+     * @param test
+     * @param driver
+     */
     public void executeVerifyStepWhenItHasMultipleElement(String step,int count,JSONObject test,WebDriver driver){
         stepParser.listOfSteps(step, count);
         for (String newStep : stepParser.listOfSteps(step, count)) {
@@ -317,6 +412,12 @@ public class TestExecutorUtility{
         }
     }
 
+    /**
+     *
+     * @param test
+     * @param testReportObject
+     * @return
+     */
     public JSONObject getSeverityAndPriorityIfExist(JSONObject test,JSONObject testReportObject){
         String msgLogText="Get severity and priority for test is: "+stepParser.isSeverityOrPriority(test);
         log.info(msgLogText);
@@ -340,6 +441,17 @@ public class TestExecutorUtility{
         return testReportObject;
     }
 
+    /**
+     *
+     * @param driver
+     * @param testsFileName
+     * @param stepIndex
+     * @param testStepArray
+     * @param test
+     * @param testResult
+     * @param screenShotPath
+     * @return
+     */
     public JSONObject executeBeforeTestStepIfExistInTestsFile(WebDriver driver,String testsFileName,int stepIndex,JSONArray testStepArray,JSONObject test,String testResult,String screenShotPath){
         String beforeTextMsg="Before test functionality is exist or not in tests file: "+testsFileParser.isBeforeTestInTestsFile(testsFileName);
         log.info(beforeTextMsg);
@@ -376,6 +488,13 @@ public class TestExecutorUtility{
         return testStepDetails;
     }
 
+    /**
+     *
+     * @param testStepArray
+     * @param stepReportObject
+     * @param step
+     * @return
+     */
     public JSONArray addStepReportObjectToTestStepArray(JSONArray testStepArray,JSONObject stepReportObject,String step){
         if(stepReportObject.size()!=0) {
             if(step.toLowerCase().contains(pauseText) )
@@ -387,6 +506,17 @@ public class TestExecutorUtility{
         return testStepArray;
     }
 
+    /**
+     *
+     * @param driver
+     * @param testsFileName
+     * @param stepIndex
+     * @param testStepArray
+     * @param test
+     * @param testResult
+     * @param screenShotPath
+     * @return
+     */
     public JSONObject executeAfterTestStepIfExistInTestsFile(WebDriver driver,String testsFileName,int stepIndex,JSONArray testStepArray,JSONObject test,String testResult,String screenShotPath){
         String beforeTextMsg="Before test functionality is exist or not in tests file: "+testsFileParser.isBeforeTestInTestsFile(testsFileName);
         log.info(beforeTextMsg);
@@ -424,6 +554,16 @@ public class TestExecutorUtility{
         return testReportDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param testStepArray
+     * @param test
+     * @param sessionList
+     * @param listOfSession
+     * @param testReportDetails
+     * @return
+     */
     public JSONObject executeTestSteps(WebDriver driver,JSONArray testStepArray, JSONObject test,Map<String, WebDriver> sessionList,JSONArray listOfSession,JSONObject testReportDetails){
         String testsFileName=test.get(testsFileNameText).toString();
         String testName=test.get(testNameText).toString();
@@ -531,6 +671,15 @@ public class TestExecutorUtility{
         return testStepDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param step
+     * @param sessionList
+     * @param stepsDetails
+     * @return
+     */
     public JSONObject executeCodeStepCloseStepAndCollectionStep(WebDriver driver,JSONObject test,String step,Map<String, WebDriver> sessionList,JSONObject stepsDetails){
         int stepIndex= (int) stepsDetails.get(stepIndexText);
         boolean isSession= (boolean) stepsDetails.get(isSessionText);
@@ -601,6 +750,14 @@ public class TestExecutorUtility{
         return stepsDetails;
     }
 
+
+    /**
+     *
+     * @param step
+     * @param testStepArray
+     * @param stepReportObject
+     * @return
+     */
     public JSONArray addPauseStepOnTestStepArray(String step,JSONArray testStepArray,JSONObject stepReportObject){
         if(step.toLowerCase().contains(pauseText))
         {
@@ -611,6 +768,12 @@ public class TestExecutorUtility{
         return testStepArray;
     }
 
+    /**
+     *
+     * @param stepReportObject
+     * @param step
+     * @return
+     */
     public JSONObject addDataSetStepOnStepReportObjectWhenItThrowError(JSONObject stepReportObject,String step){
         if (step.contains("{") && step.contains("}")) {
             stepReportObject.put(stepsText, step.replaceAll("[{,}]", "'").replace("@", ""));
@@ -618,6 +781,14 @@ public class TestExecutorUtility{
         return stepReportObject;
     }
 
+    /**
+     *
+     * @param step
+     * @param stepIndex
+     * @param testStepArray
+     * @param j
+     * @return
+     */
     public JSONObject printExternalCodeStep(String step,int stepIndex,JSONArray testStepArray,int j){
         if (step.replaceAll(whiteSpace, " ").trim().startsWith(codeText) && (!Reporter.printStepReportObject.isEmpty())) {
             for (int k = 0; k < Reporter.printStepReportObject.size(); k++){
@@ -640,6 +811,15 @@ public class TestExecutorUtility{
         return codeStepDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param test
+     * @param j
+     * @param stepReportObject
+     * @param collectionReportDetails
+     * @return
+     */
     public JSONObject executeCollectionStep(WebDriver driver,JSONObject test,int j,JSONObject stepReportObject,JSONObject collectionReportDetails){
         String testsFileName=test.get(testsFileNameText).toString();
         String testName=test.get(testNameText).toString();
@@ -714,6 +894,13 @@ public class TestExecutorUtility{
         return collectionReportData;
     }
 
+    /**
+     *
+     * @param step
+     * @param test
+     * @param driver
+     * @throws Exception
+     */
     public void executeExternalCode(String step,JSONObject test,WebDriver driver) throws Exception {
         if (step.contains("{") && step.contains("}")) {
             String replaceStepArgsLog=stepParser.replaceArgsOfCodeStep(test,step);
@@ -726,6 +913,14 @@ public class TestExecutorUtility{
         externalCode.runAllAnnotatedWith(Step.class, step,test, driver);
     }
 
+    /**
+     *
+     * @param step
+     * @param sessionList
+     * @param driver
+     * @param isSession
+     * @return
+     */
     public Map<String, WebDriver> executeSessionClosedStep(String step,Map<String, WebDriver> sessionList,WebDriver driver,boolean isSession){
         String sessionName = step.split(":")[1].trim().replace("]", "");
         boolean isSessions = false;
@@ -743,6 +938,15 @@ public class TestExecutorUtility{
         return sessionList;
     }
 
+    /**
+     *
+     * @param step
+     * @param stepReportObject
+     * @param test
+     * @param driver
+     * @return
+     * @throws IOException
+     */
     public JSONObject addStepToStepReportObjectWhenItHasDataSet(String step,JSONObject stepReportObject,JSONObject test,WebDriver driver) throws IOException {
         if (step.replaceAll(whiteSpace, " ").trim().startsWith(stepText)) {
             if (step.contains("{") && step.contains("}")) {
@@ -757,6 +961,14 @@ public class TestExecutorUtility{
         return stepReportObject;
     }
 
+    /**
+     *
+     * @param step
+     * @param stepReportObject
+     * @param test
+     * @param driver
+     * @return
+     */
     public JSONObject addVerifyStepToStepReportObjectWhenItHasDataSet(String step,JSONObject stepReportObject,JSONObject test,WebDriver driver) {
         if (step.replaceAll(whiteSpace, " ").trim().startsWith(verifyText)) {
             if (step.contains("{") && step.contains("}")) {
@@ -767,7 +979,12 @@ public class TestExecutorUtility{
         return stepReportObject;
     }
 
-
+    /**
+     *
+     * @param step
+     * @param stepPassed
+     * @return
+     */
     public boolean throwErrorWhenIfConditionIsNotFoundForElseOrElseIf(String step,boolean stepPassed){
         if((step.toLowerCase().startsWith("else::") || step.toLowerCase().startsWith("else if:: ") || step.toLowerCase().startsWith("end::")))
         {
@@ -784,6 +1001,16 @@ public class TestExecutorUtility{
         return stepPassed;
     }
 
+    /**
+     *
+     * @param step
+     * @param stepPassed
+     * @param test
+     * @param driver
+     * @param steps
+     * @param i
+     * @return
+     */
     public JSONObject executeIfConditionIfTestHas(String step,boolean stepPassed,JSONObject test,WebDriver driver,JSONArray steps,int i){
         IfStepParser ifStepParser=new IfStepParser();
         JSONObject detailsOfIfConditionStep=new JSONObject();
@@ -813,6 +1040,16 @@ public class TestExecutorUtility{
         return detailsOfIfConditionStep;
     }
 
+    /**
+     *
+     * @param step
+     * @param stepReportObject
+     * @param stepIndex
+     * @param startTimeStep
+     * @param driver
+     * @param test
+     * @return
+     */
     public JSONObject addTestStepToStepReportObject(String step, JSONObject stepReportObject,int stepIndex,long startTimeStep,WebDriver driver,JSONObject test){
         if (!step.replaceAll(whiteSpace, " ").trim().startsWith("Collection: ")) {
             if(step.toLowerCase().contains(pauseText) ) {
@@ -836,6 +1073,11 @@ public class TestExecutorUtility{
         return stepReportObject;
     }
 
+    /**
+     *
+     * @param stepsWord
+     * @return
+     */
     public String getRemoveContent(String[] stepsWord){
         String removeContent="";
         for(String word:stepsWord){
@@ -845,6 +1087,14 @@ public class TestExecutorUtility{
         }
         return removeContent;
     }
+
+    /**
+     *
+     * @param step
+     * @param stepReportObject
+     * @param test
+     * @return
+     */
 
     public JSONObject addSimpleTestStepToStepReportObject(String step,JSONObject stepReportObject,JSONObject test){
         if ( !(step.contains("{") && step.contains("}") && step.contains(printText) && step.contains(randomText))) {
@@ -869,6 +1119,12 @@ public class TestExecutorUtility{
         return stepReportObject;
     }
 
+    /**
+     *
+     * @param step
+     * @param stepReportObject
+     * @return
+     */
     public JSONObject addPauseStepToStepReportObject(String step,JSONObject stepReportObject){
         if(step.toLowerCase().contains(pauseText) && config.getPauseStepDisplay()){
             stepReportObject.put(stepsText, step.replace("@", ""));
@@ -876,6 +1132,15 @@ public class TestExecutorUtility{
         return stepReportObject;
     }
 
+
+    /**
+     *
+     * @param removeContent
+     * @param flag
+     * @param stepReportObject
+     * @param step
+     * @return
+     */
     public JSONObject removeAtSignAndAddStepToStepReportObject(String removeContent,boolean flag,JSONObject stepReportObject,String step){
         if(!removeContent.equals("") && !flag) {
             if (removeContent.contains(".")) {
@@ -892,6 +1157,13 @@ public class TestExecutorUtility{
         return stepReportObject;
     }
 
+    /**
+     *
+     * @param testName
+     * @param testsFileName
+     * @param testReportObject
+     * @param testResult
+     */
     public void addReportOnCloud(String testName,String testsFileName,JSONObject testReportObject,String testResult){
         ReportAPIConfig reportAPIConfig = new ReportAPIConfig();
         if(config.getIsCloudIntegration()) {
@@ -911,6 +1183,13 @@ public class TestExecutorUtility{
         }
     }
 
+    /**
+     *
+     * @param testName
+     * @param testsFileName
+     * @param testResult
+     * @return
+     */
     public boolean isRetryAnalyserIsGreaterThenZero(String testName,String testsFileName,String testResult){
         if((Integer.parseInt(config.getRetryAnalyser())!=0) || testsFileParser.isRetry(testsFileName, testName).equalsIgnoreCase("false")){
             return true;
@@ -923,6 +1202,14 @@ public class TestExecutorUtility{
         return false;
     }
 
+    /**
+     *
+     * @param testResult
+     * @param testName
+     * @param testsFileName
+     * @param test
+     * @param classTest
+     */
     public void manageFailTestExecutionQueue(String testResult,String testName,String testsFileName,JSONObject test,JSONObject classTest){
         TestExecutionBuilder testExecutionBuilder=new TestExecutionBuilder();
         if(testResult.equalsIgnoreCase(failedText)){
@@ -940,6 +1227,11 @@ public class TestExecutorUtility{
         }
     }
 
+    /**
+     *
+     * @param classTest
+     * @return
+     */
     public Object removeTestName(JSONObject classTest){
         for(Object failTest:TestExecutionBuilder.failTestQueue){
             if(failTest.equals(classTest)){
@@ -949,6 +1241,12 @@ public class TestExecutorUtility{
         return null;
     }
 
+    /**
+     *
+     * @param testStepArray
+     * @param stepIndex
+     * @return
+     */
     public JSONArray addTestFirstStepOfOpenBaseUrlToReportObject(JSONArray testStepArray,int stepIndex){
         if(stepIndex==0){
             JSONObject stepReportObject = new JSONObject();
@@ -964,6 +1262,15 @@ public class TestExecutorUtility{
         return testStepArray;
     }
 
+    /**
+     *
+     * @param testReportObject
+     * @param test
+     * @param testName
+     * @param testsFileName
+     * @param browser
+     * @return
+     */
     public JSONObject addTestDetailsOnReportObject(JSONObject testReportObject,JSONObject test,String testName,String testsFileName,String browser){
         long startTime = System.currentTimeMillis();
         /*Adding data into the report*/
@@ -980,6 +1287,16 @@ public class TestExecutorUtility{
         return testReportObject;
     }
 
+    /**
+     *
+     * @param testsFileName
+     * @param testName
+     * @param isSession
+     * @param driver
+     * @param browser
+     * @param sessionList
+     * @return
+     */
     public JSONObject getSessionListIfTestHasAnsInitializeBrowser(String testsFileName,String testName,boolean isSession,WebDriver driver,String browser,Map<String, WebDriver> sessionList){
         JSONObject testSessionDetails=new JSONObject();
         JSONArray listOfSession = testsFileParser.getSessionListFromTest(testsFileName, testName);
@@ -1000,6 +1317,14 @@ public class TestExecutorUtility{
         return testSessionDetails;
     }
 
+    /**
+     *
+     * @param driver
+     * @param sessionName
+     * @param sessionList
+     * @param isSession
+     * @return
+     */
     public Map<String, WebDriver> stepToExecuteAfterTest(WebDriver driver,String sessionName,Map<String, WebDriver> sessionList,boolean isSession){
         if (sessionName != null) {
             for (Map.Entry session : sessionList.entrySet()) {
@@ -1028,6 +1353,12 @@ public class TestExecutorUtility{
         return sessionList;
     }
 
+    /**
+     *
+     * @param testReportObject
+     * @param caps
+     * @return
+     */
     public JSONObject addBrowserAndOsDetailsOnReportObject(JSONObject testReportObject, Capabilities caps){
         testReportObject.put("browserVersion", caps.getVersion());
         String osName= caps.getPlatform().toString();
@@ -1036,6 +1367,15 @@ public class TestExecutorUtility{
         return testReportObject;
     }
 
+    /**
+     *
+     * @param testReportObject
+     * @param testStepArray
+     * @param testResult
+     * @param screenShotPath
+     * @param startTime
+     * @return
+     */
     public JSONObject addTestStepStatusAndEndTimeToReportObject(JSONObject testReportObject,JSONArray testStepArray,String testResult,String screenShotPath,long startTime){
         long stopTimeTest = System.currentTimeMillis();
         testReportObject.put("testStep", testStepArray);
@@ -1051,10 +1391,11 @@ public class TestExecutorUtility{
         return testReportObject;
     }
 
+
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
      * @param browserName
+     * @param driver
      * @return
      */
     public WebDriver initializeBrowserFromBinaryPath(String browserName,WebDriver driver) {
@@ -1080,10 +1421,12 @@ public class TestExecutorUtility{
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @param driver
+     *
+      * @param driver
      * @param stepReportObject
      * @param stepPassed
+     * @param testsFileName
+     * @param testName
      * @return
      */
     public JSONObject addStepResultInReport(WebDriver driver, JSONObject stepReportObject, boolean stepPassed,String testsFileName,String testName)  {
@@ -1112,9 +1455,12 @@ public class TestExecutorUtility{
     }
 
     /**
-     * @param session
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
+     *
+      * @param session
+     * @param driver
+     * @param browser
+     * @param sessionList
+     * @return
      */
     public JSONObject initializeBrowser(Object session,WebDriver driver,String browser,Map<String, WebDriver> sessionList) {
 
@@ -1154,10 +1500,11 @@ public class TestExecutorUtility{
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @param driver
+     *
+      * @param driver
      * @param stepReportObject
      * @param step
+     * @param test
      * @return
      */
     public JSONObject addStepExecutionOfAnnotation(WebDriver driver, JSONObject stepReportObject,String step,JSONObject test)  {
@@ -1208,6 +1555,15 @@ public class TestExecutorUtility{
         return stepReportObject;
     }
 
+    /**
+     *
+     * @param session
+     * @param seleniumAddress
+     * @param capability
+     * @param sessionLists
+     * @param driver
+     * @return
+     */
     public JSONObject openRemoteBrowserIfSeleniumAddressExist(Object session,String seleniumAddress, DesiredCapabilities capability,Map<String, WebDriver> sessionLists, WebDriver driver){
         if (seleniumAddress != null) {
             return setRemoteBrowser(session,driver,seleniumAddress,capability,sessionLists);

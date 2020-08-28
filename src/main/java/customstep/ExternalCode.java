@@ -24,11 +24,15 @@ public class ExternalCode  {
 
     /**
      *
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
      * @param annotation
      * @param step
-     * @throws Exception
+     * @param test
+     * @param driver
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
      */
     public void runAllAnnotatedWith(Class<? extends Annotation> annotation, String step, JSONObject test, WebDriver driver) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         boolean flag=false;
@@ -59,6 +63,12 @@ public class ExternalCode  {
         }
     }
 
+    /**
+     *
+     * @param args
+     * @param test
+     * @return
+     */
     public String[] getArgumentsOfExtCodeWhenDataSet(String[] args,JSONObject test){
         StepParser stepParser=new StepParser();
         StringBuilder argument=new StringBuilder();
@@ -78,6 +88,12 @@ public class ExternalCode  {
            return argument.toString().split(",");
     }
 
+    /**
+     *
+     * @param tagVal
+     * @param test
+     * @return
+     */
     public String[] getArgumentsOfExtCode(String tagVal,JSONObject test){
         String[] arguments=null;
         if (tagVal.contains("{") && tagVal.contains("}")) {
@@ -91,6 +107,19 @@ public class ExternalCode  {
         return arguments;
     }
 
+    /**
+     *
+     * @param driver
+     * @param methods
+     * @param tagVal
+     * @param arguments
+     * @return
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
     public boolean invokeCodeMethods(WebDriver driver,Set<Method> methods,String tagVal,String[] arguments) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         boolean flag=false;
         for (Method m : methods) {

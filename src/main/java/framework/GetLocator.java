@@ -27,6 +27,14 @@ public class GetLocator {
 
     private static final Logger log = LogManager.getLogger(GetLocator.class);
 
+
+    /**
+     *
+     * @param testsFileName
+     * @param locatorName
+     * @return
+     */
+
     public String getLocatorValue(String testsFileName, String locatorName) {
         verifyLocatorNameIsNotEmpty(locatorName);
         JSONArray locatorFileList = new JSONArray();
@@ -59,6 +67,11 @@ public class GetLocator {
         return locatorsName;
     }
 
+    /**
+     *
+     * @param locatorsName
+     * @param actualLocatorName
+     */
     public void handelExceptionWhenLocatorsNameIsNull(String locatorsName, String actualLocatorName){
         if(locatorsName==null){
             IfStepParser.isIfError=true;
@@ -66,6 +79,12 @@ public class GetLocator {
         }
     }
 
+    /**
+     *
+     * @param testsFileName
+     * @param actualLocatorName
+     * @return
+     */
     public String getLocatorFromOthersFileIfExist(String testsFileName,String actualLocatorName){
 
         String locatorsName = null;
@@ -89,6 +108,12 @@ public class GetLocator {
         return locatorsName;
     }
 
+    /**
+     *
+     * @param locatorFileList
+     * @param paths
+     * @return
+     */
     public boolean verifyThatLocatorDirectoryHasOnlyJsonFile(JSONArray locatorFileList,Stream<Path> paths) {
         StringBuilder file = new StringBuilder();
         locatorFileList.addAll(paths
@@ -112,6 +137,12 @@ public class GetLocator {
         return flag;
     }
 
+    /**
+     *
+     * @param actualLocatorName
+     * @param main
+     * @return
+     */
     public String getLocatorFromSameAsTestFile(String actualLocatorName,JSONObject main){
         String locatorsName = null;
         if(actualLocatorName.contains(".")) {
@@ -122,6 +153,14 @@ public class GetLocator {
         }
         return locatorsName;
     }
+
+    /**
+     *
+     * @param locatorName
+     * @param testsFileName
+     * @param main
+     * @return
+     */
 
     public String getLocatorValueFromJson(String locatorName,String testsFileName, JSONObject main){
         String locatorsName = null;
@@ -136,6 +175,11 @@ public class GetLocator {
         }
         return locatorsName;
     }
+
+    /**
+     *
+     * @param locatorName
+     */
     public void verifyLocatorNameIsNotEmpty(String locatorName){
         if(locatorName.equals("")) {
             commonMethods.throwTesboException("Locator is not define.",log);

@@ -27,7 +27,10 @@ public class GetUserConfiguration {
     JSONObject main = Utility.loadJsonFile(getConfigFilePath());
     private static final Logger log = LogManager.getLogger(GetUserConfiguration.class);
 
-
+    /**
+     *
+     * @return
+     */
     public String getConfigFilePath() {
         String configName;
         if(SetCommandLineArgument.configFile !=null){
@@ -40,6 +43,10 @@ public class GetUserConfiguration {
         return file.getAbsolutePath();
     }
 
+    /**
+     *
+     * @return
+     */
     public List<String> getBrowsers() {
 
         if(SetCommandLineArgument.browser !=null && !(SetCommandLineArgument.browser.equalsIgnoreCase("all"))){
@@ -68,13 +75,21 @@ public class GetUserConfiguration {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<String> getBrowserFromConfig() {
         JSONObject run = (JSONObject) main.get("run");
         JSONObject browser = (JSONObject) run.get("browser");
         return (JSONArray) browser.get("name");
     }
 
-
+    /**
+     *
+     * @param browserName
+     * @return
+     */
     public JSONObject getCapabilities(String browserName)  {
         JSONObject capabilities =null;
         try {
@@ -88,6 +103,10 @@ public class GetUserConfiguration {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public List<String> getTags() {
         if(SetCommandLineArgument.byTag !=null){
             JSONArray tag=new JSONArray();
@@ -100,19 +119,19 @@ public class GetUserConfiguration {
             return (JSONArray) by.get("tag");
         }
     }
+
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public JSONObject getBy()  {
         JSONObject run = (JSONObject) main.get("run");
         return (JSONObject) run.get("by");
     }
+
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public String getSeleniumAddress()  {
         String seleniumAddress =null;
@@ -126,10 +145,10 @@ public class GetUserConfiguration {
         else
             return seleniumAddress;
     }
+
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public String getCustomStepDirectory()  {
         File file = null;
@@ -146,9 +165,8 @@ public class GetUserConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public String getProjectDirectory()  {
         try {
@@ -158,7 +176,10 @@ public class GetUserConfiguration {
         }
     }
 
-
+    /**
+     *
+     * @return
+     */
     public String getRunBy()  {
         String runby = ((JSONObject) main.get("run")).get("by").toString();
         if(runby.contains("Suite") || runby.contains("SUITE"))
@@ -177,9 +198,8 @@ public class GetUserConfiguration {
 
 
     /**
-     * @auther : Viral Patel
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public JSONObject getCloudIntegration() {
         try {
@@ -191,6 +211,11 @@ public class GetUserConfiguration {
             throw new TesboException("Cloud Integration is not defined");
         }
     }
+
+    /**
+     *
+     * @return
+     */
 
     public String getBaseUrl() {
         String baseUrl = "";
@@ -209,6 +234,10 @@ public class GetUserConfiguration {
         return baseUrl;
     }
 
+    /**
+     *
+     * @return
+     */
     public JSONObject getParallel() {
         JSONObject parallelData = (JSONObject) ((JSONObject) main.get("run")).get("parallel");
         JSONObject dataOfparallel = new JSONObject();
@@ -236,25 +265,41 @@ public class GetUserConfiguration {
         return dataOfparallel;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSuitesDirectory()  {
         return Paths.get("").toAbsolutePath().toString()+"/src/test/java/suite";
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTestsDirectory()  {
         return Paths.get("").toAbsolutePath().toString()+"/src/test/java/tests";
     }
 
+    /**
+     *
+     * @return
+     */
     public String getLocatorDirectory() {
         return Paths.get("").toAbsolutePath().toString()+"/src/test/java/locator";
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDataSetDirectory() {
         return Paths.get("").toAbsolutePath().toString()+"/src/test/java/DataSet";
     }
 
     /**
-     * @Description : get suite name from config file.
-     * @return : suite names.
+     *
+      * @return
      */
     public List<String> getSuite()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -263,9 +308,8 @@ public class GetUserConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public String getRetryAnalyser()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -279,9 +323,8 @@ public class GetUserConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @param browser
+     *
+      * @param browser
      * @return
      */
     public String getBinaryPath(String browser)  {
@@ -301,9 +344,8 @@ public class GetUserConfiguration {
 
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getSingleWindowRun()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -316,9 +358,8 @@ public class GetUserConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getHighlightElement()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -331,9 +372,8 @@ public class GetUserConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getPauseStepDisplay()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -346,9 +386,8 @@ public class GetUserConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getBrowserClose()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -361,9 +400,8 @@ public class GetUserConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getIsGrid()  {
         JSONObject run = (JSONObject) main.get("run");
@@ -376,9 +414,8 @@ public class GetUserConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public String getEnvironment() {
         JSONObject environment = (JSONObject) ((JSONObject) main.get("run")).get("environment");
@@ -389,18 +426,16 @@ public class GetUserConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public JSONObject getEnvironmentList() {
         return (JSONObject) ((JSONObject) main.get("run")).get("environment");
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getRunPastFailure()  {
 
@@ -420,9 +455,8 @@ public class GetUserConfiguration {
     }
 
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public boolean getIsCloudIntegration() {
         try {
@@ -434,20 +468,20 @@ public class GetUserConfiguration {
         }
     }
 
+
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public List<String> getLocatorPreference()  {
         JSONObject run = (JSONObject) main.get("run");
         return (JSONArray) run.get("locatorPreference");
     }
 
+
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public String getBuildName()  {
         JSONObject cloudIntegrations = (JSONObject) main.get(cloudIntegration);
@@ -455,10 +489,10 @@ public class GetUserConfiguration {
 
     }
 
+
     /**
-     * @auther : Ankit Mistry
-     * @lastModifiedBy:
-     * @return
+     *
+      * @return
      */
     public String getReportFileName()  {
         try {

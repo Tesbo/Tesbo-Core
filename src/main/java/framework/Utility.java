@@ -11,6 +11,12 @@ import java.io.FileReader;
 public class Utility {
 
     private static final Logger log = LogManager.getLogger(Utility.class);
+
+    /**
+     *
+     * @param jsonFilePath
+     * @return
+     */
     public static JSONObject loadJsonFile(String jsonFilePath){
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = null;
@@ -21,6 +27,11 @@ public class Utility {
         return jsonObject;
     }
 
+    /**
+     *
+     * @param jsonFilePath
+     * @return
+     */
     public static JSONArray loadJsonArrayFile(String jsonFilePath){
         JSONParser parser = new JSONParser();
         JSONArray jsonObject = null;

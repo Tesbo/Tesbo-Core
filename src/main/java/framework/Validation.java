@@ -36,6 +36,9 @@ public class Validation {
     CommonMethods commonMethods=new CommonMethods();
     SuiteParser suiteParser=new SuiteParser();
 
+    /**
+     *
+     */
     public void beforeExecutionValidation(){
 
         //Validation for Project Directory Path is empty
@@ -72,6 +75,9 @@ public class Validation {
         locatorTypesValidation();
     }
 
+    /**
+     *
+     */
     public void testsDirectoryPathValidation() {
 
         //Validation for TestesDirectory Path is empty
@@ -95,6 +101,9 @@ public class Validation {
 
     }
 
+    /**
+     *
+     */
     public void configFilePathValidation() {
 
         //config File Path is exist or not
@@ -114,6 +123,9 @@ public class Validation {
 
     }
 
+    /**
+     *
+     */
     public void projectDirectoryPathValidation() {
 
         //Validation for Project Directory Path is empty
@@ -145,6 +157,10 @@ public class Validation {
 
     }
 
+    /**
+     *
+     * @param files
+     */
     public void verifyThatProjectDirectoryHasTestsLocatorAndRunnerDirectoryISExistOrNot(File[] files){
         int count=0;
         for (File aFile : files) {
@@ -157,6 +173,9 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     */
     public void locatorDirectoryPathValidation() {
 
         String locatorDirectory=null;
@@ -174,6 +193,9 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     */
     public void baseUrlValidation() {
 
         String baseUrl=getCofig.getBaseUrl();
@@ -182,6 +204,9 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     */
     public void browserValidation() {
 
         List<String> browserList=new LinkedList<>();
@@ -213,6 +238,9 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     */
     public void byTagAndBySuiteValidation() {
         try {
 
@@ -235,6 +263,9 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     */
     public void tagNameAndSuiteNameValidation() {
 
         JSONArray tagName= (JSONArray) getCofig.getTags();
@@ -250,6 +281,10 @@ public class Validation {
 
     }
 
+    /**
+     *
+     * @param tagName
+     */
     public void verifyTestFoundWithTagName(JSONArray tagName){
         if (!tagName.isEmpty()) {
             for (Object tag : tagName) {
@@ -263,6 +298,10 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     * @param suiteName
+     */
     public void verifyTestFoundWithSuiteName(JSONArray suiteName){
 
         if (!suiteName.isEmpty()) {
@@ -281,6 +320,11 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     * @param isSuite
+     * @param suite
+     */
     public void verifySuiteFileIsExistOrNotInDirectory(boolean isSuite, String suite){
         if (!isSuite) {
             commonMethods.throwTesboException("'"+suite+ "' suite is not found in suite directory",log);
@@ -291,6 +335,9 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     */
     public void parallelExecutionValidation() {
         JSONObject parallelExecution = new JSONObject();
         try {
@@ -305,6 +352,10 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     * @param testExecutionQueue
+     */
     public void endStepValidation(JSONArray testExecutionQueue) {
 
         IfStepParser ifStepParser=new IfStepParser();
@@ -333,6 +384,11 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     * @param steps
+     * @param listOfSession
+     */
     public void sessionNotDeclareOnTest(JSONArray steps,JSONArray listOfSession) {
         boolean isSessionInTest=false;
         for(Object session:listOfSession)
@@ -348,6 +404,11 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     * @param steps
+     * @param listOfSession
+     */
     public void sessionNotDefineOnTest(JSONArray steps, JSONArray listOfSession) {
         for (Object step : steps) {
             if (step.toString().replaceAll(spaceRegex, " ").trim().contains("[") && step.toString().replaceAll(spaceRegex, " ").trim().contains("]") &&
@@ -366,6 +427,12 @@ public class Validation {
 
     }
 
+    /**
+     *
+     * @param testsFileName
+     * @param testName
+     * @param listOfSession
+     */
     public void sessionDefineValidation(String testsFileName, String testName,JSONArray listOfSession) {
         StringBuilder testsFileNameDetails =testsFileParser.readTestsFile(testsFileName);
         String[] allLines = testsFileNameDetails.toString().split(newLineRegex);
@@ -388,6 +455,12 @@ public class Validation {
 
     }
 
+    /**
+     *
+     * @param listOfSession
+     * @param allLines
+     * @param j
+     */
     public void verifySessionIsDefineInSquareBracketOrNot(JSONArray listOfSession,String[] allLines,int j){
         for (Object session : listOfSession) {
             if (allLines[j].replaceAll(spaceRegex, " ").trim().replaceAll(regexForBrackets, "").equals(session.toString()) && (!allLines[j].replaceAll(spaceRegex, " ").trim().equals("[" + session.toString() + "]"))) {
@@ -396,6 +469,13 @@ public class Validation {
 
         }
     }
+
+    /**
+     *
+     * @param listOfSession
+     * @param allLines
+     * @param j
+     */
     public void verifySessionIsDefineOnTestOrNot(JSONArray listOfSession,String[] allLines,int j){
         if(allLines[j].replaceAll(spaceRegex, " ").trim().contains(closeText)){
             String sessionClose=  allLines[j].replaceAll(spaceRegex, " ").trim().replaceAll(regexForBrackets, "").split(":")[1].trim();
@@ -412,6 +492,13 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     * @param listOfSession
+     * @param allLines
+     * @param j
+     * @param endpoint
+     */
     public void verifyClosedSessionIsDefineOnTestOrNot(JSONArray listOfSession,String[] allLines,int j,int endpoint){
         if(allLines[j].replaceAll(spaceRegex, " ").trim().contains(closeText)){
             String closedSession=  allLines[j].replaceAll(spaceRegex, " ").trim().replaceAll(regexForBrackets, "").split(":")[1].trim();
@@ -426,6 +513,11 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     * @param testsFileName
+     * @param testName
+     */
     public void collectionValidation(String testsFileName, String testName) {
         StringBuilder testsFileNameDetails =testsFileParser.readTestsFile(testsFileName);
         StepParser stepParser=new StepParser();
@@ -448,6 +540,10 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     * @param step
+     */
     public void keyWordValidation(String step) {
         String newStep=step.replaceAll(spaceRegex, " ").trim().toLowerCase();
         if(newStep.startsWith("step") || newStep.startsWith("verify") || newStep.startsWith("code") || newStep.startsWith("collection")
@@ -458,7 +554,11 @@ public class Validation {
         }
     }
 
-
+    /**
+     *
+     * @param test
+     * @return
+     */
     public boolean severityAndPriorityValidation(JSONObject test) {
 
         JSONArray steps= testsFileParser.getSeverityAndPriority(test);
@@ -499,6 +599,10 @@ public class Validation {
         return isSeverityOrPriority;
     }
 
+    /**
+     *
+     * @param step
+     */
     public void verifyTypeOfPriority(String step){
         if (step.replaceAll(spaceRegex, " ").trim().contains("Priority: ")) {
             String priority=step.replaceAll(spaceRegex, " ").trim().split(":")[1];
@@ -510,6 +614,10 @@ public class Validation {
         }
     }
 
+    /**
+     *
+     * @param step
+     */
     public void verifyTypeOfSeverity(String step){
         if (step.replaceAll(spaceRegex, " ").trim().contains("Severity: ")) {
             String severity=step.replaceAll(spaceRegex, " ").trim().split(":")[1];
@@ -520,7 +628,9 @@ public class Validation {
         }
     }
 
-
+    /**
+     *
+     */
     public void locatorTypesValidation() {
         List<String> locatorTypes;
 

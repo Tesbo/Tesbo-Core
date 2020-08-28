@@ -48,12 +48,19 @@ public class ReportBuilder implements Runnable {
     String statusText="status";
     String fontTagText="</font>\n";
 
+
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         ReportBuilder builder = new ReportBuilder();
         builder.generatReport();
     }
 
-
+    /**
+     *
+     */
     public void generatReport() {
 
         GetConfiguration getConfiguration=new GetConfiguration();
@@ -88,6 +95,10 @@ public class ReportBuilder implements Runnable {
 
     }
 
+    /**
+     *
+     * @param reportFileName
+     */
     public void copyReport(String reportFileName){
         File source = new File("./htmlReport/"+reportFileName+htmlText);
 
@@ -107,6 +118,11 @@ public class ReportBuilder implements Runnable {
 
     }
 
+    /**
+     *
+     * @param filePath
+     * @param fileContent
+     */
     public void writeReportFile(String filePath, StringBuilder fileContent) {
 
         BufferedWriter writer = null;
@@ -129,6 +145,11 @@ public class ReportBuilder implements Runnable {
 
     }
 
+    /**
+     *
+     * @param sb
+     * @return
+     */
     public StringBuilder generateHeader(StringBuilder sb) {
 
 
@@ -168,6 +189,11 @@ public class ReportBuilder implements Runnable {
         return sb;
     }
 
+    /**
+     *
+     * @param sb
+     * @return
+     */
     public StringBuilder generateBody(StringBuilder sb) {
 
 
@@ -182,7 +208,11 @@ public class ReportBuilder implements Runnable {
 
     //------------------------------------------------------------------------------------------------------------
 
-
+    /**
+     *
+     * @param sb
+     * @return
+     */
     public StringBuilder generateCurrentBuildSummary(StringBuilder sb) {
 
 
@@ -236,6 +266,11 @@ public class ReportBuilder implements Runnable {
     }
 
 
+    /**
+     *
+     * @param sb
+     * @return
+     */
     public StringBuilder generatePieAndBarChart(StringBuilder sb) {
 
 
@@ -281,6 +316,13 @@ public class ReportBuilder implements Runnable {
         return sb;
     }
 
+    /**
+     *
+     * @param sb
+     * @param testsFileArray
+     * @param browserName
+     * @return
+     */
     public StringBuilder generatePerModuleSummary(StringBuilder sb, JSONArray testsFileArray, String browserName) {
 
         try {
@@ -345,8 +387,8 @@ public class ReportBuilder implements Runnable {
     }
 
     /**
-     * I think here required the module data as well so it get the identify that how much module we have and how much test in that module
      *
+     * @param sb
      * @return
      */
     public StringBuilder generateModuleSummary(StringBuilder sb) {
@@ -543,6 +585,12 @@ public class ReportBuilder implements Runnable {
         return sb;
     }
 
+    /**
+     *
+     * @param isTestFailed
+     * @param test
+     * @return
+     */
     public JSONObject getScreenShotPathAndStacktrace(boolean isTestFailed,JSONObject test){
         String stacktrace = "";
         String screenShotpath = "";
@@ -569,6 +617,11 @@ public class ReportBuilder implements Runnable {
         return failTestDetails;
     }
 
+    /**
+     *
+     * @param testDetails
+     * @return
+     */
     public String getSuiteOrTagName(JSONObject testDetails){
         String suiteOrTagName="";
         if(!testDetails.get("suiteName").toString().equals("")){
@@ -584,6 +637,14 @@ public class ReportBuilder implements Runnable {
         return suiteOrTagName;
     }
 
+    /**
+     *
+     * @param isTestFailed
+     * @param sb
+     * @param screenShotpath
+     * @param stacktrace
+     * @return
+     */
     public StringBuilder addScreenShotPathAndStacktrace(boolean isTestFailed,StringBuilder sb,String screenShotpath,String stacktrace){
         if (isTestFailed) {
             sb.append(
@@ -613,6 +674,11 @@ public class ReportBuilder implements Runnable {
         return sb;
     }
 
+    /**
+     *
+     * @param test
+     * @return
+     */
     public JSONObject getFontColor(JSONObject test){
         String fontColor = "";
         boolean isTestFailed = false;
@@ -631,6 +697,11 @@ public class ReportBuilder implements Runnable {
         return statusDetail;
     }
 
+    /**
+     *
+     * @param test
+     * @return
+     */
     public String getOsName(JSONObject test){
         String osName = "";
         if (test.get(osNameText).toString().toLowerCase().contains("win")) {
@@ -648,6 +719,12 @@ public class ReportBuilder implements Runnable {
         return osName;
     }
 
+    /**
+     *
+     * @param stepList
+     * @param sb
+     * @return
+     */
     public StringBuilder addStep(JSONArray stepList,StringBuilder sb){
         for (Object step : stepList) {
 
@@ -666,6 +743,11 @@ public class ReportBuilder implements Runnable {
         return sb;
     }
 
+    /**
+     *
+     * @param iter
+     * @return
+     */
     public JSONArray getBrowserList(Iterator iter){
         String browser = " ";
         JSONArray browserList = new JSONArray();
@@ -682,6 +764,11 @@ public class ReportBuilder implements Runnable {
         return browserList;
     }
 
+    /**
+     *
+     * @param sb
+     * @return
+     */
     public StringBuilder generateBrowserWiseChartData(StringBuilder sb) {
 
 
@@ -709,7 +796,11 @@ public class ReportBuilder implements Runnable {
         return sb;
     }
 
-
+    /**
+     *
+     * @param sb
+     * @return
+     */
     public StringBuilder generateDonutChartData(StringBuilder sb)
     {
 
@@ -736,7 +827,9 @@ public class ReportBuilder implements Runnable {
         return sb;
     }
 
-
+    /**
+     *
+     */
     public void startThread() {
         ReportBuilder rb = new ReportBuilder();
 
