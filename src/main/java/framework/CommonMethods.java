@@ -12,9 +12,9 @@ public class CommonMethods {
 
     /**
      *
-     * @param arrayList
-     * @param errorMsg
-     * @param log
+     * @param arrayList pass the arraylist that you want to check
+     * @param errorMsg sent the error message you wanted to show
+     * @param log log object to add the error message into the log
      */
     public  void verifyJsonArrayIsEmpty(JSONArray arrayList, String errorMsg, Logger log){
 
@@ -26,8 +26,8 @@ public class CommonMethods {
 
     /**
      *
-     * @param errorMsg
-     * @param log
+     * @param errorMsg sent the error message you wanted to show
+     * @param log log object to add the error message into the log
      */
     public  void throwTesboException(String errorMsg, Logger log){
             log.error(errorMsg);
@@ -36,8 +36,8 @@ public class CommonMethods {
 
     /**
      *
-     * @param errorMsg
-     * @param log
+     * @param errorMsg sent the error message you wanted to show
+     * @param log log object to add the error message into the log
      */
     public  void throwAssertException(String errorMsg, Logger log){
         log.error(errorMsg);
@@ -46,8 +46,8 @@ public class CommonMethods {
 
     /**
      *
-     * @param infoMsg
-     * @param log
+     * @param infoMsg information message you want to show
+     * @param log log object
      */
     public  void printStepInfo(String infoMsg, Logger log){
         log.info(infoMsg);
@@ -56,8 +56,8 @@ public class CommonMethods {
 
     /**
      * 
-     * @param errorMsg
-     * @param log
+     * @param errorMsg error message you wanted to show
+     * @param log log object to print error message in to the log
      */
     public void logErrorMsg(String errorMsg,Logger log){
         log.error(errorMsg);

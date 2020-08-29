@@ -41,9 +41,9 @@ public class DataDrivenParser {
 
         /**
          *
-         * @param dataSetName
-         * @param keyName
-         * @return
+         * @param dataSetName DataSet Name
+         * @param keyName Key to check
+         * @return value of data type
          */
     public String checkDataTypeIsExcelOrGlobleInDataset(String dataSetName,List<String> keyName) {
 
@@ -82,8 +82,8 @@ public class DataDrivenParser {
 
     /**
      *
-     * @param main
-     * @param dataSetName
+     * @param main Json object to check
+     * @param dataSetName DataSet Name
      * @param keyName
      * @return
      */

@@ -24,10 +24,10 @@ public class ExternalCode  {
 
     /**
      *
-     * @param annotation
+     * @param annotation step annotation
      * @param step
      * @param test
-     * @param driver
+     * @param driver Driver
      * @throws ClassNotFoundException
      * @throws NoSuchMethodException
      * @throws InvocationTargetException

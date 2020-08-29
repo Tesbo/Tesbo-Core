@@ -5,12 +5,35 @@
 
 	<groupId>Tesbo</groupId>
 	<artifactId>Tesbo-Web</artifactId>
-	<version>0.0.6</version>
+	<version>0.0.6-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 
 	<name>Tesbo</name>
-	<url>http://maven.apache.org</url>
+	<url>http://tesbo.io</url>
+	<description>Tesbo is the Test automation framework library</description>
+
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Viral Patel</name>
+			<email>vir@qable.io</email>
+			<organization>QAble</organization>
+			<organizationUrl>http://qable.io</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/Tesbo/Tesbo-Core.git</connection>
+		<developerConnection>scm:git:ssh://github.com/Tesbo/Tesbo-Core.git</developerConnection>
+		<url>https://github.com/Tesbo/Tesbo-Core</url>
+	</scm>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -25,10 +48,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.testSource>1.8</maven.compiler.testSource>
-		<maven.compiler.testTarget>1.8</maven.compiler.testTarget>
+		<maven.compiler.source>8</maven.compiler.source>
+		<maven.compiler.target>8</maven.compiler.target>
+		<maven.compiler.testSource>8</maven.compiler.testSource>
+		<maven.compiler.testTarget>8</maven.compiler.testTarget>
 		<java.bootstrap.classes>${java.home}/lib/rt.jar</java.bootstrap.classes>
 		<version.net.sf.proguard>6.0.1</version.net.sf.proguard>
 	</properties>
@@ -38,9 +61,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+
 				<configuration>
-					<source>8</source>
-					<target>8</target>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.source}</target>
 				</configuration>
 			</plugin>
 
@@ -89,16 +114,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.6</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>nexus</serverId>
-					<nexusUrl>http://localhost:8081/nexus/</nexusUrl>
-				</configuration>
-			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -115,13 +131,19 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9.1</version>
+				<version>3.2.0</version>
+				<configuration> <!-- add this to disable checking -->
+					<additionalparam>-Xdoclint:none</additionalparam>
+					<source>8</source>
+				</configuration>
 				<executions>
+
 					<execution>
 						<id>attach-javadocs</id>
 						<goals>
 							<goal>jar</goal>
 						</goals>
+
 					</execution>
 				</executions>
 			</plugin>
@@ -138,6 +160,17 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
 			</plugin>
 
 		</plugins>
