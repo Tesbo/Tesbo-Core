@@ -1,7 +1,7 @@
 package framework;
 
-import RandomLibrary.RandLibrary;
-import Selenium.Commands;
+import randomlibrary.RandLibrary;
+import selenium.Commands;
 import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -388,27 +388,27 @@ public class StepParser {
         String textToEnter="";
         if (step.toLowerCase().contains("firstname")) {textToEnter=randLibrary.firstName(); }
 
-        if (step.toLowerCase().contains("email")) {textToEnter=randLibrary.eMail(); }
+        else if (step.toLowerCase().contains("email")) {textToEnter=randLibrary.eMail(); }
 
-        if (step.toLowerCase().contains("username")){textToEnter=randLibrary.userName(); }
+        else if (step.toLowerCase().contains("username")){textToEnter=randLibrary.userName(); }
 
-        if (step.toLowerCase().contains("mobilenumber")){textToEnter=randLibrary.number(); }
+        else if (step.toLowerCase().contains("mobilenumber")){textToEnter=randLibrary.number(); }
 
-        if (step.toLowerCase().contains("lastname")){textToEnter=randLibrary.LastName(); }
+        else if (step.toLowerCase().contains("lastname")){textToEnter=randLibrary.lastName(); }
 
-        if (step.toLowerCase().contains("age")){textToEnter=randLibrary.AgeAdult(); }
+        else if (step.toLowerCase().contains("age")){textToEnter=randLibrary.ageAdult(); }
 
-        if (step.toLowerCase().contains("birthday")){textToEnter= randLibrary.Birthday(); }
+        else if (step.toLowerCase().contains("birthday")){textToEnter= randLibrary.birthday(); }
 
-        if (step.toLowerCase().contains("gender")){textToEnter=randLibrary.gender(); }
+        else if (step.toLowerCase().contains("gender")){textToEnter=randLibrary.gender(); }
 
-        if (step.toLowerCase().contains("fullname")){textToEnter=randLibrary.fullName(); }
+        else if (step.toLowerCase().contains("fullname")){textToEnter=randLibrary.fullName(); }
 
-        if (step.toLowerCase().contains("password")){textToEnter=randLibrary.password(); }
+        else if (step.toLowerCase().contains("password")){textToEnter=randLibrary.password(); }
 
-        if (step.toLowerCase().contains("passport")){textToEnter=randLibrary.passport(); }
+        else if (step.toLowerCase().contains("passport")){textToEnter=randLibrary.passport(); }
 
-        if (step.toLowerCase().contains("maritalstatus")){textToEnter=randLibrary.maritalStatus(); }
+        else if (step.toLowerCase().contains("maritalstatus")){textToEnter=randLibrary.maritalStatus(); }
 
 
         return textToEnter;
@@ -416,19 +416,19 @@ public class StepParser {
 
     public String randomUserAddressDetails(String step){
         String textToEnter="";
-        if (step.toLowerCase().contains("country")){textToEnter=randLibrary.Country(); }
+        if (step.toLowerCase().contains("country")){textToEnter=randLibrary.country(); }
 
-        if (step.toLowerCase().contains("city")){textToEnter=randLibrary.city(); }
+        else if (step.toLowerCase().contains("city")){textToEnter=randLibrary.city(); }
 
-        if (step.toLowerCase().contains("postcode")){textToEnter=randLibrary.postcode(); }
+        else if (step.toLowerCase().contains("postcode")){textToEnter=randLibrary.postcode(); }
 
-        if (step.toLowerCase().contains("street")){textToEnter=randLibrary.street(); }
+        else if (step.toLowerCase().contains("street")){textToEnter=randLibrary.street(); }
 
-        if (step.toLowerCase().contains("state")){textToEnter=randLibrary.state(); }
+        else if (step.toLowerCase().contains("state")){textToEnter=randLibrary.state(); }
 
-        if (step.toLowerCase().contains("fulladdress")){textToEnter=randLibrary.fullAddress(); }
+        else if (step.toLowerCase().contains("fulladdress")){textToEnter=randLibrary.fullAddress(); }
 
-        if (step.toLowerCase().contains("houseno")){textToEnter=randLibrary.houseNo(); }
+        else if (step.toLowerCase().contains("houseno")){textToEnter=randLibrary.houseNo(); }
 
 
         return textToEnter;
@@ -436,15 +436,15 @@ public class StepParser {
 
     public String randomUserBankDetails(String step){
         String textToEnter="";
-        if (step.toLowerCase().contains("debitcard")){textToEnter=randLibrary.DebitCardNo(); }
+        if (step.toLowerCase().contains("debitcard")){textToEnter=randLibrary.debitCardNo(); }
 
-        if (step.toLowerCase().contains("expirydate")){textToEnter=randLibrary.ExpiryDate(); }
+        else if (step.toLowerCase().contains("expirydate")){textToEnter=randLibrary.expiryDate(); }
 
-        if (step.toLowerCase().contains("cvv")){textToEnter=randLibrary.cvvNo(); }
+        else if (step.toLowerCase().contains("cvv")){textToEnter=randLibrary.cvvNo(); }
 
-        if (step.toLowerCase().contains("bankacno")){textToEnter=randLibrary.bankACNo(); }
+        else if (step.toLowerCase().contains("bankacno")){textToEnter=randLibrary.bankACNo(); }
 
-        if (step.toLowerCase().contains("cardtype")){textToEnter=randLibrary.cardname(); }
+        else if (step.toLowerCase().contains("cardtype")){textToEnter=randLibrary.cardname(); }
 
         return textToEnter;
     }
@@ -453,21 +453,21 @@ public class StepParser {
         String textToEnter="";
         if (step.toLowerCase().contains("emoji")){textToEnter=randLibrary.emoji(); }
 
-        if (step.toLowerCase().contains("lorem")){textToEnter=randLibrary.lorem(); }
+        else if (step.toLowerCase().contains("lorem")){textToEnter=randLibrary.lorem(); }
 
-        if (step.toLowerCase().contains("domain")){textToEnter=randLibrary.internetDomain(); }
+        else if (step.toLowerCase().contains("domain")){textToEnter=randLibrary.internetDomain(); }
 
-        if (step.toLowerCase().contains("gstno")){textToEnter=randLibrary.GSTNo(); }
+        else if (step.toLowerCase().contains("gstno")){textToEnter=randLibrary.gstNo(); }
 
-        if (step.toLowerCase().contains("panno")){textToEnter=randLibrary.PANNo(); }
+        else if (step.toLowerCase().contains("panno")){textToEnter=randLibrary.panNo(); }
 
-        if (step.toLowerCase().contains("companyname")){textToEnter=randLibrary.companyName(); }
+        else if (step.toLowerCase().contains("companyname")){textToEnter=randLibrary.companyName(); }
 
-        if (step.toLowerCase().contains("idno")){textToEnter=randLibrary.IDNo(); }
+        else if (step.toLowerCase().contains("idno")){textToEnter=randLibrary.idNo(); }
 
-        if (step.toLowerCase().contains("mail.mailinator")) {textToEnter=randLibrary.RandomEmailWithMailinator(); }
+        else if (step.toLowerCase().contains("mail.mailinator")) {textToEnter=randLibrary.randomEmailWithMailinator(); }
 
-        if (step.toLowerCase().contains("mail.yopmail")) {textToEnter=randLibrary.RandomEmailWithYopmail(); }
+        else if (step.toLowerCase().contains("mail.yopmail")) {textToEnter=randLibrary.randomEmailWithYopmail(); }
 
         return textToEnter;
     }

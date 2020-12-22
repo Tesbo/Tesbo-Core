@@ -1,6 +1,6 @@
 package framework;
 
-import Execution.SetCommandLineArgument;
+import execution.SetCommandLineArgument;
 import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,8 +1,7 @@
 package framework;
 
-import DataCollector.BuildReportDataObject;
-import Execution.TestExecutionBuilder;
-import CustomStep.*;
+import datacollector.BuildReportDataObject;
+import execution.TestExecutionBuilder;
 import logger.TesboLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -124,7 +123,7 @@ public class TestExecutor implements Runnable {
 
         testReportObject= testExecutorUtility.addTestStepStatusAndEndTimeToReportObject(testReportObject,testStepArray,testResult,screenShotPath,startTime);
 
-        buildReport.addDataInMainObject(browser, testsFileName, testName, testReportObject);
+        buildReport.addDataInMainObject(browser, testsFileName, testReportObject);
 
         testExecutorUtility.addReportOnCloud(testName,testsFileName,testReportObject,testResult);
 

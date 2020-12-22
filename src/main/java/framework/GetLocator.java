@@ -82,7 +82,7 @@ public class GetLocator {
                     else{
                         commonMethods.throwTesboException("Multiple Locator is found '"+actualLocatorName + "'.",log);
                     }
-                }catch (NullPointerException ex) {}
+                }catch (NullPointerException ex) {log.error("");}
             }
         }
         handelExceptionWhenLocatorsNameIsNull(locatorsName, actualLocatorName);
