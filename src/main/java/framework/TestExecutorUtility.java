@@ -676,7 +676,11 @@ public class TestExecutorUtility{
                     screenShotPath= (String)  stepDetails.get(screenShotPathText);
                     testStepArray.add(stepReportObject);
                     stepReportObject = new JSONObject();
+                    if (!stepPassed) {
+                        break;
+                    }
                 }
+
             }
 
 

@@ -9,7 +9,9 @@ import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 /**
  * Get Configuration class will contains all the methods that will read
@@ -17,16 +19,12 @@ import java.util.List;
  */
 public class GetConfiguration {
 
-    String suiteName="suite";
-    String cloudIntegration="cloudIntegration";
-    String status="status";
-    String count="count";
-    JSONObject main = Utility.loadJsonFile(getConfigFilePath());
+    SetCommandLineArgument setCommandLineArgument=new SetCommandLineArgument();
 
     public String getConfigFilePath() {
         String configName;
-        if(SetCommandLineArgument.configFile !=null){
-            configName=SetCommandLineArgument.configFile;
+        if(setCommandLineArgument.configFile !=null){
+            configName=setCommandLineArgument.configFile;
         }
         else {
             configName="config.json";
@@ -35,11 +33,11 @@ public class GetConfiguration {
         return file.getAbsolutePath();
     }
 
-    public List<String> getBrowsers() {
+    public ArrayList<String> getBrowsers() {
 
-        if(SetCommandLineArgument.browser !=null && !(SetCommandLineArgument.browser.equalsIgnoreCase("all"))){
-            String browserList=SetCommandLineArgument.browser;
-            String[] browsers=browserList.split(",");
+        if(setCommandLineArgument.browser !=null && !(setCommandLineArgument.browser.toLowerCase().equals("all"))){
+            String browserList=setCommandLineArgument.browser;
+            String browsers[]=browserList.split(",");
             String browser = null;
             for(int i=0;i<browsers.length;i++){
                 if(i==0){
@@ -48,23 +46,26 @@ public class GetConfiguration {
                 else {
                     browser=browser+",\""+browsers[i]+"\"";
                 }
+
             }
             String browserArray="["+browser+"]";
             JSONArray browserJsonArray = null;
-            JSONParser parsers = new JSONParser();
+            JSONParser parser = new JSONParser();
             try {
-                browserJsonArray = (JSONArray) parsers.parse(browserArray);
+                browserJsonArray = (JSONArray) parser.parse(browserArray);
             } catch (ParseException e) {
+                e.printStackTrace();
             }
-
             return  browserJsonArray;
         }
         else {
-            return getBrowserFromConfig();
+            return getBrowser();
         }
     }
 
-    public List<String> getBrowserFromConfig() {
+    public ArrayList<String> getBrowser() {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         JSONObject browser = (JSONObject) run.get("browser");
         return (JSONArray) browser.get("name");
@@ -72,8 +73,10 @@ public class GetConfiguration {
 
 
     public JSONObject getCapabilities(String browserName)  {
+        Utility parser = new Utility();
         JSONObject capabilities =null;
         try {
+            JSONObject main = parser.loadJsonFile(getConfigFilePath());
             JSONObject run = (JSONObject) main.get("run");
             JSONObject browser = (JSONObject) run.get("capabilities");
             capabilities = (JSONObject) browser.get(browserName);
@@ -84,13 +87,15 @@ public class GetConfiguration {
 
     }
 
-    public List<String> getTags() {
-        if(SetCommandLineArgument.byTag !=null){
+    public ArrayList<String> getTags() {
+        if(setCommandLineArgument.byTag !=null){
             JSONArray tag=new JSONArray();
-            tag.add(SetCommandLineArgument.byTag);
+            tag.add(setCommandLineArgument.byTag);
             return tag;
         }
         else {
+            Utility parser = new Utility();
+            JSONObject main = parser.loadJsonFile(getConfigFilePath());
             JSONObject run = (JSONObject) main.get("run");
             JSONObject by = (JSONObject) run.get("by");
             return (JSONArray) by.get("tag");
@@ -102,8 +107,11 @@ public class GetConfiguration {
      * @return
      */
     public JSONObject getBy()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
-        return (JSONObject) run.get("by");
+        JSONObject by = (JSONObject) run.get("by");
+        return by;
     }
     /**
      * @auther : Ankit Mistry
@@ -111,7 +119,9 @@ public class GetConfiguration {
      * @return
      */
     public String getSeleniumAddress()  {
+        Utility parser = new Utility();
         String seleniumAddress =null;
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         try {
             seleniumAddress = run.get("seleniumAddress").toString();
@@ -130,12 +140,12 @@ public class GetConfiguration {
     public String getCustomStepDirectory()  {
         File file = null;
         try {
-            String customStepDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/CustomStep";
-            file = new File(customStepDirectory);
+            String CustomStepDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/CustomStep";
+            file = new File(CustomStepDirectory);
             if(!file.exists()){
                 throw new TesboException("Custom Step Directory is not found: "+file);
             }
-            return customStepDirectory;
+            return CustomStepDirectory;
         }catch (Exception e){
             throw new TesboException("Custom Step Directory is not found: "+file);
         }
@@ -148,29 +158,46 @@ public class GetConfiguration {
      */
     public String getProjectDirectory()  {
         try {
-            return Paths.get("").toAbsolutePath().toString()+"/src/test/java/";
+            String projectDIR= Paths.get("").toAbsolutePath().toString()+"/src/test/java/";
+            return projectDIR;
         }catch (Exception e){
             throw new TesboException("projectDIR is not define on config");
         }
     }
 
+    public ArrayList<String> getSuiteName() {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        JSONObject by = (JSONObject) run.get("by");
+        return (JSONArray) by.get("suite");
+
+    }
 
     public String getRunBy()  {
-        String runby = ((JSONObject) main.get("run")).get("by").toString();
+        Utility parser = new Utility();
+        String runby = ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("by").toString();
         if(runby.contains("Suite") || runby.contains("SUITE"))
         {throw new TesboException("Enter 'suite' in small case on config file");}
 
-        if(runby.contains("Tag") || runby.contains("TAG") && SetCommandLineArgument.byTag ==null)
+        if(runby.contains("Tag") || runby.contains("TAG") && setCommandLineArgument.byTag ==null)
         {throw new TesboException("Enter 'tag' in small case on config file");}
 
-        if (runby.contains("tag") || SetCommandLineArgument.byTag !=null) {
+        if (runby.contains("tag") || setCommandLineArgument.byTag !=null) {
             return "tag";
-        } else if (runby.contains(suiteName)) {
-            return suiteName;
+        } else if (runby.contains("suite")) {
+            return "suite";
         }
         return null;
     }
 
+    public ArrayList<String> getByValue()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject run = (JSONObject) main.get("run");
+        JSONObject by = (JSONObject) run.get("by");
+        return (JSONArray) by.get("suite");
+    }
 
     /**
      * @auther : Viral Patel
@@ -178,9 +205,10 @@ public class GetConfiguration {
      * @return
      */
     public JSONObject getCloudIntegration() {
+        Utility parser = new Utility();
         try {
 
-            return (JSONObject) main.get(cloudIntegration);
+            return (JSONObject) parser.loadJsonFile(getConfigFilePath()).get("cloudIntegration");
 
 
         }catch (Exception e){
@@ -194,38 +222,41 @@ public class GetConfiguration {
             baseUrl=getEnvironment();
         }
         else {
-            if (SetCommandLineArgument.baseUrl != null) {
-                baseUrl = SetCommandLineArgument.baseUrl;
+            if (setCommandLineArgument.baseUrl != null) {
+                baseUrl = setCommandLineArgument.baseUrl;
             } else {
+                Utility parser = new Utility();
                 try {
-                    baseUrl = ((JSONObject) main.get("run")).get("baseUrl").toString();
-                } catch (Exception e) { }
+                    baseUrl = ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("baseUrl").toString();
+                } catch (Exception e) {
+                }
             }
         }
         return baseUrl;
     }
 
     public JSONObject getParallel() {
-        JSONObject parallelData = (JSONObject) ((JSONObject) main.get("run")).get("parallel");
+        Utility parser = new Utility();
+        JSONObject parallelData = (JSONObject) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("parallel");
         JSONObject dataOfparallel = new JSONObject();
 
         try {
 
-            boolean isTrue = (boolean) parallelData.get(status);
-            if (isTrue) {
-                dataOfparallel.put(status, parallelData.get(status).toString());
-                dataOfparallel.put(count, parallelData.get(count).toString());
+            boolean IsTrue = (boolean) parallelData.get("status");
+            if (IsTrue) {
+                dataOfparallel.put("status", parallelData.get("status").toString());
+                dataOfparallel.put("count", parallelData.get("count").toString());
                 return dataOfparallel;
 
             } else {
-                dataOfparallel.put(status, parallelData.get(status).toString());
+                dataOfparallel.put("status", parallelData.get("status").toString());
                 return dataOfparallel;
 
             }
 
 
         } catch (Exception e) {
-            dataOfparallel.put(status, "false");
+            dataOfparallel.put("status", "false");
 
         }
 
@@ -233,29 +264,30 @@ public class GetConfiguration {
     }
 
     public String getSuitesDirectory()  {
-        return Paths.get("").toAbsolutePath().toString()+"/src/test/java/suite";
+        String SuiteDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/suite";
+        return SuiteDirectory;
     }
 
     public String getTestsDirectory()  {
-        return Paths.get("").toAbsolutePath().toString()+"/src/test/java/tests";
+        String testsFileDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/tests";
+        return testsFileDirectory;
     }
 
     public String getLocatorDirectory() {
-        return Paths.get("").toAbsolutePath().toString()+"/src/test/java/locator";
-    }
-
-    public String getDataSetDirectory() {
-        return Paths.get("").toAbsolutePath().toString()+"/src/test/java/DataSet";
+        String locatorDirectory=Paths.get("").toAbsolutePath().toString()+"/src/test/java/locator";
+        return locatorDirectory;
     }
 
     /**
      * @Description : get suite name from config file.
      * @return : suite names.
      */
-    public List<String> getSuite()  {
+    public ArrayList<String> getSuite()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         JSONObject by = (JSONObject) run.get("by");
-        return (JSONArray) by.get(suiteName);
+        return (JSONArray) by.get("suite");
     }
 
     /**
@@ -264,10 +296,12 @@ public class GetConfiguration {
      * @return
      */
     public String getRetryAnalyser()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         JSONObject retryAnalyser = (JSONObject) run.get("retryAnalyser");
         try {
-            return (String) retryAnalyser.get(count);
+            return (String) retryAnalyser.get("count");
         }catch (Exception e)
         {
             return "0";
@@ -281,10 +315,12 @@ public class GetConfiguration {
      * @return
      */
     public String getBinaryPath(String browser)  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         JSONObject browsersPath = (JSONObject) run.get("binaries");
         try {
-            if(browsersPath.get(browser).toString()==null || browsersPath.get(browser).toString().trim().equals("")){
+            if(browsersPath.get(browser).toString()==null | browsersPath.get(browser).toString().trim().equals("")){
                 return null;
             }
             else {
@@ -302,6 +338,8 @@ public class GetConfiguration {
      * @return
      */
     public boolean getSingleWindowRun()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         try {
             return (boolean) run.get("SingleWindowRun");
@@ -317,6 +355,8 @@ public class GetConfiguration {
      * @return
      */
     public boolean getHighlightElement()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         try {
             return (boolean) run.get("highlightElement");
@@ -332,6 +372,8 @@ public class GetConfiguration {
      * @return
      */
     public boolean getPauseStepDisplay()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         try {
             return (boolean) run.get("printPause");
@@ -347,6 +389,8 @@ public class GetConfiguration {
      * @return
      */
     public boolean getBrowserClose()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         try {
             return (boolean) run.get("browserClose");
@@ -362,6 +406,8 @@ public class GetConfiguration {
      * @return
      */
     public boolean getIsGrid()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         try {
             return (boolean) run.get("IsGrid");
@@ -377,9 +423,10 @@ public class GetConfiguration {
      * @return
      */
     public String getEnvironment() {
-        JSONObject environment = (JSONObject) ((JSONObject) main.get("run")).get("Environment");
-        if(SetCommandLineArgument.Environment !=null){
-            return (String) environment.get(SetCommandLineArgument.Environment);
+        Utility parser = new Utility();
+        JSONObject Environment = (JSONObject) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("Environment");
+        if(setCommandLineArgument.Environment !=null){
+            return (String) Environment.get(setCommandLineArgument.Environment);
         }
         return null;
     }
@@ -390,7 +437,8 @@ public class GetConfiguration {
      * @return
      */
     public JSONObject getEnvironmentList() {
-        return (JSONObject) ((JSONObject) main.get("run")).get("Environment");
+        Utility parser = new Utility();
+        return (JSONObject) ((JSONObject) parser.loadJsonFile(getConfigFilePath()).get("run")).get("Environment");
     }
 
     /**
@@ -399,12 +447,13 @@ public class GetConfiguration {
      * @return
      */
     public boolean getRunPastFailure()  {
-
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
 
         try {
-            if(SetCommandLineArgument.runPastFailure !=null){
-                return Boolean.parseBoolean(SetCommandLineArgument.runPastFailure);
+            if(setCommandLineArgument.runPastFailure !=null){
+                return Boolean.parseBoolean(setCommandLineArgument.runPastFailure);
             }
             else {
                 return (boolean) run.get("runPastFailure");
@@ -421,9 +470,13 @@ public class GetConfiguration {
      * @return
      */
     public boolean getIsCloudIntegration() {
+        Utility parser = new Utility();
         try {
-            JSONObject cloudIntegrations = (JSONObject) main.get(cloudIntegration);
-            return (boolean) cloudIntegrations.get("report");
+
+
+            JSONObject main = parser.loadJsonFile(getConfigFilePath());
+            JSONObject cloudIntegration = (JSONObject) main.get("cloudIntegration");
+            return (boolean) cloudIntegration.get("report");
 
         }catch (Exception e){
             return false;
@@ -435,7 +488,9 @@ public class GetConfiguration {
      * @lastModifiedBy:
      * @return
      */
-    public List<String> getLocatorPreference()  {
+    public ArrayList<String> getLocatorPreference()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
         JSONObject run = (JSONObject) main.get("run");
         return (JSONArray) run.get("locatorPreference");
     }
@@ -446,8 +501,10 @@ public class GetConfiguration {
      * @return
      */
     public String getBuildName()  {
-        JSONObject cloudIntegrations = (JSONObject) main.get(cloudIntegration);
-        return cloudIntegrations.get("buildName").toString();
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONObject cloudIntegration = (JSONObject) main.get("cloudIntegration");
+        return cloudIntegration.get("buildName").toString();
 
     }
 
@@ -457,6 +514,9 @@ public class GetConfiguration {
      * @return
      */
     public String getReportFileName()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+
         try {
             return main.get("reportFileName").toString();
         }catch (Exception e)
@@ -464,4 +524,33 @@ public class GetConfiguration {
             return "";
         }
     }
+
+    public String getReportError()  {
+        Utility parser = new Utility();
+        JSONObject main = parser.loadJsonFile(getConfigFilePath());
+        JSONArray cloudIntegration = (JSONArray) main.get("results");
+        for(int i=0; i<5; i++){
+            System.out.println(((JSONObject)cloudIntegration.get(i)).get("owner"));
+        }
+        
+        try {
+            return null;
+            //return main.get("errors").toString();
+        }catch (Exception e)
+        {
+            return "";
+        }
+    }
+
+    public String getDataSetDirectory() {
+        return Paths.get("").toAbsolutePath().toString()+"/src/test/java/DataSet";
+    }
+
+
+    public static void main(String[] args) {
+        GetConfiguration gp=new GetConfiguration();
+        gp.getReportError();
+    }
+
+
 }

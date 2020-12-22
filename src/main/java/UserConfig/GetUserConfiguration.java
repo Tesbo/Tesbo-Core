@@ -531,4 +531,8 @@ public class GetUserConfiguration {
         }
     }
 
+    public String getDataSetDirectory() {
+        return Paths.get("").toAbsolutePath().toString()+"/src/test/java/DataSet";
+    }
+
 }

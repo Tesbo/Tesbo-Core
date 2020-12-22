@@ -450,7 +450,7 @@ public class Validation {
 
     public void keyWordValidation(String step) {
         String newStep=step.replaceAll(spaceRegex, " ").trim().toLowerCase();
-        if(newStep.startsWith("step") || newStep.startsWith("verify") || newStep.startsWith("code") || newStep.startsWith("collection")
+        if(newStep.startsWith("step") || newStep.startsWith("verify") || newStep.startsWith("code")
                 || newStep.startsWith("if") || newStep.startsWith("else if") || newStep.startsWith("end")
                 || newStep.startsWith("[close") || newStep.startsWith("close")
                 || ( step.replaceAll(spaceRegex, " ").trim().contains(closeText) && !(step.replaceAll(spaceRegex, " ").trim().contains("]"))) ){
