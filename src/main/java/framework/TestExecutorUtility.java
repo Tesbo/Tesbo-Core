@@ -595,7 +595,9 @@ public class TestExecutorUtility{
             if((boolean)ifConditionStepDetails.get("isContinue")){ continue;}
 
             stepReportObject=addTestStepToStepReportObject(step.toString(),stepReportObject,stepIndex,startTimeStep,driver,test);
-            stepIndex= (int) stepReportObject.get(stepIndexText);
+            if(!stepReportObject.isEmpty()) {
+                stepIndex = (int) stepReportObject.get(stepIndexText);
+            }
 
             if (isSession) {
                 String startSessionLog="Start session for "+step;
@@ -882,6 +884,9 @@ public class TestExecutorUtility{
             screenShotPath= (String)  stepDetails.get(screenShotPathText);
             testStepArray.add(stepReportObject);
             stepReportObject = new JSONObject();
+            if (!stepPassed) {
+                break;
+            }
         }
         JSONObject collectionReportData=new JSONObject();
         collectionReportData.put(testResultText,testResult);
