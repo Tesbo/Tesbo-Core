@@ -65,14 +65,14 @@ public class ReportLibraryFiles {
     public void createLibrary() {
         generateReportLibraryStructure();
        try {
-            String chromePath = "./htmlReport/lib/Icon/chrome.svg";
-            String firefoxPath = "./htmlReport/lib/Icon/firefox.svg";
-            String iePath = "./htmlReport/lib/Icon/ie.svg";
-            String macPath = "./htmlReport/lib/Icon/mac.svg";
-            String operaPath = "./htmlReport/lib/Icon/opera.svg";
-            String safariPath = "./htmlReport/lib/Icon/safari.svg";
-            String ubantuPath = "./htmlReport/lib/Icon/ubantu.svg";
-            String win10Path = "./htmlReport/lib/Icon/Win10.svg";
+            String chromePath = "./Reports/ReportLib/lib/Icon/chrome.svg";
+            String firefoxPath = "./Reports/ReportLib/lib/Icon/firefox.svg";
+            String iePath = "./Reports/ReportLib/lib/Icon/ie.svg";
+            String macPath = "./Reports/ReportLib/lib/Icon/mac.svg";
+            String operaPath = "./Reports/ReportLib/lib/Icon/opera.svg";
+            String safariPath = "./Reports/ReportLib/lib/Icon/safari.svg";
+            String ubantuPath = "./Reports/ReportLib/lib/Icon/ubantu.svg";
+            String win10Path = "./Reports/ReportLib/lib/Icon/Win10.svg";
             generatefile(chromePath);
             generatefile(firefoxPath);
             generatefile(iePath);
